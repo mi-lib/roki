@@ -1,0 +1,207 @@
+[chain]
+name : 2DOF_arm
+
+[optic]
+name: white
+ambient: 0.8:0.8:0.8
+diffuse: 1:1:1
+specular: 0.4:0.4:0.4
+exp: 1
+shininess: 0
+alpha: 1
+
+[optic]
+name: white2
+ambient: 0.5:0.5:0.5
+diffuse: 0.7:0.7:0.7
+specular: 0.3:0.3:0.3
+exp: 1
+shininess: 0
+alpha: 1
+
+[optic]
+name: gray
+ambient: 0.2:0.1:0.1
+diffuse: 0.4:0.2:0.1
+specular: 0.1:0.1:0.1
+exp: 1
+shininess: 0
+alpha: 1
+
+[optic]
+name: gray2
+ambient: 0.3:0.2:0.1
+diffuse: 0.5:0.3:0.2
+specular: 0.1:0.1:0.1
+exp: 1
+shininess: 0
+alpha: 1
+
+[shape]
+type : polyhedron
+name : shape_base
+optic: gray
+vert 0: { 0.1, 0.1, 0.1 }
+vert 1: { 0, 0.1, 0.1 }
+vert 2: { 0, -0.1, 0.1 }
+vert 3: { 0.1, -0.1, 0.1 }
+vert 4: { 0.1, 0.1, -0.1 }
+vert 5: { 0, 0.1, -0.1 }
+vert 6: { 0, -0.1, -0.1 }
+vert 7: { 0.1, -0.1, -0.1 }
+face 0 1 2
+face 0 2 3
+face 0 4 5
+face 0 5 1
+face 1 5 6
+face 1 6 2
+face 2 6 7
+face 2 7 3
+face 3 7 4
+face 3 4 0
+face 7 6 5
+face 7 5 4
+
+[shape]
+type : polyhedron
+name : shape#01
+optic: white
+vert 0: { 0.35, 0.05, 0.05 }
+vert 1: { 0.05, 0.05, 0.05 }
+vert 2: { 0.05, -0.05, 0.05 }
+vert 3: { 0.35, -0.05, 0.05 }
+vert 4: { 0.35, 0.05, -0.05 }
+vert 5: { 0.05, 0.05, -0.05 }
+vert 6: { 0.05, -0.05, -0.05 }
+vert 7: { 0.35, -0.05, -0.05 }
+face 0 1 2
+face 0 2 3
+face 0 4 5
+face 0 5 1
+face 1 5 6
+face 1 6 2
+face 2 6 7
+face 2 7 3
+face 3 7 4
+face 3 4 0
+face 7 6 5
+face 7 5 4
+
+[shape]
+type : polyhedron
+name : shape#02
+optic: white2
+vert 0: { 0.35, 0.05, 0.05 }
+vert 1: { 0.05, 0.05, 0.05 }
+vert 2: { 0.05, -0.05, 0.05 }
+vert 3: { 0.35, -0.05, 0.05 }
+vert 4: { 0.35, 0.05, -0.05 }
+vert 5: { 0.05, 0.05, -0.05 }
+vert 6: { 0.05, -0.05, -0.05 }
+vert 7: { 0.35, -0.05, -0.05 }
+face 0 1 2
+face 0 2 3
+face 0 4 5
+face 0 5 1
+face 1 5 6
+face 1 6 2
+face 2 6 7
+face 2 7 3
+face 3 7 4
+face 3 4 0
+face 7 6 5
+face 7 5 4
+
+[shape]
+type : cylinder
+name : shape_motor_base
+optic : gray2
+center : 0.15, 0, -0.05
+center : 0.15, 0, 0.05
+radius : 0.05
+
+[shape]
+type : cylinder
+name : shape_motor
+optic : white2
+center : 0.4, 0, -0.05
+center : 0.4, 0, 0.05
+radius : 0.05
+
+[motor]
+name : motor1
+type: trq
+max : 50.0
+min : -50.0
+
+[link]
+name: link#00
+jointtype: fix
+mass: 1.5
+stuff: body
+COM: { 0.067, 0, 0 }
+inertia: {
+ 7.395833e-03, 0, 0
+ 0, 8.645833e-03, 0
+ 0, 0, 8.541667e-03
+}
+frame: {
+ 0, 0, -1, 0
+ 0, 1, 0, 0
+ 1, 0, 0, 0
+}
+shape: shape_base
+shape: shape_motor_base
+
+[link]
+name: link#01
+jointtype: revolute
+min: -180.0000000000
+max: 180.0000000000
+stiff: 0.0000000000
+viscos: 2.2
+coulomb: 4.32
+staticfriction: 4.92
+motor: motor1
+mass: 1.5
+stuff: body
+COM: { 0.267, 0, 0 }
+inertia: {
+ 0.00239583, 0, 0
+ 0, 0.02239583, 0
+ 0, 0, 0.02229167
+}
+frame: {
+ 1, 0, 0, 0.15
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+}
+shape: shape#02
+shape: shape_motor
+parent: link#00
+
+[link]
+name: link#02
+jointtype: revolute
+min: -180.0000000000
+max: 180.0000000000
+stiff: 0.0000000000
+viscos: 2.2
+coulomb: 4.32
+staticfriction: 4.92
+motor: motor1
+mass: 1.0
+stuff: body
+COM: { 0.2, 0, 0 }
+inertia: {
+ 0.0016667, 0, 0
+ 0, 0.0083333, 0
+ 0, 0, 0.0083333
+}
+frame: {
+ 1, 0, 0, 0.4
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+}
+shape: shape#01
+parent: link#01

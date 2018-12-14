@@ -1,0 +1,17 @@
+frame : {
+ 1, 0, 0, 0
+ 0, 1, 0, 0
+ 0, 0, 1, 0.9486152423
+}
+left_shoulder_pitch : -30
+left_elbow_pitch : 60
+left_wrist : 60
+left_crotch_pitch : 30
+left_knee : 60
+left_ankle_pitch : 30
+right_shoulder_pitch : -30
+right_elbow_pitch : 60
+right_wrist : 60
+right_crotch_pitch : 30
+right_knee : 60
+right_ankle_pitch : 30

@@ -1,0 +1,8 @@
+[ik]
+joint: link1 0.001
+joint: link2 0.001
+joint: link3 0 1 2 3
+joint: link4 0.001
+constraint: world_pos hand at 0 0 0 w 1.0 1.0 1.0
+constraint: world_att hand w 1.0 1.0 1.0
+constraint: l2l_pos hand at 0 0 0.05 link2 f

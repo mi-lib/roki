@@ -1,0 +1,106 @@
+[chain]
+name : inverted_pendulum
+
+[optic]
+name: brown
+ambient: 0.4, 0.3, 0.2
+diffuse: 0.4, 0.2, 0.0
+specular: 0.0, 0.0, 0.0
+exp: 0.7
+alpha: 1
+
+[optic]
+name: silver
+ambient: 0.8, 0.8, 0.8
+diffuse: 0.4, 0.4, 0.4
+specular: 0.0, 0.0, 0.0
+exp: 0.8
+alpha: 1
+
+[shape]
+type : cylinder
+name : base
+optic: brown
+center: { 0.0, 0.0, 0.0 }
+center: { 0.0, 0.0, 0.29 }
+radius: 0.2
+
+[shape]
+type : box
+name : arm
+optic: silver
+center: { 0.245, 0.0, 0.0 }
+width: 0.01
+height: 0.01
+depth: 0.49
+
+[shape]
+type : cylinder
+name : pendulum
+center: { 0.0, 0.0, 0.0 }
+center: { 0.39, 0.0, 0.0 }
+radius: 0.01
+
+[link]
+name: base
+jointtype: fix
+frame: {
+ 1, 0, 0, 0
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+}
+shape: base
+
+[link]
+name: arm
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscos: 0
+mass: 0
+inertia: {
+  0, 0, 0,
+  0, 0, 0,
+  0, 0, 0.075
+}
+COM: { 0, 0, 0 }
+frame: {
+ 1, 0, 0, 0
+ 0, 1, 0, 0
+ 0, 0, 1, 0.3
+}
+shape: arm
+parent: base
+
+[link]
+name: pendulum
+jointtype: revolute
+min: -360
+max: 360
+stiffness: 0
+viscos: 0
+mass: 0.085
+inertia: {
+ 0, 0, 0,
+ 0, 0.0011403, 0,
+ 0, 0, 0.0011403
+}
+frame: {
+ 0, 0, 1, 0.49
+ 0,-1, 0, 0
+ 1, 0, 0, 0
+}
+COM: { 0.195, 0, 0 }
+shape: pendulum
+parent: arm
+
+[link]
+name: tip
+jointtype: fix
+frame: {
+ 0, 0, 1, 0.39
+ 0,-1, 0, 0
+ 1, 0, 0, 0
+}
+parent: pendulum

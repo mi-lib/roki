@@ -1,0 +1,48 @@
+[chain]
+name : floor
+
+[optic]
+name: blue
+ambient: 0.1:0.1:0.3
+diffuse: 0.2:0.2:0.4
+specular: 0.1:0.1:0.1
+exp: 1
+shininess: 0
+alpha: 1
+
+[shape]
+type : box
+name : shape
+optic : blue
+center : 0, -0.5, -0.175
+depth : 2.0
+width : 1.0
+height : 0.45
+
+[shape]
+type : box
+name : shape2
+optic : blue
+center : 0, 0.5, -0.2
+depth : 2.0
+width : 1.0
+height : 0.4
+
+[link]
+name: link#00
+jointtype: fix
+mass: 99.9
+stuff: ground
+COM: { 0, 0, 0 }
+inertia: {
+ 0.999, 0, 0
+ 0, 0.999, 0
+ 0, 0, 0.999
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+}
+shape: shape
+shape: shape2

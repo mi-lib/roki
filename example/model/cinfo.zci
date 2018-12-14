@@ -1,0 +1,48 @@
+[contact]
+bind : ground body
+staticfriction : 0.5
+kineticfriction : 0.3
+compensation : 1000.0
+relaxation : 0.0001
+
+[contact]
+bind : body body
+staticfriction : 0.5
+kineticfriction : 0.3
+compensation : 1000.0
+relaxation : 0.05
+
+[contact]
+bind : wall wall
+staticfriction : 0.5
+kineticfriction : 0.3
+compensation : 500.0
+relaxation : 0.001
+
+[contact]
+bind : wall ground
+staticfriction : 0.5
+kineticfriction : 0.3
+compensation : 500.0
+relaxation : 0.001
+
+[contact]
+bind : ground crawler
+staticfriction : 10.0
+kineticfriction : 7.0
+compensation : 100.0
+relaxation : 10.0
+
+[contact]
+bind : soft body
+staticfriction : 0.5
+kineticfriction : 0.3
+elasticity : 100.0
+viscosity : 1.0
+
+[contact]
+bind : soft crawler
+staticfriction : 10.0
+kineticfriction : 7.0
+elasticity : 1000.0
+viscosity : 10.0

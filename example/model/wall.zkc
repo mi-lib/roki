@@ -1,0 +1,113 @@
+[chain]
+name : wall_draw
+
+[optic]
+name: green
+ambient: 0.2:0.4:0.2
+diffuse: 0.3:0.6:0.3
+specular: 0.1:0.4:0.1
+exp: 1
+shininess: 0
+alpha: 1.0
+
+[optic]
+name: blue
+ambient: 0.1:0.1:0.3
+diffuse: 0.2:0.2:0.4
+specular: 0.1:0.1:0.1
+exp: 1
+shininess: 0
+alpha: 0.5
+
+[shape]
+type : box
+name : wall
+optic: green
+center: ( 0.05 0 0)
+depth: 0.099
+width: 0.049
+height: 0.099
+
+[link]
+name: link#10-F
+jointtype: fix
+mass: 0.25
+COM: ( 0.05 0 0)
+inertia: {
+ 0.0002604166667, 0, 0
+ 0, 0.0004166666667, 0
+ 0, 0, 0.0002604166667
+}
+stuff: wall
+frame: {
+ 0, 0, -1, 0
+ 0, 1, 0, 0.55
+ 1, 0, 0, 0
+}
+shape: wall
+
+[link]
+name: link#11-F
+jointtype: breakablefloat
+forcethreshold: 200.0
+torquethreshold: 200.0
+mass: 0.25
+COM: ( 0.05 0 0)
+inertia: {
+ 0.0002604166667, 0, 0
+ 0, 0.0004166666667, 0
+ 0, 0, 0.0002604166667
+}
+stuff: wall
+frame: {
+ 1, 0, 0, 0.1
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+}
+shape: wall
+parent: link#10-F
+break: 200.0 200.0
+
+[link]
+name: link#12-F
+jointtype: breakablefloat
+forcethreshold: 10.0
+torquethreshold: 10.0
+mass: 0.25
+COM: ( 0.05 0 0)
+inertia: {
+ 0.0002604166667, 0, 0
+ 0, 0.0004166666667, 0
+ 0, 0, 0.0002604166667
+}
+stuff: wall
+frame: {
+ 1, 0, 0, 0.1
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+}
+shape: wall
+parent: link#11-F
+break: 10.0 10.0
+
+[link]
+name: link#13-F
+jointtype: breakablefloat
+forcethreshold: 10.0
+torquethreshold: 10.0
+mass: 0.25
+COM: ( 0.05 0 0)
+inertia: {
+ 0.0002604166667, 0, 0
+ 0, 0.0004166666667, 0
+ 0, 0, 0.0002604166667
+}
+stuff: wall
+frame: {
+ 1, 0, 0, 0.1
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+}
+shape: wall
+parent: link#12-F
+break: 10.0 10.0

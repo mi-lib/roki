@@ -1,0 +1,207 @@
+[chain]
+name : crawler
+
+[optic]
+name: green
+ambient: 0.1:0.2:0.1
+diffuse: 0.1:0.3:0.1
+specular: 0.1:0.1:0.1
+exp: 1
+shininess: 0
+alpha: 1
+
+[optic]
+name: black
+ambient: 0.1:0.1:0.1
+diffuse: 0.3:0.3:0.3
+specular: 0.1:0.1:0.1
+exp: 1
+shininess: 0
+alpha: 1
+
+[shape]
+type : box
+name : shape##body
+optic : green
+center : 0, 0, 0
+depth : 0.2
+width : 0.2
+height : 0.1
+
+[shape]
+type : polyhedron
+name : shape##crawler_left
+optic : black
+vert 0: ( 0.15 0.05 0.04)
+vert 1: ( -0.15 0.05 0.04)
+vert 2: ( -0.15 -0.05 0.04)
+vert 3: ( 0.15 0.05 -0.04)
+vert 4: ( 0.15 -0.05 0.04)
+vert 5: ( -0.15 0.05 -0.04)
+vert 6: ( 0.19 -0.05 -6.938893904e-18)
+vert 7: ( -0.19 0.05 3.469446952e-18)
+vert 8: ( -0.15 -0.05 -0.04)
+vert 9: ( 0.1782842712 0.05 -0.02828427125)
+vert 10: ( -0.19 -0.05 3.469446952e-18)
+vert 11: ( 0.15 -0.05 -0.04)
+vert 12: ( -0.1782842712 0.05 -0.02828427125)
+vert 13: ( -0.1782842712 -0.05 -0.02828427125)
+vert 14: ( 0.19 0.05 -6.938893904e-18)
+vert 15: ( 0.1782842712 -0.05 -0.02828427125)
+vert 16: ( -0.1782842712 0.05 0.02828427125)
+vert 17: ( -0.1782842712 -0.05 0.02828427125)
+vert 18: ( 0.1782842712 0.05 0.02828427125)
+vert 19: ( 0.1782842712 -0.05 0.02828427125)
+face 4 0 1
+face 4 1 2
+face 11 8 5
+face 11 5 3
+face 13 10 7
+face 13 7 12
+face 13 12 5
+face 13 5 8
+face 15 9 14
+face 15 14 6
+face 15 11 3
+face 15 3 9
+face 17 2 1
+face 17 1 16
+face 17 16 7
+face 17 7 10
+face 18 14 9
+face 18 9 3
+face 18 3 5
+face 18 5 12
+face 18 12 7
+face 18 7 16
+face 18 16 1
+face 18 1 0
+face 19 6 14
+face 19 14 18
+face 19 18 0
+face 19 0 4
+face 19 4 2
+face 19 2 17
+face 19 17 10
+face 19 10 13
+face 19 13 8
+face 19 8 11
+face 19 11 15
+face 19 15 6
+
+[shape]
+type : polyhedron
+name : shape##crawler_right
+optic : black
+vert 0: ( 0.15 0.05 0.04)
+vert 1: ( -0.15 0.05 0.04)
+vert 2: ( -0.15 -0.05 0.04)
+vert 3: ( 0.15 0.05 -0.04)
+vert 4: ( 0.15 -0.05 0.04)
+vert 5: ( -0.15 0.05 -0.04)
+vert 6: ( 0.19 -0.05 -6.938893904e-18)
+vert 7: ( -0.19 0.05 3.469446952e-18)
+vert 8: ( -0.15 -0.05 -0.04)
+vert 9: ( 0.1782842712 0.05 -0.02828427125)
+vert 10: ( -0.19 -0.05 3.469446952e-18)
+vert 11: ( 0.15 -0.05 -0.04)
+vert 12: ( -0.1782842712 0.05 -0.02828427125)
+vert 13: ( -0.1782842712 -0.05 -0.02828427125)
+vert 14: ( 0.19 0.05 -6.938893904e-18)
+vert 15: ( 0.1782842712 -0.05 -0.02828427125)
+vert 16: ( -0.1782842712 0.05 0.02828427125)
+vert 17: ( -0.1782842712 -0.05 0.02828427125)
+vert 18: ( 0.1782842712 0.05 0.02828427125)
+vert 19: ( 0.1782842712 -0.05 0.02828427125)
+face 4 0 1
+face 4 1 2
+face 11 8 5
+face 11 5 3
+face 13 10 7
+face 13 7 12
+face 13 12 5
+face 13 5 8
+face 15 9 14
+face 15 14 6
+face 15 11 3
+face 15 3 9
+face 17 2 1
+face 17 1 16
+face 17 16 7
+face 17 7 10
+face 18 14 9
+face 18 9 3
+face 18 3 5
+face 18 5 12
+face 18 12 7
+face 18 7 16
+face 18 16 1
+face 18 1 0
+face 19 6 14
+face 19 14 18
+face 19 18 0
+face 19 0 4
+face 19 4 2
+face 19 2 17
+face 19 17 10
+face 19 10 13
+face 19 13 8
+face 19 8 11
+face 19 11 15
+face 19 15 6
+
+[link]
+name: link##body
+jointtype: float
+mass: 1.0
+stuff: body
+COM: { 0, 0, 0 }
+inertia: {
+ 4.167e-3, 0, 0
+ 0, 4.167e-3, 0
+ 0, 0, 6.67e-3
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 1, 0, 0
+ 0, 0, 1, 0.13
+}
+shape: shape##body
+
+[link]
+name: link##crawler_left
+jointtype: fix
+mass: 1.4
+stuff: crawler
+COM: { 0, 0, 0 }
+inertia: {
+ 1.86e-3, 0, 0
+ 0, 1.724e-2, 0
+ 0, 0, 1.783e-2
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 1, 0, 0.1
+ 0, 0, 1, -0.09
+}
+shape: shape##crawler_left
+parent: link##body
+
+[link]
+name: link##crawler_right
+jointtype: fix
+mass: 1.4
+stuff: crawler
+COM: { 0, 0, 0 }
+inertia: {
+ 1.86e-3, 0, 0
+ 0, 1.724e-2, 0
+ 0, 0, 1.783e-2
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 1, 0, -0.1
+ 0, 0, 1, -0.09
+}
+shape: shape##crawler_right
+parent: link##body

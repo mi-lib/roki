@@ -1,0 +1,261 @@
+[chain]
+name : PUMA
+
+[optic]
+name: white
+ambient:  1.0, 1.0, 1.0
+diffuse:  1.0, 1.0, 1.0
+specular: 0.0, 0.0, 0.0
+exp: 1.0
+
+[optic]
+name: yellow
+ambient:  0.9, 0.9, 0.6
+diffuse:  0.9, 0.9, 0.6
+specular: 0.0, 0.0, 0.0
+exp: 1.0
+
+[optic]
+name: lightyellow
+ambient:  1.0, 1.0, 0.6
+diffuse:  0.9, 0.9, 0.6
+specular: 0.6, 0.6, 0.0
+exp: 1.0
+
+[optic]
+name: gray
+ambient:  0.8, 0.8, 0.8
+diffuse:  0.6, 0.6, 0.6
+specular: 0.0, 0.0, 0.0
+exp: 1.0
+
+[shape]
+name: base
+type: cylinder
+bb: AABB
+optic: gray
+center: 0, 0, 0.0
+center: 0, 0, 0.05
+radius: 0.1
+
+[shape]
+name: post
+type: cylinder
+bb: AABB
+optic: gray
+center: 0, 0, 0
+center: 0, 0, 0.25
+radius: 0.05
+
+[shape]
+name: shoulderroot
+type: sphere
+bb: AABB
+optic: gray
+center: 0, 0,-0.049
+radius: 0.05
+
+[shape]
+name: shoulder
+type: cylinder
+bb: AABB
+optic: gray
+center: 0, 0,-0.12
+center: 0, 0, 0.02
+radius: 0.04
+
+[shape]
+name: upperarm
+type: polyhedron
+bb: AABB
+optic: white
+vert 0: -0.10, 0.00,  0.02
+vert 1: -0.08, 0.04,  0.02
+vert 2: -0.05, 0.06,  0.02
+vert 3:  0.05, 0.06,  0.02
+vert 4:  0.20, 0.03,  0.02
+vert 5:  0.22, 0.00,  0.02
+vert 6:  0.20,-0.03,  0.02
+vert 7:  0.05,-0.06,  0.02
+vert 8: -0.05,-0.06,  0.02
+vert 9: -0.08,-0.04,  0.02
+vert 10: -0.10, 0.00, 0.06
+vert 11: -0.08, 0.04, 0.06
+vert 12: -0.05, 0.06, 0.06
+vert 13:  0.05, 0.06, 0.06
+vert 14:  0.20, 0.03, 0.06
+vert 15:  0.22, 0.00, 0.06
+vert 16:  0.20,-0.03, 0.06
+vert 17:  0.05,-0.06, 0.06
+vert 18: -0.05,-0.06, 0.06
+vert 19: -0.08,-0.04, 0.06
+face 5 4 3
+face 5 3 2
+face 5 2 1
+face 5 1 0
+face 5 0 9
+face 5 9 8
+face 5 8 7
+face 5 7 6
+face 15 13 14
+face 15 12 13
+face 15 11 12
+face 15 10 11
+face 15 19 10
+face 15 18 19
+face 15 17 18
+face 15 16 17
+face 0 1 11
+face 0 11 10
+face 1 2 12
+face 1 12 11
+face 2 3 13
+face 2 13 12
+face 3 4 14
+face 3 14 13
+face 4 5 15
+face 4 15 14
+face 5 6 16
+face 5 16 15
+face 6 7 17
+face 6 17 16
+face 7 8 18
+face 7 18 17
+face 8 9 19
+face 8 19 18
+face 9 0 10
+face 9 10 19
+
+[shape]
+name: forearm
+type: polyhedron
+bb: AABB
+optic: yellow
+vert 0: 0.04,-0.04, 0.02
+vert 1:-0.01,-0.04, 0.02
+vert 2:-0.04, 0.00, 0.02
+vert 3:-0.00, 0.16, 0.02
+vert 4: 0.04, 0.16, 0.02
+vert 5: 0.04,-0.04,-0.02
+vert 6:-0.01,-0.04,-0.02
+vert 7:-0.04, 0.00,-0.02
+vert 8:-0.00, 0.16,-0.02
+vert 9: 0.04, 0.16,-0.02
+face 0 1 2
+face 0 2 3
+face 0 3 4
+face 5 7 6
+face 5 8 7
+face 5 9 8
+face 0 5 6
+face 0 6 1
+face 1 6 7
+face 1 7 2
+face 2 7 8
+face 2 8 3
+face 3 8 9
+face 3 9 4
+face 4 9 5
+face 4 5 0
+
+[shape]
+name: hand
+type: cone
+bb: AABB
+optic: lightyellow
+center: 0 0 -0.02
+vert: 0 0 0
+radius: 0.018
+
+% 0:base
+[link]
+name : base
+jointtype : fix
+shape: base
+shape: post
+
+[link]
+name : link1
+jointtype : revolute
+max : 180
+min :-180
+DH: { 0, 0, 0.3, 0 }
+inertia: {
+ 0, 0, 0,
+ 0, 0, 0,
+ 0, 0, 0.35 }
+parent : base
+shape: shoulderroot
+
+[link]
+name : link2
+jointtype : revolute
+max : 180
+min :-180
+DH: { 0, -90, 0.05, 0 }
+mass: 17.4
+inertia: {
+ 0.13, 0, 0,
+ 0, 0.524, 0,
+ 0, 0, 0.539 }
+COM: { 0.068, 0.006, -0.016 }
+parent : link1
+shape: shoulder
+shape: upperarm
+
+[link]
+name : link3
+jointtype : revolute
+max : 180
+min :-180
+DH: { 0.2, 0, 0, 0 }
+mass: 4.8
+inertia: {
+ 0.066, 0, 0,
+ 0, 0.0125, 0,
+ 0, 0, 0.086 }
+COM: { 0, -0.07, 0.014 }
+parent : link2
+shape: forearm
+
+[link]
+name : link4
+jointtype : revolute
+max : 180
+min :-180
+DH: { 0.02, -90, 0.18, 0 }
+mass: 0.82
+inertia: {
+ 0.0018, 0, 0,
+ 0, 0.0018, 0,
+ 0, 0, 0.0013 }
+COM: { 0, 0, -0.019 }
+parent : link3
+
+[link]
+name : link5
+jointtype : revolute
+max : 180
+min :-180
+DH: { 0, 90, 0, 0 }
+mass: 0.34
+inertia: {
+ 0.0003, 0, 0,
+ 0, 0.0003, 0,
+ 0, 0, 0.0004 }
+parent : link4
+
+[link]
+name : link6
+jointtype : revolute
+max : 180
+min :-180
+DH: { 0, -90, 0, 0 }
+mass: 0.09
+inertia: {
+ 0.00015, 0, 0,
+ 0, 0.00015, 0,
+ 0, 0, 0.00004 }
+COM: { 0, 0, 0.032 }
+parent : link5
+shape: hand
