@@ -133,7 +133,7 @@ void rkContactInfoPoolDestroy(rkContactInfoPool *ci)
   register int i;
 
   if( !ci ) return;
-  for( i=0; i<zArrayNum(ci); i++ )
+  for( i=0; i<zArraySize(ci); i++ )
     rkContactInfoDestroy( zArrayElemNC(ci,i) );
   zArrayFree( ci );
 }
@@ -146,7 +146,7 @@ rkContactInfo *rkContactInfoPoolAssoc(rkContactInfoPool *ci, char *stf1, char *s
   register int i;
 
   if( !stf1 || !stf2) return NULL;
-  for( i=0; i<zArrayNum(ci); i++ )
+  for( i=0; i<zArraySize(ci); i++ )
     if( rkContactInfoAssoc( zArrayElemNC(ci,i), stf1, stf2 ) )
       return zArrayElemNC(ci,i);
   return NULL;
@@ -158,7 +158,7 @@ rkContactInfo *rkContactInfoPoolAssocType(rkContactInfoPool *ci, char *stf1, cha
 
   if( !stf1 || !stf2) return NULL;
 
-  for( i=0; i<zArrayNum(ci); i++ )
+  for( i=0; i<zArraySize(ci); i++ )
     if( rkContactInfoType( zArrayElemNC(ci,i) ) == type && rkContactInfoAssoc( zArrayElemNC(ci,i), stf1, stf2 ) )
       return zArrayElemNC(ci,i);
   return NULL;
@@ -228,7 +228,7 @@ void rkContactInfoPoolFWrite(FILE *fp, rkContactInfoPool *ci)
 {
   register int i;
 
-  for( i=0; i<zArrayNum(ci); i++ ){
+  for( i=0; i<zArraySize(ci); i++ ){
     fprintf( fp, "[%s]\n", RK_CONTACTINFO_TAG );
     rkContactInfoFWrite( fp, zArrayElemNC(ci,i) );
   }

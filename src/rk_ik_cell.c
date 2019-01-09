@@ -139,9 +139,9 @@ zVec3D *rkIKLinkL2LAttErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRe
   zMat3D m;
   zVec3D e;
 
-  zMulMatTMat3D( rkChainLinkWldAtt(chain,attr->id), rkChainLinkWldAtt(chain,attr->id_sub), &m );
+  zMulMat3DTMat3D( rkChainLinkWldAtt(chain,attr->id), rkChainLinkWldAtt(chain,attr->id_sub), &m );
   zMat3DError( &ref->att, &m, &e );
-  return zMulMatVec3D( rkChainLinkWldAtt(chain,attr->id), &e, err );
+  return zMulMat3DVec3D( rkChainLinkWldAtt(chain,attr->id), &e, err );
 }
 
 zVec3D *rkIKCOMErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref, zVec3D *err)
@@ -183,7 +183,7 @@ void rkIKBindLinkL2LPos(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef 
 
 void rkIKBindLinkL2LAtt(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref)
 { /* current attitude of a link with respect to another link */
-  zMulMatTMat3D( rkChainLinkWldAtt(chain,attr->id), rkChainLinkWldAtt(chain,attr->id_sub), &ref->att );
+  zMulMat3DTMat3D( rkChainLinkWldAtt(chain,attr->id), rkChainLinkWldAtt(chain,attr->id_sub), &ref->att );
 }
 
 void rkIKBindCOM(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref)

@@ -116,7 +116,7 @@ zIndex rkChainCreateDefaultJointIndex(rkChain *c)
   }
   for( count=0, i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkJointType(c,i) != RK_JOINT_FIXED ){
-      zIndexSetElem( index, count, i );
+      zIndexSetElemNC( index, count, i );
       count++;
     }
   return index;
@@ -129,8 +129,8 @@ int rkChainJointIndexSize(rkChain *c, zIndex idx)
 {
   register int i, size;
 
-  for( size=0, i=0; i<zArrayNum(idx); i++ )
-    size += rkChainLinkJointSize(c,zIndexElem(idx,i));
+  for( size=0, i=0; i<zArraySize(idx); i++ )
+    size += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
   return size;
 }
 
@@ -142,9 +142,9 @@ void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis)
   register int i;
   double *dp;
 
-  for( dp=zVecBuf(dis), i=0; i<zArrayNum(idx); i++ ){
-    rkChainLinkSetJointDis( c, zIndexElem(idx,i), dp );
-    dp += rkChainLinkJointSize(c,zIndexElem(idx,i));
+  for( dp=zVecBuf(dis), i=0; i<zArraySize(idx); i++ ){
+    rkChainLinkSetJointDis( c, zIndexElemNC(idx,i), dp );
+    dp += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
   }
 }
 
@@ -156,9 +156,9 @@ void rkChainSetJointDisCNT(rkChain *c, zIndex idx, zVec dis, double dt)
   register int i;
   double *dp;
 
-  for( dp=zVecBuf(dis), i=0; i<zArrayNum(idx); i++ ){
-    rkChainLinkSetJointDisCNT( c, zIndexElem(idx,i), dp, dt );
-    dp += rkChainLinkJointSize(c,zIndexElem(idx,i));
+  for( dp=zVecBuf(dis), i=0; i<zArraySize(idx); i++ ){
+    rkChainLinkSetJointDisCNT( c, zIndexElemNC(idx,i), dp, dt );
+    dp += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
   }
 }
 
@@ -170,9 +170,9 @@ void rkChainSetJointVel(rkChain *c, zIndex idx, zVec vel)
   register int i;
   double *vp;
 
-  for( vp=zVecBuf(vel), i=0; i<zArrayNum(idx); i++ ){
-    rkJointSetVel( rkChainLinkJoint(c,zIndexElem(idx,i)), vp );
-    vp += rkChainLinkJointSize(c,zIndexElem(idx,i));
+  for( vp=zVecBuf(vel), i=0; i<zArraySize(idx); i++ ){
+    rkJointSetVel( rkChainLinkJoint(c,zIndexElemNC(idx,i)), vp );
+    vp += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
   }
 }
 
@@ -184,11 +184,11 @@ void rkChainSetJointRate(rkChain *c, zIndex idx, zVec vel, zVec acc)
   register int i;
   double *vp, *ap;
 
-  for( vp=zVecBuf(vel), ap=zVecBuf(acc), i=0; i<zArrayNum(idx); i++ ){
-    rkJointSetVel( rkChainLinkJoint(c,zIndexElem(idx,i)), vp );
-    rkJointSetAcc( rkChainLinkJoint(c,zIndexElem(idx,i)), ap );
-    vp += rkChainLinkJointSize(c,zIndexElem(idx,i));
-    ap += rkChainLinkJointSize(c,zIndexElem(idx,i));
+  for( vp=zVecBuf(vel), ap=zVecBuf(acc), i=0; i<zArraySize(idx); i++ ){
+    rkJointSetVel( rkChainLinkJoint(c,zIndexElemNC(idx,i)), vp );
+    rkJointSetAcc( rkChainLinkJoint(c,zIndexElemNC(idx,i)), ap );
+    vp += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
+    ap += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
   }
 }
 
@@ -200,9 +200,9 @@ zVec rkChainGetJointDis(rkChain *c, zIndex idx, zVec dis)
   register int i;
   double *dp;
 
-  for( dp=zVecBuf(dis), i=0; i<zArrayNum(idx); i++ ){
-    rkChainLinkGetJointDis( c, zIndexElem(idx,i), dp );
-    dp += rkChainLinkJointSize(c,zIndexElem(idx,i));
+  for( dp=zVecBuf(dis), i=0; i<zArraySize(idx); i++ ){
+    rkChainLinkGetJointDis( c, zIndexElemNC(idx,i), dp );
+    dp += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
   }
   return dis;
 }
@@ -215,9 +215,9 @@ zVec rkChainGetJointVel(rkChain *c, zIndex idx, zVec vel)
   register int i;
   double *dp;
 
-  for( dp=zVecBuf(vel), i=0; i<zArrayNum(idx); i++ ){
-    rkChainLinkGetJointVel( c, zIndexElem(idx,i), dp );
-    dp += rkChainLinkJointSize(c,zIndexElem(idx,i));
+  for( dp=zVecBuf(vel), i=0; i<zArraySize(idx); i++ ){
+    rkChainLinkGetJointVel( c, zIndexElemNC(idx,i), dp );
+    dp += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
   }
   return vel;
 }
@@ -230,9 +230,9 @@ zVec rkChainGetJointAcc(rkChain *c, zIndex idx, zVec acc)
   register int i;
   double *dp;
 
-  for( dp=zVecBuf(acc), i=0; i<zArrayNum(idx); i++ ){
-    rkChainLinkGetJointAcc( c, zIndexElem(idx,i), dp );
-    dp += rkChainLinkJointSize(c,zIndexElem(idx,i));
+  for( dp=zVecBuf(acc), i=0; i<zArraySize(idx); i++ ){
+    rkChainLinkGetJointAcc( c, zIndexElemNC(idx,i), dp );
+    dp += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
   }
   return acc;
 }
@@ -246,7 +246,7 @@ void rkChainSetJointDisAll(rkChain *c, zVec dis)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkChainLinkSetJointDis( c, i, &zVecElem(dis,rkChainLinkOffset(c,i)) );
+      rkChainLinkSetJointDis( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)) );
 }
 
 /* rkChainCatJointDisAll
@@ -258,7 +258,7 @@ void rkChainCatJointDisAll(rkChain *c, zVec dis, double k, zVec v)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkJointCatDis( rkChainLinkJoint(c,i), &zVecElem(dis,rkChainLinkOffset(c,i)), k, &zVecElem(v,rkChainLinkOffset(c,i)) );
+      rkJointCatDis( rkChainLinkJoint(c,i), &zVecElemNC(dis,rkChainLinkOffset(c,i)), k, &zVecElemNC(v,rkChainLinkOffset(c,i)) );
 }
 
 /* rkChainSubJointDisAll
@@ -270,7 +270,7 @@ void rkChainSubJointDisAll(rkChain *c, zVec dis, zVec sdis)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkJointSubDis( rkChainLinkJoint(c,i), &zVecElem(dis,rkChainLinkOffset(c,i)), &zVecElem(sdis,rkChainLinkOffset(c,i)) );
+      rkJointSubDis( rkChainLinkJoint(c,i), &zVecElemNC(dis,rkChainLinkOffset(c,i)), &zVecElemNC(sdis,rkChainLinkOffset(c,i)) );
 }
 
 /* rkChainSetJointDisCNTAll
@@ -282,7 +282,7 @@ void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkChainLinkSetJointDisCNT( c, i, &zVecElem(dis,rkChainLinkOffset(c,i)), dt );
+      rkChainLinkSetJointDisCNT( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)), dt );
 }
 
 /* rkChainSetJointVelAll
@@ -294,7 +294,7 @@ void rkChainSetJointVelAll(rkChain *c, zVec vel)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkJointSetVel( rkChainLinkJoint(c,i), &zVecElem(vel,rkChainLinkOffset(c,i)) );
+      rkJointSetVel( rkChainLinkJoint(c,i), &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
 }
 
 /* rkChainSetJointRateAll
@@ -306,8 +306,8 @@ void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 ){
-      rkJointSetVel( rkChainLinkJoint(c,i), &zVecElem(vel,rkChainLinkOffset(c,i)) );
-      rkJointSetAcc( rkChainLinkJoint(c,i), &zVecElem(acc,rkChainLinkOffset(c,i)) );
+      rkJointSetVel( rkChainLinkJoint(c,i), &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
+      rkJointSetAcc( rkChainLinkJoint(c,i), &zVecElemNC(acc,rkChainLinkOffset(c,i)) );
     }
 }
 
@@ -320,7 +320,7 @@ zVec rkChainGetJointDisAll(rkChain *c, zVec dis)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkChainLinkGetJointDis( c, i, &zVecElem(dis,rkChainLinkOffset(c,i)) );
+      rkChainLinkGetJointDis( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)) );
   return dis;
 }
 
@@ -333,7 +333,7 @@ zVec rkChainGetJointVelAll(rkChain *c, zVec vel)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkChainLinkGetJointVel( c, i, &zVecElem(vel,rkChainLinkOffset(c,i)) );
+      rkChainLinkGetJointVel( c, i, &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
   return vel;
 }
 
@@ -346,7 +346,7 @@ zVec rkChainGetJointAccAll(rkChain *c, zVec acc)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkChainLinkGetJointAcc( c, i, &zVecElem(acc,rkChainLinkOffset(c,i)) );
+      rkChainLinkGetJointAcc( c, i, &zVecElemNC(acc,rkChainLinkOffset(c,i)) );
   return acc;
 }
 
@@ -359,7 +359,7 @@ zVec rkChainGetJointTrqAll(rkChain *c, zVec trq)
 
   for( i=0; i<rkChainNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
-      rkChainLinkGetJointTrq( c, i, &zVecElem(trq,rkChainLinkOffset(c,i)) );
+      rkChainLinkGetJointTrq( c, i, &zVecElemNC(trq,rkChainLinkOffset(c,i)) );
   return trq;
 }
 
@@ -371,7 +371,7 @@ zVec rkChainGetConf(rkChain *chain, zVec conf)
   register int i;
 
   for( i=0; i<rkChainNum(chain); i++ )
-    zFrame3DToArrayAA( rkChainLinkWldFrame(chain,i), &zVecElem(conf,i*6) );
+    zFrame3DToArrayAA( rkChainLinkWldFrame(chain,i), &zVecElemNC(conf,i*6) );
   return conf;
 }
 
@@ -383,7 +383,7 @@ void rkChainSetConf(rkChain *chain, zVec conf)
   register int i;
 
   for( i=0; i<rkChainNum(chain); i++ )
-    zArrayToFrame3DAA( &zVecElem(conf,i*6), rkChainLinkWldFrame(chain,i) );
+    zArrayToFrame3DAA( &zVecElemNC(conf,i*6), rkChainLinkWldFrame(chain,i) );
   rkLinkConfToJointDis( rkChainRoot(chain) );
 }
 
@@ -464,7 +464,7 @@ zVec3D *rkChainCalcCOMVel(rkChain *c)
     /* COM velocity of link is with respect to the local frame,
        while COM velocity of a kinematic chain is with respect to
        the world frame. */
-    zMulMatVec3D( rkChainLinkWldAtt(c,i), rkChainLinkCOMVel(c,i), &v );
+    zMulMat3DVec3D( rkChainLinkWldAtt(c,i), rkChainLinkCOMVel(c,i), &v );
     zVec3DCatDRC( rkChainCOMVel(c), rkChainLinkMass(c,i)/rkChainMass(c), &v );
   }
   return rkChainCOMVel(c);
@@ -483,7 +483,7 @@ zVec3D *rkChainCalcCOMAcc(rkChain *c)
     /* COM acceleration of a link is with respect to the local frame,
        while COM acceleration of a kinematic chain is with respect to
        the world frame. */
-    zMulMatVec3D( rkChainLinkWldAtt(c,i), rkChainLinkCOMAcc(c,i), &a );
+    zMulMat3DVec3D( rkChainLinkWldAtt(c,i), rkChainLinkCOMAcc(c,i), &a );
     zVec3DCatDRC( rkChainCOMAcc(c), rkChainLinkMass(c,i)/rkChainMass(c), &a );
   }
   return rkChainCOMAcc(c);
@@ -529,7 +529,7 @@ zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am)
   for( i=0; i<rkChainNum(c); i++ ){
     zXfer3DInv( rkChainLinkWldFrame(c,i), p, &tp );
     rkLinkAM( rkChainLink(c,i), &tp, &tmp );
-    zMulMatVec3DDRC( rkChainLinkWldAtt(c,i), &tmp );
+    zMulMat3DVec3DDRC( rkChainLinkWldAtt(c,i), &tmp );
     zVec3DAddDRC( am, &tmp );
   }
   return am;
@@ -560,7 +560,7 @@ zVec6D *rkChainCalcExtWrench(rkChain *c, zVec6D *w)
   for( i=0; i<rkChainNum(c); i++ ){
     rkLinkCalcExtWrench( rkChainLink(c,i), &ew );
     if( zVec6DEqual( &ew, ZVEC6DZERO ) ) continue;
-    zMulMatVec6DDRC( rkChainLinkWldAtt(c,i), &ew );
+    zMulMat3DVec6DDRC( rkChainLinkWldAtt(c,i), &ew );
     zVec6DAngShiftDRC( &ew, rkChainLinkWldPos(c,i) );
     zVec6DAddDRC( w, &ew );
   }
@@ -743,7 +743,7 @@ bool _rkChainInitFRead(FILE *fp, void *instance, char *buf, bool *success)
   else{
     zNameFind( rkChainRoot(c), rkChainNum(c), buf, l );
     if( !l ) return false;
-    rkJointQueryFRead( fp, "dis", rkLinkJoint(l), zArrayBuf(rkChainMotor(c)), zArrayNum(rkChainMotor(c)) );
+    rkJointQueryFRead( fp, "dis", rkLinkJoint(l), zArrayBuf(rkChainMotor(c)), zArraySize(rkChainMotor(c)) );
   }
   return true;
 }
@@ -822,7 +822,7 @@ rkChain *_rkChainLinkFRead(FILE *fp, rkChain *c, int i)
         zMShape3DShapeBuf( rkChainShape(c) ),
         zMShape3DShapeNum( rkChainShape(c) ),
         zArrayBuf( rkChainMotor(c) ),
-        zArrayNum( rkChainMotor(c) ) ) ){
+        zArraySize( rkChainMotor(c) ) ) ){
     ZRUNERROR( "invalid description for the link" );
     return NULL;
   }

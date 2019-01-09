@@ -152,7 +152,7 @@ void _rkJointCalcTrqRevol(void *prp, zVec6D *f)
 /* inverse computation of joint torsion and displacement */
 void _rkJointTorsionRevol(zFrame3D *dev, zVec6D *t, double dis[])
 {
-  zMulMatTVec3D( zFrame3DAtt(dev), zFrame3DPos(dev), zVec6DLin(t) );
+  zMulMat3DTVec3D( zFrame3DAtt(dev), zFrame3DPos(dev), zVec6DLin(t) );
   dis[0] = rkJointTorsionDisRevol( dev, t );
 }
 
@@ -326,11 +326,11 @@ static void _rkJointABIQAccRevol(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVe
 void _rkJointABIAxisInertiaRevol(void *prp, zMat6D *m, zMat h, zMat ih)
 {
   _rkJointMotorInertiaRevol( prp, zMatBuf(h) );
-  zMatElem(h,0,0) += zMat6DMat3D(m,1,1)->e[2][2];
-  if( !zIsTiny( zMatElem(h,0,0) ) )
-    zMatElem(ih,0,0) = 1.0 / zMatElem(h,0,0);
+  zMatElemNC(h,0,0) += m->e[1][1].e[2][2];
+  if( !zIsTiny( zMatElemNC(h,0,0) ) )
+    zMatElemNC(ih,0,0) = 1.0 / zMatElemNC(h,0,0);
   else
-    zMatElem(ih,0,0) = 0.0;
+    zMatElemNC(ih,0,0) = 0.0;
 }
 
 void _rkJointABIAddAbiRevol(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm)
@@ -340,7 +340,7 @@ void _rkJointABIAddAbiRevol(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *p
 
   zMat6DCol( m, zZA, &tmpv );
   zMat6DRow( m, zZA, &tmpv2 );
-  zVec6DMulDRC( &tmpv, -zMatElem(h,0,0) );
+  zVec6DMulDRC( &tmpv, -zMatElemNC(h,0,0) );
   zMat6DDyad( &tmpm, &tmpv, &tmpv2 );
   zMat6DAddDRC( &tmpm, m );
 
@@ -353,11 +353,11 @@ void _rkJointABIAddBiasRevol(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat 
   zVec6D tmpv, tmpv2;
 
   zMat6DCol( m, zZA, &tmpv );
-  zVec6DMulDRC( &tmpv, -zMatElem(h,0,0) );
+  zVec6DMulDRC( &tmpv, -zMatElemNC(h,0,0) );
   zVec6DMulDRC( &tmpv, _rkc(prp)->_u - b->e[zZA] );
   zVec6DSub( b, &tmpv, &tmpv2 );
 
-  zMulMatVec6D( zFrame3DAtt( f ), &tmpv2, &tmpv );
+  zMulMat3DVec6D( zFrame3DAtt(f), &tmpv2, &tmpv );
   zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
   zVec6DAddDRC( pb, &tmpv );
 }
@@ -378,7 +378,7 @@ void _rkJointABIQAccRevol(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *ja
 
   zMat6DRow( m, zZA, &tmpv );
   /* q */
-  _rkc(prp)->acc = zMatElem(h,0,0)*( _rkc(prp)->_u - zVec6DInnerProd( &tmpv, jac ) - b->e[zZA] );
+  _rkc(prp)->acc = zMatElemNC(h,0,0)*( _rkc(prp)->_u - zVec6DInnerProd( &tmpv, jac ) - b->e[zZA] );
   /* acc */
   zVec6DCopy( jac, acc );
   acc->e[zZA] += _rkc(prp)->acc;

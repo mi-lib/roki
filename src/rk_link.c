@@ -171,7 +171,7 @@ void _rkLinkUpdateAcc(rkLink *l, zVec6D *pvel, zVec6D *pacc)
   zVec3DOuterProd( zVec6DAng(pvel), rkLinkAdjPos(l), &wp );
   zVec3DOuterProd( zVec6DAng(pvel), &wp, &tmp );
   zVec3DAddDRC( rkLinkLinAcc(l), &tmp );
-  zMulMatTVec6DDRC( rkLinkAdjAtt(l), rkLinkAcc(l) );
+  zMulMat3DTVec6DDRC( rkLinkAdjAtt(l), rkLinkAcc(l) );
   /* joint motion rate */
   zVec3DCopy( rkLinkAngVel(l), &tmp );
   rkJointIncAccOnVel( rkLinkJoint(l), &tmp, rkLinkAcc(l) );

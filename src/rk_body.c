@@ -258,9 +258,9 @@ zVec6D *rkBodyNetWrench(rkBody *body, zVec6D *w)
   zVec3D tmp;
 
   zVec3DMul( rkBodyCOMAcc(body), rkBodyMass(body), zVec6DLin(w) );
-  zMulMatVec3D( rkBodyInertia(body), rkBodyAngVel(body), &tmp );
+  zMulMat3DVec3D( rkBodyInertia(body), rkBodyAngVel(body), &tmp );
   zVec3DOuterProd( rkBodyAngVel(body), &tmp, zVec6DAng(w) );
-  zMulMatVec3D( rkBodyInertia(body), rkBodyAngAcc(body), &tmp );
+  zMulMat3DVec3D( rkBodyInertia(body), rkBodyAngAcc(body), &tmp );
   zVec3DAddDRC( zVec6DAng(w), &tmp );
   return w;
 }
@@ -275,7 +275,7 @@ zVec3D *rkBodyAM(rkBody *b, zVec3D *p, zVec3D *am)
   zVec3DSub( rkBodyCOM(b), p, &tmp );
   zVec3DOuterProd( &tmp, rkBodyCOMVel(b), am );
   zVec3DMulDRC( am, rkBodyMass(b) );
-  zMulMatVec3D( rkBodyInertia(b), rkBodyAngVel(b), &tmp );
+  zMulMat3DVec3D( rkBodyInertia(b), rkBodyAngVel(b), &tmp );
   return zVec3DAddDRC( am, &tmp );
 }
 
@@ -287,7 +287,7 @@ double rkBodyKE(rkBody *b)
   zVec3D tmp;
   double result;
 
-  zMulMatVec3D( rkBodyInertia(b), rkBodyAngVel(b), &tmp );
+  zMulMat3DVec3D( rkBodyInertia(b), rkBodyAngVel(b), &tmp );
   result = zVec3DInnerProd( rkBodyAngVel(b), &tmp );
   result += rkBodyMass(b)*zVec3DSqrNorm( rkBodyCOMVel(b) );
   return ( result *= 0.5 );

@@ -499,7 +499,7 @@ rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkCDCell *
       zVec3DSub( &cp->data._pro, &vert, &sub );
       zVec3DProj( &sub, &v->data._norm, &pro );
       zVec3DAdd( &vert, &pro, &v->data._pro );
-      zMulMatVec3D( rkLinkWldAtt(cell1->data.link), &v->data._norm, &v->data.norm );
+      zMulMat3DVec3D( rkLinkWldAtt(cell1->data.link), &v->data._norm, &v->data.norm );
       zXfer3D( rkLinkWldFrame(cell1->data.link), &v->data._pro, &v->data.pro );
       zXfer3D( rkLinkWldFrame(cell1->data.link), &v->data._ref, &v->data.ref );
       zXfer3D( rkLinkWldFrame(cell1->data.link), &v->data._axis[0], &v->data.axis[0] );
@@ -516,7 +516,7 @@ rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkCDCell *
     zVec3DCopy( &v->data.pro, &v->data.ref );
     zVec3DCopy( &v->data.norm, &v->data.axis[0] );
     zVec3DOrthoSpace( &v->data.axis[0], &v->data.axis[1], &v->data.axis[2] );
-    zMulMatTVec3D( rkLinkWldAtt(cell1->data.link), &v->data.norm, &v->data._norm );
+    zMulMat3DTVec3D( rkLinkWldAtt(cell1->data.link), &v->data.norm, &v->data._norm );
     zXfer3DInv( rkLinkWldFrame(cell1->data.link), &v->data.pro, &v->data._pro );
     zXfer3DInv( rkLinkWldFrame(cell1->data.link), &v->data.ref, &v->data._ref );
     zXfer3DInv( rkLinkWldFrame(cell1->data.link), &v->data.axis[0], &v->data._axis[0] );
@@ -722,7 +722,7 @@ int _rkCDPairColVolBREP(rkCDPair *cp)
   /* merge */
   _rkCDBREPMergeCH( &brep[0], &brep[1], &cp->data.colvol );
   /* safety */
-  if( zArrayNum(&cp->data.colvol.vert) < 4 || zArrayNum(&cp->data.colvol.face) < 4 ||
+  if( zArraySize(&cp->data.colvol.vert) < 4 || zArraySize(&cp->data.colvol.face) < 4 ||
       _rkCDColVolError( &cp->data.colvol ) ){
     cp->data.is_col = false;
     ret--;

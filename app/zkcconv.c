@@ -23,12 +23,10 @@ void zkcconv_usage(void)
 void zkcconv_mass(rkLink *l)
 {
   zFrame3D *wf; /* world frame temporarily stored in link_base_frame ) */
-  zMat3D i;
 
   wf = rkLinkAdjFrame( l );
   zXfer3DInvDRC( wf, rkLinkCOM(l) );
-  zMulMatTMat3D( zFrame3DAtt(wf), rkLinkInertia(l), &i );
-  zMulMatMat3D( &i, zFrame3DAtt(wf), rkLinkInertia(l) );
+  zRotMat3DInv( zFrame3DAtt(wf), rkLinkInertia(l), rkLinkInertia(l) );
 
   if( rkLinkChild(l) )
     zkcconv_mass( rkLinkChild(l) );

@@ -126,7 +126,7 @@ void _rkJointSetDisCNTSpher(void *prp, double *val, double dt)
 zFrame3D *_rkJointXferSpher(void *prp, zFrame3D *fo, zFrame3D *f)
 {
   zVec3DCopy( zFrame3DPos(fo), zFrame3DPos(f) );
-  zMulMatMat3D( zFrame3DAtt(fo), &_rkc(prp)->_att, zFrame3DAtt(f) );
+  zMulMat3DMat3D( zFrame3DAtt(fo), &_rkc(prp)->_att, zFrame3DAtt(f) );
   return f;
 }
 
@@ -135,7 +135,7 @@ void _rkJointIncVelSpher(void *prp, zVec6D *vel)
 {
   zVec3D cw;
 
-  zMulMatTVec3D( &_rkc(prp)->_att, &_rkc(prp)->vel, &cw );
+  zMulMat3DTVec3D( &_rkc(prp)->_att, &_rkc(prp)->vel, &cw );
   zVec3DAddDRC( zVec6DAng(vel), &cw );
 }
 
@@ -143,7 +143,7 @@ void _rkJointIncAccOnVelSpher(void *prp, zVec3D *w, zVec6D *acc)
 {
   zVec3D cw;
 
-  zMulMatTVec3D( &_rkc(prp)->_att, &_rkc(prp)->vel, &cw );
+  zMulMat3DTVec3D( &_rkc(prp)->_att, &_rkc(prp)->vel, &cw );
   zVec3DOuterProd( w, &cw, &cw );
   zVec3DAddDRC( zVec6DAng(acc), &cw );
 }
@@ -153,20 +153,20 @@ void _rkJointIncAccSpher(void *prp, zVec6D *acc)
 {
   zVec3D cw;
 
-  zMulMatTVec3D( &_rkc(prp)->_att, &_rkc(prp)->acc, &cw );
+  zMulMat3DTVec3D( &_rkc(prp)->_att, &_rkc(prp)->acc, &cw );
   zVec3DAddDRC( zVec6DAng(acc), &cw );
 }
 
 /* joint torque transfer function */
 void _rkJointCalcTrqSpher(void *prp, zVec6D *f)
 {
-  zMulMatVec3D( &_rkc(prp)->_att, zVec6DAng(f), &_rkc(prp)->trq );
+  zMulMat3DVec3D( &_rkc(prp)->_att, zVec6DAng(f), &_rkc(prp)->trq );
 }
 
 /* inverse computation of joint torsion and displacement */
 void _rkJointTorsionSpher(zFrame3D *dev, zVec6D *t, double dis[])
 {
-  zMulMatTVec3D( zFrame3DAtt(dev), zFrame3DPos(dev), zVec6DLin(t) );
+  zMulMat3DTVec3D( zFrame3DAtt(dev), zFrame3DPos(dev), zVec6DLin(t) );
   zVec3DClear( zVec6DAng(t) );
   zMat3DToAA( zFrame3DAtt(dev), (zVec3D*)dis );
 }
@@ -179,7 +179,7 @@ zVec3D *_rkJointAxisSpher(void *prp, zFrame3D *f, zDir dir, zVec3D *a){
   zVec3D al;
 
   zMat3DRow( &_rkc(prp)->_att, dir, &al );
-  return zMulMatVec3D( zFrame3DAtt(f), &al, a );
+  return zMulMat3DVec3D( zFrame3DAtt(f), &al, a );
 }
 
 zVec3D *_rkJointAxisXSpher(void *prp, zFrame3D *f, zVec3D *a){
@@ -326,7 +326,7 @@ void _rkJointABIAxisInertiaSpher(void *prp, zMat6D *m, zMat h, zMat ih)
      way. A nice property is that they are cancelled in the following
      computation and thus are omitted from the beginning. */
   _rkJointMotorInertiaSpher( prp, zMatBuf(h) );
-  zMat3DT( zMat6DMat3D(m,1,1), (zMat3D *)&zMatElem(h,0,0) );
+  zMat3DT( &m->e[1][1], (zMat3D *)&zMatElemNC(h,0,0) );
   zMatInv( h, ih );
 }
 

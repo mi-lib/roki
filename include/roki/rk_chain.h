@@ -32,9 +32,9 @@ typedef struct{
   bool _iscol;
 } rkChain;
 
-#define rkChainNum(c)              zArrayNum( &(c)->link )
+#define rkChainNum(c)              zArraySize( &(c)->link )
 #define rkChainRoot(c)             zArrayBuf( &(c)->link )
-#define rkChainLink(c,i)           zArrayElem( &(c)->link, i )
+#define rkChainLink(c,i)           zArrayElemNC( &(c)->link, i )
 #define rkChainShape(c)            (c)->shape
 #define rkChainMotor(c)            (c)->motor
 #define rkChainMass(c)             (c)->mass

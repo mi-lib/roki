@@ -146,7 +146,7 @@ void _rkJointTorsionPrism(zFrame3D *dev, zVec6D *t, double dis[])
   zVec3D aa;
 
   zMat3DToAA( zFrame3DAtt(dev), &aa );
-  zMulMatTVec3D( zFrame3DAtt(dev), &aa, zVec6DAng(t) );
+  zMulMat3DTVec3D( zFrame3DAtt(dev), &aa, zVec6DAng(t) );
   dis[0] = rkJointTorsionDisPrism( dev, t );
 }
 
@@ -319,11 +319,11 @@ static void _rkJointABIQAccPrism(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVe
 void _rkJointABIAxisInertiaPrism(void *prp, zMat6D *m, zMat h, zMat ih)
 {
   _rkJointMotorInertiaPrism( prp, zMatBuf(h) );
-  zMatElem(h,0,0) += zMat6DMat3D(m,0,0)->e[2][2];
-  if( !zIsTiny( zMatElem(h,0,0) ) )
-    zMatElem(ih,0,0) = 1.0 / zMatElem(h,0,0);
+  zMatElemNC(h,0,0) += m->e[0][0].e[2][2];
+  if( !zIsTiny( zMatElemNC(h,0,0) ) )
+    zMatElemNC(ih,0,0) = 1.0 / zMatElemNC(h,0,0);
   else
-    zMatElem(ih,0,0) = 0.0;
+    zMatElemNC(ih,0,0) = 0.0;
 }
 
 void _rkJointABIAddAbiPrism(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm)
@@ -333,7 +333,7 @@ void _rkJointABIAddAbiPrism(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *p
 
   zMat6DCol( m, zZ, &tmpv );
   zMat6DRow( m, zZ, &tmpv2 );
-  zVec6DMulDRC( &tmpv, -1.0*zMatElem(h,0,0) );
+  zVec6DMulDRC( &tmpv, -zMatElemNC(h,0,0) );
   zMat6DDyad( &tmpm, &tmpv, &tmpv2 );
   zMat6DAddDRC( &tmpm, m );
 
@@ -349,7 +349,7 @@ void _rkJointABIAddBiasPrism(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat 
   zVec6DMulDRC( &tmpv, _rkc(prp)->_u - b->e[zZ] );
   zVec6DSub( b, &tmpv, &tmpv2 );
 
-  zMulMatVec6D( zFrame3DAtt( f ), &tmpv2, &tmpv );
+  zMulMat3DVec6D( zFrame3DAtt(f), &tmpv2, &tmpv );
   zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
   zVec6DAddDRC( pb, &tmpv );
 }
@@ -370,7 +370,7 @@ void _rkJointABIQAccPrism(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *ja
 
   zMat6DRow( m, zZ, &tmpv );
   /* q */
-  _rkc(prp)->acc = zMatElem(h,0,0)*( _rkc(prp)->_u - zVec6DInnerProd( &tmpv, jac ) - b->e[zZ] );
+  _rkc(prp)->acc = zMatElemNC(h,0,0)*( _rkc(prp)->_u - zVec6DInnerProd( &tmpv, jac ) - b->e[zZ] );
   /* acc */
   zVec6DCopy( jac, acc );
   acc->e[zZ] += _rkc(prp)->acc;

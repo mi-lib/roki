@@ -59,7 +59,7 @@ void _rkJointTorsionFixed(zFrame3D *dev, zVec6D *t, double dis[])
   zVec6D to;
 
   zFrame3DToVec6DAA( dev, &to );
-  zMulMatTVec6D( zFrame3DAtt(dev), &to, t );
+  zMulMat3DTVec6D( zFrame3DAtt(dev), &to, t );
 }
 
 /* referential displacement for static friction computation */
@@ -155,7 +155,7 @@ void _rkJointABIAddBiasFixed(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat 
 {
   zVec6D tmpv;
 
-  zMulMatVec6D( zFrame3DAtt(f), b, &tmpv );
+  zMulMat3DVec6D( zFrame3DAtt(f), b, &tmpv );
   zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
   zVec6DAddDRC( pb, &tmpv );
 }

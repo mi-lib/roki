@@ -100,7 +100,7 @@ void rkIKDestroy(rkIK *ik)
  */
 bool _rkIKAllocCMat(rkIK *ik)
 {
-  if( zListNum(&ik->clist) == 0 || zArrayNum(ik->_j_idx) == 0 )
+  if( zListNum(&ik->clist) == 0 || zArraySize(ik->_j_idx) == 0 )
     return true;
   zMatFree( ik->_c_mat );
   if( !( ik->_c_mat = zMatAlloc( zListNum(&ik->clist)*3, zVecSizeNC(ik->_j_vel) ) ) ){
@@ -132,11 +132,11 @@ bool _rkIKAllocJointIndex(rkIK *ik)
   }
   for( count=0, ofs=0, i=0; i<rkChainNum(ik->chain); i++ )
     if( ik->joint_sw[i] ){
-      zIndexSetElem( ik->_j_idx, count++, i );
-      zIndexSetElem( ik->_j_ofs, i, ofs );
+      zIndexSetElemNC( ik->_j_idx, count++, i );
+      zIndexSetElemNC( ik->_j_ofs, i, ofs );
       ofs += rkChainLinkJointSize(ik->chain,i);
     } else
-      zIndexSetElem( ik->_j_ofs, i, -1 );
+      zIndexSetElemNC( ik->_j_ofs, i, -1 );
   /* allocate joint vector */
   zVecFree( ik->_j_vel );
   zVecFree( ik->_j_wn );
@@ -148,9 +148,9 @@ bool _rkIKAllocJointIndex(rkIK *ik)
     ZALLOCERROR();
     return false;
   }
-  for( wp=zVecBuf(ik->_j_wn), i=0; i<zArrayNum(ik->_j_idx); i++ )
-    for( j=0; j<rkChainLinkJointSize(ik->chain,zIndexElem(ik->_j_idx,i)); j++ )
-      *wp++ = ik->joint_weight[zIndexElem(ik->_j_idx,i)];
+  for( wp=zVecBuf(ik->_j_wn), i=0; i<zArraySize(ik->_j_idx); i++ )
+    for( j=0; j<rkChainLinkJointSize(ik->chain,zIndexElemNC(ik->_j_idx,i)); j++ )
+      *wp++ = ik->joint_weight[zIndexElemNC(ik->_j_idx,i)];
   return _rkIKAllocCMat( ik );
 }
 bool _rkIKJointReg(rkIK *ik, int id, bool sw, double weight)
@@ -284,18 +284,18 @@ int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row)
   register int i, j;
 
   if( !( ( RK_IK_CELL_XON << s ) & cell->data.attr.mode ) ) return 0;
-  zVecSetElem( ik->_c_srv, row, ik->_c_srv_cell.e[s] );
-  zVecSetElem( ik->_c_we, row, cell->data.attr.w.e[s] );
+  zVecSetElemNC( ik->_c_srv, row, ik->_c_srv_cell.e[s] );
+  zVecSetElemNC( ik->_c_we, row, cell->data.attr.w.e[s] );
   for( i=0; i<rkChainNum(ik->chain); i++ )
     if( ik->joint_sw[i] ){
       for( j=0; j<rkChainLinkJointSize(ik->chain,i); j++ )
-        zMatSetElem( ik->_c_mat, row, zIndexElem(ik->_j_ofs,i)+j,
-          zMatElem(ik->_c_mat_cell,s,rkChainLinkOffset(ik->chain,i)+j) );
+        zMatSetElemNC( ik->_c_mat, row, zIndexElemNC(ik->_j_ofs,i)+j,
+          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkOffset(ik->chain,i)+j) );
     } else{
       for( j=0; j<rkChainLinkJointSize(ik->chain,i); j++ )
-        zVecElem( ik->_c_srv, row ) -=
-          zMatElem(ik->_c_mat_cell,s,rkChainLinkOffset(ik->chain,i)+j)
-            * zVecElem(ik->joint_vel,rkChainLinkOffset(ik->chain,i)+j);
+        zVecElemNC(ik->_c_srv,row) -=
+          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkOffset(ik->chain,i)+j)
+            * zVecElemNC(ik->joint_vel,rkChainLinkOffset(ik->chain,i)+j);
     }
   return 1;
 }
@@ -357,7 +357,7 @@ zVec rkIKJointVelAD(rkIK *ik)
   zMatTQuadNC( ik->_c_mat, ik->_c_we, ik->__m );
   e = zVecInnerProd( ik->_c_srv, ik->__c );
   for( i=0; i<zMatRowSizeNC(ik->__m); i++ )
-    zMatElem(ik->__m,i,i) += zVecElem(ik->_j_wn,i) + e;
+    zMatElemNC(ik->__m,i,i) += zVecElemNC(ik->_j_wn,i) + e;
   zLESolveGaussDST( ik->__m, ik->__v, ik->_j_vel, ik->__idx, ik->__s );
   return ik->_j_vel;
 }
@@ -372,10 +372,10 @@ zVec rkIKSolveRate(rkIK *ik)
 
   rkIKEq( ik );
   ik->_jv( ik );
-  for( vp=zVecBuf(ik->_j_vel), i=0; i<zArrayNum(ik->_j_idx); i++ ){
-    k = zIndexElem( ik->_j_idx, i );
+  for( vp=zVecBuf(ik->_j_vel), i=0; i<zArraySize(ik->_j_idx); i++ ){
+    k = zIndexElemNC( ik->_j_idx, i );
     for( j=0; j<rkChainLinkJointSize(ik->chain,k); j++ )
-      zVecSetElem( ik->joint_vel, rkChainLinkOffset(ik->chain,k)+j, *vp++ );
+      zVecSetElemNC( ik->joint_vel, rkChainLinkOffset(ik->chain,k)+j, *vp++ );
   }
   return ik->joint_vel;
 }

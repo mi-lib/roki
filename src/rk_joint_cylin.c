@@ -356,10 +356,10 @@ static void _rkJointABIQAccCylin(void *prp, zMat3D *R, zMat6D *I, zVec6D *b, zVe
 void _rkJointABIAxisInertiaCylin(void *prp, zMat6D *m, zMat h, zMat ih)
 {
   _rkJointMotorInertiaCylin( prp, zMatBuf(h) );
-  zMatElem(h,0,0) += zMat6DMat3D(m,0,0)->e[2][2];
-  zMatElem(h,1,0) += zMat6DMat3D(m,1,0)->e[2][2];
-  zMatElem(h,0,1) += zMat6DMat3D(m,0,1)->e[2][2];
-  zMatElem(h,1,1) += zMat6DMat3D(m,1,1)->e[2][2];
+  zMatElemNC(h,0,0) += m->e[0][0].e[2][2];
+  zMatElemNC(h,1,0) += m->e[0][1].e[2][2];
+  zMatElemNC(h,0,1) += m->e[1][0].e[2][2];
+  zMatElemNC(h,1,1) += m->e[1][1].e[2][2];
   zMatInv( h, ih );
 }
 
@@ -373,15 +373,15 @@ void _rkJointABIAddAbiCylin(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *p
   zMat6DRow( m, zZ,  &v31 );
   zMat6DRow( m, zZA, &v61 );
 
-  zVec6DMul( &v13, zMatElem(h,0,0), &tmpv );
+  zVec6DMul( &v13, zMatElemNC(h,0,0), &tmpv );
   zMat6DDyad( &tmpm, &tmpv, &v31 );
-  zVec6DMul( &v13, zMatElem(h,0,1), &tmpv );
+  zVec6DMul( &v13, zMatElemNC(h,0,1), &tmpv );
   zMat6DDyad( &tmpm2, &tmpv, &v61 );
   zMat6DAddDRC( &tmpm, &tmpm2 );
-  zVec6DMul( &v16, zMatElem(h,1,0), &tmpv );
+  zVec6DMul( &v16, zMatElemNC(h,1,0), &tmpv );
   zMat6DDyad( &tmpm2, &tmpv, &v31 );
   zMat6DAddDRC( &tmpm, &tmpm2 );
-  zVec6DMul( &v16, zMatElem(h,1,1), &tmpv );
+  zVec6DMul( &v16, zMatElemNC(h,1,1), &tmpv );
   zMat6DDyad( &tmpm2, &tmpv, &v61 );
   zMat6DAddDRC( &tmpm, &tmpm2 );
 
@@ -396,12 +396,12 @@ void _rkJointABIAddBiasCylin(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat 
 
   zMat6DCol( m, zZ,  &v13 );
   zMat6DCol( m, zZA, &v16 );
-  zVec6DCat(b,        (_rkc(prp)->_u[0] - b->e[zZ])*zMatElem(h,0,0) + (_rkc(prp)->_u[1] - b->e[zZA])*zMatElem(h,0,1), &v13, &tmpv );
-  zVec6DCatDRC(&tmpv, (_rkc(prp)->_u[0] - b->e[zZ])*zMatElem(h,1,0) + (_rkc(prp)->_u[1] - b->e[zZA])*zMatElem(h,1,1), &v16 );
+  zVec6DCat(b,        (_rkc(prp)->_u[0] - b->e[zZ])*zMatElemNC(h,0,0) + (_rkc(prp)->_u[1] - b->e[zZA])*zMatElemNC(h,0,1), &v13, &tmpv );
+  zVec6DCatDRC(&tmpv, (_rkc(prp)->_u[0] - b->e[zZ])*zMatElemNC(h,1,0) + (_rkc(prp)->_u[1] - b->e[zZA])*zMatElemNC(h,1,1), &v16 );
 
-  zMulMatVec6D( zFrame3DAtt( f ), &tmpv, &v13 );
+  zMulMat3DVec6D( zFrame3DAtt(f), &tmpv, &v13 );
   zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
-  zVec3DAddDRC( zVec6DAng( &v13 ), zVec3DOuterProd( zFrame3DPos( f ), zVec6DLin( &v13 ), &tmp3v ) );
+  zVec3DAddDRC( zVec6DAng(&v13), zVec3DOuterProd( zFrame3DPos(f), zVec6DLin(&v13), &tmp3v ) );
   zVec6DAddDRC( pb, &v13 );
 }
 
@@ -427,8 +427,8 @@ void _rkJointABIQAccCylin(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *ja
   u[1] = _rkc(prp)->_u[1] - zVec6DInnerProd( &v61, jac ) + b->e[zZA];
 
   /* q */
-  _rkc(prp)->acc[0] = u[0]*zMatElem(h,0,0) + u[1]*zMatElem(h,0,1);
-  _rkc(prp)->acc[1] = u[0]*zMatElem(h,1,0) + u[1]*zMatElem(h,1,1);
+  _rkc(prp)->acc[0] = u[0]*zMatElemNC(h,0,0) + u[1]*zMatElemNC(h,0,1);
+  _rkc(prp)->acc[1] = u[0]*zMatElemNC(h,1,0) + u[1]*zMatElemNC(h,1,1);
   /* acc */
   zVec6DCopy( jac, acc );
   acc->e[zZ ] += _rkc(prp)->acc[0];

@@ -91,9 +91,9 @@ zIndex rk_mpLinkList(rkChain *chain)
   if( !( index = zIndexCreate( zListNum(&list) ) ) )
     ZALLOCERROR();
   else
-    for( cp=zListTail(&list), i=0; i<zArrayNum(index);
+    for( cp=zListTail(&list), i=0; i<zArraySize(index);
          i++, cp=zListCellNext(cp) )
-      zIndexSetElem( index, i, cp->data );
+      zIndexSetElemNC( index, i, cp->data );
   zListDestroy( int_list_cell_t, &list );
   return index;
 }
@@ -135,8 +135,8 @@ void rk_mpCalc(rkChain *chain, zIndex index, rkMP *mp)
   zVec3DClear( rkMPCOM(mp) );
   zMat3DClear( rkMPInertia(mp) );
 
-  for( i=0; i<zArrayNum(index); i++ ){
-    l = rkChainLink( chain, zIndexElem(index,i) );
+  for( i=0; i<zArraySize(index); i++ ){
+    l = rkChainLink( chain, zIndexElemNC(index,i) );
     /* mass */
     rkMPMass(mp) += rkLinkMass(l);
     /* COM */

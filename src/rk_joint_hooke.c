@@ -138,7 +138,7 @@ zFrame3D *_rkJointXferHooke(void *prp, zFrame3D *fo, zFrame3D *f)
   /* joint displacements correspond to the rotation angle about
    * z-axis and y-axis, respectively */
   zMat3DFromZYXSC( &m, _rkc(prp)->_s[0], _rkc(prp)->_c[0], _rkc(prp)->_s[1], _rkc(prp)->_c[1], 0, 1 );
-  zMulMatMat3D( zFrame3DAtt(fo), &m, zFrame3DAtt(f) );
+  zMulMat3DMat3D( zFrame3DAtt(fo), &m, zFrame3DAtt(f) );
   return f;
 }
 
@@ -224,7 +224,7 @@ void _rkJointTorsionHooke(zFrame3D *dev, zVec6D *t, double dis[])
   double qx, s, c;
 
   r = zFrame3DAtt(dev);
-  zMulMatTVec3D( r, zFrame3DPos(dev), zVec6DLin(t) );
+  zMulMat3DTVec3D( r, zFrame3DPos(dev), zVec6DLin(t) );
   qx = atan2( r->e[1][2], r->e[1][1] );
   zMat3DRow( r, 0, zVec6DAng(t) );
   zVec3DMulDRC( zVec6DAng(t), qx );
@@ -406,11 +406,11 @@ void _rkJointABIAxisInertiaHooke(void *prp, zMat6D *m, zMat h, zMat ih)
 
   _rkJointMotorInertiaHooke( prp, zMatBuf(h) );
   p = prp;
-  m22 = zMat6DMat3D(m, 1, 1);
-  zMatElem(h,0,0) += m22->e[0][0]*p->_s[1]*p->_s[1] - (m22->e[2][0] + m22->e[0][2])*p->_s[1]*p->_c[1] + m22->e[2][2]*p->_c[1]*p->_c[1];
-  zMatElem(h,1,0) += m22->e[2][1]*p->_c[1] - m22->e[0][1]*p->_s[1];
-  zMatElem(h,0,1) += m22->e[1][2]*p->_c[1] - m22->e[1][0]*p->_s[1];
-  zMatElem(h,1,1) += m22->e[1][1];
+  m22 = &m->e[1][1];
+  zMatElemNC(h,0,0) += m22->e[0][0]*p->_s[1]*p->_s[1] - (m22->e[2][0] + m22->e[0][2])*p->_s[1]*p->_c[1] + m22->e[2][2]*p->_c[1]*p->_c[1];
+  zMatElemNC(h,1,0) += m22->e[2][1]*p->_c[1] - m22->e[0][1]*p->_s[1];
+  zMatElemNC(h,0,1) += m22->e[1][2]*p->_c[1] - m22->e[1][0]*p->_s[1];
+  zMatElemNC(h,1,1) += m22->e[1][1];
   zMatInv( h, ih );
 }
 

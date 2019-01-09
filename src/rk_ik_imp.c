@@ -33,7 +33,7 @@ zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
   /* attitude error */
   zMat3DError( &ref->att, rkChainLinkWldAtt(chain,attr->id), &err );
   /* rotation velocity */
-  zMulMatVec3D( rkChainLinkWldAtt(chain,attr->id),
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,attr->id),
     rkChainLinkAngVel(chain,attr->id), &v );
   return _rkIKImpSRV( &err, &v, priv, srv );
 }
@@ -50,7 +50,7 @@ zVec3D *rkIKImpWldPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
   zVec3DSub( &ref->pos, &v, &err );
   /* velocity */
   rkChainLinkPointVel( chain, attr->id, &attr->ap, &v );
-  zMulMatVec3DDRC( rkChainLinkWldAtt(chain,attr->id), &v );
+  zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,attr->id), &v );
   return _rkIKImpSRV( &err, &v, priv, srv );
 }
 

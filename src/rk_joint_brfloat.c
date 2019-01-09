@@ -139,7 +139,7 @@ zFrame3D *_rkJointXferBrFloat(void *prp, zFrame3D *fo, zFrame3D *f)
   /* position */
   zXfer3D( fo, zVec6DLin(&_rkc(prp)->dis), zFrame3DPos(f) );
   /* attitude */
-  zMulMatMat3D( zFrame3DAtt(fo), &_rkc(prp)->_att, zFrame3DAtt(f) );
+  zMulMat3DMat3D( zFrame3DAtt(fo), &_rkc(prp)->_att, zFrame3DAtt(f) );
   return f;
 }
 
@@ -148,7 +148,7 @@ void _rkJointIncVelBrFloat(void *prp, zVec6D *vel)
 {
   zVec6D vl;
 
-  zMulMatTVec6D( &_rkc(prp)->_att, &_rkc(prp)->vel, &vl );
+  zMulMat3DTVec6D( &_rkc(prp)->_att, &_rkc(prp)->vel, &vl );
   zVec6DAddDRC( vel, &vl );
 }
 
@@ -157,8 +157,8 @@ void _rkJointIncAccOnVelBrFloat(void *prp, zVec3D *w, zVec6D *acc)
   zVec6D vl;
   zVec3D tmp;
 
-	/* FIXME: _att -> ^pR_j */
-  zMulMatTVec6D( &_rkc(prp)->_att, &_rkc(prp)->vel, &vl );
+  /* FIXME: _att -> ^pR_j */
+  zMulMat3DTVec6D( &_rkc(prp)->_att, &_rkc(prp)->vel, &vl );
   zVec3DOuterProd( w, zVec6DLin(&vl), &tmp );
   zVec3DCatDRC( zVec6DLin(acc), 2, &tmp );
   zVec3DOuterProd( w, zVec6DAng(&vl), &tmp );
@@ -170,14 +170,14 @@ void _rkJointIncAccBrFloat(void *prp, zVec6D *acc)
 {
   zVec6D al;
 
-  zMulMatTVec6D( &_rkc(prp)->_att, &_rkc(prp)->acc, &al );
+  zMulMat3DTVec6D( &_rkc(prp)->_att, &_rkc(prp)->acc, &al );
   zVec6DAddDRC( acc, &al );
 }
 
 /* joint torque transfer function */
 void _rkJointCalcTrqBrFloat(void *prp, zVec6D *f)
 {
-  zMulMatVec6D( &_rkc(prp)->_att, f, &_rkc(prp)->trq );
+  zMulMat3DVec6D( &_rkc(prp)->_att, f, &_rkc(prp)->trq );
 }
 
 /* inverse computation of joint torsion and displacement */
@@ -195,7 +195,7 @@ zVec3D *_rkJointAxisBrFloat(void *prp, zFrame3D *f, zDir dir, zVec3D *a){
   zVec3D al;
 
   zMat3DRow( &_rkc(prp)->_att, dir, &al );
-  return zMulMatVec3D( zFrame3DAtt(f), &al, a );
+  return zMulMat3DVec3D( zFrame3DAtt(f), &al, a );
 }
 
 zVec3D *_rkJointAxisXBrFloat(void *prp, zFrame3D *f, zVec3D *a){
@@ -325,10 +325,10 @@ void _rkJointABIAxisInertiaBrFloat(void *prp, zMat6D *m, zMat h, zMat ih){
   _rkJointMotorInertiaBrFloat( prp, zMatBuf(h) );
   for( i=0; i<3; i++ )
     for( j=0; j<3; j++ ){
-      zMatElem(h,i,  j)   += zMat6DMat3D(m,0,0)->e[j][i];
-      zMatElem(h,i+3,j)   += zMat6DMat3D(m,1,0)->e[j][i];
-      zMatElem(h,i,  j+3) += zMat6DMat3D(m,0,1)->e[j][i];
-      zMatElem(h,i+3,j+3) += zMat6DMat3D(m,1,1)->e[j][i];
+      zMatElemNC(h,i,  j)   += m->e[0][0].e[j][i];
+      zMatElemNC(h,i+3,j)   += m->e[0][1].e[j][i];
+      zMatElemNC(h,i,  j+3) += m->e[1][0].e[j][i];
+      zMatElemNC(h,i+3,j+3) += m->e[1][1].e[j][i];
     }
   zMatInv( h, ih );
 }
@@ -343,12 +343,12 @@ void _rkJointABIQAccBrFloat(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *
   /* acc */
   zVec6DRev(b, &tmpv2);
   for(i=zX;i<=zZA;i++)
-    tmpv.e[i] = zVec6DInnerProd( (zVec6D *)&zMatElem(h,i,0), &tmpv2 );
+    tmpv.e[i] = zVec6DInnerProd( (zVec6D *)&zMatElemNC(h,i,0), &tmpv2 );
   zVec6DCopy( &tmpv, acc );
 
   /* q */
   zVec6DSubDRC(&tmpv, jac);
-  zMulMatVec6D(r, &tmpv, &_rkc(prp)->acc);
+  zMulMat3DVec6D(r, &tmpv, &_rkc(prp)->acc);
 }
 
 static rkJointABICom rk_joint_abi_brfloat = {
@@ -384,7 +384,7 @@ void _rkJointABIAddBiasBrFloatFixed(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f
 {
   zVec6D tmpv;
 
-  zMulMatVec6D( zFrame3DAtt(f), b, &tmpv );
+  zMulMat3DVec6D( zFrame3DAtt(f), b, &tmpv );
   zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
   zVec6DAddDRC( pb, &tmpv );
 }
