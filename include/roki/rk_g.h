@@ -7,24 +7,24 @@
 #ifndef __RK_G_H__
 #define __RK_G_H__
 
-/* MACRO: RK_G
- * acceleration of gravity
- * - it is nonsense to define the acceleration as more precise
- * value, since it depends on where it is measured.
+/*! \brief acceleration of gravity
+ *
  * RK_G_M  [m/s^2]
  * RK_G_MM [mm/s^2]
  * RK_G is a default macro(bound with RK_G_M).
+ * \note
+ * It does not make sense to define too much finely defined
+ * acceleration of gravity since it varies depending on places.
  */
 #define RK_G_M  9.806652
 #define RK_G_MM 9806.652
 #define RK_G    RK_G_M
 
-/* METHOD:
- * rkKgf2N, rkN2Kgf - conversion between Kgf and Newton.
+/*! \brief conversion between Kgf and Newton.
  *
- * 'rkKgf2N()' converts 'f' in Kgf to the equal Newton value.
- * 'rkN2Kgf()' converts 'f' in Newton to the equal Kgf value.
- * [RETURN VALUE]
+ * rkKgf2N() converts \a f in Kgf to the equal Newton value.
+ * rkN2Kgf() converts \a f in Newton to the equal Kgf value.
+ * \return
  * The values converted are returned.
  */
 #define rkKgf2N(f) ( (f) * RK_G_M )

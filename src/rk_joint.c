@@ -14,17 +14,13 @@ static char *__rkjointtypename[] = {
   NULL
 };
 
-/* rkJointTypeExpr
- * - convert joint type to string.
- */
+/* convert joint type to a string. */
 char *rkJointTypeExpr(byte type)
 {
   return __rkjointtypename[zLimit(type,RK_JOINT_FIXED,RK_JOINT_BRFLOAT)];
 }
 
-/* rkJointTypeFromStr
- * - convert string to joint type.
- */
+/* convert a string to joint type. */
 byte rkJointTypeFromStr(char *str)
 {
   char **jp;
@@ -51,18 +47,16 @@ static rkJoint *(* rk_joint_create[])(rkJoint*) = {
   rkJointCreateBrFloat,
 };
 
-/* rkJointCreate
- * - create joint object.
- */
+/* create a joint object. */
 rkJoint *rkJointCreate(rkJoint *j, byte type)
 {
   if( type < RK_JOINT_FIXED || type > RK_JOINT_BRFLOAT ){
-    ZRUNERROR( "invalid joint type specified - %d", type );
+    ZRUNERROR( RK_ERR_JOINT_INVTYPE, type );
     return NULL;
   }
   rkJointInit( j );
   if( !rk_joint_create[( (j)->type = type )]( j ) ){
-    ZRUNERROR( "cannot create joint instance" );
+    ZRUNERROR( RK_ERR_JOINT_FAILED );
     rkJointDestroy( j );
     return NULL;
   }
@@ -70,27 +64,21 @@ rkJoint *rkJointCreate(rkJoint *j, byte type)
   return j;
 }
 
-/* rkJointDestroy
- * - destroy joint object.
- */
+/* destroy a joint object. */
 void rkJointDestroy(rkJoint *j)
 {
   zFree( j->prp );
   rkJointInit( j );
 }
 
-/* rkJointNeutral
- * - neutralize joint displacement.
- */
+/* neutralize joint displacement. */
 void rkJointNeutral(rkJoint *j)
 {
   double dis[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   rkJointSetDis( j, dis );
 }
 
-/* rkJointIsNeutral
- * - check if joint displacement is neutral.
- */
+/* check if joint displacement is neutral. */
 bool rkJointIsNeutral(rkJoint *j)
 {
   double dis[6];
@@ -102,9 +90,7 @@ bool rkJointIsNeutral(rkJoint *j)
   return true;
 }
 
-/* rkJointClone
- * - clone a joint .
- */
+/* clone a joint. */
 rkJoint *rkJointClone(rkJoint *org, rkJoint *cln)
 {
   rkMotor *morg, *mcln;
@@ -124,9 +110,7 @@ rkJoint *rkJointClone(rkJoint *org, rkJoint *cln)
   return cln;
 }
 
-/* rkJointCopyState
- * - copy joint state.
- */
+/* copy joint state. */
 rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst)
 {
   double val[6];
@@ -138,9 +122,7 @@ rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst)
   return dst;
 }
 
-/* rkJointIncRate
- * - increment motion rate due to the joint rate.
- */
+/* increment motion rate due to joint rate. */
 void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc)
 {
   rkJointIncVel( j, vel );

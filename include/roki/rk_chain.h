@@ -417,9 +417,6 @@ __EXPORT void rkChainSetOffset(rkChain *c);
  */
 __EXPORT zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl);
 
-#define RK_CHAIN_SUFFIX "zkc"
-#define RK_CHAIN_INIT_SUFFIX "zkci"
-
 __EXPORT bool rkChainReadFile(rkChain *c, char filename[]);
 __EXPORT rkChain *rkChainFRead(FILE *fp, rkChain *c);
 __EXPORT bool rkChainInitReadFile(rkChain *c, char filename[]);

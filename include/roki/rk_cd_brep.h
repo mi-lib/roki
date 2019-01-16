@@ -1,7 +1,7 @@
-/* Zeo - Z/Geometry and optics computation library.
- * Copyright (C) 2005 Tomomichi Sugihara (Zhidao)
+/* RoKi - Robot Kinetics library
+ * Copyright (C) 1998 Tomomichi Sugihara (Zhidao)
  *
- * zeo_brep - B-Rep (boundary representation)
+ * rk_cd_brep - collision detection manager: B-Rep (boundary representation).
  */
 
 #ifndef __RK_CD_BREP_H__
@@ -21,30 +21,30 @@ typedef struct{
   zVec3D *p, _ps;
   double _d; /* for beneath-beyond test */
   void *_p; /* pointer to destination vector */
-	bool org, discard;
+  bool org, discard;
 } rkBREPVert;
 zListClass( rkBREPVertList, rkBREPVertListCell, rkBREPVert );
 
 #define rkBREPVertListCellInit(c,v) do{\
-	(c)->data.p = v; \
+  (c)->data.p = (v); \
   (c)->data._d = 0; /* dummy */\
   (c)->data._p = NULL;\
-	} while(0)
+} while(0)
 
 /*! \brief find vertex cell from a list.
  *
  * rkBREPVertListFind() finds a cell which has the same vertex
  * with \a v from a list \a vlist.
  * \retval
- * rkBREPVertListFind() returns a pointer to the found
- * cell. Otherwise, the null pointer is returned.
+ * rkBREPVertListFind() returns a pointer to the found cell.
+ * Otherwise, the null pointer is returned.
  */
 __EXPORT rkBREPVertListCell *rkBREPVertListFind(rkBREPVertList *vlist, zVec3D *v);
 
 typedef struct{
   rkBREPVertListCell *v[2], *_v0[2];
   void *_v;
-	bool org, discard;
+  bool org, discard;
 } rkBREPEdge;
 zListClass( rkBREPEdgeList, rkBREPEdgeListCell, rkBREPEdge );
 
@@ -68,7 +68,7 @@ typedef struct{
   rkBREPVertListCell *v[3], *_v0[3];
   rkBREPEdgeListCell *e[3], *_e0[3];
   zVec3D norm; /* to be used. */
-	bool org, discard;
+  bool org, discard;
 } rkBREPFace;
 zListClass( rkBREPFaceList, rkBREPFaceListCell, rkBREPFace );
 
@@ -81,7 +81,7 @@ typedef struct{
   rkBREPVertList vlist;
   rkBREPEdgeList elist;
   rkBREPFaceList flist;
-	int discard;
+  int discard;
 } rkBREP;
 
 __EXPORT void rkBREPInit(rkBREP *brep);

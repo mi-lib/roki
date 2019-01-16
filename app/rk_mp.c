@@ -26,11 +26,17 @@ void rk_mpUsage(void)
 bool rk_mpInitFK(rkChain *chain)
 {
   zVec v;
+  FILE *fp;
 
-  if( !( v = zVecReadFile( option[RK_MP_VFILE].arg ) ) ){
+  if( !( fp = fopen( option[RK_MP_VFILE].arg, "r" ) ) ){
+    ZOPENERROR( option[RK_MP_VFILE].arg );
+    return false;
+  }
+  if( !( v = zVecFRead( fp ) ) ){
     ZALLOCERROR();
     return false;
   }
+  fclose( fp );
   rkChainFK( chain, v );
   zVecFree( v );
   return true;

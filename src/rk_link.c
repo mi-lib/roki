@@ -11,9 +11,7 @@
  * link class
  * ********************************************************** */
 
-/* rkLinkInit
- * - initialize a link.
- */
+/* initialize a link. */
 void rkLinkInit(rkLink *l)
 {
   rkLinkSetOffset( l, -1 );
@@ -32,9 +30,7 @@ void rkLinkInit(rkLink *l)
   l->_util = NULL;
 }
 
-/* rkLinkDestroy
- * - destroy a link.
- */
+/* destroy a link. */
 void rkLinkDestroy(rkLink *l)
 {
   zNameDestroy( l );
@@ -44,9 +40,7 @@ void rkLinkDestroy(rkLink *l)
   rkLinkInit( l );
 }
 
-/* rkLinkClone
- * - clone a link.
- */
+/* clone a link. */
 rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc)
 {
   if( !zNameSet( cln, zName(org) ) ||
@@ -67,9 +61,7 @@ rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc)
   return cln;
 }
 
-/* rkLinkCopyState
- * - copy link state.
- */
+/* copy link state. */
 rkLink *rkLinkCopyState(rkLink *src, rkLink *dst)
 {
   rkJointCopyState( rkLinkJoint(src), rkLinkJoint(dst) );
@@ -79,18 +71,14 @@ rkLink *rkLinkCopyState(rkLink *src, rkLink *dst)
   return dst;
 }
 
-/* rkLinkAddSibl
- * - add a sibling link.
- */
+/* add a sibling link. */
 rkLink *rkLinkAddSibl(rkLink *l, rkLink *bl)
 {
   for( ; rkLinkSibl(l); l=rkLinkSibl(l) );
   return rkLinkSetSibl( l, bl );
 }
 
-/* rkLinkAddChild
- * - add a child link.
- */
+/* add a child link. */
 rkLink *rkLinkAddChild(rkLink *l, rkLink *cl)
 {
   rkLinkSetParent( cl, l );
@@ -98,18 +86,14 @@ rkLink *rkLinkAddChild(rkLink *l, rkLink *cl)
   return rkLinkAddSibl( rkLinkChild(l), cl );
 }
 
-/* rkLinkPointVel
- * - calculate velocity of a point with respect to the inertial frame.
- */
+/* calculate velocity of a point with respect to the inertial frame. */
 zVec3D *rkLinkPointVel(rkLink *l, zVec3D *p, zVec3D *v)
 {
   zVec3DOuterProd( rkLinkAngVel(l), p, v );
   return zVec3DAddDRC( v, rkLinkLinVel(l) );
 }
 
-/* rkLinkPointAcc
- * - calculate accerelation of a point with respect to the inertial frame.
- */
+/* calculate accerelation of a point with respect to the inertial frame. */
 zVec3D *rkLinkPointAcc(rkLink *l, zVec3D *p, zVec3D *a)
 {
   zVec3D tmp;
@@ -120,17 +104,13 @@ zVec3D *rkLinkPointAcc(rkLink *l, zVec3D *p, zVec3D *a)
   return zVec3DAddDRC( a, rkLinkLinAcc(l) );
 }
 
-/* rkLinkWldInertia
- * - compute inertia tensor of a link with respect to the inertial frame.
- */
+/* compute inertia tensor of a link with respect to the inertial frame. */
 zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i)
 {
   return zRotMat3D( rkLinkWldAtt(l), rkLinkInertia(l), i );
 }
 
-/* rkLinkUpdateFrame
- *  - update link frame with respect to the world frame.
- */
+/* update link frame with respect to the world frame. */
 void rkLinkUpdateFrame(rkLink *l, zFrame3D *pwf)
 {
   rkJointXfer( rkLinkJoint(l), rkLinkOrgFrame(l), rkLinkAdjFrame(l) );
@@ -189,9 +169,7 @@ void rkLinkUpdateAcc(rkLink *l, zVec6D *pvel, zVec6D *pacc)
     rkLinkUpdateAcc( rkLinkSibl(l), rkLinkVel(rkLinkParent(l)), rkLinkAcc(rkLinkParent(l)) );
 }
 
-/* rkLinkUpdateRate
- * - update link motion rate with respect to the inertial frame.
- */
+/* update link motion rate with respect to the inertial frame. */
 void rkLinkUpdateRate(rkLink *l, zVec6D *pvel, zVec6D *pacc)
 {
   _rkLinkUpdateVel( l, pvel );
@@ -202,9 +180,7 @@ void rkLinkUpdateRate(rkLink *l, zVec6D *pvel, zVec6D *pacc)
     rkLinkUpdateRate( rkLinkSibl(l), rkLinkVel(rkLinkParent(l)), rkLinkAcc(rkLinkParent(l)) );
 }
 
-/* rkLinkUpdateWrench
- * - update joint torque of link based on Neuton=Euler's equation.
- */
+/* update joint torque of link based on Neuton=Euler's equation. */
 void rkLinkUpdateWrench(rkLink *l)
 {
   zVec6D w;
@@ -263,9 +239,7 @@ typedef struct{
 
 static bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success);
 
-/* rkLinkFRead
- * - input link properties from file.
- */
+/* read link properties from file. */
 bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success)
 {
   _rkLinkParam *prm;
@@ -276,11 +250,11 @@ bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success)
   if( strcmp( buf, "name" ) == 0 ){
     if( strlen( zFToken( fp, buf, BUFSIZ ) ) >= BUFSIZ ){
       buf[BUFSIZ-1] = '\0';
-      ZRUNWARN( "too long link name, truncated to %s", buf );
+      ZRUNWARN( RK_WARN_TOOLNG_NAME, buf );
     }
     zNameFind( prm->larray, prm->nl, buf, cl );
     if( cl ){
-      ZRUNERROR( "twofolded link %s exists", buf );
+      ZRUNERROR( RK_WARN_TWOFOLDNAME, buf );
       return false;
     }
     if( !( zNameSet( prm->l, buf ) ) ){
@@ -295,7 +269,7 @@ bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success)
   else if( strcmp( buf, "stuff" ) == 0 ){
     if( strlen( zFToken( fp, buf, BUFSIZ ) ) >= BUFSIZ ){
       buf[BUFSIZ-1] = '\0';
-      ZRUNWARN( "too long stuff name, truncated to %s", buf );
+      ZRUNWARN( RK_WARN_TOOLNG_NAME, buf );
     }
     rkLinkSetStuff( prm->l, buf );
   } else if( strcmp( buf, "COM" ) == 0 )
@@ -314,7 +288,7 @@ bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success)
     zFToken( fp, buf, BUFSIZ );
     zNameFind( prm->larray, prm->nl, buf, pl );
     if( !pl ){
-      ZRUNERROR( "link %s not found", buf );
+      ZRUNERROR( RK_ERR_LINK_UNKNOWN, buf );
       return ( *success = false );
     }
     rkLinkAddChild( pl, prm->l );
@@ -322,7 +296,7 @@ bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success)
     zFToken( fp, buf, BUFSIZ );
     zNameFind( prm->sarray, prm->ns, buf, sp );
     if( !sp ){
-      ZRUNERROR( "shape %s not found", buf );
+      ZRUNERROR( RK_ERR_SHAPE_UNKNOWN, buf );
       return ( *success = false );
     }
     rkLinkShapePush( prm->l, sp );
@@ -345,13 +319,11 @@ rkLink *rkLinkFRead(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarra
   rkJointCreate( rkLinkJoint(l), RK_JOINT_FIXED );
   if( !zFieldFRead( fp, _rkLinkFRead, &prm ) ) return NULL;
   if( zNamePtr(l) ) return l;
-  ZRUNERROR( "unnamed link exists" );
+  ZRUNERROR( RK_ERR_LINK_UNNAMED );
   return NULL;
 }
 
-/* rkLinkFWrite
- * - output of link properties to file.
- */
+/* output link properties to file. */
 void rkLinkFWrite(FILE *fp, rkLink *l)
 {
   zShapeListCell *cp;
@@ -375,9 +347,7 @@ void rkLinkFWrite(FILE *fp, rkLink *l)
   fprintf( fp, "\n" );
 }
 
-/* rkLinkPostureFWrite
- * - output of link posture to file.
- */
+/* output link posture to file. */
 void rkLinkPostureFWrite(FILE *fp, rkLink *l)
 {
   fprintf( fp, "Link(name:%s offset:%d)\n", zName(l), rkLinkOffset(l) );
@@ -387,9 +357,7 @@ void rkLinkPostureFWrite(FILE *fp, rkLink *l)
   zFrame3DFWrite( fp, rkLinkWldFrame( l ) );
 }
 
-/* rkLinkConnectionFWrite
- * - output of link connectivity to file.
- */
+/* output link connectivity to file. */
 #define RK_LINK_CONNECTION_INDENT 2
 void rkLinkConnectionFWrite(FILE *fp, rkLink *l, int n)
 {
@@ -402,9 +370,7 @@ void rkLinkConnectionFWrite(FILE *fp, rkLink *l, int n)
     rkLinkConnectionFWrite( fp, rkLinkSibl(l), n );
 }
 
-/* rkLinkExtWrenchFWrite
- * - output of external wrenches applied to link to file.
- */
+/* output external wrenches applied to link to file. */
 void rkLinkExtWrenchFWrite(FILE *fp, rkLink *l)
 {
   rkWrench *c;

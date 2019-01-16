@@ -19,10 +19,7 @@ static bool _rkIKAllocSRV(rkIK *ik);
 
 static int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row);
 
-/* (static)
- * _rkIKInit
- * - initialize inverse kinematics solver.
- */
+/* initialize inverse kinematics solver. */
 void _rkIKInit(rkIK *ik)
 {
   ik->chain = NULL;
@@ -49,9 +46,7 @@ void _rkIKInit(rkIK *ik)
   ik->__idx = NULL;
 }
 
-/* rkIKCreate
- * create inverse kinematics solver.
- */
+/* create inverse kinematics solver. */
 rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
 {
   _rkIKInit( ik );
@@ -69,9 +64,7 @@ rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
   return ik;
 }
 
-/* rkIKDestroy
- * destroy inverse kinematics solver.
- */
+/* destroy inverse kinematics solver. */
 void rkIKDestroy(rkIK *ik)
 {
   ik->chain = NULL;
@@ -94,10 +87,7 @@ void rkIKDestroy(rkIK *ik)
   zLEFreeWork( ik->__m, ik->__v, ik->__s, ik->__idx );
 }
 
-/* (static)
- * _rkIKAllocCMat
- * - allocate working memory for constraint coefficient matrix.
- */
+/* allocate working memory for constraint coefficient matrix of inverse kinematics solver. */
 bool _rkIKAllocCMat(rkIK *ik)
 {
   if( zListNum(&ik->clist) == 0 || zArraySize(ik->_j_idx) == 0 )
@@ -110,9 +100,7 @@ bool _rkIKAllocCMat(rkIK *ik)
   return true;
 }
 
-/* rkIKJointReg, rkIKJointUnreg
- * - register/unregister cooperating joint.
- */
+/* register/unregister a cooperating joint to inverse kinematics solver. */
 bool _rkIKAllocJointIndex(rkIK *ik)
 {
   register int i, j;
@@ -156,7 +144,7 @@ bool _rkIKAllocJointIndex(rkIK *ik)
 bool _rkIKJointReg(rkIK *ik, int id, bool sw, double weight)
 {
   if( id < 0 || id >= rkChainNum(ik->chain) ){
-    ZRUNERROR( "invalid link #%d specified", id );
+    ZRUNERROR( RK_ERR_LINK_INVID, id );
     return false;
   }
   ik->joint_sw[id] = sw;
@@ -170,9 +158,7 @@ bool rkIKJointUnreg(rkIK *ik, int id){
   return _rkIKJointReg( ik, id, false, 0.0 );
 }
 
-/* rkIKJointRegAll
- * - register all joints.
- */
+/* register all joints to inverse kinematics solver. */
 bool rkIKJointRegAll(rkIK *ik, double weight)
 {
   register int i;
@@ -183,9 +169,7 @@ bool rkIKJointRegAll(rkIK *ik, double weight)
   return true;
 }
 
-/* rkIKCellReg
- * - register constraint cell.
- */
+/* register constraint cell to inverse kinematics solver. */
 bool _rkIKAllocSRV(rkIK *ik)
 {
   if( zListNum(&ik->clist) == 0 ) return true;
@@ -230,9 +214,7 @@ bool rkIKCellUnreg(rkIK *ik, rkIKCell *cell)
   return _rkIKAllocSRV( ik );
 }
 
-/* rkIKFindCell
- * - find cell from identifier.
- */
+/* find a constraint cell of inverse kinematics solver from identifier. */
 rkIKCell *rkIKFindCell(rkIK *ik, int id)
 {
   rkIKCell *cp;
@@ -242,9 +224,7 @@ rkIKCell *rkIKFindCell(rkIK *ik, int id)
   return NULL;
 }
 
-/* rkIKDeactivate
- * - deactivate all the constraint cells.
- */
+/* deactivate all constraint cells of inverse kinematics solver. */
 void rkIKDeactivate(rkIK *ik)
 {
   rkIKCell *cp;
@@ -253,10 +233,7 @@ void rkIKDeactivate(rkIK *ik)
     rkIKCellDisable( cp );
 }
 
-/* rkIKBind
- * - bind current status of constrained properties
- *   to the references.
- */
+/* bind current state of properties to be constrained in inverse kinematics to references. */
 void rkIKBind(rkIK *ik)
 {
   rkIKCell *cp;
@@ -265,9 +242,7 @@ void rkIKBind(rkIK *ik)
     rkIKCellBind( cp, ik->chain );
 }
 
-/* rkIKAcmClear
- * - clear accumulator of each cell.
- */
+/* clear accumulator of each cell. */
 void rkIKAcmClear(rkIK *ik)
 {
   rkIKCell *cp;
@@ -276,9 +251,7 @@ void rkIKAcmClear(rkIK *ik)
     rkIKCellAcmClear( cp );
 }
 
-/* rkIKEq
- * - form motion rate contraint equation.
- */
+/* form the motion rate contraint equation. */
 int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row)
 {
   register int i, j;
@@ -325,18 +298,14 @@ void rkIKEq(rkIK *ik)
   zVecSetSize( ik->_c_we, row );
 }
 
-/* rkIKJointVelMP
- * - resolve the motion rate with MP-inverse matrix.
- */
+/* resolve the motion rate with MP-inverse matrix. */
 zVec rkIKJointVelMP(rkIK *ik)
 {
   zLESolveMP( ik->_c_mat, ik->_c_srv, ik->_j_wn, ik->_c_we, ik->_j_vel );
   return ik->_j_vel;
 }
 
-/* rkIKJointVelSR
- * - resolve the motion rate with SR-inverse matrix.
- */
+/* resolve the motion rate with SR-inverse matrix. */
 zVec rkIKJointVelSR(rkIK *ik)
 {
   zVecCopy( ik->_c_srv, ik->__c );
@@ -344,9 +313,7 @@ zVec rkIKJointVelSR(rkIK *ik)
   return ik->_j_vel;
 }
 
-/* rkIKJointVelAD
- * - resolve the motion rate with SR-inverse matrix and auto-damping.
- */
+/* resolve the motion rate with SR-inverse matrix and auto-damping. */
 zVec rkIKJointVelAD(rkIK *ik)
 {
   register int i;
@@ -362,9 +329,7 @@ zVec rkIKJointVelAD(rkIK *ik)
   return ik->_j_vel;
 }
 
-/* rkIKSolveRate
- * - resolve the motion rate into joint angle rate.
- */
+/* resolve the motion rate into joint angle rate. */
 zVec rkIKSolveRate(rkIK *ik)
 {
   register int i, j, k;
@@ -380,9 +345,7 @@ zVec rkIKSolveRate(rkIK *ik)
   return ik->joint_vel;
 }
 
-/* rkIKSolveOne
- * - solve one-step inverse kinematics based on Newton=Raphson's method.
- */
+/* solve one-step inverse kinematics based on Newton=Raphson's method. */
 zVec rkIKSolveOne(rkIK *ik, zVec dis, double dt)
 {
   rkIKSolveRate( ik );
@@ -393,9 +356,7 @@ zVec rkIKSolveOne(rkIK *ik, zVec dis, double dt)
   return dis;
 }
 
-/* rkIKSolve
- * - solve inverse kinematics based on Newton=Raphson's method.
- */
+/* solve inverse kinematics based on Newton=Raphson's method. */
 int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter)
 {
   register int i;
@@ -406,9 +367,6 @@ int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter)
   rkIKAcmClear( ik );
   for( i=0; i<iter; i++ ){
     rkIKSolveOne( ik, dis, 1.0 );
-/*
-printf( "%.12g %.12g %.12g %12g\n", ik->eval, zListHead(&ik->clist)->data._eval, zListTail(&ik->clist)->data._eval, zVec3DNorm(&zListTail(&ik->clist)->data.acm.pos) );
-*/
     if( zIsTol( ik->eval - rest, tol ) )
       return i; /* probably no more decrease */
     rest = ik->eval;
@@ -483,7 +441,7 @@ struct _rkIKLookup *_rkIKLookupCell(char *str)
 
   for( lookup=__rk_ik_lookup; lookup->str; lookup++ )
     if( strcmp( str, lookup->str ) == 0 ) return lookup;
-  ZRUNERROR( "unknown constraint type %s", str );
+  ZRUNERROR( RK_ERR_IK_UNKNOWN, str );
   return NULL;
 }
 
@@ -517,7 +475,7 @@ bool _rkIKConfParseJoint(FILE *fp, char *buf, rkIK *ik)
   }
   zNameFind( rkChainRoot(ik->chain), rkChainNum(ik->chain), buf, l );
   if( !l ){
-    ZRUNERROR( "unknown link %s", buf );
+    ZRUNERROR( RK_ERR_LINK_UNKNOWN, buf );
     return false;
   }
   if( !_rkIKConfFieldIsTerminated( fp, buf ) )
@@ -551,7 +509,7 @@ bool _rkIKConfParseConstraint(FILE *fp, char *buf, rkChain *chain, rkIKCellAttr 
     } else{
       zNameFind( rkChainRoot(chain), rkChainNum(chain), buf, l );
       if( !l ){
-        ZRUNERROR( "unknown link name %s", buf );
+        ZRUNERROR( RK_ERR_LINK_UNKNOWN, buf );
         return false;
       }
       if( linknum++ == 0 ){
@@ -590,9 +548,7 @@ bool _rkIKConfFRead(FILE *fp, void *instance, char *buf, bool *success)
   return true;
 }
 
-/* rkIKConfFRead
- * - read the IK configuration file.
- */
+/* read information of IK configuration from file. */
 bool rkIKConfFRead(FILE *fp, rkIK *ik, rkChain *chain)
 {
   if( !rkIKCreate( ik, chain ) ) return false;
@@ -600,15 +556,13 @@ bool rkIKConfFRead(FILE *fp, rkIK *ik, rkChain *chain)
   return zTagFRead( fp, _rkIKConfFRead, ik );
 }
 
-/* rkIKConfReadFile
- * - read the IK configuration file.
- */
+/* read information of IK configuration from file. */
 bool rkIKConfReadFile(rkIK *ik, rkChain *chain, char *filename)
 {
   FILE *fp;
   bool result;
 
-  if( !( fp = fopen( filename, "r" ) ) ){
+  if( !( fp = zOpenZTKFile( filename, "r" ) ) ){
     ZOPENERROR( filename );
     return false;
   }

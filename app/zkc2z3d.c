@@ -9,15 +9,13 @@ void zkc2z3dUsage(char *cmd)
 bool zkc2z3dConvert(rkChain *chain, char basename[])
 {
   FILE *fp;
-  char filename[BUFSIZ];
   register int i;
   rkLink *l;
   zShapeListCell *sc;
   zShape3D s;
 
-  zAddSuffix( basename, ZMULTISHAPE3D_SUFFIX, filename, BUFSIZ );
-  if( !( fp = fopen( filename, "w" ) ) ){
-    ZOPENERROR( filename );
+  if( !( fp = zOpenZTKFile( basename, "w" ) ) ){
+    ZOPENERROR( basename );
     return false;
   }
   for( i=0; i<zMShape3DOpticNum(rkChainShape(chain)); i++ ){

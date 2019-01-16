@@ -9,12 +9,10 @@ void z3d2zkcUsage(char *cmd)
 bool z3d2zkcConvert(zMShape3D *ms, char basename[])
 {
   FILE *fp;
-  char filename[BUFSIZ];
   register int i;
 
-  zAddSuffix( basename, RK_CHAIN_SUFFIX, filename, BUFSIZ );
-  if( !( fp = fopen( filename, "w" ) ) ){
-    ZOPENERROR( filename );
+  if( !( fp = zOpenZTKFile( basename, "w" ) ) ){
+    ZOPENERROR( basename );
     return false;
   }
   fprintf( fp, "[chain]\n" );

@@ -237,11 +237,11 @@ bool _rkJointQueryFReadCylin(FILE *fp, char *buf, void *prp, rkMotor *marray, in
     zFToken( fp, buf, BUFSIZ );
     zNameFind( marray, nm, buf, mp );
     if( !mp ){
-      ZRUNERROR( "invalid motor name %s detected", buf );
+      ZRUNERROR( RK_ERR_MOTOR_UNKNOWN, buf );
       return true;
     }
     if( rkMotorSize(mp) != 2 ){
-      ZRUNERROR( "unmatched motor size" );
+      ZRUNERROR( RK_ERR_JOINT_SIZMISMATCH );
       return true;
     }
     rkMotorClone( mp, &_rkc(prp)->m );

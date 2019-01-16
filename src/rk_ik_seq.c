@@ -6,9 +6,7 @@
 
 #include <roki/rk_ik.h>
 
-/* rkIKSeqListCellSet
- * - set IK sequence cell to IK solver.
- */
+/* set IK sequence cell to IK solver. */
 void rkIKSeqCellSet(rkIK *ik, rkIKSeqCell *c)
 {
   register int i;
@@ -18,7 +16,7 @@ void rkIKSeqCellSet(rkIK *ik, rkIKSeqCell *c)
   for( i=0; i<c->nc; i++ ){
     e = &c->entry[i];
     if( !( cell = rkIKFindCell( ik, e->id ) ) ){
-      ZRUNWARN( "IK cell not found" );
+      ZRUNWARN( RK_WARN_IK_CELL_NOTFOUND );
       continue;
     }
     rkIKCellSetWeight( cell, e->w[0], e->w[1], e->w[2] );
@@ -26,9 +24,7 @@ void rkIKSeqCellSet(rkIK *ik, rkIKSeqCell *c)
   }
 }
 
-/* rkIKSeqInit
- * - initialize IK sequence.
- */
+/* initialize IK sequence. */
 rkIKSeq *rkIKSeqInit(rkIKSeq *seq)
 {
   zListInit( seq );
@@ -38,9 +34,7 @@ rkIKSeq *rkIKSeqInit(rkIKSeq *seq)
   return seq;
 }
 
-/* rkIKSeqFree
- * - free IK sequence.
- */
+/* free IK sequence. */
 void rkIKSeqFree(rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;
@@ -51,9 +45,7 @@ void rkIKSeqFree(rkIKSeq *seq)
   }
 }
 
-/* rkIKSeqReadFile
- * - read an IK sequence from a file.
- */
+/* read an IK sequence from file. */
 bool rkIKSeqReadFile(rkIKSeq *seq, char filename[])
 {
   FILE *fp;
@@ -65,9 +57,7 @@ bool rkIKSeqReadFile(rkIKSeq *seq, char filename[])
   return true;
 }
 
-/* rkIKSeqFRead
- * - read an IK sequence from the current position of a file.
- */
+/* read an IK sequence from the current position of a file. */
 rkIKSeq *rkIKSeqFRead(FILE *fp, rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;
@@ -101,9 +91,7 @@ rkIKSeq *rkIKSeqFRead(FILE *fp, rkIKSeq *seq)
   return seq;
 }
 
-/* rkIKSeqWriteFile
- * - output IK sequence to a file.
- */
+/* output IK sequence to file. */
 bool rkIKSeqWriteFile(rkIKSeq *seq, char filename[])
 {
   char fname[BUFSIZ];
@@ -119,9 +107,7 @@ bool rkIKSeqWriteFile(rkIKSeq *seq, char filename[])
   return true;
 }
 
-/* rkIKSeqFWrite
- * - output IK sequence to the current position of a file.
- */
+/* output IK sequence to the current position of a file. */
 void rkIKSeqFWrite(FILE *fp, rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;

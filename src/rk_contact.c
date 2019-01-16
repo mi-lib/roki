@@ -13,9 +13,7 @@
 
 static bool _rkContactInfoFRead(FILE *fp, void *instance, char *buf, bool *success);
 
-/* rkContactInfoRigidCreate
- * - creation of a rigid contact model.
- */
+/* create a rigid contact model. */
 rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, double sf, double kf, char *stf1, char *stf2)
 {
   rkContactInfoSetType( ci, RK_CONTACT_RIGID );
@@ -28,9 +26,7 @@ rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, d
   return ci;
 }
 
-/* rkContactInfoElasticCreate
- * - creation of an elastic contact model.
- */
+/* create an elastic contact model. */
 rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, double e, double v, double sf, double kf, char *stf1, char *stf2)
 {
   rkContactInfoSetType( ci, RK_CONTACT_ELASTIC );
@@ -43,9 +39,7 @@ rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, double e, double v,
   return ci;
 }
 
-/* rkContactInfoAssoc
- * - associate contact info to a pair of stuff.
- */
+/* associate contact info with a pair of stuff. */
 rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *stf2)
 {
   if( ( strcmp( ci->__stf[0], stf1 ) == 0 && strcmp( ci->__stf[1], stf2 ) == 0 ) ||
@@ -54,10 +48,7 @@ rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *stf2)
   return NULL;
 }
 
-/* (static)
- * _rkContactInfoFRead
- * - input of the information of a contact model.
- */
+/* read information of a contact model (internal operation). */
 bool _rkContactInfoFRead(FILE *fp, void *instance, char *buf, bool *success)
 {
   rkContactInfo *ci;
@@ -87,21 +78,17 @@ bool _rkContactInfoFRead(FILE *fp, void *instance, char *buf, bool *success)
   return true;
 }
 
-/* rkContactInfoFRead
- * - input of the information of a contact model.
- */
+/* read information of a contact model. */
 rkContactInfo *rkContactInfoFRead(FILE *fp, rkContactInfo *ci)
 {
   rkContactInfoInit( ci );
   zFieldFRead( fp, _rkContactInfoFRead, ci );
   if( ci->__stf[0] && ci->__stf[1] ) return ci;
-  ZRUNERROR( "unbound contact info" );
+  ZRUNERROR( RK_ERR_CONTACT_UNBOUND );
   return NULL;
 }
 
-/* rkContactInfoFWrite
- * - output of the information of a contact model.
- */
+/* write information of a contact model. */
 void rkContactInfoFWrite(FILE *fp, rkContactInfo *ci)
 {
   fprintf( fp, "bind: %s %s\n", ci->__stf[0], ci->__stf[1] );
@@ -128,6 +115,7 @@ void rkContactInfoFWrite(FILE *fp, rkContactInfo *ci)
 
 static bool _rkContactInfoPoolFRead(FILE *fp, void *instance, char *buf, bool *success);
 
+/* destroy contact info ppool */
 void rkContactInfoPoolDestroy(rkContactInfoPool *ci)
 {
   register int i;
@@ -138,9 +126,7 @@ void rkContactInfoPoolDestroy(rkContactInfoPool *ci)
   zArrayFree( ci );
 }
 
-/* rkContactInfoPoolAssoc
- * - associate contact info to a pair of keys.
- */
+/* associate contact info with a pair of keys. */
 rkContactInfo *rkContactInfoPoolAssoc(rkContactInfoPool *ci, char *stf1, char *stf2)
 {
   register int i;
@@ -152,6 +138,7 @@ rkContactInfo *rkContactInfoPoolAssoc(rkContactInfoPool *ci, char *stf1, char *s
   return NULL;
 }
 
+/* associate contact info that matches specified type with a pair of keys. */
 rkContactInfo *rkContactInfoPoolAssocType(rkContactInfoPool *ci, char *stf1, char *stf2, char type)
 {
   register int i;
@@ -164,12 +151,13 @@ rkContactInfo *rkContactInfoPoolAssocType(rkContactInfoPool *ci, char *stf1, cha
   return NULL;
 }
 
+/* read contact info pool from file. */
 bool rkContactInfoPoolReadFile(rkContactInfoPool *ci, char filename[])
 {
   FILE *fp;
   rkContactInfoPool *result;
 
-  if( !( fp = zOpenFile( filename, RK_CONTACTINFO_SUFFIX, "r" ) ) )
+  if( !( fp = zOpenZTKFile( filename, "r" ) ) )
     return false;
   result = rkContactInfoPoolFRead( fp, ci );
   fclose( fp );
@@ -192,10 +180,11 @@ bool _rkContactInfoPoolFRead(FILE *fp, void *instance, char *buf, bool *success)
     if( !rkContactInfoFRead( fp, ci ) )
       return ( *success = false );
   if( rkContactInfoPoolAssoc( prm->ci, ci->__stf[0], ci->__stf[1] ) != ci )
-    ZRUNWARN( "duplicate contact information with keys %s and %s", ci->__stf[0], ci->__stf[1] );
+    ZRUNWARN( RK_WARN_CONTACT_DUPKEY, ci->__stf[0], ci->__stf[1] );
   return true;
 }
 
+/* read contact info pool from file. */
 rkContactInfoPool *rkContactInfoPoolFRead(FILE *fp, rkContactInfoPool *ci)
 {
   _rkContactInfoPoolParam prm;
@@ -213,17 +202,18 @@ rkContactInfoPool *rkContactInfoPoolFRead(FILE *fp, rkContactInfoPool *ci)
   return NULL;
 }
 
+/* write contact info pool to file. */
 bool rkContactInfoPoolWriteFile(rkContactInfoPool *ci, char filename[])
 {
   char name[BUFSIZ];
   FILE *fp;
 
-  zAddSuffix( filename, RK_CONTACTINFO_SUFFIX, name, BUFSIZ );
-  if( !( fp = fopen( name, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( name, "w" ) ) ) return false;
   rkContactInfoPoolFWrite( fp, ci );
   return true;
 }
 
+/* write contact info pool to file. */
 void rkContactInfoPoolFWrite(FILE *fp, rkContactInfoPool *ci)
 {
   register int i;

@@ -43,12 +43,12 @@ static rkMotor *(* rk_motor_create[])(rkMotor*) = {
 rkMotor *rkMotorCreate(rkMotor *m, byte type)
 {
   if( type < RK_MOTOR_NONE || type > RK_MOTOR_DC ){
-    ZRUNERROR( "invalid motor type specified - %d", type );
+    ZRUNERROR( RK_ERR_MOTOR_INVTYPE, type );
     return NULL;
   }
   rkMotorInit( m );
   if( !rk_motor_create[( m->type = type )]( m ) ){
-    ZRUNERROR( "cannot create motor instance" );
+    ZRUNERROR( RK_ERR_MOTOR_FAILED );
     rkMotorDestroy( m );
     return NULL;
   }
@@ -128,11 +128,11 @@ bool __rkMotorArrayMotorFRead(FILE *fp, void *instance, char *buf, bool *success
   if( strcmp( buf, "name" ) == 0 ){
     if( strlen( zFToken( fp, buf, BUFSIZ ) ) >= BUFSIZ ){
       buf[BUFSIZ-1] = '\0';
-      ZRUNWARN( "too long motor name, truncated to %s", buf );
+      ZRUNWARN( RK_WARN_TOOLNG_NAME, buf );
     }
     zNameFind( zArrayBuf(prm->marray), zArraySize(prm->marray), buf, cm );
     if( cm ){
-      ZRUNERROR( "twofolded motor %s exists", buf );
+      ZRUNERROR( RK_WARN_TWOFOLDNAME, buf );
       return false;
     }
     if( !( zNameSet( prm->m, buf ) ) ){
@@ -153,14 +153,14 @@ rkMotorArray *_rkMotorArrayMotorFRead(FILE *fp, rkMotorArray *marray, int i)
   _rkMotorArrayMotorParam prm;
 
   if( i >= zArraySize(marray) ){
-    ZRUNERROR( "motor identifier out of range %d/%d", i, zArraySize(marray) );
+    ZRUNERROR( RK_ERR_MOTOR_OUTOFRANGE, i, zArraySize(marray) );
     return NULL;
   }
   prm.m = zArrayElemNC(marray,i);
   prm.marray = marray;
   if( !zFieldFRead( fp, __rkMotorArrayMotorFRead, &prm ) ) return NULL;
   if( !zNamePtr( prm.m ) ){
-    ZRUNERROR( "unnamed motor exists" );
+    ZRUNERROR( RK_ERR_MOTOR_UNNAMED );
     return NULL;
   }
   return marray;

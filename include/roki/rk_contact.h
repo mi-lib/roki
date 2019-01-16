@@ -8,6 +8,7 @@
 #define __RK_CONTACT_H__
 
 #include <zeda/zeda.h>
+#include <roki/rk_errmsg.h>
 
 __BEGIN_DECLS
 
@@ -167,20 +168,18 @@ __EXPORT rkContactInfo *rkContactInfoPoolAssocType(rkContactInfoPool *ci, char *
 /*! \brief input/output of contact info pool.
  *
  * rkContactInfoPoolReadFile() reads the file \a filename and creates
- * a new contact information pool \a ci. One can omit the suffix;
- * the \a filename."RK_CONTACTINFO_SUFFIX" file is examined in that
- * case. rkContactInfoPoolFRead() and rkContactInfoPoolFRead() read
- * the information from the current position of the file \a fp, and
+ * a new contact information pool \a ci.
+ * rkContactInfoPoolFRead() and rkContactInfoPoolFRead() read the
+ * information from the current position of the file \a fp, and
  * the standard input, respectively.
  *
  * An acceptable data file for these functions should contain at
- * least one contact information set, tagged by [contact]
- * The denotation of the information follows its format.
+ * least one contact information set in .ztk format, tagged by
+ * [contact].
  * See also rkContactInfoFRead().
  *
  * rkContactInfoPoolWriteFile() writes the information of \a ci to
- * the file \a filename. In this function, one can also omit the
- * suffix as rkContactInfoPoolReadFile().
+ * the file \a filename.
  * rkContactInfoPoolFWrite() and rkContactInfoPoolWrite() write the
  * information of \a ci to the current position of the file \a fp and
  * the standard output, respectively, in the same format with
@@ -189,12 +188,11 @@ __EXPORT rkContactInfo *rkContactInfoPoolAssocType(rkContactInfoPool *ci, char *
  * rkContactInfoPoolReadFile() and rkContactInfoPoolWriteFile() return
  * a boolean according to whether the operation succeeds or not.
  *
- * Each of rkContactInfoPoolFRead() family return a pointer to \a ci,
- * while rkContactInfoPoolFWrite() family returns no value.
+ * rkContactInfoPoolFRead() family return a pointer \a ci, while
+ * rkContactInfoPoolFWrite() family returns no value.
  * \sa
  * rkContactInfoFRead
  */
-#define RK_CONTACTINFO_SUFFIX "zci"
 __EXPORT bool rkContactInfoPoolReadFile(rkContactInfoPool *ci, char filename[]);
 __EXPORT rkContactInfoPool *rkContactInfoPoolFRead(FILE *fp, rkContactInfoPool *ci);
 #define rkContactInfoPoolRead(c) rkContactInfoPoolFRead( stdin, (c) )

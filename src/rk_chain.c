@@ -11,9 +11,7 @@
  * kinematic chain class
  * ********************************************************** */
 
-/* rkChainInit
- * - initialize a kinematic chain.
- */
+/* initialize a kinematic chain. */
 void rkChainInit(rkChain *c)
 {
   zNameSetPtr( c, NULL );
@@ -26,9 +24,7 @@ void rkChainInit(rkChain *c)
   rkChainSetCOMAcc( c, ZVEC3DZERO );
 }
 
-/* rkChainDestroy
- * - destroy a kinematic chain.
- */
+/* destroy a kinematic chain. */
 void rkChainDestroy(rkChain *c)
 {
   register int i;
@@ -47,9 +43,7 @@ void rkChainDestroy(rkChain *c)
   rkChainInit( c );
 }
 
-/* rkChainClone
- * - clone a kinematic chain.
- */
+/* clone a kinematic chain. */
 rkChain *rkChainClone(rkChain *org, rkChain *cln)
 {
   char name[BUFSIZ];
@@ -73,9 +67,7 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
   return cln;
 }
 
-/* rkChainCopyState
- * - copy state of a kinematic chain.
- */
+/* copy state of a kinematic chain. */
 rkChain *rkChainCopyState(rkChain *src, rkChain *dst)
 {
   register int i;
@@ -88,9 +80,7 @@ rkChain *rkChainCopyState(rkChain *src, rkChain *dst)
   return dst;
 }
 
-/* rkChainJointSize
- * - count the total number of joint of a kinematic chain.
- */
+/* count the total number of joint of a kinematic chain. */
 int rkChainJointSize(rkChain *c)
 {
   register int i, size;
@@ -100,9 +90,7 @@ int rkChainJointSize(rkChain *c)
   return size;
 }
 
-/* rkChainCreateDefaultJointIndex
- * - create default joint index of a kinematic chain.
- */
+/* create default joint index of a kinematic chain. */
 zIndex rkChainCreateDefaultJointIndex(rkChain *c)
 {
   register int i, count;
@@ -122,9 +110,7 @@ zIndex rkChainCreateDefaultJointIndex(rkChain *c)
   return index;
 }
 
-/* rkChainJointIndexSize
- * - count the total joint size indicated on a kinematic chain.
- */
+/* count the total joint size indicated in a kinematic chain. */
 int rkChainJointIndexSize(rkChain *c, zIndex idx)
 {
   register int i, size;
@@ -134,9 +120,7 @@ int rkChainJointIndexSize(rkChain *c, zIndex idx)
   return size;
 }
 
-/* rkChainSetJointDis
- * - set joint displacement.
- */
+/* set joint displacements of a kinematic chain. */
 void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis)
 {
   register int i;
@@ -148,9 +132,7 @@ void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis)
   }
 }
 
-/* rkChainSetJointDisCNT
- * - continuously update joint displacement.
- */
+/* continuously update joint displacements of a kinematic chain. */
 void rkChainSetJointDisCNT(rkChain *c, zIndex idx, zVec dis, double dt)
 {
   register int i;
@@ -162,9 +144,7 @@ void rkChainSetJointDisCNT(rkChain *c, zIndex idx, zVec dis, double dt)
   }
 }
 
-/* rkChainSetJointVel
- * - set joint velocity.
- */
+/* set joint velocities of a kinematic chain. */
 void rkChainSetJointVel(rkChain *c, zIndex idx, zVec vel)
 {
   register int i;
@@ -176,9 +156,7 @@ void rkChainSetJointVel(rkChain *c, zIndex idx, zVec vel)
   }
 }
 
-/* rkChainSetJointRate
- * - set joint velocity and acceleration.
- */
+/* set joint velocities and accelerations of a kinematic chain. */
 void rkChainSetJointRate(rkChain *c, zIndex idx, zVec vel, zVec acc)
 {
   register int i;
@@ -192,9 +170,7 @@ void rkChainSetJointRate(rkChain *c, zIndex idx, zVec vel, zVec acc)
   }
 }
 
-/* rkChainGetJointDis
- * - get joint displacement.
- */
+/* get joint displacements of a kinematic chain. */
 zVec rkChainGetJointDis(rkChain *c, zIndex idx, zVec dis)
 {
   register int i;
@@ -207,9 +183,7 @@ zVec rkChainGetJointDis(rkChain *c, zIndex idx, zVec dis)
   return dis;
 }
 
-/* rkChainGetJointVel
- * - get joint velocity.
- */
+/* get joint velocities of a kinematic chain. */
 zVec rkChainGetJointVel(rkChain *c, zIndex idx, zVec vel)
 {
   register int i;
@@ -222,9 +196,7 @@ zVec rkChainGetJointVel(rkChain *c, zIndex idx, zVec vel)
   return vel;
 }
 
-/* rkChainGetJointAcc
- * - get joint acceleration.
- */
+/* get joint accelerations of a kinematic chain. */
 zVec rkChainGetJointAcc(rkChain *c, zIndex idx, zVec acc)
 {
   register int i;
@@ -237,9 +209,7 @@ zVec rkChainGetJointAcc(rkChain *c, zIndex idx, zVec acc)
   return acc;
 }
 
-/* rkChainSetJointDisAll
- * - set all joint displacements.
- */
+/* set all joint displacements of a kinematic chain. */
 void rkChainSetJointDisAll(rkChain *c, zVec dis)
 {
   register int i;
@@ -249,9 +219,7 @@ void rkChainSetJointDisAll(rkChain *c, zVec dis)
       rkChainLinkSetJointDis( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)) );
 }
 
-/* rkChainCatJointDisAll
- * - concatenate all joint displacement.
- */
+/* concatenate all joint displacements of a kinematic chain. */
 void rkChainCatJointDisAll(rkChain *c, zVec dis, double k, zVec v)
 {
   register int i;
@@ -261,9 +229,7 @@ void rkChainCatJointDisAll(rkChain *c, zVec dis, double k, zVec v)
       rkJointCatDis( rkChainLinkJoint(c,i), &zVecElemNC(dis,rkChainLinkOffset(c,i)), k, &zVecElemNC(v,rkChainLinkOffset(c,i)) );
 }
 
-/* rkChainSubJointDisAll
- * - subtract all joint displacement.
- */
+/* subtract all joint displacements of a kinematic chain. */
 void rkChainSubJointDisAll(rkChain *c, zVec dis, zVec sdis)
 {
   register int i;
@@ -273,9 +239,7 @@ void rkChainSubJointDisAll(rkChain *c, zVec dis, zVec sdis)
       rkJointSubDis( rkChainLinkJoint(c,i), &zVecElemNC(dis,rkChainLinkOffset(c,i)), &zVecElemNC(sdis,rkChainLinkOffset(c,i)) );
 }
 
-/* rkChainSetJointDisCNTAll
- * - continuously update all joint displacements.
- */
+/* continuously update all joint displacements of a kinematic chain. */
 void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt)
 {
   register int i;
@@ -285,9 +249,7 @@ void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt)
       rkChainLinkSetJointDisCNT( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)), dt );
 }
 
-/* rkChainSetJointVelAll
- * - set all joint velocities.
- */
+/* set all joint velocities of a kinematic chain. */
 void rkChainSetJointVelAll(rkChain *c, zVec vel)
 {
   register int i;
@@ -297,9 +259,7 @@ void rkChainSetJointVelAll(rkChain *c, zVec vel)
       rkJointSetVel( rkChainLinkJoint(c,i), &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
 }
 
-/* rkChainSetJointRateAll
- * - set all joint velocities and accelerations.
- */
+/* set all joint velocities and accelerations of a kinematic chain. */
 void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc)
 {
   register int i;
@@ -311,9 +271,7 @@ void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc)
     }
 }
 
-/* rkChainGetJointDisAll
- * - get all joint displacements.
- */
+/* get all joint displacements of a kinematic chain. */
 zVec rkChainGetJointDisAll(rkChain *c, zVec dis)
 {
   register int i;
@@ -324,9 +282,7 @@ zVec rkChainGetJointDisAll(rkChain *c, zVec dis)
   return dis;
 }
 
-/* rkChainGetJointVelAll
- * - get all joint velocities.
- */
+/* get all joint velocities of a kinematic chain. */
 zVec rkChainGetJointVelAll(rkChain *c, zVec vel)
 {
   register int i;
@@ -337,9 +293,7 @@ zVec rkChainGetJointVelAll(rkChain *c, zVec vel)
   return vel;
 }
 
-/* rkChainGetJointAccAll
- * - get all joint accelerations.
- */
+/* get all joint accelerations of a kinematic chain. */
 zVec rkChainGetJointAccAll(rkChain *c, zVec acc)
 {
   register int i;
@@ -350,9 +304,7 @@ zVec rkChainGetJointAccAll(rkChain *c, zVec acc)
   return acc;
 }
 
-/* rkChainGetJointTrqAll
- * - get all joint torque.
- */
+/* get all joint torques of a kinematic chain. */
 zVec rkChainGetJointTrqAll(rkChain *c, zVec trq)
 {
   register int i;
@@ -363,9 +315,7 @@ zVec rkChainGetJointTrqAll(rkChain *c, zVec trq)
   return trq;
 }
 
-/* rkChainGetConf
- * - get all link configuration.
- */
+/* get all link configurations of a kinematic chain. */
 zVec rkChainGetConf(rkChain *chain, zVec conf)
 {
   register int i;
@@ -375,9 +325,7 @@ zVec rkChainGetConf(rkChain *chain, zVec conf)
   return conf;
 }
 
-/* rkChainSetConf
- * - set all link configuration.
- */
+/* set all link configurations of a kinematic chain. */
 void rkChainSetConf(rkChain *chain, zVec conf)
 {
   register int i;
@@ -387,32 +335,27 @@ void rkChainSetConf(rkChain *chain, zVec conf)
   rkLinkConfToJointDis( rkChainRoot(chain) );
 }
 
-/* rkChainGravityDir
- * - direction vector of gravity with respect to the body frame.
- */
+/* direction vector of gravity with respect to the body frame of a kinematic chain. */
 zVec3D *rkChainGravityDir(rkChain *c, zVec3D *v)
 {
   return zMat3DRow( rkChainRootAtt(c), 2, v );
 }
 
-/* rkChainUpdateFK, rkChainFK
- * - forward kinematics of a kinematic chain.
- */
+/* update link frames of a kinematic chain via forward kinematics. */
 void rkChainUpdateFK(rkChain *c)
 {
   rkChainUpdateFrame( c );
   rkChainCalcCOM( c );
 }
 
+/* solve forward kinematics of a kinematic chain. */
 void rkChainFK(rkChain *c, zVec dis)
 {
   rkChainSetJointDisAll( c, dis );
   rkChainUpdateFK( c );
 }
 
-/* rkChainUpdateID, rkChainID
- * - inverse dynamics of a kinematic chain.
- */
+/* update link states and joint torques of a kinematic chain via inverse dynamics. */
 void rkChainUpdateID(rkChain *c)
 {
   rkChainUpdateRate( c );
@@ -421,15 +364,14 @@ void rkChainUpdateID(rkChain *c)
   rkChainCalcCOMAcc( c );
 }
 
+/* solve inverse dynamics of a kinematic chain. */
 void rkChainID(rkChain *c, zVec vel, zVec acc)
 {
   rkChainSetJointRateAll( c, vel, acc );
   rkChainUpdateID( c );
 }
 
-/* rkChainFKCNT
- * - continuously update joint displacement over a time step.
- */
+/* continuously update joint displacements of a kinematic chain over a time step. */
 void rkChainFKCNT(rkChain *c, zVec dis, double dt)
 {
   rkChainSetJointDisCNTAll( c, dis, dt );
@@ -437,9 +379,7 @@ void rkChainFKCNT(rkChain *c, zVec dis, double dt)
   rkChainUpdateID( c );
 }
 
-/* rkChainCalcCOM
- * - the center of mass of a kinematic chain with respect to the total/world frame.
- */
+/* the center of mass of a kinematic chain with respect to the total/world frame. */
 zVec3D *rkChainCalcCOM(rkChain *c)
 {
   register int i;
@@ -451,9 +391,7 @@ zVec3D *rkChainCalcCOM(rkChain *c)
   return zVec3DDivDRC( rkChainWldCOM(c), rkChainMass(c) );
 }
 
-/* rkChainCalcCOMVel
- * - COM velocity of a kinematic chain with respect to the world frame.
- */
+/* velocity of the center of mass of a kinematic chain with respect to the world frame. */
 zVec3D *rkChainCalcCOMVel(rkChain *c)
 {
   register int i;
@@ -470,9 +408,7 @@ zVec3D *rkChainCalcCOMVel(rkChain *c)
   return rkChainCOMVel(c);
 }
 
-/* rkChainCalcCOMAcc
- * - COM acceleration of a kinematic chain with respect to the world frame.
- */
+/* acceleration of the center of mass of a kinematic chain with respect to the world frame. */
 zVec3D *rkChainCalcCOMAcc(rkChain *c)
 {
   register int i;
@@ -489,9 +425,7 @@ zVec3D *rkChainCalcCOMAcc(rkChain *c)
   return rkChainCOMAcc(c);
 }
 
-/* rkChainZMP
- * - Zero Moment Point of a kinematic chain.
- */
+/* Zero Moment Point of a kinematic chain. */
 zVec3D *rkChainZMP(rkChain *c, double z, zVec3D *zmp)
 {
   zVec3D dz;
@@ -506,9 +440,7 @@ zVec3D *rkChainZMP(rkChain *c, double z, zVec3D *zmp)
   return zXfer3DDRC( rkChainRootFrame(c), zmp );
 }
 
-/* rkChainYawTorque
- * - torque around vertical axis.
- */
+/* net torque around vertical axis exerted to a kinematic chain. */
 double rkChainYawTorque(rkChain *c)
 {
   zVec3D dz;
@@ -517,9 +449,7 @@ double rkChainYawTorque(rkChain *c)
   return zVec3DInnerProd(rkChainRootTorque(c),rkChainRootForce(c)) / zVec3DInnerProd(rkChainRootTorque(c),&dz);
 }
 
-/* rkChainAM
- * - angular momentum of a kinematic chain.
- */
+/* angular momentum of a kinematic chain. */
 zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am)
 {
   register int i;
@@ -535,9 +465,7 @@ zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am)
   return am;
 }
 
-/* rkChainKE
- * - kinematic energy of a kinematic chain.
- */
+/* kinetic energy of a kinematic chain. */
 double rkChainKE(rkChain *c)
 {
   register int i;
@@ -548,9 +476,7 @@ double rkChainKE(rkChain *c)
   return energy;
 }
 
-/* rkChainCalcExtWrench
- * - calculation of total external wrench applied to a kinematic chain.
- */
+/* net external wrench applied to a kinematic chain. */
 zVec6D *rkChainCalcExtWrench(rkChain *c, zVec6D *w)
 {
   register int i;
@@ -567,9 +493,7 @@ zVec6D *rkChainCalcExtWrench(rkChain *c, zVec6D *w)
   return w;
 }
 
-/* rkChainExtWrenchDestroy
- * - destroy external wrench list applied to a kinematic chain.
- */
+/* destroy external wrench list attached to a kinematic chain. */
 void rkChainExtWrenchDestroy(rkChain *c)
 {
   register int i;
@@ -578,9 +502,7 @@ void rkChainExtWrenchDestroy(rkChain *c)
     rkLinkExtWrenchDestroy( rkChainLink(c,i) );
 }
 
-/* rkChainSetOffset
- * - set offset value of each link.
- */
+/* set offset values of links of a kinematic chain. */
 void rkChainSetOffset(rkChain *c)
 {
   register int i, s;
@@ -593,9 +515,7 @@ void rkChainSetOffset(rkChain *c)
       rkLinkSetOffset( rkChainLink(c,i), -1 );
 }
 
-/* rkChain2VertList
- * - make a list of vertices of a chain.
- */
+/* make a list of vertices of a kinematic chain. */
 zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl)
 {
   zVec3D v;
@@ -624,15 +544,13 @@ static bool __rkChainNameFRead(FILE *fp, void *instance, char *buf, bool *succes
 static rkChain *_rkChainNameFRead(FILE *fp, rkChain *c);
 static rkChain *_rkChainLinkFRead(FILE *fp, rkChain *c, int i);
 
-/* rkChainReadFile
- * - generate a kinematic chain instance reading properties from a file.
- */
+/* read information of a kinematic chain from file. */
 bool rkChainReadFile(rkChain *c, char filename[])
 {
   FILE *fp;
   rkChain *result;
 
-  if( !( fp = zOpenFile( filename, RK_CHAIN_SUFFIX, "r" ) ) )
+  if( !( fp = zOpenZTKFile( filename, "r" ) ) )
     return false;
   result = rkChainFRead( fp, c );
   fclose( fp );
@@ -644,10 +562,7 @@ typedef struct{
   int lc;
 } _rkChainParam;
 
-/* (static)
- * _rkChainFRead
- * - generate a kinematic chain instance reading properties from a file.
- */
+/* read information of a kinematic chain from file. */
 bool _rkChainFRead(FILE *fp, void *instance, char *buf, bool *success)
 {
   _rkChainParam *prm;
@@ -666,9 +581,7 @@ bool _rkChainFRead(FILE *fp, void *instance, char *buf, bool *success)
   return true;
 }
 
-/* rkChainFRead
- * - generate a kinematic chain instance reading properties from a file.
- */
+/* read information of a kinematic chain from file. */
 rkChain *rkChainFRead(FILE *fp, rkChain *c)
 {
   _rkChainParam prm;
@@ -680,7 +593,7 @@ rkChain *rkChainFRead(FILE *fp, rkChain *c)
     return NULL;
   }
   if( !zMShape3DFRead( fp, rkChainShape(c) ) ){
-    ZRUNERROR( "invalid model file" );
+    ZRUNERROR( RK_ERR_CHAIN_INVSHAPE );
     return NULL;
   }
   rewind(fp);
@@ -689,7 +602,7 @@ rkChain *rkChainFRead(FILE *fp, rkChain *c)
     return NULL;
   }
   if( !rkMotorArrayFRead( fp, rkChainMotor(c) ) ){
-    ZRUNERROR( "invalid model file" );
+    ZRUNERROR( RK_ERR_CHAIN_INVSHAPE );
     return NULL;
   }
   rewind( fp );
@@ -699,7 +612,7 @@ rkChain *rkChainFRead(FILE *fp, rkChain *c)
     rkChainDestroy( c );
     return NULL;
   }
-  if( zIsTiny( rkChainMass(c) ) )
+  if( rkChainMass(c) == 0 )
     rkChainSetMass( c, 1.0 ); /* dummy weight */
   rkChainSetOffset( c ); /* offset value arrangement */
   rkChainUpdateFK( c );
@@ -707,27 +620,20 @@ rkChain *rkChainFRead(FILE *fp, rkChain *c)
   return c;
 }
 
-/* rkChainInitReadFile
- * read an information about the initial state of a kinematic chain
- * from file.
- */
+/* read information of the initial state of a kinematic chain from file. */
 bool rkChainInitReadFile(rkChain *c, char filename[])
 {
   FILE *fp;
   rkChain *result;
 
-  if( !( fp = zOpenFile( filename, RK_CHAIN_INIT_SUFFIX, "r" ) ) )
+  if( !( fp = zOpenZTKFile( filename, "r" ) ) )
     return false;
   result = rkChainInitFRead( fp, c );
   fclose( fp );
   return result != NULL;
 }
 
-/* (static)
- * _rkChainInitFRead
- * - set initial position of a kinematic chain.
- *   The initial position of root link is written in the file.
- */
+/* read information of the initial state of a kinematic chain from file. */
 bool _rkChainInitFRead(FILE *fp, void *instance, char *buf, bool *success)
 {
   rkChain *c;
@@ -748,10 +654,7 @@ bool _rkChainInitFRead(FILE *fp, void *instance, char *buf, bool *success)
   return true;
 }
 
-/* rkChainInitFRead
- * - set initial position of a kinematic chain.
- *   The initial position of root link is written in the file.
- */
+/* read information of the initial state of a kinematic chain from file. */
 rkChain *rkChainInitFRead(FILE *fp, rkChain *c)
 {
   zFieldFRead( fp, _rkChainInitFRead, c );
@@ -760,16 +663,13 @@ rkChain *rkChainInitFRead(FILE *fp, rkChain *c)
   return c;
 }
 
-/* (static)
- * __rkChainNameFRead
- * - read name of a kinematic chain from a file and set properties.
- */
+/* read name of a kinematic chain from file. */
 bool __rkChainNameFRead(FILE *fp, void *instance, char *buf, bool *success)
 {
   if( strcmp( buf, "name" ) == 0 ){
     if( strlen( zFToken( fp, buf, BUFSIZ ) ) >= BUFSIZ ){
       buf[BUFSIZ-1] = '\0';
-      ZRUNWARN( "too long name, truncated to %s", buf );
+      ZRUNWARN( RK_WARN_TOOLNG_NAME, buf );
     }
     zNameSet( (rkChain *)instance, buf );
   } else
@@ -777,21 +677,14 @@ bool __rkChainNameFRead(FILE *fp, void *instance, char *buf, bool *success)
   return true;
 }
 
-/* (static)
- * _rkChainNameFRead
- * - read name of a kinematic chain from a file and set properties.
- */
+/* read name of a kinematic chain from file. */
 rkChain *_rkChainNameFRead(FILE *fp, rkChain *c)
 {
   zFieldFRead( fp, __rkChainNameFRead, c );
   return c;
 }
 
-/* (static)
- * _rkChainLinkFAlloc
- * prepare and initialize the whole links of a kinematic chain.
- * the information is given from a file.
- */
+/* count the number of links of a kinematic chain in a file and allocate memory for them. */
 rkChain *_rkChainLinkFAlloc(FILE *fp, rkChain *c)
 {
   register int i;
@@ -808,14 +701,11 @@ rkChain *_rkChainLinkFAlloc(FILE *fp, rkChain *c)
   return c;
 }
 
-/* (static)
- * _rkChainLinkFRead
- * - read properties of a link of a kinematic chain from a file.
- */
+/* read informationof a link of a kinematic chain from file. */
 rkChain *_rkChainLinkFRead(FILE *fp, rkChain *c, int i)
 {
   if( i >= rkChainNum(c) ){
-    ZRUNERROR( "too many links specified" );
+    ZRUNERROR( RK_ERR_LINK_MANY );
     return NULL;
   }
   if( !rkLinkFRead( fp, rkChainLink(c,i), rkChainRoot(c), rkChainNum(c),
@@ -823,20 +713,18 @@ rkChain *_rkChainLinkFRead(FILE *fp, rkChain *c, int i)
         zMShape3DShapeNum( rkChainShape(c) ),
         zArrayBuf( rkChainMotor(c) ),
         zArraySize( rkChainMotor(c) ) ) ){
-    ZRUNERROR( "invalid description for the link" );
+    ZRUNERROR( RK_ERR_LINK_INVDSC );
     return NULL;
   }
   if( !zNamePtr(rkChainLink(c,i)) ){
-    ZRUNERROR( "unnamed link exists" );
+    ZRUNERROR( RK_ERR_LINK_UNNAMED );
     return NULL;
   }
   rkChainMass(c) += rkChainLinkMass(c,i);
   return c;
 }
 
-/* rkChainMShape3DReadFile
- * - read 3D multiple-shapes from a file and create a mono-link chain.
- */
+/* read information of multiple shapes of a kinematic chain from file. */
 bool rkChainMShape3DReadFile(rkChain *chain, char filename[])
 {
   register int i;
@@ -851,7 +739,7 @@ bool rkChainMShape3DReadFile(rkChain *chain, char filename[])
     return false;
   }
   if( !zMShape3DReadFile( ms, filename ) ){
-    ZRUNERROR( "invalid model file" );
+    ZRUNERROR( RK_ERR_CHAIN_INVSHAPE );
     return false;
   }
   zArrayAlloc( &chain->link, rkLink, 1 );
@@ -868,24 +756,19 @@ bool rkChainMShape3DReadFile(rkChain *chain, char filename[])
   return true;
 }
 
-/* rkChainWriteFile
- * - output the information of a kinematic chain to a file.
- */
+/* output information of a kinematic chain to file. */
 bool rkChainWriteFile(rkChain *c, char filename[])
 {
   char name[BUFSIZ];
   FILE *fp;
 
-  zAddSuffix( filename, RK_CHAIN_SUFFIX, name, BUFSIZ );
-  if( !( fp = fopen( name, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( name, "w" ) ) ) return false;
   rkChainFWrite( fp, c );
-	fclose(fp);
+  fclose(fp);
   return true;
 }
 
-/* rkChainFWrite
- * - output the information of a kinematic chain to a file.
- */
+/* output information of a kinematic chain to file. */
 void rkChainFWrite(FILE *fp, rkChain *c)
 {
   register int i;
@@ -908,13 +791,13 @@ void rkChainFWrite(FILE *fp, rkChain *c)
   }
 }
 
+/* output information of initial configuration of a kinematic chain to file. */
 bool rkChainInitWriteFile(rkChain *c, char filename[])
 {
   char name[BUFSIZ];
   FILE *fp;
 
-  zAddSuffix( filename, RK_CHAIN_INIT_SUFFIX, name, BUFSIZ );
-  if( !( fp = fopen( name, "w" ) ) ){
+  if( !( fp = zOpenZTKFile( name, "w" ) ) ){
     ZOPENERROR( name );
     return false;
   }
@@ -923,9 +806,7 @@ bool rkChainInitWriteFile(rkChain *c, char filename[])
   return true;
 }
 
-/* _rkChainInitFWrite
- * output the information about initial posture of a kinematic chain to a file.
- */
+/* output information of initial configuration of a kinematic chain to file. */
 void rkChainInitFWrite(FILE *fp, rkChain *c)
 {
   register int i;
@@ -937,9 +818,7 @@ void rkChainInitFWrite(FILE *fp, rkChain *c)
       rkJointFWrite( fp, rkChainLinkJoint(c,i), rkChainLinkName(c,i) );
 }
 
-/* rkChainPostureFWrite
- * show the current posture of a kinematic chain to a file.
- */
+/* output current posture of a kinematic chain to file. */
 void rkChainPostureFWrite(FILE *fp, rkChain *c)
 {
   register int i;
@@ -949,15 +828,14 @@ void rkChainPostureFWrite(FILE *fp, rkChain *c)
     rkLinkPostureFWrite( fp, rkChainLink(c,i) );
 }
 
-/* rkChainConnectionFWrite
- * show the connection of a kinematic chain to a file.
- */
+/* output connection of a kinematic chain to file. */
 void rkChainConnectionFWrite(FILE *fp, rkChain *c)
 {
   fprintf( fp, "Chain : %s\n", zName(c) );
   rkLinkConnectionFWrite( fp, rkChainRoot(c), 0 );
 }
 
+/* output external wrench exerted to a kinematic chain to file. */
 void rkChainExtWrenchFWrite(FILE *fp, rkChain *c)
 {
   register int i;

@@ -1,7 +1,7 @@
-/* Zeo - Z/Geometry and optics computation library.
- * Copyright (C) 2005 Tomomichi Sugihara (Zhidao)
+/* RoKi - Robot Kinetics library
+ * Copyright (C) 1998 Tomomichi Sugihara (Zhidao)
  *
- * zeo_brep_trunc - truncation of B-Rep.
+ * rk_cd_brep_trunc - collision detection manager: truncation of B-Rep.
  */
 
 #include <roki/rk_cd_brep.h>
@@ -16,31 +16,24 @@ static bool _rkBREPTruncFace(rkBREP *brep, rkBREPFaceListCell **fp);
 static void _rkBREPTruncEdgeShrink(rkBREPEdgeList *elist);
 static void _rkBREPTruncGR(rkBREP *brep);
 
-/* (static)
- * _rkBREPTruncBBCheck
- * - beneath-beyond check with respect to a plane.
- */
+/* beneath-beyond check with respect to a plane. */
 int _rkBREPTruncBBCheck(rkBREPVertList *vlist, zPlane3D *pl)
 {
   int count = 0;
   rkBREPVertListCell *vp;
-	zVec3D tmp;
+  zVec3D tmp;
 
   zListForEach( vlist, vp ){
-		if( vp->data.discard ) continue;
-		zVec3DSub( vp->data.p, zPlane3DVert(pl), &tmp );
-		vp->data._d = zVec3DInnerProd( &tmp, zPlane3DNorm(pl) );
-    /* vp->data._d = zPlane3DPointDist( pl, &vp->data.p ); */
+    if( vp->data.discard ) continue;
+    zVec3DSub( vp->data.p, zPlane3DVert(pl), &tmp );
+    vp->data._d = zVec3DInnerProd( &tmp, zPlane3DNorm(pl) );
     if( zIsTiny( vp->data._d ) ) vp->data._d = 0;
     if( vp->data._d > 0 ) count++;
   }
   return count;
 }
 
-/* (static)
- * _rkBREPTruncIntersect
- * - compute intersections of edges and a cutting plane.
- */
+/* compute intersections of edges and a cutting plane. */
 bool _rkBREPTruncIntersect(rkBREP *brep, zPlane3D *pl)
 {
   rkBREPEdgeListCell *ep;
@@ -48,32 +41,19 @@ bool _rkBREPTruncIntersect(rkBREP *brep, zPlane3D *pl)
   double d1, d2;
 
   zListForEach( &brep->elist, ep ){
-		if( ep->data.discard ) continue;
+    if( ep->data.discard ) continue;
     if( ep->data.v[0]->data._d * ep->data.v[1]->data._d < 0 ){
       if( !( vp = zAlloc( rkBREPVertListCell, 1 ) ) ){
         ZALLOCERROR();
         return false;
       }
-			/* if( !( vp->data.p = zAlloc( zVec3D, 1 ) ) ){ */
-			/* 	ZALLOCERROR(); */
-			/* 	zFree( vp ); */
-      /*   return false; */
-			/* } */
-			/* debug */
-			/* eprintf("ev1\n"); */
-			/* zVec3DFWrite(stderr,ep->data.v[0]->data.p); */
-			/* eprintf("ev1\n"); */
-			/* zVec3DFWrite(stderr,ep->data.v[1]->data.p); */
-			/* eprintf("v\n"); */
-			/* zVec3DFWrite(stderr,vp->data.p); */
-
       vp->data._d = 0;
       vp->data._p = NULL;
       d1 = fabs( ep->data.v[0]->data._d );
       d2 = fabs( ep->data.v[1]->data._d );
       zVec3DInterDiv( ep->data.v[0]->data.p, ep->data.v[1]->data.p,
         d1/(d1+d2), &vp->data._ps );
-			vp->data.p = &vp->data._ps;
+      vp->data.p = &vp->data._ps;
       zListInsertHead( &brep->vlist, vp );
       ep->data._v = vp;
     }
@@ -81,10 +61,7 @@ bool _rkBREPTruncIntersect(rkBREP *brep, zPlane3D *pl)
   return true;
 }
 
-/* (static)
- * _rkBREPTruncFaceA
- * - A type face reconfiguration (2-beneath, 1-beyond).
- */
+/* A type face reconfiguration (2-beneath, 1-beyond). */
 bool _rkBREPTruncFaceA(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 {
   rkBREPEdgeListCell *e4, *e5;
@@ -102,13 +79,13 @@ bool _rkBREPTruncFaceA(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
   }
   /* trim edge */
   rkBREPEdgeListCellInit( e4, f->e[i2]->data._v, f->e[i3]->data._v );
-	e4->data.org = false;
-	e4->data.discard = false;
+  e4->data.org = false;
+  e4->data.discard = false;
   zListInsertHead( &brep->elist, e4 );
   /* bracing edge */
   rkBREPEdgeListCellInit( e5, f->e[i2]->data._v, f->v[i2] );
-	e5->data.org = false;
-	e5->data.discard = false;
+  e5->data.org = false;
+  e5->data.discard = false;
   zListInsertHead( &brep->elist, e5 );
   /* upper triangle */
   fp->data.v[0] = f->v[i2];
@@ -117,8 +94,8 @@ bool _rkBREPTruncFaceA(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
   fp->data.e[0] = e4;
   fp->data.e[1] = f->e[i3];
   fp->data.e[2] = e5;
-	fp->data.org = false;
-	fp->data.discard = false;
+  fp->data.org = false;
+  fp->data.discard = false;
   zListInsertTail( &brep->flist, fp );
   /* lower triangle */
   f->e[i3] = e5;
@@ -126,10 +103,7 @@ bool _rkBREPTruncFaceA(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
   return true;
 }
 
-/* (static)
- * _rkBREPTruncFaceV
- * - V type face reconfiguration (1-beneath, 2-beyond).
- */
+/* V type face reconfiguration (1-beneath, 2-beyond). */
 bool _rkBREPTruncFaceV(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 {
   rkBREPEdgeListCell *e4;
@@ -140,8 +114,8 @@ bool _rkBREPTruncFaceV(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
   }
   /* trim edge */
   rkBREPEdgeListCellInit( e4, f->e[i3]->data._v, f->e[i2]->data._v );
-	e4->data.org = false;
-	e4->data.discard = false;
+  e4->data.org = false;
+  e4->data.discard = false;
   zListInsertHead( &brep->elist, e4 );
   /* renewal triangle */
   f->e[i1] = e4;
@@ -150,10 +124,7 @@ bool _rkBREPTruncFaceV(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
   return true;
 }
 
-/* (static)
- * _rkBREPTruncFaceE
- * - E type face reconfiguration (1-beneath, 1-beyond, 1-border).
- */
+/* E type face reconfiguration (1-beneath, 1-beyond, 1-border). */
 bool _rkBREPTruncFaceE(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 {
   rkBREPEdgeListCell *e4;
@@ -164,8 +135,8 @@ bool _rkBREPTruncFaceE(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
   }
   /* trim edge */
   rkBREPEdgeListCellInit( e4, f->v[i1], f->e[i1]->data._v );
-	e4->data.org = false;
-	e4->data.discard = false;
+  e4->data.org = false;
+  e4->data.discard = false;
   zListInsertHead( &brep->elist, e4 );
   /* renewal triangle */
   f->v[i3] = f->e[i1]->data._v;
@@ -173,10 +144,7 @@ bool _rkBREPTruncFaceE(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
   return true;
 }
 
-/* (static)
- * _rkBREPTruncEdgeShrink
- * - shrink intersecting edges.
- */
+/* shrink intersecting edges. */
 void _rkBREPTruncEdgeShrink(rkBREPEdgeList *elist)
 {
   rkBREPEdgeListCell *ep;
@@ -191,10 +159,7 @@ void _rkBREPTruncEdgeShrink(rkBREPEdgeList *elist)
   }
 }
 
-/* (static)
- * _rkBREPTruncGR
- * - release garbages.
- */
+/* release garbages. */
 void _rkBREPTruncGR(rkBREP *brep)
 {
   rkBREPVertListCell *vp;
@@ -204,42 +169,37 @@ void _rkBREPTruncGR(rkBREP *brep)
 
   /* initialize mark */
   zListForEach( &brep->vlist, vp )
-		if( !vp->data.discard )
-			vp->data._p = NULL;
+    if( !vp->data.discard ) vp->data._p = NULL;
   zListForEach( &brep->elist, ep )
-		if( !ep->data.discard )
-			ep->data._v = NULL;
+    if( !ep->data.discard ) ep->data._v = NULL;
   /* mark */
   zListForEach( &brep->flist, fp ){
-		if( fp->data.discard ) continue;
+    if( fp->data.discard ) continue;
     for( i=0; i<3; i++ ){
       fp->data.v[i]->data._p = (void *)0xffff;
       fp->data.e[i]->data._v = (void *)0xffff;
     }
-	}
-	/* garbage release */
-	zListForEach( &brep->vlist, vp ){
-		if( vp->data.discard ) continue;
-		if( vp->data._p == (void *)0xffff )
-			vp->data._p = NULL;
-		else{
-			vp->data.discard = true;
-			brep->discard++;
-		}
-	}
-	zListForEach( &brep->elist, ep ){
-		if( ep->data.discard ) continue;
-		if( ep->data._v == (void *)0xffff )
-			ep->data._v = NULL;
-		else
-			ep->data.discard = true;
-	}
+  }
+  /* garbage release */
+  zListForEach( &brep->vlist, vp ){
+    if( vp->data.discard ) continue;
+    if( vp->data._p == (void *)0xffff )
+      vp->data._p = NULL;
+    else{
+      vp->data.discard = true;
+      brep->discard++;
+    }
+  }
+  zListForEach( &brep->elist, ep ){
+    if( ep->data.discard ) continue;
+    if( ep->data._v == (void *)0xffff )
+      ep->data._v = NULL;
+    else
+      ep->data.discard = true;
+  }
 }
 
-/* (static)
- * _rkBREPTruncFace
- * - face reconfiguration.
- */
+/* face reconfiguration. */
 #define __z_brep_trunc_pat(d) ( (d)<0 ? 3: ( (d)>0 ? 1 : 0 ) )
 bool _rkBREPTruncFace(rkBREP *brep, rkBREPFaceListCell **fp)
 {
@@ -251,7 +211,7 @@ bool _rkBREPTruncFace(rkBREP *brep, rkBREPFaceListCell **fp)
         | __z_brep_trunc_pat( f->v[2]->data._d ) << 4 ){
   case 0x01: case 0x04: case 0x05:
   case 0x10: case 0x11: case 0x14: case 0x15:
-		f->discard = true;
+    f->discard = true;
   case 0x00: case 0x03: case 0x0c: case 0x0f:
   case 0x30: case 0x33: case 0x3c: case 0x3f:
     return true;
@@ -273,8 +233,7 @@ bool _rkBREPTruncFace(rkBREP *brep, rkBREPFaceListCell **fp)
   return false;
 }
 
-/* rkBREPTrunc
- * - truncate B-Rep by a plane.
+/* truncate B-Rep by a plane.
  */
 rkBREP *rkBREPTrunc(rkBREP *brep, zPlane3D *pl)
 {
@@ -284,18 +243,14 @@ rkBREP *rkBREPTrunc(rkBREP *brep, zPlane3D *pl)
     return brep; /* no need to truncate */
   if( !_rkBREPTruncIntersect( brep, pl ) ) return NULL;
   zListForEach( &brep->flist, fp )
-		if( !fp->data.discard )
-			if( !_rkBREPTruncFace( brep, &fp ) ) return NULL;
+    if( !fp->data.discard && !_rkBREPTruncFace( brep, &fp ) ) return NULL;
 
   _rkBREPTruncEdgeShrink( &brep->elist );
   _rkBREPTruncGR( brep );
-
   return brep;
 }
 
-/* rkBREPTruncPH3D
- * - truncate B-Rep by a polyhedron.
- */
+/* truncate B-Rep by a polyhedron. */
 rkBREP *rkBREPTruncPH3D(rkBREP *brep, zPH3D *ph)
 {
   register int i;

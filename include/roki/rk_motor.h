@@ -9,6 +9,7 @@
 #define __RK_MOTOR_H__
 
 #include <zm/zm.h>
+#include <roki/rk_errmsg.h>
 
 __BEGIN_DECLS
 
