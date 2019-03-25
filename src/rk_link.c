@@ -61,7 +61,7 @@ rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc)
   return cln;
 }
 
-/* copy link state. */
+/* copy state of a link. */
 rkLink *rkLinkCopyState(rkLink *src, rkLink *dst)
 {
   rkJointCopyState( rkLinkJoint(src), rkLinkJoint(dst) );

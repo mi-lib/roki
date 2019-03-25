@@ -53,7 +53,7 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
   sprintf( name, "%s_clone", zName(org) );
   if( !zNameSet( cln, name ) ||
       !( rkChainShape(cln) = zMShape3DClone( rkChainShape(org) ) ) ||
-			!( rkChainMotor(cln) = rkMotorArrayClone( rkChainMotor(org) ) ) ){
+      !( rkChainMotor(cln) = rkMotorArrayClone( rkChainMotor(org) ) ) ){
     ZALLOCERROR();
     return NULL;
   }

@@ -1,3 +1,8 @@
+2019. 3.25. Renamed _rkChainLinkVelAccClear to _rkChainClearLinkRate. [rk_abi]
+2019. 3.25. Abolished _rkLinkVelAccClear. [rk_abi]
+2019. 3.25. Added rkBodyClearRate and rkLinkClearRate. [rk_body, rk_link]
+2019. 3.25. Renamed rkLinkABIAlloc and rkChainABIAlloc to rkLinkABIAlloc and rkChainABIAlloc, respectively. [rk_abi]
+2019. 3.24. Debugged _rkLinkABIInitInertia by Naoki Wakisaka. [rk_abi]
 2019. 1.17. Renamed model files following the change of default suffix. [example]
 2019. 1.17. Created rk_errmsg.h. [rk_errmsg, rk_contact, rk_joint, rk_joint_revol, rk_joint_prism, rk_joint_hooke, rk_joint_cylin, rk_joint_spher, rk_chain, rk_ik, rk_ik_seq]
 2019. 1.17. Modified rk_cd_brep and rk_cd_brep_trunc. [rk_cd_brep, rk_cd_brep_trunc]
@@ -18,8 +23,8 @@
 2018.10.30. Reflected modified specification of zMat3DDyad in _rkJointABIAddAbi* . [rk_joint_revol, rk_joint_prism, rk_joint_cylin]
 2018.10.30. Applied zArrayElemNC. [rk_contact]
 2018.10.30. Created automatic testing system. [test]
-2018. 7. 9. Separated rkFD to RoKi-FD. (by Naoki Wakisaka)
-2018. 7. 9. Added breakable floating joint. [rk_joint_brfloat] (by Naoki Wakisaka)
+2018. 7. 9. Separated rkFD to RoKi-FD by Naoki Wakisaka.
+2018. 7. 9. Added breakable floating joint by Naoki Wakisaka. [rk_joint_brfloat]
 2015. 7.14. Modified rkFD to compute contact forces based on volumetric contact model by Naoki Wakisaka. [rk_fd]
 2015. 7.14. Added some methods to simulate a fake-crawler by Naoki Wakisaka. [rk_fd]
 2015. 7.14. Added members for a fake-crawler to rkCDCellDat by Naoki Wakisaka. [rk_cd]

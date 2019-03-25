@@ -140,8 +140,34 @@ typedef struct _rkLink{
 __EXPORT void rkLinkInit(rkLink *l);
 __EXPORT void rkLinkDestroy(rkLink *l);
 
+/*! \brief clone a link.
+ *
+ * rkLinkClone() clones a link \a org, namely, copies its body and
+ * connectivities with other links, to another \a cln.
+ *
+ * The multishapes associated with \a org and \a cln are pointed by
+ * \a so and \sc, respectively. It is supposed that the orders of the
+ * shapes of \a org and \a cln are the same in \a so and \sc. Namely,
+ * if the k-th shape of \a so is attached with \a org, the k-th shape
+ * of \a sc is supposed to be attached with \a cln.
+ * \return cln
+ */
 __EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc);
 
+/*! \brief clear velocity and acceleration of a link.
+ *
+ * rkLinkClearRate() zeroes velocity and acceleration of a link.
+ */
+#define rkLinkClearRate(l) rkBodyClearRate( rkLinkBody(l) )
+
+/*! \brief copy state of a link.
+ *
+ * rkLinkCopyState() copies state of a link \a src to that of another
+ * \a dst. The state includes frame, velocity, acceleration, the
+ * position, velocity and acceleration of the center of mass, and the
+ * net external wrench.
+ * \return dst
+ */
 __EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dst);
 
 /*! \brief add link branch.

@@ -7,10 +7,23 @@
 
 #include <roki/rk_abi.h>
 
-/* (static)
- * _rkLinkABIInitInertia
- * - initialize invariant mass properties.
- */
+static void _rkLinkABIInitInertia(rkLink *link);
+
+static void _rkLinkABIAddBias(rkLink *link);
+static void _rkLinkABIUpdateBackward(rkLink *link);
+static void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa);
+
+static void _rkChainClearLinkRate(rkChain *chain);
+
+static void _rkLinkABIFindBackwardPathAddExForce(rkLink *link);
+static void _rkLinkABISubBiasNetWrenchAddExForce(rkLink *link);
+static void _rkLinkABIUpdateBackwardAddExForce(rkLink *link);
+static void _rkChainABIUpdateBackwardAddExForce(rkChain *chain);
+
+static void _rkLinkABIFindBackwardPathAddExForceOne(rkChain *chain, rkLink *link);
+static void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2);
+
+/* initialize invariant mass properties. */
 void _rkLinkABIInitInertia(rkLink *link)
 {
   rkABIPrp *ap;
@@ -20,13 +33,14 @@ void _rkLinkABIInitInertia(rkLink *link)
   ap = rkLinkABIPrp(link);
   zMat3DCreate( &ap->m.e[0][0], rkLinkMass(link), 0, 0, 0, rkLinkMass(link), 0, 0, 0, rkLinkMass(link) );
   zVec3DMul( rkLinkCOM(link), rkLinkMass(link), &pc );
-  zVec3DOuterProd2Mat3D( &pc, &ap->m.e[1][0] );
-  zMat3DRev( &ap->m.e[1][0], &ap->m.e[0][1] );
+  zVec3DOuterProd2Mat3D( &pc, &ap->m.e[0][1] );
+  zMat3DRev( &ap->m.e[0][1], &ap->m.e[1][0] );
   zVec3DTripleProd2Mat3D( &pc, rkLinkCOM(link), &mpcross2 );
   zMat3DSub( rkLinkInertia(link), &mpcross2, &ap->m.e[1][1] );
 }
 
-void rkLinkABIInit(rkLink *link)
+/* allocate memory for ABI of a link. */
+void rkLinkABIAlloc(rkLink *link)
 {
   rkABIPrp *ap;
 
@@ -42,20 +56,24 @@ void rkLinkABIInit(rkLink *link)
   _rkLinkABIInitInertia( link );
 }
 
-void rkChainABIInit(rkChain *chain)
+/* allocate memory for ABI of a kinematic chain. */
+void rkChainABIAlloc(rkChain *chain)
 {
   register int i;
 
   for( i=0; i<rkChainNum(chain); i++ )
-    rkLinkABIInit( rkChainLink(chain,i) );
+    rkLinkABIAlloc( rkChainLink(chain,i) );
 }
 
+/* destroy ABI of a link. */
 void rkLinkABIDestroy(rkLink *link)
 {
-  zMatFreeAO( 2, rkLinkABIPrp(link)->axi, rkLinkABIPrp(link)->iaxi );
+  zMatFree( rkLinkABIPrp(link)->axi );
+  zMatFree( rkLinkABIPrp(link)->iaxi );
   rkWrenchListDestroy( &rkLinkABIPrp(link)->wlist );
 }
 
+/* destroy ABI of a kinematic chain. */
 void rkChainABIDestroy(rkChain *chain)
 {
   register int i;
@@ -64,43 +82,43 @@ void rkChainABIDestroy(rkChain *chain)
     rkLinkABIDestroy( rkChainLink(chain,i) );
 }
 
-/******************************************************************************/
+/* initialize ABI of a link for recursive computation. */
 void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel)
 {
   rkABIPrp *ap;
-  zVec3D tempv;
+  zVec3D tmp;
 
   ap = rkLinkABIPrp(link);
-  /*I*/
+  /* I */
   zMat6DCopy( &ap->m, &ap->i );
 
-  /*b*/
-  zVec3DTripleProd( rkLinkAngVel(link), rkLinkAngVel(link), rkLinkCOM(link), &tempv);
-  zVec3DMul( &tempv, rkLinkMass(link), zVec6DLin(&ap->f) );
-  zMulMat3DVec3D( &ap->i.e[1][1], rkLinkAngVel(link), &tempv );
-  zVec3DOuterProd( rkLinkAngVel(link), &tempv, zVec6DAng(&ap->f) );
+  /* b */
+  zVec3DTripleProd( rkLinkAngVel(link), rkLinkAngVel(link), rkLinkCOM(link), &tmp);
+  zVec3DMul( &tmp, rkLinkMass(link), zVec6DLin(&ap->f) );
+  zMulMat3DVec3D( &ap->i.e[1][1], rkLinkAngVel(link), &tmp );
+  zVec3DOuterProd( rkLinkAngVel(link), &tmp, zVec6DAng(&ap->f) );
   zVec6DCopy( &ap->f, &ap->b );
 
   /* total external forces */
   rkWrenchListNet( &ap->wlist, &ap->w ); /* temporary contact forces */
-  rkLinkCalcExtWrench( link, &ap->w0 );       /* external forces */
-  zVec3DCreate( &tempv,                  /* gravity force */
-                0, 0, -RK_G * rkLinkMass(link) );
-  zMulMat3DTVec3DDRC( rkLinkWldAtt(link), &tempv );
-  zVec3DAddDRC( zVec6DLin(&ap->w0), &tempv );
-  zVec3DOuterProd( rkLinkCOM(link), &tempv, &tempv );
-  zVec3DAddDRC( zVec6DAng(&ap->w0), &tempv );
+  rkLinkCalcExtWrench( link, &ap->w0 ); /* external forces */
+  zVec3DCreate( &tmp, 0, 0, -RK_G * rkLinkMass(link) ); /* gravity force */
+  zMulMat3DTVec3DDRC( rkLinkWldAtt(link), &tmp );
+  zVec3DAddDRC( zVec6DLin(&ap->w0), &tmp );
+  zVec3DOuterProd( rkLinkCOM(link), &tmp, &tmp );
+  zVec3DAddDRC( zVec6DAng(&ap->w0), &tmp );
   zVec6DAddDRC( &ap->w, &ap->w0 );
 
-  /*c*/
+  /* c */
   zVec6DClear( &ap->c );
-  zMulMat3DTVec3D( rkLinkAdjAtt(link), zVec6DAng(pvel), &tempv );
-  rkJointIncAccOnVel( rkLinkJoint(link), &tempv, &ap->c );
-  zVec3DTripleProd( zVec6DAng(pvel), zVec6DAng(pvel), rkLinkAdjPos(link), &tempv );
-  zMulMat3DTVec3DDRC( rkLinkAdjAtt(link), &tempv );
-  zVec3DAddDRC( zVec6DLin(&ap->c), &tempv );
+  zMulMat3DTVec3D( rkLinkAdjAtt(link), zVec6DAng(pvel), &tmp );
+  rkJointIncAccOnVel( rkLinkJoint(link), &tmp, &ap->c );
+  zVec3DTripleProd( zVec6DAng(pvel), zVec6DAng(pvel), rkLinkAdjPos(link), &tmp );
+  zMulMat3DTVec3DDRC( rkLinkAdjAtt(link), &tmp );
+  zVec3DAddDRC( zVec6DLin(&ap->c), &tmp );
 }
 
+/* initialize ABI of a kinematic chain for recursive computation. */
 void rkChainABIUpdateInit(rkChain *chain)
 {
   register int i;
@@ -113,15 +131,18 @@ void rkChainABIUpdateInit(rkChain *chain)
   }
 }
 
+/* add bias acceleration term in backward computation to update ABI of a link. */
 void _rkLinkABIAddBias(rkLink *link)
 {
   zVec6D icb;
+
   /* IH (HIH)-1 (u - H^T (Ic + b)) */
   zMulMat6DVec6D( &rkLinkABIPrp(link)->i, &rkLinkABIPrp(link)->c, &icb );
   zVec6DAddDRC( &icb, &rkLinkABIPrp(link)->b );
   rkJointABIAddBias( rkLinkJoint(link), &rkLinkABIPrp(link)->i, &icb, rkLinkAdjFrame(link), rkLinkABIPrp(link)->iaxi, &rkLinkABIPrp(rkLinkParent(link))->b );
 }
 
+/* update ABI of a link in backward computation. */
 void _rkLinkABIUpdateBackward(rkLink *link)
 {
   rkABIPrp *ap;
@@ -140,6 +161,7 @@ void _rkLinkABIUpdateBackward(rkLink *link)
   _rkLinkABIAddBias( link );
 }
 
+/* backward computation to update ABI of a link. */
 void rkLinkABIUpdateBackward(rkLink *link)
 {
   /* recursive update of ABI */
@@ -151,6 +173,7 @@ void rkLinkABIUpdateBackward(rkLink *link)
   _rkLinkABIUpdateBackward( link );
 }
 
+/* update acceleration from ABI of a link in forward computation. */
 void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 {
   rkABIPrp *ap;
@@ -166,7 +189,7 @@ void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 
   zVec6DAddDRC( &jac, &ap->c );
 
-  /* q, acc update */
+  /* update acceleration */
   if( rkLinkJointType(link) >= RK_JOINT_SPHER ){
     zMulMat3DTMat3D(rkLinkOrgAtt(link), rkLinkAdjAtt(link), &att);
     rkJointABIQAcc( rkLinkJoint(link), &att, &ap->i, &ap->b, &jac, ap->iaxi, rkLinkAcc(link) );
@@ -174,6 +197,7 @@ void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
     rkJointABIQAcc( rkLinkJoint(link), NULL, &ap->i, &ap->b, &jac, ap->iaxi, rkLinkAcc(link) );
 }
 
+/* forward computation to update acceleration from ABI of a link. */
 void rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 {
   _rkLinkABIUpdateForward( link, pa );
@@ -185,6 +209,7 @@ void rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
     rkLinkABIUpdateForward( rkLinkChild(link), rkLinkAcc(link) );
 }
 
+/* forward computation to update acceleration and wrench from ABI of a link. */
 void rkLinkABIUpdateForwardGetWrench(rkLink *link, zVec6D *pa)
 {
   _rkLinkABIUpdateForward( link, pa );
@@ -198,25 +223,20 @@ void rkLinkABIUpdateForwardGetWrench(rkLink *link, zVec6D *pa)
     rkLinkABIUpdateForwardGetWrench( rkLinkChild(link), rkLinkAcc(link) );
 }
 
-/******************************************************************************/
-void _rkLinkVelAccClear(rkLink *link)
-{
-  zVec6DClear( rkLinkVel(link) );
-  zVec6DClear( rkLinkAcc(link) );
-}
-
-void _rkChainLinkVelAccClear(rkChain *chain)
+/* clear velocity and acceleration of links of a kinematic chain. */
+void _rkChainClearLinkRate(rkChain *chain)
 {
   register int i;
 
   for( i=0; i<rkChainNum(chain); i++ )
-    _rkLinkVelAccClear( rkChainLink(chain,i) );
+    rkLinkClearRate( rkChainLink(chain,i) );
 }
 
+/* update ABI and acceleration of a kinematic chain. */
 void rkChainABIUpdate(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainLinkVelAccClear( chain );
+    _rkChainClearLinkRate( chain );
     return;
   }
   rkChainABIUpdateInit( chain );
@@ -224,10 +244,11 @@ void rkChainABIUpdate(rkChain *chain)
   rkChainABIUpdateForward( chain );
 }
 
+/* update ABI, acceleration and wrench of a kinematic chain. */
 void rkChainABIUpdateGetWrench(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainLinkVelAccClear( chain );
+    _rkChainClearLinkRate( chain );
     return;
   }
   rkChainABIUpdateInit( chain );
@@ -235,10 +256,11 @@ void rkChainABIUpdateGetWrench(rkChain *chain)
   rkChainABIUpdateForwardGetWrench( chain );
 }
 
+/* compute accleration of a kinematic chain based on ABI method. */
 zVec rkChainABI(rkChain *chain, zVec dis, zVec vel, zVec acc)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainLinkVelAccClear( chain );
+    _rkChainClearLinkRate( chain );
     return NULL;
   }
   rkChainSetJointDisAll( chain, dis );
@@ -251,15 +273,16 @@ zVec rkChainABI(rkChain *chain, zVec dis, zVec vel, zVec acc)
 }
 
 /******************************************************************************/
-/* for rigid contact force computation */
-/* *****
- * the ABI backward path follows only the links with rigid contact forces and their all parent links
- * when the ABI and ABbias with no rigid contact forces have been computed.
+/* for rigid contact force computation
+ *
+ * the ABI backward path follows only the links with rigid contact forces
+ * and their all parent links when the ABI and ABbias with no rigid contact
+ * forces have been computed.
  *
  * NOTE:
  * by the time of using this ABI version,
  * the regular ABI method must be run,
- * the ABI and ABbios must not be overwritten, and
+ * the ABI and ABbias must not be overwritten, and
  * the forces except rigid contact forces in the list 'wlist' must be removed.
  */
 void _rkLinkABIFindBackwardPathAddExForce(rkLink *link)
@@ -312,7 +335,7 @@ void _rkChainABIUpdateBackwardAddExForce(rkChain *chain)
 void rkChainABIUpdateAddExForce(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainLinkVelAccClear( chain );
+    _rkChainClearLinkRate( chain );
     return;
   }
   _rkChainABIUpdateBackwardAddExForce( chain );
@@ -322,15 +345,14 @@ void rkChainABIUpdateAddExForce(rkChain *chain)
 void rkChainABIUpdateAddExForceGetWrench(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainLinkVelAccClear( chain );
+    _rkChainClearLinkRate( chain );
     return;
   }
   _rkChainABIUpdateBackwardAddExForce( chain );
   rkChainABIUpdateForwardGetWrench( chain );
 }
 
-/* *****
- * in the case of only one or two additional external forces, to find the backward path is easier.
+/* in the case of only one or two additional external forces, to find the backward path is easier.
  * this case happens in the computation of the relation between acceleration and contact force
  *
  * NOTE:
@@ -402,7 +424,7 @@ void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWren
 void rkChainABIUpdateAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainLinkVelAccClear( chain );
+    _rkChainClearLinkRate( chain );
     return;
   }
   _rkChainABIUpdateBackwardAddExForceTwo( chain, link, w, link2, w2 );

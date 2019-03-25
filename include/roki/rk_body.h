@@ -146,34 +146,60 @@ typedef struct{
 
 /*! \brief initialize and destroy body object.
  *
- * rkBodyInit() initializes a body object \a b by cleaning up all
+ * rkBodyInit() initializes a body object \a body by clearing all
  * internal properties.
  *
- * rkBodyDestroy() destroys a body object \a b by freeing the memory
- * space allocated for its name and external forces.
+ * rkBodyDestroy() destroys a body object \a body by freeing the
+ * memory allocated for its name and external forces.
  * \return
  * rkBodyInit() and rkBodyDestroy() return no value.
  */
-__EXPORT void rkBodyInit(rkBody *b);
-__EXPORT void rkBodyDestroy(rkBody *b);
+__EXPORT void rkBodyInit(rkBody *body);
+__EXPORT void rkBodyDestroy(rkBody *body);
 
+/*! \brief clone a body.
+ *
+ * rkBodyClone() clones a body \a org, namely, copies its mass-property,
+ * external wrench, material stuff and multishape, to another \a cln.
+ *
+ * The multishapes associated with \a org and \a cln are pointed by
+ * \a so and \sc, respectively. It is supposed that the orders of the
+ * shapes of \a org and \a cln are the same in \a so and \sc. Namely,
+ * if the k-th shape of \a so is attached with \a org, the k-th shape
+ * of \a sc is supposed to be attached with \a cln.
+ * \return cln
+ */
 __EXPORT rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *so, zMShape3D *sc);
 
+/*! \brief clear velocity and acceleration of a body.
+ *
+ * rkBodyClearRate() zeroes velocity and acceleration of a body.
+ * \return
+ * rkBodyClearRate() returns no value.
+ */
+__EXPORT void rkBodyClearRate(rkBody *body);
+
+/*! \brief copy state of a body.
+ *
+ * rkBodyCopyState() copies state of a body \a src to that of another
+ * \a dst. The state includes frame, velocity, acceleration, and the
+ * position, velocity and acceleration of the center of mass.
+ * \return dst
+ */
 __EXPORT rkBody *rkBodyCopyState(rkBody *src, rkBody *dst);
 
 /*! \brief combine two bodies.
  *
- * rkBodyCombine() combines mass properties of the two bodies
- * \a b1 and \a b2 to one body \a b which is denoted in a frame
- * \a f.
+ * rkBodyCombine() combines mass properties of the two bodies \a b1
+ * and \a b2 to one body \a b which is denoted in a frame \a f.
  * \return b
  */
 __EXPORT rkBody *rkBodyCombine(rkBody *b1, rkBody *b2, zFrame3D *f, rkBody *b);
 
 /*! \brief combine a body directly to another.
  *
- * rkBodyCombineDRC() combines mass properties of a given body
- * \a sb directly to another \a b.
+ * rkBodyCombineDRC() combines mass properties of a given body \a sb
+ * directly to another \a b.
  * \return b
  */
 __EXPORT rkBody *rkBodyCombineDRC(rkBody *b, rkBody *sb);

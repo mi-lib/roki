@@ -124,8 +124,20 @@ typedef struct{
 __EXPORT void rkChainInit(rkChain *c);
 __EXPORT void rkChainDestroy(rkChain *c);
 
+/*! \brief clone a kinematic chain.
+ *
+ * rkChainClone() clones a kinematic chain \a org to another \a cln.
+ * \return cln
+ */
 __EXPORT rkChain *rkChainClone(rkChain *org, rkChain *cln);
 
+/*! \brief copy state of a kinematic chain.
+ *
+ * rkChainCopyState() copies state of all links and position, velocity
+ * and acceleration of the center of mass of a kinematic chain \a src
+ * to that of another \a dst.
+ * \return dst
+ */
 __EXPORT rkChain *rkChainCopyState(rkChain *src, rkChain *dst);
 
 /*! \brief count total number of joints of a kinematic chain.

@@ -13,9 +13,7 @@
 
 static zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest);
 
-/* rkMPXfer
- * - transfer a mass property set to that with respect to a frame.
- */
+/* transfer a mass property set to that with respect to a frame. */
 rkMP *rkMPXfer(rkMP *src, zFrame3D *f, rkMP *dest)
 {
   rkMPSetMass( dest, rkMPMass(src) );
@@ -24,10 +22,7 @@ rkMP *rkMPXfer(rkMP *src, zFrame3D *f, rkMP *dest)
   return dest;
 }
 
-/* (static)
- * _rkMPShiftInertia
- * - shift mass property translationally.
- */
+/* shift mass property translationally. */
 zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest)
 {
   zMat3D tmp;
@@ -46,9 +41,7 @@ zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest)
   return zMat3DCat( src, m, &tmp, dest );
 }
 
-/* rkMPCombine
- * - combine two mass property sets in the same frame.
- */
+/* combine two mass property sets in the same frame. */
 rkMP *rkMPCombine(rkMP *mp1, rkMP *mp2, rkMP *mp)
 {
   zVec3D r1, r2;
@@ -69,17 +62,13 @@ rkMP *rkMPCombine(rkMP *mp1, rkMP *mp2, rkMP *mp)
   return mp;
 }
 
-/* rkMPOrgInertia
- * - convert inertia tensor to that about the origin.
- */
+/* convert inertia tensor to that about the origin. */
 zMat3D *rkMPOrgInertia(rkMP *mp, zMat3D *i)
 {
   return _rkMPShiftInertia( rkMPInertia(mp), rkMPMass(mp), rkMPCOM(mp), i );
 }
 
-/* rkMPInertiaEllips
- * - compute the inertial ellipsoid from a mass property set.
- */
+/* compute the inertial ellipsoid from a mass property set. */
 zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie)
 {
   zVec3D evec[3];
@@ -89,9 +78,7 @@ zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie)
   return zEllips3DCreate( ie, rkMPCOM(mp), &evec[0], &evec[1], &evec[2], eval[0], eval[1], eval[2], 0 );
 }
 
-/* rkMPFWrite
- * - output mass property.
- */
+/* output mass property. */
 void rkMPFWrite(FILE *fp, rkMP *mp)
 {
   fprintf( fp, "mass: %.10g\n", rkMPMass(mp) );
@@ -106,41 +93,35 @@ void rkMPFWrite(FILE *fp, rkMP *mp)
  * rigid body class
  * ********************************************************** */
 
-/* rkBodyInit
- * - initialize a body.
- */
-void rkBodyInit(rkBody *b)
+/* initialize a body. */
+void rkBodyInit(rkBody *body)
 {
-  rkBodySetMass( b, 0 );
-  rkBodySetCOM( b, ZVEC3DZERO );
-  rkBodySetInertia( b, ZMAT3DZERO );
-  rkBodySetFrame( b, ZFRAME3DIDENT );
-  rkBodySetVel( b, ZVEC6DZERO );
-  rkBodySetAcc( b, ZVEC6DZERO );
-  rkBodySetWldCOM( b, ZVEC3DZERO );
-  rkBodySetCOMVel( b, ZVEC3DZERO );
-  rkBodySetCOMAcc( b, ZVEC3DZERO );
+  rkBodySetMass( body, 0 );
+  rkBodySetCOM( body, ZVEC3DZERO );
+  rkBodySetInertia( body, ZMAT3DZERO );
+  rkBodySetFrame( body, ZFRAME3DIDENT );
+  rkBodySetVel( body, ZVEC6DZERO );
+  rkBodySetAcc( body, ZVEC6DZERO );
+  rkBodySetWldCOM( body, ZVEC3DZERO );
+  rkBodySetCOMVel( body, ZVEC3DZERO );
+  rkBodySetCOMAcc( body, ZVEC3DZERO );
 
-  zListInit( rkBodyExtWrench( b ) );
-  zListInit( rkBodyShapeList( b ) );
+  zListInit( rkBodyExtWrench( body ) );
+  zListInit( rkBodyShapeList( body ) );
 
-  rkBodyStuff(b) = NULL;
+  rkBodyStuff(body) = NULL;
 }
 
-/* rkBodyDestroy
- * - destroy a body.
- */
-void rkBodyDestroy(rkBody *b)
+/* destroy a body. */
+void rkBodyDestroy(rkBody *body)
 {
-  rkBodyExtWrenchDestroy( b );
-  rkBodyShapeDestroy( b );
-  rkBodyStuffDestroy( b );
-  rkBodyInit( b );
+  rkBodyExtWrenchDestroy( body );
+  rkBodyShapeDestroy( body );
+  rkBodyStuffDestroy( body );
+  rkBodyInit( body );
 }
 
-/* rkBodyClone
- * - clone a body.
- */
+/* clone a body. */
 rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *so, zMShape3D *sc)
 {
   rkWrench *wp, *wpc;
@@ -167,9 +148,14 @@ rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *so, zMShape3D *sc)
   return cln;
 }
 
-/* rkBodyCopyState
- * - copy body state.
- */
+/* clear velocity and acceleration of a body. */
+void rkBodyClearRate(rkBody *body)
+{
+  rkBodySetVel( body, ZVEC6DZERO );
+  rkBodySetAcc( body, ZVEC6DZERO );
+}
+
+/* copy state of a body. */
 rkBody *rkBodyCopyState(rkBody *src, rkBody *dst)
 {
   zFrame3DCopy( rkBodyFrame(src), rkBodyFrame(dst) );
@@ -181,9 +167,7 @@ rkBody *rkBodyCopyState(rkBody *src, rkBody *dst)
   return dst;
 }
 
-/* rkBodyCombine
- * - combine two bodies.
- */
+/* combine two bodies. */
 rkBody *rkBodyCombine(rkBody *b1, rkBody *b2, zFrame3D *f, rkBody *b)
 {
   rkMP mp1, mp2;
@@ -198,9 +182,7 @@ rkBody *rkBodyCombine(rkBody *b1, rkBody *b2, zFrame3D *f, rkBody *b)
   return b;
 }
 
-/* rkBodyCombineDRC
- * - combine a body directly to another.
- */
+/* combine a body directly to another. */
 rkBody *rkBodyCombineDRC(rkBody *b, rkBody *sb)
 {
   rkMP mp1, mp2;
@@ -213,46 +195,42 @@ rkBody *rkBodyCombineDRC(rkBody *b, rkBody *sb)
   return b;
 }
 
-/* rkBodyUpdateCOM
- * - update body COM position with respect to the world frame.
- */
+/* update COM position of a body with respect to the world frame. */
 zVec3D *rkBodyUpdateCOM(rkBody *body)
 {
   return zXfer3D( rkBodyFrame(body), rkBodyCOM(body), rkBodyWldCOM(body) );
 }
 
-/* rkBodyUpdateCOMRate
- * - update body COM rate with respect to the inertial frame.
- */
+/* update COM rate of a body with respect to the inertial frame. */
 void rkBodyUpdateCOMVel(rkBody *body)
 {
-	zVec3D tmp;
+  zVec3D tmp;
 
   /* COM velocity */
   zVec3DOuterProd( rkBodyAngVel(body), rkBodyCOM(body), &tmp ); /* w x p */
   zVec3DAdd( rkBodyLinVel(body), &tmp, rkBodyCOMVel(body) );
 }
 
+/* update COM acceleration of a body. */
 void rkBodyUpdateCOMAcc(rkBody *body)
 {
-	zVec3D tmp;
-	/* COM acceleration */
-	zVec3DTripleProd( rkBodyAngVel(body), rkBodyAngVel(body), rkBodyCOM(body), rkBodyCOMAcc(body) ); /* w x ( w x p ) */
+  zVec3D tmp;
+
+  /* COM acceleration */
+  zVec3DTripleProd( rkBodyAngVel(body), rkBodyAngVel(body), rkBodyCOM(body), rkBodyCOMAcc(body) ); /* w x ( w x p ) */
   zVec3DOuterProd( rkBodyAngAcc(body), rkBodyCOM(body), &tmp ); /* a x p */
   zVec3DAddDRC( rkBodyCOMAcc(body), &tmp );
   zVec3DAddDRC( rkBodyCOMAcc(body), rkBodyLinAcc(body) );
 }
 
-
+/* update COM rate of a body. */
 void rkBodyUpdateCOMRate(rkBody *body)
 {
-	rkBodyUpdateCOMVel( body );
-	rkBodyUpdateCOMAcc( body );
+  rkBodyUpdateCOMVel( body );
+  rkBodyUpdateCOMAcc( body );
 }
 
-/* rkBodyNetWrench
- * - net wrench exerted on body.
- */
+/* net wrench exerted on a body. */
 zVec6D *rkBodyNetWrench(rkBody *body, zVec6D *w)
 {
   zVec3D tmp;
@@ -265,9 +243,7 @@ zVec6D *rkBodyNetWrench(rkBody *body, zVec6D *w)
   return w;
 }
 
-/* rkBodyAM
- * - angular momentum of body.
- */
+/* angular momentum of a body. */
 zVec3D *rkBodyAM(rkBody *b, zVec3D *p, zVec3D *am)
 {
   zVec3D tmp;
@@ -279,9 +255,7 @@ zVec3D *rkBodyAM(rkBody *b, zVec3D *p, zVec3D *am)
   return zVec3DAddDRC( am, &tmp );
 }
 
-/* rkBodyKE
- * - kinematic energy of body.
- */
+/* kinematic energy of a body. */
 double rkBodyKE(rkBody *b)
 {
   zVec3D tmp;
@@ -293,9 +267,7 @@ double rkBodyKE(rkBody *b)
   return ( result *= 0.5 );
 }
 
-/* rkBodyContigVert
- * - contiguous vertex of a body to a point.
- */
+/* contiguous vertex of a body to a point. */
 zVec3D *rkBodyContigVert(rkBody *body, zVec3D *p, double *d)
 {
   zVec3D pc;
