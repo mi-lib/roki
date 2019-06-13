@@ -6,13 +6,13 @@ int main(int argc, char *argv[])
   zVec3DList vl;
   zSphere3D bb;
 
-  rkChainReadFile( &chain, "../model/mighty.zkc" );
+  rkChainScanFile( &chain, "../model/mighty.zkc" );
   rkChain2VertList( &chain, &vl );
-  zVec3DListDataWrite( &vl );
+  zVec3DListDataPrint( &vl );
   zBBallPL( &bb, &vl, NULL );
-  zSphere3DFWrite( stderr, &bb );
+  zSphere3DFPrint( stderr, &bb );
 
-  zVec3DListDestroy( &vl, true );
+  zVec3DListDestroy( &vl );
   rkChainDestroy( &chain );
   return 0;
 }

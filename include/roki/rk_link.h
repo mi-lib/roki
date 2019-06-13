@@ -361,11 +361,11 @@ __EXPORT void rkLinkConfToJointDis(rkLink *l);
 
 #define RK_LINK_TAG "link"
 
-/*! \brief input and output link properties.
+/*! \brief scan and print link properties.
  *
- * rkLinkFRead() reads the properties of link \a l from
- * the current position of the file \a fp.
- * An acceptable keywords and their meanings are as follows.
+ * rkLinkFScan() scans properties of a link \a l from the
+ * current position of a file \a fp. An acceptable keywords
+ * and their meanings are as follows.
  *
  *  name: <name>
  *   link name.
@@ -407,43 +407,43 @@ __EXPORT void rkLinkConfToJointDis(rkLink *l);
  * 3. non-existing shape name is specified.
  * 4. link name is not defined.
  *
- * rkLinkFWrite() writes out the properties of link \a l to
- * the current position of file \a fp in the above format.
- * rkLinkWrite() outputs the result to the standard output.
+ * rkLinkFPrint() prints out properties of a link \a l to
+ * the current position of a file \a fp in the above format.
+ * rkLinkPrint() prints the result out to the standard output.
  *
- * rkLinkPostureFWrite() writes out the posture of link \a l
- * in the adjacent and world frames to the
- * current position of file \a fp.
- * rkLinkPostureWrite() writes out the result to the standard
+ * rkLinkPostureFPrint() prints out the posture of a link \a l
+ * in the adjacent and world frames to the current position
+ * of a file \a fp.
+ * rkLinkPosturePrint() prints out the result to the standard
  * output.
  *
- * rkLinkConnectionFWrite() writes out the connectivity of
- * link \a l to the current position of file \a fp.
+ * rkLinkConnectionFPrint() prints out the connectivity of
+ * a link \a l to the current position of a file \a fp.
  * \a n is a width of indent.
- * rkLinkConnectionWrite() writes out the connectivity to
+ * rkLinkConnectionPrint() prints out the connectivity to
  * the standard output.
  *
- * rkLinkExtForceFWrite() writes out the whole external force
- * applied to link \a l. See zForceListCellFWrite().
- * rkLinkExtForceWrite() writes them to the standard output.
+ * rkLinkExtForceFPrint() prints out the whole external forces
+ * applied to a link \a l. See zForceListCellFPrint().
+ * rkLinkExtForcePrint() prints them out to the standard output.
  * \return
- * rkLinkFRead() returns a pointer \a l if succeed, or the
+ * rkLinkFScan() returns a pointer \a l if succeeding, or the
  * null pointer otherwise.
  *
- * rkLinkFWrite(), rkLinkWrite(), rkLinkPostureFWrite(),
- * rkLinkPostureWrite(), rkLinkConnectionFWrite(),
- * rkLinkConnectionWrite(), rkLinkExtForceFWrite() and
- * rkLinkExtForceWrite() return no values.
+ * rkLinkFPrint(), rkLinkPrint(), rkLinkPostureFPrint(),
+ * rkLinkPosturePrint(), rkLinkConnectionFPrint(),
+ * rkLinkConnectionPrint(), rkLinkExtForceFPrint() and
+ * rkLinkExtForcePrint() return no values.
  */
-__EXPORT rkLink *rkLinkFRead(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarray, int ns, rkMotor *marray, int nm);
-__EXPORT void rkLinkFWrite(FILE *fp, rkLink *l);
-__EXPORT void rkLinkPostureFWrite(FILE *fp, rkLink *l);
-__EXPORT void rkLinkConnectionFWrite(FILE *fp, rkLink *l, int n);
-__EXPORT void rkLinkExtWrenchFWrite(FILE *fp, rkLink *l);
-#define rkLinkWrite(l)             rkLinkFWrite( stdout, (l) )
-#define rkLinkPostureWrite(l)      rkLinkPostureFWrite( stdout, (l) )
-#define rkLinkConnectionWrite(l,n) rkLinkConnectionFWrite( stdout, (l), (n) )
-#define rkLinkExtWrenchWrite(l)     rkLinkExtWrenchFWrite( stdout, (l) )
+__EXPORT rkLink *rkLinkFScan(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarray, int ns, rkMotor *marray, int nm);
+__EXPORT void rkLinkFPrint(FILE *fp, rkLink *l);
+__EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *l);
+__EXPORT void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n);
+__EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l);
+#define rkLinkPrint(l)             rkLinkFPrint( stdout, (l) )
+#define rkLinkPosturePrint(l)      rkLinkPostureFPrint( stdout, (l) )
+#define rkLinkConnectionPrint(l,n) rkLinkConnectionFPrint( stdout, (l), (n) )
+#define rkLinkExtWrenchPrint(l)     rkLinkExtWrenchFPrint( stdout, (l) )
 
 __END_DECLS
 

@@ -11,9 +11,7 @@
  * wrench list class
  * ********************************************************** */
 
-/* rkWrenchListPop
- * - pop to wrench list.
- */
+/* pop a wrench from a list. */
 rkWrench *rkWrenchListPop(rkWrenchList *wl)
 {
   rkWrench *cell;
@@ -23,17 +21,13 @@ rkWrench *rkWrenchListPop(rkWrenchList *wl)
   return cell;
 }
 
-/* rkWrenchXfer
- * - convert a wrench.
- */
+/* transform a wrench. */
 zVec6D *rkWrenchXfer(rkWrench *cell, zVec6D *w)
 {
   return zVec6DAngShift( rkWrenchW(cell), rkWrenchPos(cell), w );
 }
 
-/* rkWrenchListNet
- * - calculate net wrench of a list.
- */
+/* calculate the net wrench of a list. */
 zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w)
 {
   rkWrench *cell;
@@ -47,17 +41,15 @@ zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w)
   return w;
 }
 
-/* rkWrenchFWrite
- * - output wrench to file.
- */
-void rkWrenchFWrite(FILE *fp, rkWrench *cell)
+/* print wrench out to a file. */
+void rkWrenchFPrint(FILE *fp, rkWrench *cell)
 {
   if( !cell ) return;
 
   fprintf( fp, " force: " );
-  zVec3DFWrite( fp, rkWrenchForce( cell ) );
+  zVec3DFPrint( fp, rkWrenchForce( cell ) );
   fprintf( fp, " torque: " );
-  zVec3DFWrite( fp, rkWrenchTorque( cell ) );
+  zVec3DFPrint( fp, rkWrenchTorque( cell ) );
   fprintf( fp, " point of action: " );
-  zVec3DFWrite( fp, rkWrenchPos( cell ) );
+  zVec3DFPrint( fp, rkWrenchPos( cell ) );
 }

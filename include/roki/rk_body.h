@@ -63,10 +63,10 @@ __EXPORT zMat3D *rkMPOrgInertia(rkMP *mp, zMat3D *i);
  */
 __EXPORT zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie);
 
-/*! \brief output mass property.
+/*! \brief print mass property.
  *
- * rkMPFWrite() outputs a set of mass properties \a mp to the current
- * position of a file \a fp in the following format.
+ * rkMPFPrint() prints a set of mass properties \a mp out to
+ * the current position of a file \a fp in the following format.
  *
  *  mass: <m>
  *  COM:  { <x>, <y>, <z> }
@@ -76,13 +76,13 @@ __EXPORT zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie);
  *    <izx>, <iyz>, <izz>
  *  }
  *
- * rkMPWrite() outputs a set of mass properties \a mp to the standard
- * output in the same format with the above.
+ * rkMPPrint() prints a set of mass properties \a mp out to the
+ * standard output in the same format with the above.
  * \return
- * rkMPFWrite() and rkMPWrite() return no value.
+ * rkMPFPrint() and rkMPPrint() return no value.
  */
-__EXPORT void rkMPFWrite(FILE *fp, rkMP *mp);
-#define rkMPWrite(mp) rkMPFWrite( stdout, mp )
+__EXPORT void rkMPFPrint(FILE *fp, rkMP *mp);
+#define rkMPPrint(mp) rkMPFPrint( stdout, mp )
 
 /* ********************************************************** */
 /* CLASS: rkBody

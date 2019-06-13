@@ -61,19 +61,19 @@ void chain_init(rkChain *chain)
 void world_ang_test(rkChain *chain, zMat jacobi, zVec3D *v)
 {
   rkChainLinkWldAngJacobi( chain, TIP, jacobi );
-  zMulMatVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkAngVel(chain,TIP), v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkAngVel(chain,TIP), v );
 }
 
 void world_lin_test(rkChain *chain, zMat jacobi, zVec3D *v)
 {
   rkChainLinkWldLinJacobi( chain, TIP, ZVEC3DZERO, jacobi );
-  zMulMatVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkLinVel(chain,TIP), v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkLinVel(chain,TIP), v );
 }
 
 void world_com_test(rkChain *chain, zMat jacobi, zVec3D *v)
 {
   rkChainLinkWldLinJacobi( chain, TIP, rkChainLinkCOM(chain,TIP), jacobi );
-  zMulMatVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkCOMVel(chain,TIP), v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkCOMVel(chain,TIP), v );
 }
 
 void l2l_ang_test(rkChain *chain, zMat jacobi, zVec3D *v)
@@ -81,8 +81,8 @@ void l2l_ang_test(rkChain *chain, zMat jacobi, zVec3D *v)
   zVec3D av;
 
   rkChainLinkToLinkAngJacobi( chain, ANO, TIP, jacobi );
-  zMulMatVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkAngVel(chain,TIP), v );
-  zMulMatVec3D( rkChainLinkWldAtt(chain,ANO), rkChainLinkAngVel(chain,ANO), &av );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkAngVel(chain,TIP), v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,ANO), rkChainLinkAngVel(chain,ANO), &av );
   zVec3DSubDRC( v, &av );
 }
 
@@ -91,11 +91,11 @@ void l2l_lin_test(rkChain *chain, zMat jacobi, zVec3D *v)
   zVec3D av, vr, tmp;
 
   rkChainLinkToLinkLinJacobi( chain, ANO, TIP, ZVEC3DZERO, jacobi );
-  zMulMatVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkLinVel(chain,TIP), v );
-  zMulMatVec3D( rkChainLinkWldAtt(chain,ANO), rkChainLinkLinVel(chain,ANO), &av );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,TIP), rkChainLinkLinVel(chain,TIP), v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,ANO), rkChainLinkLinVel(chain,ANO), &av );
   zVec3DSubDRC( v, &av );
 
-  zMulMatVec3D( rkChainLinkWldAtt(chain,ANO), rkChainLinkAngVel(chain,ANO), &vr );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,ANO), rkChainLinkAngVel(chain,ANO), &vr );
   zVec3DSub( rkChainLinkWldPos(chain,TIP), rkChainLinkWldPos(chain,ANO), &av );
   zVec3DOuterProd( &vr, &av, &tmp );
   zVec3DSubDRC( v, &tmp );
@@ -114,7 +114,7 @@ void link_am_test(rkChain *chain, zMat jacobi, zVec3D *v)
   rkChainLinkAMJacobi( chain, TIP, ZVEC3DZERO, jacobi );
   zXfer3DInv( rkChainLinkWldFrame(chain,TIP), ZVEC3DZERO, &tp );
   rkLinkAM( rkChainLink(chain,TIP), &tp, v );
-  zMulMatVec3DDRC( rkChainLinkWldAtt(chain,TIP), v );
+  zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,TIP), v );
 }
 
 void am_test(rkChain *chain, zMat jacobi, zVec3D *v)

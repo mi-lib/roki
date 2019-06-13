@@ -429,30 +429,30 @@ __EXPORT void rkChainSetOffset(rkChain *c);
  */
 __EXPORT zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl);
 
-__EXPORT bool rkChainReadFile(rkChain *c, char filename[]);
-__EXPORT rkChain *rkChainFRead(FILE *fp, rkChain *c);
-__EXPORT bool rkChainInitReadFile(rkChain *c, char filename[]);
-__EXPORT rkChain *rkChainInitFRead(FILE *fp, rkChain *c);
+__EXPORT bool rkChainScanFile(rkChain *c, char filename[]);
+__EXPORT rkChain *rkChainFScan(FILE *fp, rkChain *c);
+__EXPORT bool rkChainInitScanFile(rkChain *c, char filename[]);
+__EXPORT rkChain *rkChainInitFScan(FILE *fp, rkChain *c);
 
-/*! \brief read 3D multiple-shapes from a file and create a mono-link chain.
+/*! \brief scan 3D multiple-shapes from a file and create a mono-link chain.
  *
- * rkChainMShape3DReadFile() reads a file \a filename which defines
+ * rkChainMShape3DScanFile() scans a file \a filename which defines
  * 3D multiple-shapes and create a chain \a chain comprising a sole link.
  */
-__EXPORT bool rkChainMShape3DReadFile(rkChain *chain, char filename[]);
+__EXPORT bool rkChainMShape3DScanFile(rkChain *chain, char filename[]);
 
-__EXPORT bool rkChainWriteFile(rkChain *c, char filename[]);
-__EXPORT void rkChainFWrite(FILE *fp, rkChain *c);
-__EXPORT bool rkChainInitWriteFile(rkChain *c, char filename[]);
-__EXPORT void rkChainInitFWrite(FILE *fp, rkChain *c);
-__EXPORT void rkChainPostureFWrite(FILE *fp, rkChain *c);
-__EXPORT void rkChainConnectionFWrite(FILE *fp, rkChain *c);
-__EXPORT void rkChainExtWrenchFWrite(FILE *fp, rkChain *c);
-#define rkChainWrite(c)           rkChainFWrite( stdout, (c) )
-#define rkChainInitWrite(c)       rkChainInitFWrite( stdout, (c) )
-#define rkChainPostureWrite(c)    rkChainPostureFWrite( stdout, (c) )
-#define rkChainConnectionWrite(c) rkChainConnectionFWrite( stdout, (c) )
-#define rkChainExtWrenchWrite(c)  rkChainExtWrenchFWrite( stdout, (c) )
+__EXPORT bool rkChainPrintFile(rkChain *c, char filename[]);
+__EXPORT void rkChainFPrint(FILE *fp, rkChain *c);
+__EXPORT bool rkChainInitPrintFile(rkChain *c, char filename[]);
+__EXPORT void rkChainInitFPrint(FILE *fp, rkChain *c);
+__EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *c);
+__EXPORT void rkChainConnectionFPrint(FILE *fp, rkChain *c);
+__EXPORT void rkChainExtWrenchFPrint(FILE *fp, rkChain *c);
+#define rkChainPrint(c)           rkChainFPrint( stdout, (c) )
+#define rkChainInitPrint(c)       rkChainInitFPrint( stdout, (c) )
+#define rkChainPosturePrint(c)    rkChainPostureFPrint( stdout, (c) )
+#define rkChainConnectionPrint(c) rkChainConnectionFPrint( stdout, (c) )
+#define rkChainExtWrenchPrint(c)  rkChainExtWrenchFPrint( stdout, (c) )
 
 __END_DECLS
 

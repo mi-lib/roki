@@ -41,8 +41,8 @@ static void _rkJointGetRefHooke(void *prp, rkJointRef *ref);
 static zVec3D *_rkJointAngAxisHooke1(void *prp, zFrame3D *f, zVec3D *a);
 static zVec3D *_rkJointAngAxisHooke2(void *prp, zFrame3D *f, zVec3D *a);
 
-static bool _rkJointQueryFReadHooke(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
-static void _rkJointFWriteHooke(FILE *fp, void *prp, char *name);
+static bool _rkJointQueryFScanHooke(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
+static void _rkJointFPrintHooke(FILE *fp, void *prp, char *name);
 
 #define _rkc(p) ((rkJointPrpHooke *)p)
 
@@ -247,7 +247,7 @@ zVec3D *_rkJointAngAxisHooke2(void *prp, zFrame3D *f, zVec3D *a){
 }
 
 /* query joint properties */
-bool _rkJointQueryFReadHooke(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
+bool _rkJointQueryFScanHooke(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
 {
   rkMotor *mp;
 
@@ -292,12 +292,12 @@ bool _rkJointQueryFReadHooke(FILE *fp, char *buf, void *prp, rkMotor *marray, in
     }
     rkMotorClone( mp, &_rkc(prp)->m );
   } else
-  if( !rkMotorQueryFRead( fp, buf, &_rkc(prp)->m ) )
+  if( !rkMotorQueryFScan( fp, buf, &_rkc(prp)->m ) )
     return false;
   return true;
 }
 
-void _rkJointFWriteHooke(FILE *fp, void *prp, char *name)
+void _rkJointFPrintHooke(FILE *fp, void *prp, char *name)
 {
   rkJointPrpHooke *v;
 
@@ -348,8 +348,8 @@ static rkJointCom rk_joint_hooke = {
   _rkJointGetRefHooke,
   _rk_joint_axis_hooke_ang,
   _rk_joint_axis_hooke_lin,
-  _rkJointQueryFReadHooke,
-  _rkJointFWriteHooke,
+  _rkJointQueryFScanHooke,
+  _rkJointFPrintHooke,
 };
 
 /* motor */

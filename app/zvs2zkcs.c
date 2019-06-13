@@ -1,9 +1,5 @@
-/*
- * zvs2zkcs
+/* zvs2zkcs
  * .zvs -> .zkcs file
- *
- * 2011.12.14. Created.
- * 2011.12.14. Last updated.
  */
 
 #include <roki/rk_chain.h>
@@ -25,12 +21,12 @@ int main(int argc, char *argv[])
 
   if( argc < 3 ) usage();
 
-  rkChainReadFile( &chain, argv[1] );
+  rkChainScanFile( &chain, argv[1] );
   if( !( conf = zVecAlloc( rkChainNum(&chain) * 6 ) ) ){
     ZALLOCERROR();
     return 1;
   }
-  zSeqReadFile( &seq, argv[2] );
+  zSeqScanFile( &seq, argv[2] );
   if( argc > 3 ){
     if( !( fp = fopen( argv[3], "r" ) ) ){
       ZOPENERROR( argv[3] );
@@ -44,7 +40,7 @@ int main(int argc, char *argv[])
     rkChainFK( &chain, cp->data.v );
     rkChainGetConf( &chain, conf );
     fprintf( fp, "%g ", cp->data.dt );
-    zVecFWrite( fp, conf );
+    zVecFPrint( fp, conf );
     zSeqListCellFree( cp );
   }
   if( fp != stdout ) fclose( fp );

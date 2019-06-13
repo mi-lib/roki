@@ -77,23 +77,23 @@ __EXPORT rkWrench *rkWrenchListPop(rkWrenchList *wl);
 __EXPORT zVec6D *rkWrenchXfer(rkWrench *cell, zVec6D *w);
 __EXPORT zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w);
 
-/*! \brief output wrench.
+/*! \brief print out a wrench.
  *
- * rkWrenchFWrite() writes out the properties of the force list cell
- * \a cell to the current position in the file \a fp in the following
- * format.
+ * rkWrenchFPrint() prints out properties of the wrench list
+ * cell \a cell to the current position of a file \a fp in the
+ * following format.
  *
  *  force: { <x>, <y>, <z> }
  *  moment: { <x>, <y>, <z> }
  *  point of action: { <x>, <y>, <z> }
  *
- * rkWrenchWrite() writes out the properties of \a cell to the
+ * rkWrenchPrint() prints out properties of \a cell to the
  * standard output.
  * \retval
- * Neither rkWrenchFWrite() nor rkWrenchWrite() returns any values.
+ * Neither rkWrenchFPrint() nor rkWrenchPrint() return any values.
  */
-__EXPORT void rkWrenchFWrite(FILE *fp, rkWrench *cell);
-#define rkWrenchWrite(c) rkWrenchFWrite( stdout, (c) )
+__EXPORT void rkWrenchFPrint(FILE *fp, rkWrench *cell);
+#define rkWrenchPrint(c) rkWrenchFPrint( stdout, (c) )
 
 __END_DECLS
 

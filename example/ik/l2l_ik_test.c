@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
   register int i;
 
   zRandInit();
-  rkChainReadFile( &chain, "../model/dualarm.zkc" );
+  rkChainScanFile( &chain, "../model/dualarm.zkc" );
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainSetJointDisAll( &chain, dis );
   rkChainGetJointDisAll( &chain, dis );
@@ -48,31 +48,31 @@ int main(int argc, char *argv[])
   rkIKCellSetRef( cell[3], 0, 0, 0 );
 
   eprintf( "++ initial frame\n" );
-  zFrame3DFWrite( stderr, rkChainLinkWldFrame(ik.chain,EL1) );
-  zFrame3DFWrite( stderr, rkChainLinkWldFrame(ik.chain,EL2) );
+  zFrame3DFPrint( stderr, rkChainLinkWldFrame(ik.chain,EL1) );
+  zFrame3DFPrint( stderr, rkChainLinkWldFrame(ik.chain,EL2) );
 
   rkIKSolve( &ik, dis, zTOL, 0 );
-  zVecFWrite( stderr, dis );
+  zVecFPrint( stderr, dis );
   rkChainFK( ik.chain, dis );
   eprintf( "++ goal frame\n" );
-  zVec3DFWrite( stderr, &cell[0]->data.ref.pos );
-  zMat3DFWrite( stderr, &cell[1]->data.ref.att );
-  zVec3DFWrite( stderr, &cell[2]->data.ref.pos );
-  zMat3DFWrite( stderr, &cell[3]->data.ref.att );
+  zVec3DFPrint( stderr, &cell[0]->data.ref.pos );
+  zMat3DFPrint( stderr, &cell[1]->data.ref.att );
+  zVec3DFPrint( stderr, &cell[2]->data.ref.pos );
+  zMat3DFPrint( stderr, &cell[3]->data.ref.att );
 
   eprintf( "++ final frame\n" );
-  zFrame3DFWrite( stderr, rkChainLinkWldFrame(ik.chain,EL1) );
-  zFrame3DFWrite( stderr, rkChainLinkWldFrame(ik.chain,EL2) );
+  zFrame3DFPrint( stderr, rkChainLinkWldFrame(ik.chain,EL1) );
+  zFrame3DFPrint( stderr, rkChainLinkWldFrame(ik.chain,EL2) );
 
   eprintf( "++ error\n" );
   zVec3DSub( &cell[0]->data.ref.pos, rkChainLinkWldPos(ik.chain,EL1), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
   zMat3DError( &cell[1]->data.ref.att, rkChainLinkWldAtt(ik.chain,EL1), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
   zVec3DSub( rkChainLinkWldPos(ik.chain,EL1), rkChainLinkWldPos(ik.chain,EL2), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
   zMat3DError( rkChainLinkWldAtt(ik.chain,EL2), rkChainLinkWldAtt(ik.chain,EL2), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

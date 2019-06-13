@@ -36,8 +36,8 @@ static void _rkJointGetKFricCylin(void *prp, double *val);
 static void _rkJointSetRefCylin(void *prp, rkJointRef *ref);
 static void _rkJointGetRefCylin(void *prp, rkJointRef *ref);
 
-static bool _rkJointQueryFReadCylin(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
-static void _rkJointFWriteCylin(FILE *fp, void *prp, char *name);
+static bool _rkJointQueryFScanCylin(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
+static void _rkJointFPrintCylin(FILE *fp, void *prp, char *name);
 
 #define _rkc(p) ((rkJointPrpCylin *)p)
 
@@ -199,7 +199,7 @@ void _rkJointGetRefCylin(void *prp, rkJointRef *ref){
 }
 
 /* query joint properties */
-bool _rkJointQueryFReadCylin(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
+bool _rkJointQueryFScanCylin(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
 {
   rkMotor *mp;
   double dis[2];
@@ -246,12 +246,12 @@ bool _rkJointQueryFReadCylin(FILE *fp, char *buf, void *prp, rkMotor *marray, in
     }
     rkMotorClone( mp, &_rkc(prp)->m );
   } else
-  if( !rkMotorQueryFRead( fp, buf, &_rkc(prp)->m ) )
+  if( !rkMotorQueryFScan( fp, buf, &_rkc(prp)->m ) )
     return false;
   return true;
 }
 
-void _rkJointFWriteCylin(FILE *fp, void *prp, char *name)
+void _rkJointFPrintCylin(FILE *fp, void *prp, char *name)
 {
   rkJointPrpCylin *v;
 
@@ -302,8 +302,8 @@ static rkJointCom rk_joint_cylin = {
   _rkJointGetRefCylin,
   _rk_joint_axis_cylin_ang,
   _rk_joint_axis_cylin_lin,
-  _rkJointQueryFReadCylin,
-  _rkJointFWriteCylin,
+  _rkJointQueryFScanCylin,
+  _rkJointFPrintCylin,
 };
 
 /* motor */

@@ -19,16 +19,16 @@ void output(rkBody *body)
   zVec3D comvel, comacc;
 
   zMat3DToAA( rkBodyAtt(body), &aa );
-  zMulMatVec3D( rkBodyAtt(body), rkBodyCOMVel(body), &comvel );
-  zMulMatVec3D( rkBodyAtt(body), rkBodyCOMAcc(body), &comacc );
-  zMulMatVec3D( rkBodyAtt(body), rkBodyAngVel(body), &vel );
-  zMulMatVec3D( rkBodyAtt(body), rkBodyAngAcc(body), &acc );
-  zVec3DDataWrite( rkBodyWldCOM(body) );
-  zVec3DDataWrite( &comvel );
-  zVec3DDataWrite( &comacc );
-  zVec3DDataWrite( &aa );
-  zVec3DDataWrite( &vel );
-  zVec3DDataNLWrite( &acc );
+  zMulMat3DVec3D( rkBodyAtt(body), rkBodyCOMVel(body), &comvel );
+  zMulMat3DVec3D( rkBodyAtt(body), rkBodyCOMAcc(body), &comacc );
+  zMulMat3DVec3D( rkBodyAtt(body), rkBodyAngVel(body), &vel );
+  zMulMat3DVec3D( rkBodyAtt(body), rkBodyAngAcc(body), &acc );
+  zVec3DDataPrint( rkBodyWldCOM(body) );
+  zVec3DDataPrint( &comvel );
+  zVec3DDataPrint( &comacc );
+  zVec3DDataPrint( &aa );
+  zVec3DDataPrint( &vel );
+  zVec3DDataNLPrint( &acc );
 }
 
 #define DIV 1000
@@ -62,7 +62,7 @@ void pattern2(rkBody *body, double t)
   vz = 1; z = vz*t;
   zVec3DClear( rkBodyPos(body) );
   zVec3DCreate( &aa, x, y, z );
-  zMat3DAA( rkBodyAtt(body), &aa );
+  zMat3DFromAA( rkBodyAtt(body), &aa );
   zVec6DCreate( rkBodyVel(body), 0, 0, 0, vx, vy, vz );
   zVec6DCreate( rkBodyAcc(body), 0, 0, 0, 0, 0, 0 );
 }
@@ -79,7 +79,7 @@ void pattern3(rkBody *body, double t)
   vz = 1; z = vz*t;
   zVec3DCreate( rkBodyPos(body), 0.1*x, 0.1*y, 0.1*z );
   zVec3DCreate( &aa, x, y, z );
-  zMat3DAA( rkBodyAtt(body), &aa );
+  zMat3DFromAA( rkBodyAtt(body), &aa );
   zVec6DCreate( rkBodyVel(body), 0.1*vx, 0.1*vy, 0.1*vz, vx, vy, vz );
   zVec6DCreate( rkBodyAcc(body), 0, 0, 0, 0, 0, 0 );
 }
@@ -97,7 +97,7 @@ void pattern4(rkBody *body, double t)
   az = 0.3; vz = az * t; z = 0.5*az*t*t;
   zVec3DClear( rkBodyPos(body) );
   zVec3DCreate( &aa, x, y, z );
-  zMat3DAA( rkBodyAtt(body), &aa );
+  zMat3DFromAA( rkBodyAtt(body), &aa );
   zVec6DCreate( rkBodyVel(body), 0, 0, 0, vx, vy, vz );
   zVec6DCreate( rkBodyAcc(body), 0, 0, 0, ax, ay, az );
 }

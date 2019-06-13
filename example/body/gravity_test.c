@@ -3,17 +3,17 @@
 int main(void)
 {
   printf( "+++ gravity +++\n" );
-  zVec6DWrite( RK_GRAVITY6D );
-  zVec3DWrite( RK_GRAVITY3D );
+  zVec6DPrint( RK_GRAVITY6D );
+  zVec3DPrint( RK_GRAVITY3D );
 
   printf( "+++ clear gravity +++\n" );
   rkGravitySet( 0 );
-  zVec6DWrite( RK_GRAVITY6D );
-  zVec3DWrite( RK_GRAVITY3D );
+  zVec6DPrint( RK_GRAVITY6D );
+  zVec3DPrint( RK_GRAVITY3D );
 
   printf( "+++ reset gravity +++\n" );
   rkGravityReset();
-  zVec6DWrite( RK_GRAVITY6D );
-  zVec3DWrite( RK_GRAVITY3D );
+  zVec6DPrint( RK_GRAVITY6D );
+  zVec3DPrint( RK_GRAVITY3D );
   return 0;
 }

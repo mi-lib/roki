@@ -41,7 +41,7 @@ typedef struct{
   void (*_statecopy)(void*,void*);
 
   bool (*_query)(FILE*,char*,void*);
-  void (*_write)(FILE*,void*);
+  void (*_print)(FILE*,void*);
 } rkMotorCom;
 
 typedef struct{
@@ -78,9 +78,9 @@ __EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
 
 #define rkMotorStateCopy(src,dst)      ( (src)->type == (dst)->type ? (src)->com->_statecopy( (src)->prp, (dst)->prp ) : false )
 
-#define rkMotorQueryFRead(f,k,m)       (m)->com->_query( f, k, (m)->prp )
-__EXPORT void rkMotorFWrite(FILE *fp, rkMotor *m);
-#define rkMotorWrite(m)                rkMotorFWrite( stdout, m )
+#define rkMotorQueryFScan(f,k,m)       (m)->com->_query( f, k, (m)->prp )
+__EXPORT void rkMotorFPrint(FILE *fp, rkMotor *m);
+#define rkMotorPrint(m)                rkMotorFPrint( stdout, m )
 
 /* ********************************************************** */
 /* CLASS: rkMotorArray
@@ -90,8 +90,8 @@ __EXPORT void rkMotorFWrite(FILE *fp, rkMotor *m);
 zArrayClass( rkMotorArray, rkMotor );
 
 __EXPORT rkMotorArray *rkMotorArrayClone(rkMotorArray *org);
-__EXPORT rkMotorArray *rkMotorArrayFRead(FILE *fp, rkMotorArray *m);
-__EXPORT void rkMotorArrayFWrite(FILE *fp, rkMotorArray *m);
+__EXPORT rkMotorArray *rkMotorArrayFScan(FILE *fp, rkMotorArray *m);
+__EXPORT void rkMotorArrayFPrint(FILE *fp, rkMotorArray *m);
 
 __END_DECLS
 

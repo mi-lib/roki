@@ -107,14 +107,14 @@ __EXPORT void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef
   (c)->data._ref_fp( &(c)->data.ref, v1, v2, v3 );\
 } while(0)
 #define rkIKCellSetRefVec(c,v) \
-  rkIKCellSetRef(c,zVec3DElem(v,0),zVec3DElem(v,1),zVec3DElem(v,2))
+  rkIKCellSetRef(c,(v)->e[0],(v)->e[1],(v)->e[2])
 
 #define rkIKCellSetRefForce(c,v1,v2,v3) do{\
   rkIKCellForce( c );\
   (c)->data._ref_fp( &(c)->data.ref, v1, v2, v3 );\
 } while(0)
 #define rkIKCellSetRefVecForce(c,v) \
-  rkIKCellSetRefForce(c,zVec3DElem(v,0),zVec3DElem(v,1),zVec3DElem(v,2))
+  rkIKCellSetRefForce(c,(v)->e[0],(v)->e[1],(v)->e[2])
 
 __EXPORT void rkIKCellAcmClear(rkIKCell *cell);
 

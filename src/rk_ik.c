@@ -432,8 +432,8 @@ static struct _rkIKLookup *_rkIKLookupCell(char *str);
 static bool _rkIKConfFieldIsTerminated(FILE *fp, char *buf);
 static bool _rkIKConfParseJoint(FILE *fp, char *buf, rkIK *ik);
 static bool _rkIKConfParseConstraint(FILE *fp, char *buf, rkChain *chain, rkIKCellAttr *attr, int *mask);
-static bool __rkIKConfFRead(FILE *fp, void *instance, char *buf, bool *success);
-static bool _rkIKConfFRead(FILE *fp, void *instance, char *buf, bool *success);
+static bool __rkIKConfFScan(FILE *fp, void *instance, char *buf, bool *success);
+static bool _rkIKConfFScan(FILE *fp, void *instance, char *buf, bool *success);
 
 struct _rkIKLookup *_rkIKLookupCell(char *str)
 {
@@ -481,7 +481,7 @@ bool _rkIKConfParseJoint(FILE *fp, char *buf, rkIK *ik)
   if( !_rkIKConfFieldIsTerminated( fp, buf ) )
     w = zFDouble( fp );
   if( w == 0 ){
-    rkJointQueryFRead( fp, "dis", rkLinkJoint(l), NULL, 0 );
+    rkJointQueryFScan( fp, "dis", rkLinkJoint(l), NULL, 0 );
     return true;
   } else
     return rkLinkJointType(l) != RK_JOINT_FIXED ?
@@ -497,11 +497,11 @@ bool _rkIKConfParseConstraint(FILE *fp, char *buf, rkChain *chain, rkIKCellAttr 
   while( !_rkIKConfFieldIsTerminated( fp, buf ) ){
     zFToken( fp, buf, BUFSIZ );
     if( strcmp( buf, "at" ) == 0 ){
-      zVec3DFRead( fp, &attr->ap );
+      zVec3DFScan( fp, &attr->ap );
       *mask |= RK_IK_CELL_ATTR_AP;
     } else
     if( strcmp( buf, "w" ) == 0 ){
-      zVec3DFRead( fp, &attr->w );
+      zVec3DFScan( fp, &attr->w );
       *mask |= RK_IK_CELL_ATTR_WEIGHT;
     } else
     if( strcmp( buf, "f" ) == 0 ){
@@ -524,7 +524,7 @@ bool _rkIKConfParseConstraint(FILE *fp, char *buf, rkChain *chain, rkIKCellAttr 
   return true;
 }
 
-bool __rkIKConfFRead(FILE *fp, void *instance, char *buf, bool *success)
+bool __rkIKConfFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
   rkIKCellAttr attr;
   int mask;
@@ -541,23 +541,23 @@ bool __rkIKConfFRead(FILE *fp, void *instance, char *buf, bool *success)
   return false;
 }
 
-bool _rkIKConfFRead(FILE *fp, void *instance, char *buf, bool *success)
+bool _rkIKConfFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
   if( strcmp( buf, "ik" ) == 0 )
-    return zFieldFRead( fp, __rkIKConfFRead, instance );
+    return zFieldFScan( fp, __rkIKConfFScan, instance );
   return true;
 }
 
-/* read information of IK configuration from file. */
-bool rkIKConfFRead(FILE *fp, rkIK *ik, rkChain *chain)
+/* scan information of IK configuration from a file. */
+bool rkIKConfFScan(FILE *fp, rkIK *ik, rkChain *chain)
 {
   if( !rkIKCreate( ik, chain ) ) return false;
   rewind( fp );
-  return zTagFRead( fp, _rkIKConfFRead, ik );
+  return zTagFScan( fp, _rkIKConfFScan, ik );
 }
 
-/* read information of IK configuration from file. */
-bool rkIKConfReadFile(rkIK *ik, rkChain *chain, char *filename)
+/* scan information of IK configuration from a file. */
+bool rkIKConfScanFile(rkIK *ik, rkChain *chain, char *filename)
 {
   FILE *fp;
   bool result;
@@ -566,7 +566,7 @@ bool rkIKConfReadFile(rkIK *ik, rkChain *chain, char *filename)
     ZOPENERROR( filename );
     return false;
   }
-  result = rkIKConfFRead( fp, ik, chain );
+  result = rkIKConfFScan( fp, ik, chain );
   fclose( fp );
   return result;
 }

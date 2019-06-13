@@ -540,19 +540,19 @@ zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl)
 }
 
 static rkChain *_rkChainLinkFAlloc(FILE *fp, rkChain *c);
-static bool __rkChainNameFRead(FILE *fp, void *instance, char *buf, bool *success);
-static rkChain *_rkChainNameFRead(FILE *fp, rkChain *c);
-static rkChain *_rkChainLinkFRead(FILE *fp, rkChain *c, int i);
+static bool __rkChainNameFScan(FILE *fp, void *instance, char *buf, bool *success);
+static rkChain *_rkChainNameFScan(FILE *fp, rkChain *c);
+static rkChain *_rkChainLinkFScan(FILE *fp, rkChain *c, int i);
 
-/* read information of a kinematic chain from file. */
-bool rkChainReadFile(rkChain *c, char filename[])
+/* scan information of a kinematic chain from a file. */
+bool rkChainScanFile(rkChain *c, char filename[])
 {
   FILE *fp;
   rkChain *result;
 
   if( !( fp = zOpenZTKFile( filename, "r" ) ) )
     return false;
-  result = rkChainFRead( fp, c );
+  result = rkChainFScan( fp, c );
   fclose( fp );
   return result != NULL;
 }
@@ -562,27 +562,27 @@ typedef struct{
   int lc;
 } _rkChainParam;
 
-/* read information of a kinematic chain from file. */
-bool _rkChainFRead(FILE *fp, void *instance, char *buf, bool *success)
+/* scan information of a kinematic chain from a file. */
+bool _rkChainFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
   _rkChainParam *prm;
 
   prm = instance;
   if( strcmp( buf, "chain" ) == 0 ){
-    if( !_rkChainNameFRead( fp, prm->c ) )
+    if( !_rkChainNameFScan( fp, prm->c ) )
       return ( *success = false );
   } else if( strcmp( buf, "link" ) == 0 ){
-    if( !_rkChainLinkFRead( fp, prm->c, prm->lc++ ) )
+    if( !_rkChainLinkFScan( fp, prm->c, prm->lc++ ) )
       return ( *success = false );
   } else if( strcmp( buf, "init" ) == 0 ){
-    if( !rkChainInitFRead( fp, prm->c ) )
+    if( !rkChainInitFScan( fp, prm->c ) )
       return ( *success = false );
   }
   return true;
 }
 
-/* read information of a kinematic chain from file. */
-rkChain *rkChainFRead(FILE *fp, rkChain *c)
+/* scan information of a kinematic chain from a file. */
+rkChain *rkChainFScan(FILE *fp, rkChain *c)
 {
   _rkChainParam prm;
 
@@ -592,7 +592,7 @@ rkChain *rkChainFRead(FILE *fp, rkChain *c)
     ZALLOCERROR();
     return NULL;
   }
-  if( !zMShape3DFRead( fp, rkChainShape(c) ) ){
+  if( !zMShape3DFScan( fp, rkChainShape(c) ) ){
     ZRUNERROR( RK_ERR_CHAIN_INVSHAPE );
     return NULL;
   }
@@ -601,14 +601,14 @@ rkChain *rkChainFRead(FILE *fp, rkChain *c)
     ZALLOCERROR();
     return NULL;
   }
-  if( !rkMotorArrayFRead( fp, rkChainMotor(c) ) ){
+  if( !rkMotorArrayFScan( fp, rkChainMotor(c) ) ){
     ZRUNERROR( RK_ERR_CHAIN_INVSHAPE );
     return NULL;
   }
   rewind( fp );
   prm.c = c;
   prm.lc = 0;
-  if( !zTagFRead( fp, _rkChainFRead, &prm ) ){
+  if( !zTagFScan( fp, _rkChainFScan, &prm ) ){
     rkChainDestroy( c );
     return NULL;
   }
@@ -620,51 +620,51 @@ rkChain *rkChainFRead(FILE *fp, rkChain *c)
   return c;
 }
 
-/* read information of the initial state of a kinematic chain from file. */
-bool rkChainInitReadFile(rkChain *c, char filename[])
+/* scan information of the initial state of a kinematic chain from a file. */
+bool rkChainInitScanFile(rkChain *c, char filename[])
 {
   FILE *fp;
   rkChain *result;
 
   if( !( fp = zOpenZTKFile( filename, "r" ) ) )
     return false;
-  result = rkChainInitFRead( fp, c );
+  result = rkChainInitFScan( fp, c );
   fclose( fp );
   return result != NULL;
 }
 
-/* read information of the initial state of a kinematic chain from file. */
-bool _rkChainInitFRead(FILE *fp, void *instance, char *buf, bool *success)
+/* scan information of the initial state of a kinematic chain from a file. */
+bool _rkChainInitFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
   rkChain *c;
   rkLink *l;
 
   c = instance;
   if( strcmp( buf, "pos" ) == 0 )
-    zVec3DFRead( fp, rkChainOrgPos(c) );
+    zVec3DFScan( fp, rkChainOrgPos(c) );
   else if( strcmp( buf, "att" ) == 0 )
-    zMat3DFRead( fp, rkChainOrgAtt(c) );
+    zMat3DFScan( fp, rkChainOrgAtt(c) );
   else if( strcmp( buf, "frame" ) == 0 )
-    zFrame3DFRead( fp, rkChainOrgFrame(c) );
+    zFrame3DFScan( fp, rkChainOrgFrame(c) );
   else{
     zNameFind( rkChainRoot(c), rkChainNum(c), buf, l );
     if( !l ) return false;
-    rkJointQueryFRead( fp, "dis", rkLinkJoint(l), zArrayBuf(rkChainMotor(c)), zArraySize(rkChainMotor(c)) );
+    rkJointQueryFScan( fp, "dis", rkLinkJoint(l), zArrayBuf(rkChainMotor(c)), zArraySize(rkChainMotor(c)) );
   }
   return true;
 }
 
-/* read information of the initial state of a kinematic chain from file. */
-rkChain *rkChainInitFRead(FILE *fp, rkChain *c)
+/* scan information of the initial state of a kinematic chain from a file. */
+rkChain *rkChainInitFScan(FILE *fp, rkChain *c)
 {
-  zFieldFRead( fp, _rkChainInitFRead, c );
+  zFieldFScan( fp, _rkChainInitFScan, c );
   rkChainUpdateFK( c );
   rkChainUpdateID( c );
   return c;
 }
 
-/* read name of a kinematic chain from file. */
-bool __rkChainNameFRead(FILE *fp, void *instance, char *buf, bool *success)
+/* scan name of a kinematic chain from a file. */
+bool __rkChainNameFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
   if( strcmp( buf, "name" ) == 0 ){
     if( strlen( zFToken( fp, buf, BUFSIZ ) ) >= BUFSIZ ){
@@ -677,10 +677,10 @@ bool __rkChainNameFRead(FILE *fp, void *instance, char *buf, bool *success)
   return true;
 }
 
-/* read name of a kinematic chain from file. */
-rkChain *_rkChainNameFRead(FILE *fp, rkChain *c)
+/* scan name of a kinematic chain from a file. */
+rkChain *_rkChainNameFScan(FILE *fp, rkChain *c)
 {
-  zFieldFRead( fp, __rkChainNameFRead, c );
+  zFieldFScan( fp, __rkChainNameFScan, c );
   return c;
 }
 
@@ -701,14 +701,14 @@ rkChain *_rkChainLinkFAlloc(FILE *fp, rkChain *c)
   return c;
 }
 
-/* read informationof a link of a kinematic chain from file. */
-rkChain *_rkChainLinkFRead(FILE *fp, rkChain *c, int i)
+/* scan informationof a link of a kinematic chain from a file. */
+rkChain *_rkChainLinkFScan(FILE *fp, rkChain *c, int i)
 {
   if( i >= rkChainNum(c) ){
     ZRUNERROR( RK_ERR_LINK_MANY );
     return NULL;
   }
-  if( !rkLinkFRead( fp, rkChainLink(c,i), rkChainRoot(c), rkChainNum(c),
+  if( !rkLinkFScan( fp, rkChainLink(c,i), rkChainRoot(c), rkChainNum(c),
         zMShape3DShapeBuf( rkChainShape(c) ),
         zMShape3DShapeNum( rkChainShape(c) ),
         zArrayBuf( rkChainMotor(c) ),
@@ -724,8 +724,8 @@ rkChain *_rkChainLinkFRead(FILE *fp, rkChain *c, int i)
   return c;
 }
 
-/* read information of multiple shapes of a kinematic chain from file. */
-bool rkChainMShape3DReadFile(rkChain *chain, char filename[])
+/* scan information of multiple shapes of a kinematic chain from a file. */
+bool rkChainMShape3DScanFile(rkChain *chain, char filename[])
 {
   register int i;
   zMShape3D *ms;
@@ -738,7 +738,7 @@ bool rkChainMShape3DReadFile(rkChain *chain, char filename[])
     ZALLOCERROR();
     return false;
   }
-  if( !zMShape3DReadFile( ms, filename ) ){
+  if( !zMShape3DScanFile( ms, filename ) ){
     ZRUNERROR( RK_ERR_CHAIN_INVSHAPE );
     return false;
   }
@@ -756,20 +756,20 @@ bool rkChainMShape3DReadFile(rkChain *chain, char filename[])
   return true;
 }
 
-/* output information of a kinematic chain to file. */
-bool rkChainWriteFile(rkChain *c, char filename[])
+/* print information of a kinematic chain out to a file. */
+bool rkChainPrintFile(rkChain *c, char filename[])
 {
   char name[BUFSIZ];
   FILE *fp;
 
   if( !( fp = zOpenZTKFile( name, "w" ) ) ) return false;
-  rkChainFWrite( fp, c );
+  rkChainFPrint( fp, c );
   fclose(fp);
   return true;
 }
 
-/* output information of a kinematic chain to file. */
-void rkChainFWrite(FILE *fp, rkChain *c)
+/* print information of a kinematic chain out to a file. */
+void rkChainFPrint(FILE *fp, rkChain *c)
 {
   register int i;
 
@@ -777,22 +777,22 @@ void rkChainFWrite(FILE *fp, rkChain *c)
   if( zNamePtr(c) )
     fprintf( fp, "name : %s\n\n", zName(c) );
   if( rkChainShape(c) )
-    zMShape3DFWrite( fp, rkChainShape(c) );
+    zMShape3DFPrint( fp, rkChainShape(c) );
   if( rkChainMotor(c) )
-    rkMotorArrayFWrite( fp, rkChainMotor(c) );
+    rkMotorArrayFPrint( fp, rkChainMotor(c) );
 
   for( i=0; i<rkChainNum(c); i++ ){
     fprintf( fp, "[link]\n" );
-    rkLinkFWrite( fp, rkChainLink(c,i) );
+    rkLinkFPrint( fp, rkChainLink(c,i) );
   }
   if( rkChainRoot(c) ){
     fprintf( fp, "[init]\n" );
-    rkChainInitFWrite( fp, c );
+    rkChainInitFPrint( fp, c );
   }
 }
 
-/* output information of initial configuration of a kinematic chain to file. */
-bool rkChainInitWriteFile(rkChain *c, char filename[])
+/* print information of initial configuration of a kinematic chain out to a file. */
+bool rkChainInitPrintFile(rkChain *c, char filename[])
 {
   char name[BUFSIZ];
   FILE *fp;
@@ -801,48 +801,48 @@ bool rkChainInitWriteFile(rkChain *c, char filename[])
     ZOPENERROR( name );
     return false;
   }
-  rkChainInitFWrite( fp, c );
+  rkChainInitFPrint( fp, c );
   fclose( fp );
   return true;
 }
 
-/* output information of initial configuration of a kinematic chain to file. */
-void rkChainInitFWrite(FILE *fp, rkChain *c)
+/* print information of initial configuration of a kinematic chain out to a file. */
+void rkChainInitFPrint(FILE *fp, rkChain *c)
 {
   register int i;
 
   fprintf( fp, "frame : " );
-  zFrame3DFWrite( fp, rkChainOrgFrame(c) );
+  zFrame3DFPrint( fp, rkChainOrgFrame(c) );
   for( i=0; i<rkChainNum(c); i++ )
     if( !rkJointIsNeutral( rkChainLinkJoint(c,i) ) )
-      rkJointFWrite( fp, rkChainLinkJoint(c,i), rkChainLinkName(c,i) );
+      rkJointFPrint( fp, rkChainLinkJoint(c,i), rkChainLinkName(c,i) );
 }
 
-/* output current posture of a kinematic chain to file. */
-void rkChainPostureFWrite(FILE *fp, rkChain *c)
+/* print current posture of a kinematic chain out to a file. */
+void rkChainPostureFPrint(FILE *fp, rkChain *c)
 {
   register int i;
 
   fprintf( fp, "Chain : %s\n", zName(c) );
   for( i=0; i<rkChainNum(c); i++ )
-    rkLinkPostureFWrite( fp, rkChainLink(c,i) );
+    rkLinkPostureFPrint( fp, rkChainLink(c,i) );
 }
 
-/* output connection of a kinematic chain to file. */
-void rkChainConnectionFWrite(FILE *fp, rkChain *c)
+/* print connection of a kinematic chain out to a file. */
+void rkChainConnectionFPrint(FILE *fp, rkChain *c)
 {
   fprintf( fp, "Chain : %s\n", zName(c) );
-  rkLinkConnectionFWrite( fp, rkChainRoot(c), 0 );
+  rkLinkConnectionFPrint( fp, rkChainRoot(c), 0 );
 }
 
-/* output external wrench exerted to a kinematic chain to file. */
-void rkChainExtWrenchFWrite(FILE *fp, rkChain *c)
+/* print external wrench exerted to a kinematic chain out to a file. */
+void rkChainExtWrenchFPrint(FILE *fp, rkChain *c)
 {
   register int i;
 
   for( i=0; i<rkChainNum(c); i++ )
     if( zListNum(rkChainLinkExtWrench(c,i)) != 0 ){
       fprintf( fp, "[%s]\n", rkChainLinkName(c,i) );
-      rkLinkExtWrenchFWrite( fp, rkChainLink(c,i) );
+      rkLinkExtWrenchFPrint( fp, rkChainLink(c,i) );
     }
 }

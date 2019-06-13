@@ -81,10 +81,10 @@ bool cad2zkc_list_create(cad2zkc_list_t *list, FILE *fin)
       continue;
     }
     cell->data.parent = cad2zkc_pickup( list, buf );
-    zVec3DFRead( fin, zFrame3DPos(&cell->data.f) );
-    zMat3DFRead( fin, zFrame3DAtt(&cell->data.f) );
+    zVec3DFScan( fin, zFrame3DPos(&cell->data.f) );
+    zMat3DFScan( fin, zFrame3DAtt(&cell->data.f) );
     rkMPSetMass( &cell->data.mp, zFDouble(fin) );
-    zVec3DFRead( fin, rkMPCOM(&cell->data.mp) );
+    zVec3DFScan( fin, rkMPCOM(&cell->data.mp) );
     for( i=0; i<6; i++ )
       ixx[i] = zFDouble( fin );
     zMat3DCreate( rkMPInertia(&cell->data.mp),
@@ -119,9 +119,9 @@ void cad2zkc_conv_one(cad2zkc_t *data)
   printf( "[link]\nname: %s\n", zName(data) );
   if( !data->parent ){
     printf( "jointtype: fix\n" );
-    rkMPWrite( &data->mp );
+    rkMPPrint( &data->mp );
     printf( "frame: " );
-    zFrame3DWrite( &data->f );
+    zFrame3DPrint( &data->f );
     zEndl();
     return;
   }
@@ -131,9 +131,9 @@ void cad2zkc_conv_one(cad2zkc_t *data)
   zMulMat3DTMat3D( zFrame3DAtt(&data->f), rkMPInertia(&data->mp), &ri );
   zMulMat3DMat3D( &ri, zFrame3DAtt(&data->f), rkMPInertia(&mp) );
   printf( "jointtype: revolute\n" );
-  rkMPWrite( &mp );
+  rkMPPrint( &mp );
   printf( "frame: " );
-  zFrame3DWrite( &f );
+  zFrame3DPrint( &f );
   printf( "parent: %s\n\n", zName(data->parent) );
 }
 

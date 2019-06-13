@@ -229,10 +229,10 @@ __EXPORT int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter);
 
 #define RK_IK_JOINT_WEIGHT_DEFAULT 0.001
 
-/*! \brief read IK configuration file. */
-__EXPORT bool rkIKConfFRead(FILE *fp, rkIK *ik, rkChain *chain);
-/*! \brief read IK configuration from the current position of a file. */
-__EXPORT bool rkIKConfReadFile(rkIK *ik, rkChain *chain, char *filename);
+/*! \brief scan IK configuration file. */
+__EXPORT bool rkIKConfFScan(FILE *fp, rkIK *ik, rkChain *chain);
+/*! \brief scan IK configuration from the current position of a file. */
+__EXPORT bool rkIKConfScanFile(rkIK *ik, rkChain *chain, char *filename);
 
 __END_DECLS
 

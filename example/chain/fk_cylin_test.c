@@ -76,35 +76,35 @@ int main(void)
   rkChainID( &chain1, vel, acc );
   rkChainID( &chain2, vel, acc );
   /* output */
-  rkChainConnectionWrite( &chain1 );
+  rkChainConnectionPrint( &chain1 );
   printf( " frame ... " );
-  zFrame3DWrite( rkChainLinkWldFrame(&chain1,1) );
+  zFrame3DPrint( rkChainLinkWldFrame(&chain1,1) );
   printf( " velocity ...\n" );
-  zVec6DWrite( rkChainLinkVel(&chain1,1) );
+  zVec6DPrint( rkChainLinkVel(&chain1,1) );
   printf( " acceleration ...\n" );
-  zVec6DWrite( rkChainLinkAcc(&chain1,1) );
+  zVec6DPrint( rkChainLinkAcc(&chain1,1) );
 
   printf( "\n" );
-  rkChainConnectionWrite( &chain2 );
+  rkChainConnectionPrint( &chain2 );
   printf( " frame ... " );
-  zFrame3DWrite( rkChainLinkWldFrame(&chain2,2) );
+  zFrame3DPrint( rkChainLinkWldFrame(&chain2,2) );
   printf( " velocity ...\n" );
-  zVec6DWrite( rkChainLinkVel(&chain2,2) );
+  zVec6DPrint( rkChainLinkVel(&chain2,2) );
   printf( " acceleration ...\n" );
-  zVec6DWrite( rkChainLinkAcc(&chain2,2) );
+  zVec6DPrint( rkChainLinkAcc(&chain2,2) );
 
   printf( "\n>> evaluation <<\n" );
   printf( " frame error ...\n" );
   zFrame3DError( rkChainLinkWldFrame(&chain1,1), rkChainLinkWldFrame(&chain2,2), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
   printf( " velocity error ...\n" );
   zVec6DSub( rkChainLinkVel(&chain1,1), rkChainLinkVel(&chain2,2), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
   printf( " acceleration error ...\n" );
   zVec6DSub( rkChainLinkAcc(&chain1,1), rkChainLinkAcc(&chain2,2), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
 
   /* terminate */

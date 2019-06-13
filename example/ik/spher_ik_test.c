@@ -74,23 +74,23 @@ int main(int argc, char *argv[])
 #endif
 
   eprintf( "++ initial attitude\n" );
-  zMat3DFWrite( stderr, rkChainLinkWldAtt(ik.chain,1) );
-  zMat3DFWrite( stderr, rkChainLinkWldAtt(ik.chain,2) );
+  zMat3DFPrint( stderr, rkChainLinkWldAtt(ik.chain,1) );
+  zMat3DFPrint( stderr, rkChainLinkWldAtt(ik.chain,2) );
 
   rkIKSolve( &ik, dis, zTOL, 0 );
-  zVecFWrite( stderr, dis );
+  zVecFPrint( stderr, dis );
   rkChainFK( ik.chain, dis );
   eprintf( "++ goal attitude\n" );
-  zMat3DFWrite( stderr, &ca0->data.ref.att );
-  zMat3DFWrite( stderr, &ca1->data.ref.att );
+  zMat3DFPrint( stderr, &ca0->data.ref.att );
+  zMat3DFPrint( stderr, &ca1->data.ref.att );
   eprintf( "++ final attitude\n" );
-  zMat3DFWrite( stderr, rkChainLinkWldAtt(ik.chain,1) );
-  zMat3DFWrite( stderr, rkChainLinkWldAtt(ik.chain,2) );
+  zMat3DFPrint( stderr, rkChainLinkWldAtt(ik.chain,1) );
+  zMat3DFPrint( stderr, rkChainLinkWldAtt(ik.chain,2) );
   eprintf( "++ error\n" );
   zMat3DError( &ca0->data.ref.att, rkChainLinkWldAtt(ik.chain,1), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
   zMat3DError( &ca1->data.ref.att, rkChainLinkWldAtt(ik.chain,2), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

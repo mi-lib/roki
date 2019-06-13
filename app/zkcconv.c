@@ -53,15 +53,15 @@ int main(int argc, char *argv[])
 {
   if( argc < 2 ) zkcconv_usage();
 
-  if( !rkChainReadFile( &chain, argv[1] ) ) exit( 1 );
+  if( !rkChainScanFile( &chain, argv[1] ) ) exit( 1 );
 
   zkcconv_mass( rkChainRoot( &chain ) );
   zkcconv_frame( rkChainRoot( &chain ) );
 
   if( argc > 3 )
-    rkChainWriteFile( &chain, argv[2] );
+    rkChainPrintFile( &chain, argv[2] );
   else
-    rkChainWrite( &chain );
+    rkChainPrint( &chain );
   rkChainDestroy( &chain );
   return 0;
 }

@@ -34,11 +34,11 @@ void rk_fkUsage(void)
 bool rk_fkLoadSequence(void)
 {
   if( option[RK_FK_SEQFILE].flag ){
-    if( !zSeqReadFile( &seq, option[RK_FK_SEQFILE].arg ) )
+    if( !zSeqScanFile( &seq, option[RK_FK_SEQFILE].arg ) )
       return false;
   } else{
     option[RK_FK_SEQFILE].arg = "fk.out";
-    if( !zSeqRead( &seq ) )
+    if( !zSeqScan( &seq ) )
       return false;
   }
   zGetBasename( option[RK_FK_SEQFILE].arg, seqfilebase, BUFSIZ );
@@ -85,7 +85,7 @@ FILE *rk_fkCommandArgs(int argc, char *argv[])
     option[RK_FK_SEQFILE].arg  = seqfile;
   }
 
-  if( !rkChainReadFile( &chain, option[RK_FK_CHAINFILE].arg ) ){
+  if( !rkChainScanFile( &chain, option[RK_FK_CHAINFILE].arg ) ){
     ZOPENERROR( option[RK_FK_CHAINFILE].arg );
     return NULL;
   }
@@ -97,7 +97,7 @@ FILE *rk_fkCommandArgs(int argc, char *argv[])
   if( !rk_fkLoadSequence() ||
       !( fp = rk_fkOpenLogfile( option[RK_FK_LINKNAME].arg ) ) ) return NULL;
   if( option[RK_FK_INITFILE].flag &&
-      !rkChainInitReadFile( &chain, option[RK_FK_INITFILE].arg ) ){
+      !rkChainInitScanFile( &chain, option[RK_FK_INITFILE].arg ) ){
     ZOPENERROR( option[RK_FK_INITFILE].arg );
     return NULL;
   }

@@ -22,7 +22,7 @@ extern zVec6D rk_gravity6D;
 #define RK_GRAVITY6D ( &rk_gravity6D )
 #define RK_GRAVITY3D zVec6DLin( RK_GRAVITY6D )
 
-#define rkGravitySet(g)  zVec6DSetElem( RK_GRAVITY6D, zZ, g )
+#define rkGravitySet(g)  ( RK_GRAVITY6D->e[zZ] = (g) )
 #define rkGravityReset() rkGravitySet( RK_G )
 
 __END_DECLS

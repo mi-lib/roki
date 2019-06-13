@@ -5,11 +5,11 @@ int main(int argc, char *argv[])
   rkChain chain, chain2;
   rkCD cd;
 
-  if( !rkChainReadFile( &chain, argv[1] ) ){
+  if( !rkChainScanFile( &chain, argv[1] ) ){
     ZOPENERROR( argv[1] );
     return EXIT_FAILURE;
   }
-  if( !rkChainReadFile( &chain2, argv[2] ) ){
+  if( !rkChainScanFile( &chain2, argv[2] ) ){
     ZOPENERROR( argv[2] );
     return EXIT_FAILURE;
   }
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
   rkCDChainReg( &cd, &chain2, RK_CD_CELL_MOVE );
   rkCDPairChainUnreg( &cd, &chain);
   rkCDColChkVert( &cd );
-  rkCDPairWrite( &cd );
+  rkCDPairPrint( &cd );
 
   rkChainDestroy( &chain );
   rkChainDestroy( &chain2 );

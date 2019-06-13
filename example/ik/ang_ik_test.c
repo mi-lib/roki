@@ -59,17 +59,17 @@ int main(int argc, char *argv[])
     zDeg2Rad(zRandF(-180,180)), zDeg2Rad(zRandF( 0,180)), zDeg2Rad(zRandF(-180,180)) );
 
   printf( "++ initial attitude\n" );
-  zMat3DWrite( rkChainLinkWldAtt(ik.chain,3) );
+  zMat3DPrint( rkChainLinkWldAtt(ik.chain,3) );
   rkIKSolve( &ik, dis, zTOL, 0 );
-  zVecWrite( dis );
+  zVecPrint( dis );
   rkChainFK( ik.chain, dis );
   printf( "++ goal attitude\n" );
-  zMat3DWrite( &cell->data.ref.att );
+  zMat3DPrint( &cell->data.ref.att );
   printf( "++ final attitude\n" );
-  zMat3DWrite( rkChainLinkWldAtt(ik.chain,3) );
+  zMat3DPrint( rkChainLinkWldAtt(ik.chain,3) );
   printf( "++ error\n" );
   zMat3DError( &cell->data.ref.att, rkChainLinkWldAtt(ik.chain,3), &err );
-  zVec3DWrite( &err );
+  zVec3DPrint( &err );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

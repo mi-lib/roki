@@ -7,11 +7,11 @@ int main(void)
   rkChain chain;
   zIndex index;
 
-  rkChainReadFile( &chain, CHAIN_FILE );
+  rkChainScanFile( &chain, CHAIN_FILE );
   index = rkChainCreateDefaultJointIndex( &chain );
-  rkChainConnectionWrite( &chain );
+  rkChainConnectionPrint( &chain );
   printf( "total joint size = %d\n", rkChainJointSize( &chain ) );
-  zIndexWrite( index );
+  zIndexPrint( index );
   rkChainDestroy( &chain );
   zIndexFree( index );
   return 0;

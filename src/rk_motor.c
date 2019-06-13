@@ -71,11 +71,11 @@ rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln)
   return cln;
 }
 
-void rkMotorFWrite(FILE *fp, rkMotor *m)
+void rkMotorFPrint(FILE *fp, rkMotor *m)
 {
   fprintf( fp, "name: %s\n", zName(m) );
   fprintf( fp, "type: %s\n", rkMotorTypeExpr( rkMotorType(m) ) );
-  (m)->com->_write( fp, (m)->prp );
+  (m)->com->_print( fp, (m)->prp );
 }
 
 /* ********************************************************** */
@@ -119,7 +119,7 @@ typedef struct{
   rkMotorArray *marray;
 } _rkMotorArrayMotorParam;
 
-bool __rkMotorArrayMotorFRead(FILE *fp, void *instance, char *buf, bool *success)
+bool __rkMotorArrayMotorFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
   _rkMotorArrayMotorParam *prm;
   rkMotor *cm;
@@ -143,12 +143,12 @@ bool __rkMotorArrayMotorFRead(FILE *fp, void *instance, char *buf, bool *success
     zFToken( fp, buf, BUFSIZ );
     if( !rkMotorCreate( prm->m, rkMotorTypeFromStr(buf) ) )
       return ( *success = false );
-  } else if( !rkMotorQueryFRead( fp, buf, prm->m ) )
+  } else if( !rkMotorQueryFScan( fp, buf, prm->m ) )
     return false;
   return true;
 }
 
-rkMotorArray *_rkMotorArrayMotorFRead(FILE *fp, rkMotorArray *marray, int i)
+rkMotorArray *_rkMotorArrayMotorFScan(FILE *fp, rkMotorArray *marray, int i)
 {
   _rkMotorArrayMotorParam prm;
 
@@ -158,7 +158,7 @@ rkMotorArray *_rkMotorArrayMotorFRead(FILE *fp, rkMotorArray *marray, int i)
   }
   prm.m = zArrayElemNC(marray,i);
   prm.marray = marray;
-  if( !zFieldFRead( fp, __rkMotorArrayMotorFRead, &prm ) ) return NULL;
+  if( !zFieldFScan( fp, __rkMotorArrayMotorFScan, &prm ) ) return NULL;
   if( !zNamePtr( prm.m ) ){
     ZRUNERROR( RK_ERR_MOTOR_UNNAMED );
     return NULL;
@@ -171,19 +171,19 @@ typedef struct{
   int nm;
 } _rkMotorArrayParam;
 
-bool _rkMotorArrayFRead(FILE *fp, void *instance, char *buf, bool *success)
+bool _rkMotorArrayFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
   _rkMotorArrayParam *prm;
 
   prm = instance;
   if( strcmp( buf, RK_MOTOR_TAG ) == 0 ){
-    if( !_rkMotorArrayMotorFRead( fp, prm->m, prm->nm++ ) )
+    if( !_rkMotorArrayMotorFScan( fp, prm->m, prm->nm++ ) )
       return ( *success = false );
   }
   return true;
 }
 
-rkMotorArray *rkMotorArrayFRead(FILE *fp, rkMotorArray *m)
+rkMotorArray *rkMotorArrayFScan(FILE *fp, rkMotorArray *m)
 {
   _rkMotorArrayParam prm;
 
@@ -191,19 +191,19 @@ rkMotorArray *rkMotorArrayFRead(FILE *fp, rkMotorArray *m)
   prm.nm = 0;
   zArrayInit( m );
   if( !_rkMotorArrayFAlloc(fp,m) ) return NULL;
-  if( !zTagFRead( fp, _rkMotorArrayFRead, &prm ) ){
+  if( !zTagFScan( fp, _rkMotorArrayFScan, &prm ) ){
     zArrayFree( m );
     return NULL;
   }
   return m;
 }
 
-void rkMotorArrayFWrite(FILE *fp, rkMotorArray *m)
+void rkMotorArrayFPrint(FILE *fp, rkMotorArray *m)
 {
   register int i;
 
   for( i=0; i<zArraySize(m); i++ ){
     fprintf( fp, "[%s]\n", RK_MOTOR_TAG );
-    rkMotorFWrite( fp, zArrayElemNC(m,i) );
+    rkMotorFPrint( fp, zArrayElemNC(m,i) );
   }
 }

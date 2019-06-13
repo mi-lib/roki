@@ -35,8 +35,8 @@ static zVec3D *_rkJointAxisXSpher(void *prp, zFrame3D *f, zVec3D *a);
 static zVec3D *_rkJointAxisYSpher(void *prp, zFrame3D *f, zVec3D *a);
 static zVec3D *_rkJointAxisZSpher(void *prp, zFrame3D *f, zVec3D *a);
 
-static bool _rkJointQueryFReadSpher(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
-static void _rkJointFWriteSpher(FILE *fp, void *prp, char *name);
+static bool _rkJointQueryFScanSpher(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
+static void _rkJointFPrintSpher(FILE *fp, void *prp, char *name);
 
 #define _rkc(p) ((rkJointPrpSpher *)p)
 
@@ -195,13 +195,13 @@ zVec3D *_rkJointAxisZSpher(void *prp, zFrame3D *f, zVec3D *a){
 }
 
 /* query joint properties */
-bool _rkJointQueryFReadSpher(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
+bool _rkJointQueryFScanSpher(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
 {
   rkMotor *mp;
   zVec3D aa;
 
   if( strcmp( buf, "dis" ) == 0 ){
-    zVec3DFRead( fp, &aa );
+    zVec3DFScan( fp, &aa );
     _rkJointSetDisSpher( prp, aa.e );
   } else
   if( strcmp( buf, "motor" ) == 0 ){
@@ -217,12 +217,12 @@ bool _rkJointQueryFReadSpher(FILE *fp, char *buf, void *prp, rkMotor *marray, in
     }
     rkMotorClone( mp, &_rkc(prp)->m );
   } else
-  if( !rkMotorQueryFRead( fp, buf, &_rkc(prp)->m ) )
+  if( !rkMotorQueryFScan( fp, buf, &_rkc(prp)->m ) )
     return false;
   return true;
 }
 
-void _rkJointFWriteSpher(FILE *fp, void *prp, char *name)
+void _rkJointFPrintSpher(FILE *fp, void *prp, char *name)
 {
   if( !zVec3DIsTiny( &_rkc(prp)->aa ) )
     fprintf( fp, "%s: %.10f %.10f %.10f\n", name,
@@ -268,8 +268,8 @@ static rkJointCom rk_joint_spher = {
   _rkJointRefSpher,
   _rk_joint_axis_spher_ang,
   _rk_joint_axis_spher_lin,
-  _rkJointQueryFReadSpher,
-  _rkJointFWriteSpher,
+  _rkJointQueryFScanSpher,
+  _rkJointFPrintSpher,
 };
 
 /* motor */

@@ -39,8 +39,8 @@ static zVec3D *_rkJointAxisXBrFloat(void *prp, zFrame3D *f, zVec3D *a);
 static zVec3D *_rkJointAxisYBrFloat(void *prp, zFrame3D *f, zVec3D *a);
 static zVec3D *_rkJointAxisZBrFloat(void *prp, zFrame3D *f, zVec3D *a);
 
-static bool _rkJointQueryFReadBrFloat(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
-static void _rkJointFWriteBrFloat(FILE *fp, void *prp, char *name);
+static bool _rkJointQueryFScanBrFloat(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
+static void _rkJointFPrintBrFloat(FILE *fp, void *prp, char *name);
 
 #define _rkc(p) ((rkJointPrpBrFloat *)p)
 
@@ -211,12 +211,12 @@ zVec3D *_rkJointAxisZBrFloat(void *prp, zFrame3D *f, zVec3D *a){
 }
 
 /* query joint properties */
-bool _rkJointQueryFReadBrFloat(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
+bool _rkJointQueryFScanBrFloat(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
 {
   zVec6D dis;
 
   if( strcmp( buf, "dis" ) == 0 ){
-    zVec6DFRead( fp, &dis );
+    zVec6DFScan( fp, &dis );
     _rkJointSetDisBrFloat( prp, dis.e );
   } else
   if( strcmp( buf, "forcethreshold" ) == 0 )
@@ -229,7 +229,7 @@ bool _rkJointQueryFReadBrFloat(FILE *fp, char *buf, void *prp, rkMotor *marray, 
   return false;
 }
 
-void _rkJointFWriteBrFloat(FILE *fp, void *prp, char *name)
+void _rkJointFPrintBrFloat(FILE *fp, void *prp, char *name)
 {
   if( !zVec6DIsTiny( &_rkc(prp)->dis ) )
     fprintf( fp, "%s: %.10f %.10f %.10f %.10f %.10f %.10f\n", name,
@@ -284,8 +284,8 @@ static rkJointCom rk_joint_brfloat = {
   _rkJointRefBrFloat,
   _rk_joint_axis_float_ang,
   _rk_joint_axis_float_lin,
-  _rkJointQueryFReadBrFloat,
-  _rkJointFWriteBrFloat,
+  _rkJointQueryFScanBrFloat,
+  _rkJointFPrintBrFloat,
 };
 
 /* motor */

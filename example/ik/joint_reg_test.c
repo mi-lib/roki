@@ -32,7 +32,7 @@ int main(void)
   rkIK ik;
 
   chain_init( &r );
-  rkChainConnectionWrite( &r );
+  rkChainConnectionPrint( &r );
   rkIKCreate( &ik, &r );
 
   rkIKJointReg( &ik, 0, 100 );
@@ -40,9 +40,9 @@ int main(void)
   rkIKJointReg( &ik, 3,   5 );
   rkIKJointReg( &ik, 5,  20 );
 
-  zIndexWrite( ik._j_idx );
-  zIndexWrite( ik._j_ofs );
-  zVecWrite( ik._j_wn );
+  zIndexPrint( ik._j_idx );
+  zIndexPrint( ik._j_ofs );
+  zVecPrint( ik._j_wn );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &r );

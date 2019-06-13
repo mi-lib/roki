@@ -105,7 +105,7 @@ typedef struct{
   zVec3D* (**_linaxis)(void*,zFrame3D*,zVec3D*); /* linear */
 
   bool (*_query)(FILE*,char*,void*,rkMotor*,int);  /* query */
-  void (*_write)(FILE*,void*,char*);  /* write */
+  void (*_print)(FILE*,void*,char*);  /* print */
 } rkJointCom;
 
 typedef struct{
@@ -319,9 +319,9 @@ __EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
 #define rkJointAngAxis(j,i,f,a) (j)->com->_angaxis[i]( (j)->prp, f, a )
 #define rkJointLinAxis(j,i,f,a) (j)->com->_linaxis[i]( (j)->prp, f, a )
 
-/*! \brief read/write joint displacement and properties.
+/*! \brief scan and print out joint displacement and properties.
  *
- * rkJointQueryFRead() reads joint properties of \a j identified
+ * rkJointQueryFScan() scans joint properties of \a j identified
  * by a string \a key from the current position of a file \a fp.
  *
  * The candidates of \a key are listed as follows:
@@ -346,20 +346,21 @@ __EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
  * denoted in [m] and [deg] when values are displacements, or
  * in [N/m] and [N.m/deg] when values are stiffnesses.
  *
- * rkJointFWrite() writes the joint properties in accordance with
- * the above rule. The field "dis" is output only when any
- * components of the joint displacement are non-zero values.
+ * rkJointFPrint() prints the joint properties out to a file
+ * \a fp in accordance with the above rule. The field "dis" is
+ * output only when any components of the joint displacement
+ * are non-zero values.
  * \a name is used instead of the key "dis", unless it is the
  * null pointer.
  * \return
- * rkJointQueryFRead() returns the true value when \a key is
+ * rkJointQueryFScan() returns the true value when \a key is
  * valid, or the false value otherwise.
  *
- * rkJointFWrite() and rkJointWrite() return no value.
+ * rkJointFPrint() and rkJointPrint() return no value.
  */
-#define rkJointQueryFRead(f,b,j,ma,mn) (j)->com->_query( f, b, (j)->prp, (ma), (mn) )
-#define rkJointFWrite(f,j,n)     ( (n) ? (j)->com->_write( f, (j)->prp, n ) : (j)->com->_write( f, (j)->prp, "dis" ) )
-#define rkJointWrite(j,n)        rkJointFWrite( stdout, j, n )
+#define rkJointQueryFScan(f,b,j,ma,mn) (j)->com->_query( f, b, (j)->prp, (ma), (mn) )
+#define rkJointFPrint(f,j,n)     ( (n) ? (j)->com->_print( f, (j)->prp, n ) : (j)->com->_print( f, (j)->prp, "dis" ) )
+#define rkJointPrint(j,n)        rkJointFPrint( stdout, j, n )
 
 /* NOTE: The following macros and functions are for sharing
  * some operation codes. Do not use them in users programs. */

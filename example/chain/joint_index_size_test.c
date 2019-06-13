@@ -34,21 +34,21 @@ int main(void)
   zIndex idx, idx2;
 
   chain_init( &chain );
-  rkChainConnectionWrite( &chain );
+  rkChainConnectionPrint( &chain );
   dis = zVecCreateList( SIZE, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2 );
   idx = rkChainCreateDefaultJointIndex( &chain );
   idx2 = zIndexCreateList( 3, 2, 4, 5 );
   dis2 = zVecAlloc( rkChainJointIndexSize(&chain,idx2) );
   printf( "++ input joint ++\n" );
-  zIndexWrite( idx );
-  zVecWrite( dis );
+  zIndexPrint( idx );
+  zVecPrint( dis );
   rkChainSetJointDis( &chain, idx, dis );
   rkChainGetJointDis( &chain, idx2, dis2 );
   printf( "++ output joint ++\n" );
-  zIndexWrite( idx );
-  zVecWrite( dis );
-  zIndexWrite( idx2 );
-  zVecWrite( dis2 );
+  zIndexPrint( idx );
+  zVecPrint( dis );
+  zIndexPrint( idx2 );
+  zVecPrint( dis2 );
 
   zIndexFree( idx );
   zVecFree( dis );

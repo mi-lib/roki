@@ -12,11 +12,11 @@ void output_shape(zShape3D *s)
   register int i;
 
   for( i=0; i<zShape3DFaceNum(s); i++ ){
-    zVec3DDataWrite( zShape3DFaceVert(s,i,0) );
-    zVec3DDataWrite( zShape3DFaceVert(s,i,1) );
+    zVec3DDataPrint( zShape3DFaceVert(s,i,0) );
+    zVec3DDataPrint( zShape3DFaceVert(s,i,1) );
     printf( "\n" );
-    zVec3DDataWrite( zShape3DFaceVert(s,i,2) );
-    zVec3DDataWrite( zShape3DFaceVert(s,i,2) );
+    zVec3DDataPrint( zShape3DFaceVert(s,i,2) );
+    zVec3DDataPrint( zShape3DFaceVert(s,i,2) );
     printf( "\n\n" );
   }
 }
@@ -26,7 +26,7 @@ void conv_mshape(char *filename)
   register int i;
   zMShape3D ms;
 
-  if( !zMShape3DReadFile( &ms, filename ) )
+  if( !zMShape3DScanFile( &ms, filename ) )
     exit( EXIT_FAILURE );
   for( i=0; i<zMShape3DShapeNum(&ms); i++ )
     output_shape( zMShape3DShape(&ms,i) );
@@ -41,7 +41,7 @@ void conv_chain(char *filename)
   zShapeListCell *sp;
   zShape3D s;
 
-  if( !rkChainReadFile( &chain, filename ) )
+  if( !rkChainScanFile( &chain, filename ) )
     exit( EXIT_FAILURE );
   for( i=0; i<rkChainNum(&chain); i++ ){
     l = rkChainLink(&chain,i);

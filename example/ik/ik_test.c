@@ -58,19 +58,19 @@ int main(int argc, char *argv[])
   zMat3DRotYaw( ZMAT3DIDENT, zDeg2Rad(45), &cell[1]->data.ref.att );
 
   printf( "++ initial frame\n" );
-  zFrame3DWrite( rkChainLinkWldFrame(ik.chain,3) );
+  zFrame3DPrint( rkChainLinkWldFrame(ik.chain,3) );
   printf( "++ goal frame\n" );
-  zVec3DWrite( &cell[0]->data.ref.pos );
-  zMat3DWrite( &cell[1]->data.ref.att );
+  zVec3DPrint( &cell[0]->data.ref.pos );
+  zMat3DPrint( &cell[1]->data.ref.att );
   rkIKSolve( &ik, dis, zTOL, 0 );
-  zVecWrite( dis );
+  zVecPrint( dis );
   rkChainFK( ik.chain, dis );
   printf( "++ final frame\n" );
-  zFrame3DWrite( rkChainLinkWldFrame(ik.chain,3) );
+  zFrame3DPrint( rkChainLinkWldFrame(ik.chain,3) );
   printf( "++ error\n" );
   zVec3DSub( &cell[0]->data.ref.pos, zFrame3DPos(rkChainLinkWldFrame(ik.chain,3)), zVec6DLin(&err) );
   zMat3DError( &cell[1]->data.ref.att, rkChainLinkWldAtt(ik.chain,3), zVec6DAng(&err) );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

@@ -5,9 +5,9 @@ int main(int argc, char *argv[])
   rkIK ik;
   rkChain chain;
 
-  if( !rkChainReadFile( &chain, "../model/arm.zkc" ) )
+  if( !rkChainScanFile( &chain, "../model/arm.ztk" ) )
     return 1;
-  rkIKConfReadFile( &ik, &chain, "test.zik" );
+  rkIKConfScanFile( &ik, &chain, "test.zik" );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

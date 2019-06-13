@@ -16,8 +16,8 @@ static void _rkMotorDrivingTrqTRQ(void *prp, double *dis, double *vel, double *a
 
 static void _rkMotorStateCopyTRQ(void *src, void *dst);
 
-static bool _rkMotorQueryFReadTRQ(FILE *fp, char *key, void *prp);
-static void _rkMotorFWriteTRQ(FILE *fp, void *prp);
+static bool _rkMotorQueryFScanTRQ(FILE *fp, char *key, void *prp);
+static void _rkMotorFPrintTRQ(FILE *fp, void *prp);
 
 #define _rkc(p) ((rkMotorPrpTRQ *)p)
 
@@ -44,7 +44,7 @@ void _rkMotorStateCopyTRQ(void *src, void *dst){
   memcpy(dst, src, sizeof(rkMotorPrpTRQ));
 }
 
-bool _rkMotorQueryFReadTRQ(FILE *fp, char *key, void *prp)
+bool _rkMotorQueryFScanTRQ(FILE *fp, char *key, void *prp)
 {
   if( strcmp( key, "max" ) == 0 )
     _rkc(prp)->max = zFDouble( fp );
@@ -55,7 +55,7 @@ bool _rkMotorQueryFReadTRQ(FILE *fp, char *key, void *prp)
   return true;
 }
 
-void _rkMotorFWriteTRQ(FILE *fp, void *prp)
+void _rkMotorFPrintTRQ(FILE *fp, void *prp)
 {
   fprintf( fp, "\n" );
 }
@@ -68,8 +68,8 @@ static rkMotorCom rk_motor_trq = {
   _rkMotorRegistanceTRQ,
   _rkMotorDrivingTrqTRQ,
   _rkMotorStateCopyTRQ,
-  _rkMotorQueryFReadTRQ,
-  _rkMotorFWriteTRQ,
+  _rkMotorQueryFScanTRQ,
+  _rkMotorFPrintTRQ,
 };
 
 void _rkMotorInitPrpTRQ(void *prp)

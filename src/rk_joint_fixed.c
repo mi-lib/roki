@@ -19,8 +19,8 @@ static void _rkJointIncAccFixed(void *prp, zVec6D *acc);
 static void _rkJointCalcTrqFixed(void *prp, zVec6D *f);
 static void _rkJointTorsionFixed(zFrame3D *dev, zVec6D *t, double dis[]);
 static void _rkJointRefFixed(void *prp, rkJointRef *ref);
-static bool _rkJointQueryFReadFixed(FILE *fp, char *key, void *prp, rkMotor *marray, int nm);
-static void _rkJointFWriteFixed(FILE *fp, void *prp, char *name);
+static bool _rkJointQueryFScanFixed(FILE *fp, char *key, void *prp, rkMotor *marray, int nm);
+static void _rkJointFPrintFixed(FILE *fp, void *prp, char *name);
 
 /* limit joint displacement (dummy) */
 void _rkJointLimValFixed(void *prp, double *testval, double *limval){}
@@ -66,11 +66,11 @@ void _rkJointTorsionFixed(zFrame3D *dev, zVec6D *t, double dis[])
 void _rkJointRefFixed(void *prp, rkJointRef *ref){}
 
 /* query joint properties */
-bool _rkJointQueryFReadFixed(FILE *fp, char *key, void *prp, rkMotor *marray, int nm){
+bool _rkJointQueryFScanFixed(FILE *fp, char *key, void *prp, rkMotor *marray, int nm){
   return false;
 }
 
-void _rkJointFWriteFixed(FILE *fp, void *prp, char *name){}
+void _rkJointFPrintFixed(FILE *fp, void *prp, char *name){}
 
 static zVec3D* (*_rk_joint_axis_fixed_ang[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
@@ -107,8 +107,8 @@ static rkJointCom rk_joint_fixed = {
   _rkJointRefFixed,
   _rk_joint_axis_fixed_ang,
   _rk_joint_axis_fixed_lin,
-  _rkJointQueryFReadFixed,
-  _rkJointFWriteFixed,
+  _rkJointQueryFScanFixed,
+  _rkJointFPrintFixed,
 };
 
 /* motor */

@@ -1,9 +1,5 @@
-/*
- * zvs2zkci
+/* zvs2zkci
  * end posture in .zvs -> .zkci file
- *
- * 2005. 5. 2. Created.
- * 2007.11.29. Last updated.
  */
 
 #include <roki/rk_chain.h>
@@ -22,8 +18,8 @@ int main(int argc, char *argv[])
   zSeqListCell *cp;
 
   if( argc < 3 ) usage();
-  rkChainReadFile( &chain, argv[1] );
-  zSeqReadFile( &seq, argv[2] );
+  rkChainScanFile( &chain, argv[1] );
+  zSeqScanFile( &seq, argv[2] );
   if( argc > 3 ){
     if( !strcmp( argv[3], "last" ) )
       cp = zListTail( &seq );
@@ -32,8 +28,8 @@ int main(int argc, char *argv[])
   } else
     cp = zListHead( &seq );
   if( argc > 4 )
-    rkChainInitReadFile( &chain, argv[4] );
+    rkChainInitScanFile( &chain, argv[4] );
   rkChainFK( &chain, cp->data.v );
-  rkChainInitWrite( &chain );
+  rkChainInitPrint( &chain );
   return 0;
 }

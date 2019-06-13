@@ -13,11 +13,11 @@ void output(zEllips3D *e, zVec3D *c, zMat3D *r)
   zEllips3DInertia( e, rkMPInertia(&mp) );
   rkMPInertiaEllips( &mp, &ie );
 
-  printf( "center: " ); zVec3DWrite( c );
+  printf( "center: " ); zVec3DPrint( c );
   zMat3DT( r, &rt );
-  printf( "rotation^T: " ); zMat3DWrite( &rt );
-  rkMPWrite( &mp );
-  zEllips3DWrite( &ie );
+  printf( "rotation^T: " ); zMat3DPrint( &rt );
+  rkMPPrint( &mp );
+  zEllips3DPrint( &ie );
   zVec3DOuterProd( zEllips3DAxis(&ie,0), zEllips3DAxis(&ie,1), &v );
   printf( "(assertion of the right-hand system ... %s)\n",
     zVec3DEqual( &v, zEllips3DAxis(&ie,2) ) ? "ok" : "failure" );
@@ -30,7 +30,7 @@ int main(void)
   zVec3D c;
 
   zRandInit();
-  zMat3DZYX( &r, zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
+  zMat3DFromZYX( &r, zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
   zVec3DCreate( &c, zRandF(-10,10), zRandF(-10,10), zRandF(-10,10) );
   output( &e, &c, &r );
   return 0;

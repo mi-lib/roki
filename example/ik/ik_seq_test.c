@@ -4,8 +4,8 @@ int main(int argc, char *argv[])
 {
   rkIKSeq seq;
 
-  rkIKSeqRead( &seq );
-  rkIKSeqWrite( &seq );
+  rkIKSeqScan( &seq );
+  rkIKSeqPrint( &seq );
   rkIKSeqFree( &seq );
   return 0;
 }

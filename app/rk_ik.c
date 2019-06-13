@@ -61,12 +61,12 @@ FILE *rk_ik_command_args(int argc, char *argv[])
     option[RK_IK_OUTPUTFILE].arg  = outputfile;
   }
 
-  if( !rkChainReadFile( &chain, option[RK_IK_MODELFILE].arg ) ) exit( 1 );
-  if( !rkIKConfReadFile( &ik, &chain, option[RK_IK_CONFFILE].arg ) ) exit( 1 );
+  if( !rkChainScanFile( &chain, option[RK_IK_MODELFILE].arg ) ) exit( 1 );
+  if( !rkIKConfScanFile( &ik, &chain, option[RK_IK_CONFFILE].arg ) ) exit( 1 );
   if( option[RK_IK_ENTRYFILE].flag )
-    rkIKSeqReadFile( &ik_seq, option[RK_IK_ENTRYFILE].arg );
+    rkIKSeqScanFile( &ik_seq, option[RK_IK_ENTRYFILE].arg );
   else
-    rkIKSeqRead( &ik_seq );
+    rkIKSeqScan( &ik_seq );
 
   if( !option[RK_IK_OUTPUTFILE].flag ) return stdout;
   if( !( fout = fopen( option[RK_IK_OUTPUTFILE].arg, "w" ) ) ){
@@ -100,7 +100,7 @@ void rk_ik_solve(rkIKSeq *seq, FILE *fout, rkIK *ik)
     rkIKSolve( ik, v, tol, iter );
     /* output */
     fprintf( fout, "%.10f ", cp->data.dt );
-    zVecFWrite( fout, v ); fflush( fout );
+    zVecFPrint( fout, v ); fflush( fout );
     rkIKSeqListCellFree( cp );
   }
   zVecFree( v );

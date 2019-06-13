@@ -78,14 +78,14 @@ zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie)
   return zEllips3DCreate( ie, rkMPCOM(mp), &evec[0], &evec[1], &evec[2], eval[0], eval[1], eval[2], 0 );
 }
 
-/* output mass property. */
-void rkMPFWrite(FILE *fp, rkMP *mp)
+/* print mass property out to a file. */
+void rkMPFPrint(FILE *fp, rkMP *mp)
 {
   fprintf( fp, "mass: %.10g\n", rkMPMass(mp) );
   fprintf( fp, "COM: " );
-  zVec3DFWrite( fp, rkMPCOM(mp) );
+  zVec3DFPrint( fp, rkMPCOM(mp) );
   fprintf( fp, "inertia: " );
-  zMat3DFWrite( fp, rkMPInertia(mp) );
+  zMat3DFPrint( fp, rkMPInertia(mp) );
 }
 
 /* ********************************************************** */

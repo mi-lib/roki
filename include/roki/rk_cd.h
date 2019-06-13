@@ -127,8 +127,8 @@ __EXPORT rkCD *rkCDPairReg(rkCD *cd, rkLink *link1, rkLink *link2);
 __EXPORT void rkCDPairUnreg(rkCD *cd, rkLink *link1, rkLink *link2);
 __EXPORT void rkCDPairChainUnreg(rkCD *cd, rkChain *chain);
 
-__EXPORT void rkCDPairWrite(rkCD *cd);
-__EXPORT void rkCDPairVertWrite(rkCD *cd);
+__EXPORT void rkCDPairPrint(rkCD *cd);
+__EXPORT void rkCDPairVertPrint(rkCD *cd);
 
 __EXPORT void rkCDColChkAABB(rkCD *cd);    /* AABB */
 __EXPORT void rkCDColChkOBB(rkCD *cd);     /* AABB->OBB */

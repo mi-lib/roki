@@ -15,23 +15,23 @@ void truth(zVec dis, zVec vel, zVec acc, zFrame3D *f, zVec6D *v, zVec6D *a)
     c1*c2,-s1, c1*s2,
     s1*c2, c1, s1*s2,
       -s2,  0,    c2 );
-  zMulMatVec3D( zFrame3DAtt(f), &p, zFrame3DPos(f) );
+  zMulMat3DVec3D( zFrame3DAtt(f), &p, zFrame3DPos(f) );
   /* velocity */
   dq1 = zVecElem(vel,0);
   dq2 = zVecElem(vel,1);
   zVec3DCreate( &w,-dq2*s1, dq2*c1, dq1 );
-  zMulMatTVec3D( zFrame3DAtt(f), &w, zVec6DAng(v) );
+  zMulMat3DTVec3D( zFrame3DAtt(f), &w, zVec6DAng(v) );
   zVec3DOuterProd( zVec6DAng(v), &p, zVec6DLin(v) );
   /* acceleration */
   ddq1 = zVecElem(acc,0);
   ddq2 = zVecElem(acc,1);
   zVec3DCreate( &dw, -ddq2*s1-dq1*dq2*c1, ddq2*c1-dq1*dq2*s1, ddq1 );
-  zMulMatTVec3D( zFrame3DAtt(f), &dw, zVec6DAng(a) );
+  zMulMat3DTVec3D( zFrame3DAtt(f), &dw, zVec6DAng(a) );
 
   zVec3DOuterProd( zVec6DAng(v), zVec6DLin(v), zVec6DLin(a) );
   zVec3DOuterProd( zVec6DAng(a), &p, &tmp );
   zVec3DAddDRC( zVec6DLin(a), &tmp );
-  zMulMatTVec3D( zFrame3DAtt(f), RK_GRAVITY3D, &tmp );
+  zMulMat3DTVec3D( zFrame3DAtt(f), RK_GRAVITY3D, &tmp );
   zVec3DAddDRC( zVec6DLin(a), &tmp );
 }
 
@@ -124,55 +124,55 @@ int main(void)
   /* output */
   printf( ">> frame test\n" );
   printf( " True answer ..." );
-  zFrame3DWrite( &f );
+  zFrame3DPrint( &f );
   printf( " Hooke joint ..." );
-  zFrame3DWrite( rkLinkWldFrame(le1) );
+  zFrame3DPrint( rkLinkWldFrame(le1) );
   printf( " (error) ...\n" );
   zFrame3DError( &f, rkLinkWldFrame(le1), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
   printf( " Successive revolute joints ... " );
-  zFrame3DWrite( rkLinkWldFrame(le2) );
+  zFrame3DPrint( rkLinkWldFrame(le2) );
   printf( " (error) ...\n" );
   zFrame3DError( &f, rkLinkWldFrame(le2), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
   printf( "Hit enter key." );
   getchar();
 
   printf( ">> velocity test\n" );
   printf( " True answer ...\n" );
-  zVec6DWrite( &v );
+  zVec6DPrint( &v );
   printf( " Hooke joint ...\n" );
-  zVec6DWrite( rkLinkVel(le1) );
+  zVec6DPrint( rkLinkVel(le1) );
   printf( " (error) ...\n" );
   zVec6DSub( &v, rkLinkVel(le1), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
   printf( " Successive revolute joints ... " );
-  zVec6DWrite( rkLinkVel(le2) );
+  zVec6DPrint( rkLinkVel(le2) );
   printf( " (error) ...\n" );
   zVec6DSub( &v, rkLinkVel(le2), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
   printf( "Hit enter key." );
   getchar();
 
   printf( ">> acceleration test\n" );
   printf( " True answer ...\n" );
-  zVec6DWrite( &a );
+  zVec6DPrint( &a );
   printf( " Hooke joint ...\n" );
-  zVec6DWrite( rkLinkAcc(le1) );
+  zVec6DPrint( rkLinkAcc(le1) );
   printf( " (error) ...\n" );
   zVec6DSub( &a, rkLinkAcc(le1), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
   printf( " Successive revolute joints ... " );
-  zVec6DWrite( rkLinkAcc(le2) );
+  zVec6DPrint( rkLinkAcc(le2) );
   printf( " (error) ...\n" );
   zVec6DSub( &a, rkLinkAcc(le2), &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
 
   /* terminate */
   zVecFree( dis );

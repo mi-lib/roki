@@ -25,7 +25,7 @@ void assert_pool(void)
   rkContactInfoPool cip;
 
   eprintf( "(duplicate error expected.)\n" );
-  zAssert( rkContactInfoPoolReadFile, rkContactInfoPoolReadFile( &cip, "test" ) );
+  zAssert( rkContactInfoPoolScanFile, rkContactInfoPoolScanFile( &cip, "contact" ) );
   zAssert( rkContactInfoPoolAssoc,
     rkContactInfoPoolAssoc( &cip, "stf1", "stf2" ) &&
     rkContactInfoPoolAssoc( &cip, "stf3", "stf4" ) &&

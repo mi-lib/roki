@@ -2,7 +2,7 @@
 
 void init_shape(zMShape3D *ms)
 {
-  zMShape3DReadFile( ms, "../model/cube.z3d" );
+  zMShape3DScanFile( ms, "../model/cube.ztk" );
 }
 
 void init_mp(rkBody *body, zMShape3D *ms)
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
   zRandInit();
   init_shape( &ms );
   init_mp( &body, &ms );
-  zFrame3DZYX( rkBodyFrame(&body),
+  zFrame3DFromZYX( rkBodyFrame(&body),
     zRandF(-1,1), zRandF(-1,1), zRandF(-1,1),
     zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
   /* for assertion */
@@ -52,10 +52,10 @@ int main(int argc, char *argv[])
     cv2 = zShape3DContigVert( &sc, &p, &d2 );
     dp = (zVec3D*)( (long)zShape3DVertBuf(zMShape3DShape(&ms,0)) + (long)cv2 - (long)zShape3DVertBuf(&sc) );
     if( cv1 != dp ) ZRUNERROR( "might be false" );
-    zVec3DDataFWrite( fp1, &p );
-    zVec3DDataFWrite( fp1, cv2 );
+    zVec3DDataFPrint( fp1, &p );
+    zVec3DDataFPrint( fp1, cv2 );
     fprintf( fp1, "\n\n" );
-    zVec3DDataFWrite( fp2, cv2 );
+    zVec3DDataFPrint( fp2, cv2 );
   }
   fclose( fp1 );
   fclose( fp2 );

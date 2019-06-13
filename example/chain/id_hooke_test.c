@@ -73,23 +73,23 @@ int main(void)
   /* output */
   printf( ">> frame test\n" );
   printf( " Hooke joint ..." );
-  zFrame3DWrite( rkLinkWldFrame(le1) );
+  zFrame3DPrint( rkLinkWldFrame(le1) );
   printf( " Successive revolute joints ... " );
-  zFrame3DWrite( rkLinkWldFrame(le2) );
+  zFrame3DPrint( rkLinkWldFrame(le2) );
   printf( " (error) ...\n" );
   zFrame3DError( rkLinkWldFrame(le1), rkLinkWldFrame(le2), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( "\n" );
 
   /* torque */
-  zMulMatTVec6D( rkChainLinkWldAtt(&c1,0), &w, &wj );
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&c1,0), &w, &wj );
   rkJointCalcTrq( rkChainLinkJoint(&c1,0), &wj );
   rkJointGetTrq( rkChainLinkJoint(&c1,0), u );
   printf( "trq(r1) = %.16g %.16g\n", u[0], u[1] );
-  zMulMatTVec6D( rkChainLinkWldAtt(&c2,0), &w, &wj );
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&c2,0), &w, &wj );
   rkJointCalcTrq( rkChainLinkJoint(&c2,0), &wj );
   rkJointGetTrq( rkChainLinkJoint(&c2,0), &u[0] );
-  zMulMatTVec6D( rkChainLinkWldAtt(&c2,1), &w, &wj );
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&c2,1), &w, &wj );
   rkJointCalcTrq( rkChainLinkJoint(&c2,1), &wj );
   rkJointGetTrq( rkChainLinkJoint(&c2,1), &u[1] );
   printf( "trq(r2) = %.16g %.16g\n", u[0], u[1] );

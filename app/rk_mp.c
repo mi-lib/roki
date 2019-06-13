@@ -32,7 +32,7 @@ bool rk_mpInitFK(rkChain *chain)
     ZOPENERROR( option[RK_MP_VFILE].arg );
     return false;
   }
-  if( !( v = zVecFRead( fp ) ) ){
+  if( !( v = zVecFScan( fp ) ) ){
     ZALLOCERROR();
     return false;
   }
@@ -63,7 +63,7 @@ bool rk_mpCommandArgs(int argc, char *argv[])
     option[RK_MP_VFILE].flag = true;
     option[RK_MP_VFILE].arg  = vfile;
   }
-  if( !rkChainReadFile( &chain, option[RK_MP_MFILE].arg ) )
+  if( !rkChainScanFile( &chain, option[RK_MP_MFILE].arg ) )
     return 1;
   if( option[RK_MP_VFILE].flag )
     if( !rk_mpInitFK( &chain ) ) return 1;
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
     return 1;
 
   rk_mpCalc( &chain, index, &mp );
-  rkMPWrite( &mp );
+  rkMPPrint( &mp );
 
   zIndexFree( index );
   rkChainDestroy( &chain );

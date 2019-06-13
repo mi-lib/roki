@@ -16,8 +16,8 @@ static void _rkMotorDrivingTrqNone(void *prp, double *dis, double *vel, double *
 
 static void _rkMotorStateCopyNone(void *src, void *dst);
 
-static bool _rkMotorQueryFReadNone(FILE *fp, char *key, void *prp);
-static void _rkMotorFWriteNone(FILE *fp, void *prp);
+static bool _rkMotorQueryFScanNone(FILE *fp, char *key, void *prp);
+static void _rkMotorFPrintNone(FILE *fp, void *prp);
 
 
 void _rkMotorSetInputNone(void *prp, double *val){}
@@ -29,11 +29,11 @@ void _rkMotorDrivingTrqNone(void *prp, double *dis, double *vel, double *acc, do
 
 void _rkMotorStateCopyNone(void *src, void *dst){}
 
-bool _rkMotorQueryFReadNone(FILE *fp, char *key, void *prp){
+bool _rkMotorQueryFScanNone(FILE *fp, char *key, void *prp){
   return false;
 }
 
-void _rkMotorFWriteNone(FILE *fp, void *prp){}
+void _rkMotorFPrintNone(FILE *fp, void *prp){}
 
 static rkMotorCom rk_motor_none = {
   0,
@@ -43,8 +43,8 @@ static rkMotorCom rk_motor_none = {
   _rkMotorRegistanceNone,
   _rkMotorDrivingTrqNone,
   _rkMotorStateCopyNone,
-  _rkMotorQueryFReadNone,
-  _rkMotorFWriteNone,
+  _rkMotorQueryFScanNone,
+  _rkMotorFPrintNone,
 };
 
 rkMotor *rkMotorCreateNone(rkMotor *m){

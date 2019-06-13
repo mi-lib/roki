@@ -36,8 +36,8 @@ static void _rkJointGetKFricPrism(void *prp, double *val);
 static void _rkJointSetRefPrism(void *prp, rkJointRef *ref);
 static void _rkJointGetRefPrism(void *prp, rkJointRef *ref);
 
-static bool _rkJointQueryFReadPrism(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
-static void _rkJointFWritePrism(FILE *fp, void *prp, char *name);
+static bool _rkJointQueryFScanPrism(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
+static void _rkJointFPrintPrism(FILE *fp, void *prp, char *name);
 
 #define _rkc(p) ((rkJointPrpPrism *)p)
 
@@ -171,7 +171,7 @@ void _rkJointGetRefPrism(void *prp, rkJointRef *ref){
 }
 
 /* query joint properties */
-bool _rkJointQueryFReadPrism(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
+bool _rkJointQueryFScanPrism(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
 {
   double val;
   rkMotor *mp;
@@ -211,12 +211,12 @@ bool _rkJointQueryFReadPrism(FILE *fp, char *buf, void *prp, rkMotor *marray, in
     }
     rkMotorClone( mp, &_rkc(prp)->m );
   } else
-  if( !rkMotorQueryFRead( fp, buf, &_rkc(prp)->m ) )
+  if( !rkMotorQueryFScan( fp, buf, &_rkc(prp)->m ) )
     return false;
   return true;
 }
 
-void _rkJointFWritePrism(FILE *fp, void *prp, char *name)
+void _rkJointFPrintPrism(FILE *fp, void *prp, char *name)
 {
   rkJointPrpPrism *v;
 
@@ -265,8 +265,8 @@ static rkJointCom rk_joint_prism = {
   _rkJointGetRefPrism,
   _rk_joint_axis_prism_ang,
   _rk_joint_axis_prism_lin,
-  _rkJointQueryFReadPrism,
-  _rkJointFWritePrism,
+  _rkJointQueryFScanPrism,
+  _rkJointFPrintPrism,
 };
 
 /* motor */

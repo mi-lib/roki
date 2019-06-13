@@ -9,30 +9,30 @@ void truth(zVec3D *aa1, zVec3D *w1, zVec3D *a1, zVec3D *aa2, zVec3D *w2, zVec3D 
   zVec3D wp, ww, tmp1, tmp2;
 
   /* frame */
-  zMat3DAA( &m1, aa1 );
-  zMat3DAA( &m2, aa2 );
-  zMulMatMat3D( &m1, &m2, zFrame3DAtt(f) );
-  zMulMatVec3D( &m1, &p, zFrame3DPos(f) );
+  zMat3DFromAA( &m1, aa1 );
+  zMat3DFromAA( &m2, aa2 );
+  zMulMat3DMat3D( &m1, &m2, zFrame3DAtt(f) );
+  zMulMat3DVec3D( &m1, &p, zFrame3DPos(f) );
   /* lin. veloc. */
   zVec3DOuterProd( w1, zFrame3DPos(f), &wp );
-  zMulMatTVec3D( zFrame3DAtt(f), &wp, zVec6DLin(v) );
+  zMulMat3DTVec3D( zFrame3DAtt(f), &wp, zVec6DLin(v) );
   /* ang. veloc. */
-  zMulMatVec3D( &m1, w2, &ww );
+  zMulMat3DVec3D( &m1, w2, &ww );
   zVec3DAdd( w1, &ww, &tmp1 );
-  zMulMatTVec3D( zFrame3DAtt(f), &tmp1, zVec6DAng(v) );
+  zMulMat3DTVec3D( zFrame3DAtt(f), &tmp1, zVec6DAng(v) );
   /* lin. accel. */
   zVec3DOuterProd( a1, zFrame3DPos(f), &tmp1 );
   zVec3DOuterProd( w1, &wp, &tmp2 );
   zVec3DAddDRC( &tmp1, &tmp2 );
-  zMulMatTVec3D( zFrame3DAtt(f), &tmp1, zVec6DLin(a) );
-  zMulMatTVec3D( zFrame3DAtt(f), RK_GRAVITY3D, &tmp1 );
+  zMulMat3DTVec3D( zFrame3DAtt(f), &tmp1, zVec6DLin(a) );
+  zMulMat3DTVec3D( zFrame3DAtt(f), RK_GRAVITY3D, &tmp1 );
   zVec3DAddDRC( zVec6DLin(a), &tmp1 );
   /* ang. accel. */
   zVec3DOuterProd( w1, &ww, &tmp1 );
   zVec3DAddDRC( &tmp1, a1 );
-  zMulMatVec3D( &m1, a2, &tmp2 );
+  zMulMat3DVec3D( &m1, a2, &tmp2 );
   zVec3DAddDRC( &tmp1, &tmp2 );
-  zMulMatTVec3D( zFrame3DAtt(f), &tmp1, zVec6DAng(a) );
+  zMulMat3DTVec3D( zFrame3DAtt(f), &tmp1, zVec6DAng(a) );
 }
 
 void create_sphere(rkChain *chain)
@@ -93,32 +93,32 @@ int main(void)
   /* output */
   printf( ">> frame test\n" );
   printf( " spherical joint ..." );
-  zFrame3DWrite( rkLinkWldFrame(le) );
+  zFrame3DPrint( rkLinkWldFrame(le) );
   printf( " answer ..." );
-  zFrame3DWrite( &f );
+  zFrame3DPrint( &f );
   printf( " (error) ...\n" );
   zFrame3DError( &f, rkLinkWldFrame(le), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
 
   printf( ">> velocity test\n" );
   printf( " spherical joint ...\n" );
-  zVec6DWrite( rkLinkVel(le) );
+  zVec6DPrint( rkLinkVel(le) );
   printf( " answer ...\n" );
-  zVec6DWrite( &v );
+  zVec6DPrint( &v );
   printf( " (error) ...\n" );
   zVec6DSub( &v, rkLinkVel(le), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
 
   printf( ">> acceleration test\n" );
   printf( " spherical joint ...\n" );
-  zVec6DWrite( rkLinkAcc(le) );
+  zVec6DPrint( rkLinkAcc(le) );
   printf( " answer ...\n" );
-  zVec6DWrite( &a );
+  zVec6DPrint( &a );
   printf( " (error) ...\n" );
   zVec6DSub( &a, rkLinkAcc(le), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
 
   /* terminate */

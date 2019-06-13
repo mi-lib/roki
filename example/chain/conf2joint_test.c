@@ -6,7 +6,7 @@ int main(void)
   zVec orgdis, orgconf, dis, conf;
 
   zRandInit();
-  rkChainReadFile( &chain, "../model/arm.zkc" );
+  rkChainScanFile( &chain, "../model/arm.zkc" );
   orgdis = zVecAlloc( rkChainJointSize( &chain ) );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
   orgconf = zVecAlloc( rkChainNum( &chain ) * 6 );

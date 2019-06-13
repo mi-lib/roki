@@ -11,9 +11,7 @@
 static void _rkCDPairDestroy(rkCDPair *pair);
 
 /* (static)
- * _rkCDCellInit
- * - initialize a collision detection cell.
- */
+ * initialize a collision detection cell. */
 void _rkCDCellInit(rkCDCell *cell)
 {
   cell->data.shape = NULL;
@@ -26,9 +24,7 @@ void _rkCDCellInit(rkCDCell *cell)
 }
 
 /* (static)
- * _rkCDCellCreate
- * - create a collision detection cell.
- */
+ * create a collision detection cell. */
 rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, zShape3D *shape, rkCDCellType type)
 {
   _rkCDCellInit( cell );
@@ -60,18 +56,14 @@ rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, zShape3D
 }
 
 /* (static)
- * _rkCDCellDestroy
- * - destroy a collision detection cell.
- */
+ * destroy a collision detection cell. */
 void _rkCDCellDestroy(rkCDCell *cell)
 {
   zPH3DDestroy( &cell->data.ph );
   _rkCDCellInit( cell );
 }
 
-/* rkCDCellReg
- * - register a collision detection cell.
- */
+/* register a collision detection cell. */
 rkCDCell *rkCDCellReg(rkCDCellList *clist, rkChain *chain, rkLink *link, zShape3D *shape, rkCDCellType type)
 {
   rkCDCell *cell;
@@ -85,9 +77,7 @@ rkCDCell *rkCDCellReg(rkCDCellList *clist, rkChain *chain, rkLink *link, zShape3
   return cell;
 }
 
-/* rkCDCellUpdateBB
- * - update the bounding box of a collision detection cell.
- */
+/* update the bounding box of a collision detection cell. */
 void rkCDCellUpdateBB(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ||
@@ -97,9 +87,7 @@ void rkCDCellUpdateBB(rkCDCell *cell)
   cell->data._bb_update_flag = true;
 }
 
-/* rkCDCellUpdatePH
- * - update the polyhedron of a collision detection cell.
- */
+/* update the polyhedron of a collision detection cell. */
 void rkCDCellUpdatePH(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ||
@@ -108,9 +96,7 @@ void rkCDCellUpdatePH(rkCDCell *cell)
   cell->data._ph_update_flag = true;
 }
 
-/* rkCDCellUpdate
- * - update a cellcollision detection cell.
- */
+/* update a collision detection cell. */
 void rkCDCellUpdate(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ) return;
@@ -125,9 +111,7 @@ void rkCDCellUpdate(rkCDCell *cell)
   }
 }
 
-/* rkCDCreate
- * - create a collision detector.
- */
+/* create a collision detector. */
 rkCD *rkCDCreate(rkCD *cd)
 {
   zListInit( &cd->clist );
@@ -137,9 +121,7 @@ rkCD *rkCDCreate(rkCD *cd)
   return cd;
 }
 
-/* rkCDDestroy
- * - destroy a collision detector.
- */
+/* destroy a collision detector. */
 void rkCDDestroy(rkCD *cd)
 {
   rkCDCell *cp;
@@ -158,9 +140,7 @@ void rkCDDestroy(rkCD *cd)
 }
 
 /* (static)
- * _rkCDPairDestroy
- * - destroy a pair of collision detection cells.
- */
+ * destroy a pair of collision detection cells. */
 void _rkCDPairDestroy(rkCDPair *pair)
 {
   zListDestroy( rkCDVert, &pair->data.vlist );
@@ -169,9 +149,7 @@ void _rkCDPairDestroy(rkCDPair *pair)
 }
 
 /* (static)
- * _rkCDPairReg
- * - register a pair of collision detection cells.
- */
+ * register a pair of collision detection cells. */
 rkCDPair *_rkCDPairReg(rkCD *cd, rkCDCell *c1, rkCDCell *c2)
 {
   rkCDPair *pair;
@@ -191,9 +169,7 @@ rkCDPair *_rkCDPairReg(rkCD *cd, rkCDCell *c1, rkCDCell *c2)
 }
 
 /* (static)
- * _rkCDPairCellReg
- * - register all pairs of collision detection cells.
- */
+ * register all pairs of collision detection cells. */
 rkCD *_rkCDPairCellReg(rkCD *cd, rkCDCell *cell)
 {
   rkCDCell *cp;
@@ -215,9 +191,7 @@ rkCD *_rkCDPairCellReg(rkCD *cd, rkCDCell *cell)
   return cd;
 }
 
-/* rkCDReset
- * - reset a collision detector.
- */
+/* reset a collision detector. */
 void rkCDReset(rkCD *cd)
 {
   rkCDPair *pair;
@@ -239,9 +213,7 @@ void rkCDSetDefaultFricType(rkCD *cd, rkContactFricType type)
   cd->def_type = type;
 }
 
-/* rkCDPairReg
- * - register a pair of links in collision detector.
- */
+/* register a pair of links in a collision detector. */
 rkCD *rkCDPairReg(rkCD *cd, rkLink *link1, rkLink *link2)
 {
   rkCDCell *cp0, *cp1;
@@ -262,9 +234,7 @@ rkCD *rkCDPairReg(rkCD *cd, rkLink *link1, rkLink *link2)
   return cd;
 }
 
-/* rkCDPairUnreg
- * - unregister a pair of links from a collision detector.
- */
+/* unregister a pair of links from a collision detector. */
 void rkCDPairUnreg(rkCD *cd, rkLink *link1, rkLink *link2)
 {
   rkCDPair *cp, *temp;
@@ -301,7 +271,7 @@ void rkCDPairChainUnreg(rkCD *cd, rkChain *chain)
   }
 }
 
-void rkCDPairWrite(rkCD *cd)
+void rkCDPairPrint(rkCD *cd)
 {
   rkCDPair *cp;
   register int i = 0;
@@ -310,16 +280,16 @@ void rkCDPairWrite(rkCD *cd)
   zListForEach( &cd->plist, cp ){
     printf( "%d : %s : %s %s %s : %s %s %s\n", i,
       zBoolExpr(cp->data.is_col),
-            zName(cp->data.cell[0]->data.chain),  zName(cp->data.cell[0]->data.link), zName(cp->data.cell[0]->data.shape),
-            zName(cp->data.cell[1]->data.chain),  zName(cp->data.cell[1]->data.link), zName(cp->data.cell[1]->data.shape) );
+        zName(cp->data.cell[0]->data.chain),  zName(cp->data.cell[0]->data.link), zName(cp->data.cell[0]->data.shape),
+        zName(cp->data.cell[1]->data.chain),  zName(cp->data.cell[1]->data.link), zName(cp->data.cell[1]->data.shape) );
     i++;
   }
 }
 
-#define __vec_label_write(label,v) \
+#define __vec_label_print(label,v) \
   printf( "%s %g %g %g", label, (v)->e[zX], (v)->e[zY], (v)->e[zZ] )
 
-void rkCDPairVertWrite(rkCD *cd)
+void rkCDPairVertPrint(rkCD *cd)
 {
   rkCDPair *cp;
   rkCDVert *v;
@@ -334,19 +304,17 @@ void rkCDPairVertWrite(rkCD *cd)
     zListForEach( &cp->data.vlist, v ){
       printf( "%s %s",
         zName(v->data.cell->data.chain), zName(v->data.cell->data.link) );
-      __vec_label_write( " vert", v->data.vert );
-      __vec_label_write( " norm", &v->data.norm );
-      __vec_label_write( " pro",  &v->data.pro );
-      __vec_label_write( " ref",  &v->data.ref );
+      __vec_label_print( " vert", v->data.vert );
+      __vec_label_print( " norm", &v->data.norm );
+      __vec_label_print( " pro",  &v->data.pro );
+      __vec_label_print( " ref",  &v->data.ref );
       printf( "\n" );
     }
     i++;
   }
 }
 
-/* rkCDChainReg
- * - register a chain to a collision detector.
- */
+/* register a chain to a collision detector. */
 rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
 {
   zShapeListCell *sc;
@@ -737,7 +705,6 @@ int _rkCDPairColVolBREP(rkCDPair *cp)
  CONTINUE:
   zBREPDestroy( &brep[0] );
   zBREPDestroy( &brep[1] );
-
   return ret;
 }
 

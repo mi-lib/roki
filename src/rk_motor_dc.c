@@ -16,8 +16,8 @@ static void _rkMotorDrivingTrqDC(void *prp, double *dis, double *vel, double *ac
 
 static void _rkMotorStateCopyDC(void *src, void *dst);
 
-static bool _rkMotorQueryFReadDC(FILE *fp, char *key, void *prp);
-static void _rkMotorFWriteDC(FILE *fp, void *prp);
+static bool _rkMotorQueryFScanDC(FILE *fp, char *key, void *prp);
+static void _rkMotorFPrintDC(FILE *fp, void *prp);
 
 #define _rkc(p) ((rkMotorPrpDC *)p)
 
@@ -49,7 +49,7 @@ void _rkMotorStateCopyDC(void *src, void *dst){
   memcpy(dst, src, sizeof(rkMotorPrpDC));
 }
 
-bool _rkMotorQueryFReadDC(FILE *fp, char *key, void *prp)
+bool _rkMotorQueryFScanDC(FILE *fp, char *key, void *prp)
 {
   if( strcmp( key, "motorconstant" ) == 0 )
     _rkc(prp)->k = zFDouble( fp );
@@ -74,7 +74,7 @@ bool _rkMotorQueryFReadDC(FILE *fp, char *key, void *prp)
   return true;
 }
 
-void _rkMotorFWriteDC(FILE *fp, void *prp)
+void _rkMotorFPrintDC(FILE *fp, void *prp)
 {
   fprintf( fp, "motorconstant: %.10g\n", _rkc(prp)->k            );
   fprintf( fp, "admitance: %.10g\n"    , _rkc(prp)->admit        );
@@ -96,8 +96,8 @@ static rkMotorCom rk_motor_dc = {
   _rkMotorRegistanceDC,
   _rkMotorDrivingTrqDC,
   _rkMotorStateCopyDC,
-  _rkMotorQueryFReadDC,
-  _rkMotorFWriteDC,
+  _rkMotorQueryFScanDC,
+  _rkMotorFPrintDC,
 };
 
 #define RK_MOTOR_DC_DEFAULT_K     2.58e-2

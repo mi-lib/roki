@@ -237,10 +237,10 @@ typedef struct{
   int nm;
 } _rkLinkParam;
 
-static bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success);
+static bool _rkLinkFScan(FILE *fp, void *instance, char *buf, bool *success);
 
-/* read link properties from file. */
-bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success)
+/* scan link properties from a file. */
+bool _rkLinkFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
   _rkLinkParam *prm;
   rkLink *pl, *cl;
@@ -273,17 +273,17 @@ bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success)
     }
     rkLinkSetStuff( prm->l, buf );
   } else if( strcmp( buf, "COM" ) == 0 )
-    zVec3DFRead( fp, rkLinkCOM(prm->l) );
+    zVec3DFScan( fp, rkLinkCOM(prm->l) );
   else if( strcmp( buf, "inertia" ) == 0 )
-    zMat3DFRead( fp, rkLinkInertia(prm->l) );
+    zMat3DFScan( fp, rkLinkInertia(prm->l) );
   else if( strcmp( buf, "pos" ) == 0 )
-    zVec3DFRead( fp, rkLinkOrgPos(prm->l) );
+    zVec3DFScan( fp, rkLinkOrgPos(prm->l) );
   else if( strcmp( buf, "att" ) == 0 )
-    zMat3DFRead( fp, rkLinkOrgAtt(prm->l) );
+    zMat3DFScan( fp, rkLinkOrgAtt(prm->l) );
   else if( strcmp( buf, "frame" ) == 0 )
-    zFrame3DFRead( fp, rkLinkOrgFrame(prm->l) );
+    zFrame3DFScan( fp, rkLinkOrgFrame(prm->l) );
   else if( strcmp( buf, "DH" ) == 0 )
-    zFrame3DDHFRead( fp, rkLinkOrgFrame(prm->l) );
+    zFrame3DDHFScan( fp, rkLinkOrgFrame(prm->l) );
   else if( strcmp( buf, "parent" ) == 0 ){
     zFToken( fp, buf, BUFSIZ );
     zNameFind( prm->larray, prm->nl, buf, pl );
@@ -300,12 +300,12 @@ bool _rkLinkFRead(FILE *fp, void *instance, char *buf, bool *success)
       return ( *success = false );
     }
     rkLinkShapePush( prm->l, sp );
-  } else if( !rkJointQueryFRead( fp, buf, rkLinkJoint(prm->l), prm->marray, prm->nm ) )
+  } else if( !rkJointQueryFScan( fp, buf, rkLinkJoint(prm->l), prm->marray, prm->nm ) )
     return false;
   return true;
 }
 
-rkLink *rkLinkFRead(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarray, int ns, rkMotor *marray, int nm)
+rkLink *rkLinkFScan(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarray, int ns, rkMotor *marray, int nm)
 {
   _rkLinkParam prm;
 
@@ -317,14 +317,14 @@ rkLink *rkLinkFRead(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarra
   prm.marray = marray;
   prm.nm = nm;
   rkJointCreate( rkLinkJoint(l), RK_JOINT_FIXED );
-  if( !zFieldFRead( fp, _rkLinkFRead, &prm ) ) return NULL;
+  if( !zFieldFScan( fp, _rkLinkFScan, &prm ) ) return NULL;
   if( zNamePtr(l) ) return l;
   ZRUNERROR( RK_ERR_LINK_UNNAMED );
   return NULL;
 }
 
-/* output link properties to file. */
-void rkLinkFWrite(FILE *fp, rkLink *l)
+/* print link properties out to a file. */
+void rkLinkFPrint(FILE *fp, rkLink *l)
 {
   zShapeListCell *cp;
 
@@ -334,11 +334,11 @@ void rkLinkFWrite(FILE *fp, rkLink *l)
   }
   fprintf( fp, "name: %s\n", zName(l) );
   fprintf( fp, "jointtype: %s\n", rkJointTypeExpr( rkLinkJointType(l) ) );
-  rkJointFWrite( fp, rkLinkJoint(l), NULL );
-  rkMPFWrite( fp, rkLinkMP(l) );
+  rkJointFPrint( fp, rkLinkJoint(l), NULL );
+  rkMPFPrint( fp, rkLinkMP(l) );
   if( rkLinkStuff(l) ) fprintf( fp, "stuff: %s\n", rkLinkStuff(l) );
   fprintf( fp, "frame: " );
-  zFrame3DFWrite( fp, rkLinkOrgFrame(l) );
+  zFrame3DFPrint( fp, rkLinkOrgFrame(l) );
   if( !rkLinkShapeIsEmpty(l) )
     zListForEach( rkLinkShapeList(l), cp )
       fprintf( fp, "shape: %s\n", zName( zShapeListCellShape(cp) ) );
@@ -347,34 +347,34 @@ void rkLinkFWrite(FILE *fp, rkLink *l)
   fprintf( fp, "\n" );
 }
 
-/* output link posture to file. */
-void rkLinkPostureFWrite(FILE *fp, rkLink *l)
+/* print link posture out to a file. */
+void rkLinkPostureFPrint(FILE *fp, rkLink *l)
 {
   fprintf( fp, "Link(name:%s offset:%d)\n", zName(l), rkLinkOffset(l) );
   fprintf( fp, " adjacent frame:\n" );
-  zFrame3DFWrite( fp, rkLinkAdjFrame( l ) );
+  zFrame3DFPrint( fp, rkLinkAdjFrame( l ) );
   fprintf( fp, " world frame:\n" );
-  zFrame3DFWrite( fp, rkLinkWldFrame( l ) );
+  zFrame3DFPrint( fp, rkLinkWldFrame( l ) );
 }
 
-/* output link connectivity to file. */
+/* print link connectivity out to a file. */
 #define RK_LINK_CONNECTION_INDENT 2
-void rkLinkConnectionFWrite(FILE *fp, rkLink *l, int n)
+void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n)
 {
   zIndentF( fp, n );
   fprintf( fp, "|-%s (%s:%d)\n", zName(l), rkJointTypeExpr(rkLinkJointType(l)), rkLinkOffset(l) );
 
   if( rkLinkChild( l ) )
-    rkLinkConnectionFWrite( fp, rkLinkChild(l), n+RK_LINK_CONNECTION_INDENT );
+    rkLinkConnectionFPrint( fp, rkLinkChild(l), n+RK_LINK_CONNECTION_INDENT );
   if( rkLinkSibl( l ) )
-    rkLinkConnectionFWrite( fp, rkLinkSibl(l), n );
+    rkLinkConnectionFPrint( fp, rkLinkSibl(l), n );
 }
 
-/* output external wrenches applied to link to file. */
-void rkLinkExtWrenchFWrite(FILE *fp, rkLink *l)
+/* print external wrenches applied to a link out to a file. */
+void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l)
 {
   rkWrench *c;
 
   zListForEach( rkLinkExtWrench(l), c )
-    rkWrenchFWrite( fp, c );
+    rkWrenchFPrint( fp, c );
 }

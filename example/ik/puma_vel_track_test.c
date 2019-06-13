@@ -17,7 +17,7 @@ void init(rkChain *puma, rkChain *puma_v, rkIK *ik, rkIKSRV_fp srv_fp, zVec *dis
 {
   rkIKCellAttr attr;
 
-  if( !rkChainReadFile( puma, "../model/puma.zkc" ) ) exit( 1 );
+  if( !rkChainScanFile( puma, "../model/puma.ztk" ) ) exit( 1 );
   rkChainClone( puma, puma_v );
   rkIKCreate( ik, puma_v );
   rkIKJointRegAll( ik, 0.001 );
@@ -51,15 +51,15 @@ void cmp(rkChain *ra, rkChain *rb)
 {
   zVec3D v, e;
 
-  zVec3DDataWrite( &des_vel );
-  zMulMatVec3D( rkChainLinkWldAtt(ra,6), rkChainLinkLinAcc(ra,6), &v );
-  zVec3DDataWrite( &v );
+  zVec3DDataPrint( &des_vel );
+  zMulMat3DVec3D( rkChainLinkWldAtt(ra,6), rkChainLinkLinAcc(ra,6), &v );
+  zVec3DDataPrint( &v );
   zVec3DSub( &des_vel, &v, &e );
-  zVec3DDataWrite( &e );
-  zMulMatVec3D( rkChainLinkWldAtt(rb,6), rkChainLinkLinAcc(rb,6), &v );
-  zVec3DDataWrite( &v );
+  zVec3DDataPrint( &e );
+  zMulMat3DVec3D( rkChainLinkWldAtt(rb,6), rkChainLinkLinAcc(rb,6), &v );
+  zVec3DDataPrint( &v );
   zVec3DSub( &des_vel, &v, &e );
-  zVec3DDataNLWrite( &e );
+  zVec3DDataNLPrint( &e );
 }
 
 int main(int argc, char *argv[])
@@ -93,11 +93,11 @@ int main(int argc, char *argv[])
     rkIKCellSetRef( cellA[1], x, y, z );
     rkIKSolve( &ikA, disA, zTOL, 1000 );
     rkChainFKCNT( &pumaA, disA, DT );
-    fprintf( fpA, "%f ", DT ); zVecFWrite( fpA, disA );
+    fprintf( fpA, "%f ", DT ); zVecFPrint( fpA, disA );
 
     rkIKSolveOne( &ikB, disB, DT );
     rkChainFKCNT( &pumaB, disB, DT );
-    fprintf( fpB, "%f ", DT ); zVecFWrite( fpB, disB );
+    fprintf( fpB, "%f ", DT ); zVecFPrint( fpB, disB );
 
     cmp( &pumaA, &pumaB );
   }

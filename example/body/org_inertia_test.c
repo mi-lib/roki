@@ -15,10 +15,10 @@ void test(int id, rkMP *mp)
   zMat3D io;
 
   printf( "*** test %d\n", id );
-  rkMPWrite( mp );
+  rkMPPrint( mp );
   rkMPOrgInertia( mp, &io );
   printf( "(inertia about origin)\n" );
-  zMat3DWrite( &io );
+  zMat3DPrint( &io );
 }
 
 int main(int argc, char *argv[])

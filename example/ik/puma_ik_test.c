@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
   rkIKCellAttr attr;
 
   zRandInit();
-  if( !rkChainReadFile( &chain, "../model/puma.zkc" ) )
+  if( !rkChainScanFile( &chain, "../model/puma.ztk" ) )
     exit( 1 );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
   rkChainFK( &chain, dis );
@@ -29,18 +29,18 @@ int main(int argc, char *argv[])
     zDeg2Rad(zRandF(-30,30)), zDeg2Rad(zRandF(0,45)), zDeg2Rad(zRandF(-30,30)) );
   cell[1]->data.ref.pos.e[zZ] = zRandF(0.1,0.6);
   printf( "++ initial frame\n" );
-  zFrame3DWrite( rkChainLinkWldFrame(ik.chain,6) );
+  zFrame3DPrint( rkChainLinkWldFrame(ik.chain,6) );
   rkIKSolve( &ik, dis, zTOL, 0 );
-  zVecWrite( dis );
+  zVecPrint( dis );
   rkChainFK( ik.chain, dis );
   printf( "++ goal frame\n" );
   zFrame3DCreate( &goal, &cell[1]->data.ref.pos, &cell[0]->data.ref.att );
-  zFrame3DWrite( &goal );
+  zFrame3DPrint( &goal );
   printf( "++ final frame\n" );
-  zFrame3DWrite( rkChainLinkWldFrame(ik.chain,6) );
+  zFrame3DPrint( rkChainLinkWldFrame(ik.chain,6) );
   printf( "++ error\n" );
   zFrame3DError( &goal, rkChainLinkWldFrame(ik.chain,6), &err );
-  zVec6DWrite( &err );
+  zVec6DPrint( &err );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

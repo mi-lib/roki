@@ -8,7 +8,7 @@ zVec3D *pos_srv(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zV
 {
   zVec3D v;
 
-  zMulMatVec3D( rkChainLinkWldAtt(chain,6), rkChainLinkLinVel(chain,6), &v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,6), rkChainLinkLinVel(chain,6), &v );
   return zVec3DCat( &v, DT, &des_acc, srv );
 }
 
@@ -22,7 +22,7 @@ void init(rkChain *puma, rkChain *puma_v, rkIK *ik, rkIKSRV_fp srv_fp, zVec *dis
 {
   rkIKCellAttr attr;
 
-  if( !rkChainReadFile( puma, "../model/puma.zkc" ) ) exit( 1 );
+  if( !rkChainScanFile( puma, "../model/puma.ztk" ) ) exit( 1 );
   rkChainClone( puma, puma_v );
   rkIKCreate( ik, puma_v );
   rkIKJointRegAll( ik, 0.001 );
@@ -53,15 +53,15 @@ void cmp(rkChain *ra, rkChain *rb)
 {
   zVec3D a, e;
 
-  zVec3DDataWrite( &des_acc );
-  zMulMatVec3D( rkChainLinkWldAtt(ra,6), rkChainLinkLinAcc(ra,6), &a );
-  zVec3DDataWrite( &a );
+  zVec3DDataPrint( &des_acc );
+  zMulMat3DVec3D( rkChainLinkWldAtt(ra,6), rkChainLinkLinAcc(ra,6), &a );
+  zVec3DDataPrint( &a );
   zVec3DSub( &des_acc, &a, &e );
-  zVec3DDataWrite( &e );
-  zMulMatVec3D( rkChainLinkWldAtt(rb,6), rkChainLinkLinAcc(rb,6), &a );
-  zVec3DDataWrite( &a );
+  zVec3DDataPrint( &e );
+  zMulMat3DVec3D( rkChainLinkWldAtt(rb,6), rkChainLinkLinAcc(rb,6), &a );
+  zVec3DDataPrint( &a );
   zVec3DSub( &des_acc, &a, &e );
-  zVec3DDataNLWrite( &e );
+  zVec3DDataNLPrint( &e );
 }
 
 int main(int argc, char *argv[])
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
   for( i=0; i<=step; i++ ){
     phase = 4 * zPI * i / step;
     zVec3DCreate( &des_acc, 0.1*cos(phase), 0.1*sin(2*phase), 0.05*sin(phase) );
-    zMulMatVec3D( rkChainLinkWldAtt(&pumaA,6), rkChainLinkLinVel(&pumaA,6), &v );
+    zMulMat3DVec3D( rkChainLinkWldAtt(&pumaA,6), rkChainLinkLinVel(&pumaA,6), &v );
     zVec3DCatDRC( &v, DT, &des_acc );
 
     x += v.e[zX] * DT;
@@ -99,12 +99,12 @@ int main(int argc, char *argv[])
     rkIKSync( &ikA, &pumaA );
     rkIKSolve( &ikA, disA, zTOL, 1000 );
     rkChainFKCNT( &pumaA, disA, DT );
-    fprintf( fpA, "%f ", DT ); zVecFWrite( fpA, disA );
+    fprintf( fpA, "%f ", DT ); zVecFPrint( fpA, disA );
 
     rkIKSync( &ikB, &pumaB );
     rkIKSolveOne( &ikB, disB, DT );
     rkChainFKCNT( &pumaB, disB, DT );
-    fprintf( fpB, "%f ", DT ); zVecFWrite( fpB, disB );
+    fprintf( fpB, "%f ", DT ); zVecFPrint( fpB, disB );
 
     cmp( &pumaA, &pumaB );
   }

@@ -36,7 +36,7 @@ void chain_init(rkChain *chain)
   rkChainSetOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
-  rkChainWriteFile( chain, "trident.zkc" );
+  rkChainPrintFile( chain, "trident.zkc" );
 }
 
 #define DIV 200

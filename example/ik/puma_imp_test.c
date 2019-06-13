@@ -7,7 +7,7 @@ void init(rkChain *puma, rkChain *puma_v, rkIK *ik, rkIKCell *cell[])
 {
   rkIKCellAttr attr;
 
-  if( !rkChainReadFile( puma, "../model/puma.zkc" ) ) exit( 1 );
+  if( !rkChainScanFile( puma, "../model/puma.zkc" ) ) exit( 1 );
   rkChainClone( puma, puma_v );
   rkIKCreate( ik, puma_v );
   rkIKJointRegAll( ik, 0.001 );
@@ -54,9 +54,9 @@ int main(int argc, char *argv[])
     rkIKSync( &ik, &puma );
     rkIKSolveOne( &ik, dis, DT );
     rkChainFKCNT( &puma, dis, DT );
-    printf( "%f ", DT ); zVecWrite( dis );
+    printf( "%f ", DT ); zVecPrint( dis );
     fprintf( fp, "%f %f %f %f ", DT*i/STEP, x, y, z );
-    zVec3DDataFWrite( fp, rkChainLinkWldPos(ik.chain,6) );
+    zVec3DDataFPrint( fp, rkChainLinkWldPos(ik.chain,6) );
 
     zFrame3DCreate( &goal, &cell[1]->data.ref.pos, &cell[0]->data.ref.att );
     zFrame3DError( &goal, rkChainLinkWldFrame(ik.chain,6), &err );

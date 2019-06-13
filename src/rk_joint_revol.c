@@ -36,8 +36,8 @@ static void _rkJointGetKFricRevol(void *prp, double *val);
 static void _rkJointSetRefRevol(void *prp, rkJointRef *ref);
 static void _rkJointGetRefRevol(void *prp, rkJointRef *ref);
 
-static bool _rkJointQueryFReadRevol(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
-static void _rkJointFWriteRevol(FILE *fp, void *prp, char *name);
+static bool _rkJointQueryFScanRevol(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm);
+static void _rkJointFPrintRevol(FILE *fp, void *prp, char *name);
 
 #define _rkc(p) ((rkJointPrpRevol *)p)
 
@@ -179,7 +179,7 @@ void _rkJointGetRefRevol(void *prp, rkJointRef *ref){
 }
 
 /* query joint properties */
-bool _rkJointQueryFReadRevol(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
+bool _rkJointQueryFScanRevol(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
 {
   double val;
   rkMotor *mp;
@@ -219,12 +219,12 @@ bool _rkJointQueryFReadRevol(FILE *fp, char *buf, void *prp, rkMotor *marray, in
     }
     rkMotorClone( mp, &_rkc(prp)->m );
   } else
-  if( !rkMotorQueryFRead( fp, buf, &_rkc(prp)->m ) )
+  if( !rkMotorQueryFScan( fp, buf, &_rkc(prp)->m ) )
     return false;
   return true;
 }
 
-void _rkJointFWriteRevol(FILE *fp, void *prp, char *name)
+void _rkJointFPrintRevol(FILE *fp, void *prp, char *name)
 {
   rkJointPrpRevol *v;
 
@@ -272,8 +272,8 @@ static rkJointCom rk_joint_revol = {
   _rkJointGetRefRevol,
   _rk_joint_axis_revol_ang,
   _rk_joint_axis_revol_lin,
-  _rkJointQueryFReadRevol,
-  _rkJointFWriteRevol,
+  _rkJointQueryFScanRevol,
+  _rkJointFPrintRevol,
 };
 
 /* motor */

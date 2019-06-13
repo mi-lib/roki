@@ -43,11 +43,11 @@ void rk_idUsage(void)
 bool rk_idLoadSequence(void)
 {
   if( option[RK_ID_SEQFILE].flag ){
-    if( !zSeqReadFile( &seq, option[RK_ID_SEQFILE].arg ) )
+    if( !zSeqScanFile( &seq, option[RK_ID_SEQFILE].arg ) )
       return false;
   } else{
     option[RK_ID_SEQFILE].arg = "id.out";
-    if( !zSeqRead( &seq ) )
+    if( !zSeqScan( &seq ) )
       return false;
   }
   zGetBasename( option[RK_ID_SEQFILE].arg, seqfilebase, BUFSIZ );
@@ -91,13 +91,13 @@ bool rk_idCommandArgs(int argc, char *argv[])
     option[RK_ID_SEQFILE].arg  = seqfile;
   }
 
-  if( !rkChainReadFile( &chain, option[RK_ID_CHAINFILE].arg ) ){
+  if( !rkChainScanFile( &chain, option[RK_ID_CHAINFILE].arg ) ){
     ZOPENERROR( option[RK_ID_CHAINFILE].arg );
     return false;
   }
   if( !rk_idLoadSequence() || !rk_idOpenLogfile() ) return false;
   if( option[RK_ID_INITFILE].flag &&
-      !rkChainInitReadFile( &chain, option[RK_ID_INITFILE].arg ) ){
+      !rkChainInitScanFile( &chain, option[RK_ID_INITFILE].arg ) ){
     ZOPENERROR( option[RK_ID_INITFILE].arg );
     return false;
   }
@@ -125,13 +125,13 @@ void rk_idOutput(double t, zVec trq)
   rkChainAM( &chain, rkChainWldCOM(&chain), &am );
   rkChainGetJointTrqAll( &chain, trq );
 
-  fprintf( fp[0], "%f ", t ); zVec3DDataFWrite( fp[0], rkChainWldCOM(&chain) );
-  fprintf( fp[1], "%f ", t ); zVec3DDataFWrite( fp[1], rkChainCOMVel(&chain) );
-  fprintf( fp[2], "%f ", t ); zVec3DDataFWrite( fp[2], &a );
-  fprintf( fp[3], "%f ", t ); zVec3DDataFWrite( fp[3], &zmp );
-  fprintf( fp[4], "%f ", t ); zVec3DDataFWrite( fp[4], &rpy );
-  fprintf( fp[5], "%f ", t ); zVec3DDataFWrite( fp[5], &am );
-  fprintf( fp[6], "%f ", t ); zVecDataFWrite( fp[6], trq );
+  fprintf( fp[0], "%f ", t ); zVec3DDataFPrint( fp[0], rkChainWldCOM(&chain) );
+  fprintf( fp[1], "%f ", t ); zVec3DDataFPrint( fp[1], rkChainCOMVel(&chain) );
+  fprintf( fp[2], "%f ", t ); zVec3DDataFPrint( fp[2], &a );
+  fprintf( fp[3], "%f ", t ); zVec3DDataFPrint( fp[3], &zmp );
+  fprintf( fp[4], "%f ", t ); zVec3DDataFPrint( fp[4], &rpy );
+  fprintf( fp[5], "%f ", t ); zVec3DDataFPrint( fp[5], &am );
+  fprintf( fp[6], "%f ", t ); zVecDataFPrint( fp[6], trq );
 }
 
 /* ******************************************************* */

@@ -23,7 +23,7 @@ int main(void)
   register int i;
   double theta;
   zMat3D ident;
-  zVec3D am, am_com, aa;
+  zVec3D am, am_com;
 
   rkBodyInit( &body );
   init_mp( &body );
@@ -32,9 +32,9 @@ int main(void)
     theta = 2 * zPI * i / DIV;
     zMat3DRotYaw( &ident, theta, rkBodyAtt(&body) );
     rkBodyAM( &body, rkBodyCOM(&body), &am_com );
-    rkBodyAM( &body, Z_ZEROVEC3D, &am );
-    zVec3DDataWrite( &am );
-    zVec3DDataWrite( &am_com );
+    rkBodyAM( &body, ZVEC3DZERO, &am );
+    zVec3DDataPrint( &am );
+    zVec3DDataPrint( &am_com );
   }
   rkBodyDestroy( &body );
   return 0;

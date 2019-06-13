@@ -15,10 +15,10 @@ void init_mp(rkBody *body)
 
 void output(rkBody *body, zVec6D *f)
 {
-  zVec3DDataWrite( rkBodyCOMAcc(body) );
-  zVec3DDataWrite( zVec6DLin(f) );
-  zVec3DDataWrite( rkBodyAngAcc(body) );
-  zVec3DDataWrite( zVec6DAng(f) );
+  zVec3DDataPrint( rkBodyCOMAcc(body) );
+  zVec3DDataPrint( zVec6DLin(f) );
+  zVec3DDataPrint( rkBodyAngAcc(body) );
+  zVec3DDataPrint( zVec6DAng(f) );
 }
 
 #define DIV 1000
@@ -55,7 +55,7 @@ void pattern2(rkBody *body, double t)
   vz = 1; z = vz*t;
   zVec3DClear( rkBodyPos(body) );
   zVec3DCreate( &aa, x, y, z );
-  zMat3DAA( rkBodyAtt(body), &aa );
+  zMat3DFromAA( rkBodyAtt(body), &aa );
   zVec6DCreate( rkBodyVel(body), 0, 0, 0, vx, vy, vz );
   zVec6DCreate( rkBodyAcc(body), 0, 0, 0, 0, 0, 0 );
 }
@@ -72,7 +72,7 @@ void pattern3(rkBody *body, double t)
   vz = 1; z = vz*t;
   zVec3DCreate( rkBodyPos(body), 0.1*x, 0.1*y, 0.1*z );
   zVec3DCreate( &aa, x, y, z );
-  zMat3DAA( rkBodyAtt(body), &aa );
+  zMat3DFromAA( rkBodyAtt(body), &aa );
   zVec6DCreate( rkBodyVel(body), 0.1*vx, 0.1*vy, 0.1*vz, vx, vy, vz );
   zVec6DCreate( rkBodyAcc(body), 0, 0, 0, 0, 0, 0 );
 }
@@ -90,7 +90,7 @@ void pattern4(rkBody *body, double t)
   az = 0.1; vz = az * t; z = 0.5*az*t*t;
   zVec3DClear( rkBodyPos(body) );
   zVec3DCreate( &aa, x, y, z );
-  zMat3DAA( rkBodyAtt(body), &aa );
+  zMat3DFromAA( rkBodyAtt(body), &aa );
   zVec6DCreate( rkBodyVel(body), 0, 0, 0, vx, vy, vz );
   zVec6DCreate( rkBodyAcc(body), 0, 0, 0, ax, ay, az );
 }

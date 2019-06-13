@@ -15,30 +15,30 @@ void update_dis(int st)
   zMat3D r;
 
   val = DTHETA * ( 1 - cos(2*zPI*st/STEP) );
-  zMat3DZYX( &r, val, val, val );
-  zMat3DToAA( &r, (zVec3D*)&zVecElem(dis,0) );
+  zMat3DFromZYX( &r, val, val, val );
+  zMat3DToAA( &r, (zVec3D*)&zVecElemNC(dis,0) );
 }
 
 void world_com_test(void)
 {
   zVec3D v, a;
 
-  zVec3DDataWrite( rkChainLinkWldPos(&chain,1) );
-  zMulMatVec3D( rkChainLinkWldAtt(&chain,1), rkChainLinkCOMVel(&chain,1), &v );
-  zVec3DDataWrite( &v );
-  zMulMatVec3D( rkChainLinkWldAtt(&chain,1), rkChainLinkCOMAcc(&chain,1), &a );
-  zVec3DDataWrite( &a );
+  zVec3DDataPrint( rkChainLinkWldPos(&chain,1) );
+  zMulMat3DVec3D( rkChainLinkWldAtt(&chain,1), rkChainLinkCOMVel(&chain,1), &v );
+  zVec3DDataPrint( &v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(&chain,1), rkChainLinkCOMAcc(&chain,1), &a );
+  zVec3DDataPrint( &a );
 
-  zVec3DDataWrite( rkChainWldCOM(&chain) );
-  zVec3DDataWrite( rkChainCOMVel(&chain) );
-  zVec3DDataWrite( rkChainCOMAcc(&chain) );
+  zVec3DDataPrint( rkChainWldCOM(&chain) );
+  zVec3DDataPrint( rkChainCOMVel(&chain) );
+  zVec3DDataPrint( rkChainCOMAcc(&chain) );
 
   zVec3DSub( rkChainWldCOM(&chain), &com, &v );
   zVec3DDivDRC( &v, DT );
-  zVec3DDataWrite( &v );
+  zVec3DDataPrint( &v );
   zVec3DSub( &v, &vel, &a );
   zVec3DDivDRC( &a, DT );
-  zVec3DDataNLWrite( &a );
+  zVec3DDataNLPrint( &a );
 
   zVec3DCopy( rkChainWldCOM(&chain), &com );
   zVec3DCopy( &v, &vel );
@@ -74,7 +74,7 @@ int main(void)
   register int i;
 
   chain_init( &chain );
-  rkChainConnectionFWrite( stderr, &chain );
+  rkChainConnectionFPrint( stderr, &chain );
   rkChainUpdateID( &chain );
   zVec3DCopy( rkChainWldCOM(&chain), &com );
   zVec3DCopy( rkChainCOMVel(&chain), &vel );

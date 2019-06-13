@@ -47,7 +47,7 @@ void set_vel(zVec vel)
 {
   register int i;
 
-  for( i=0; i<_zVecSize(vel); i++ )
+  for( i=0; i<zVecSizeNC(vel); i++ )
     zVecSetElem( vel, i, zRandF(-1.0,1.0) );
 }
 

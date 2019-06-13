@@ -98,16 +98,16 @@ void assert_invpend(rkChain *invpend, zVec t, zVec dt, zVec ddt)
   /* analytical computation */
   invpend_vel( invpend, zVecElem(t,0), zVecElem(t,1), zVecElem(dt,0), zVecElem(dt,1), &v1 );
   /* - recursive computation */
-  zMulMatVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkCOMVel(invpend,2), zVec6DLin(&v2) );
-  zMulMatVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkAngVel(invpend,2), zVec6DAng(&v2) );
+  zMulMat3DVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkCOMVel(invpend,2), zVec6DLin(&v2) );
+  zMulMat3DVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkAngVel(invpend,2), zVec6DAng(&v2) );
   zAssert( velocity test, zVec6DIsTiny( zVec6DSub( &v1, &v2, &ve6 ) ) );
 
   /* *** acceleration test *** */
   /* analytical computation */
   invpend_acc( invpend, zVecElem(t,0), zVecElem(t,1), zVecElem(dt,0), zVecElem(dt,1), zVecElem(ddt,0), zVecElem(ddt,1), &a1 );
   /* recursive computation */
-  zMulMatVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkCOMAcc(invpend,2), zVec6DLin(&a2) );
-  zMulMatVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkAngAcc(invpend,2), zVec6DAng(&a2) );
+  zMulMat3DVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkCOMAcc(invpend,2), zVec6DLin(&a2) );
+  zMulMat3DVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkAngAcc(invpend,2), zVec6DAng(&a2) );
   zAssert( acceleration test, zVec6DIsTol( zVec6DSub( &a1, &a2, &ae6 ), zTOL*15 ) );
 
   /* *** angular momentum test *** */
@@ -139,7 +139,7 @@ int main(void)
   zVec t, dt, ddt;
 
   zRandInit();
-  rkChainReadFile( &invpend, "invpend.zkc" );
+  rkChainScanFile( &invpend, "invpend.ztk" );
   t   = zVecAlloc( rkChainJointSize(&invpend) );
   dt  = zVecAlloc( rkChainJointSize(&invpend) );
   ddt = zVecAlloc( rkChainJointSize(&invpend) );

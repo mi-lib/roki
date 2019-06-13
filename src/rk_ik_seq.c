@@ -45,20 +45,20 @@ void rkIKSeqFree(rkIKSeq *seq)
   }
 }
 
-/* read an IK sequence from file. */
-bool rkIKSeqReadFile(rkIKSeq *seq, char filename[])
+/* scan an IK sequence from a file. */
+bool rkIKSeqScanFile(rkIKSeq *seq, char filename[])
 {
   FILE *fp;
 
   if( !( fp = zOpenFile( filename, RK_IKSEQ_SUFFIX, "r" ) ) )
     return false;
-  rkIKSeqFRead( fp, seq );
+  rkIKSeqFScan( fp, seq );
   fclose( fp );
   return true;
 }
 
-/* read an IK sequence from the current position of a file. */
-rkIKSeq *rkIKSeqFRead(FILE *fp, rkIKSeq *seq)
+/* scan an IK sequence from the current position of a file. */
+rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;
   register int i;
@@ -91,8 +91,8 @@ rkIKSeq *rkIKSeqFRead(FILE *fp, rkIKSeq *seq)
   return seq;
 }
 
-/* output IK sequence to file. */
-bool rkIKSeqWriteFile(rkIKSeq *seq, char filename[])
+/* print IK sequence out to a file. */
+bool rkIKSeqPrintFile(rkIKSeq *seq, char filename[])
 {
   char fname[BUFSIZ];
   FILE *fp;
@@ -102,13 +102,13 @@ bool rkIKSeqWriteFile(rkIKSeq *seq, char filename[])
     ZOPENERROR( fname );
     return false;
   }
-  rkIKSeqFWrite( fp, seq );
+  rkIKSeqFPrint( fp, seq );
   fclose( fp );
   return true;
 }
 
-/* output IK sequence to the current position of a file. */
-void rkIKSeqFWrite(FILE *fp, rkIKSeq *seq)
+/* print IK sequence out to the current position of a file. */
+void rkIKSeqFPrint(FILE *fp, rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;
   register int i;

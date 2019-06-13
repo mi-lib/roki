@@ -21,16 +21,16 @@ void total_zmp_test(void)
 {
   zVec3D zmp;
 
-  zVec3DDataWrite( rkChainWldCOM(&chain) );
+  zVec3DDataPrint( rkChainWldCOM(&chain) );
   rkChainZMP( &chain, 0, &zmp );
-  zVec3DDataNLWrite( &zmp );
+  zVec3DDataNLPrint( &zmp );
 }
 
 int main(void)
 {
   register int i;
 
-  rkChainReadFile( &chain, CHAIN_FILE );
+  rkChainScanFile( &chain, CHAIN_FILE );
   rkChainUpdateID( &chain );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
   rkChainGetJointDisAll( &chain, dis );

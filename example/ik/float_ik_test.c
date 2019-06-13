@@ -73,31 +73,31 @@ int main(int argc, char *argv[])
   rkIKCellSetRef( ca1, zDeg2Rad(-30), zDeg2Rad(0), zDeg2Rad(45) );
 
   eprintf( "++ initial frame\n" );
-  zFrame3DFWrite( stderr, rkChainLinkWldFrame(ik.chain,1) );
-  zFrame3DFWrite( stderr, rkChainLinkWldFrame(ik.chain,2) );
+  zFrame3DFPrint( stderr, rkChainLinkWldFrame(ik.chain,1) );
+  zFrame3DFPrint( stderr, rkChainLinkWldFrame(ik.chain,2) );
 
   rkIKSolve( &ik, dis, zTOL, 0 );
-  zVecFWrite( stderr, dis );
+  zVecFPrint( stderr, dis );
   rkChainFK( ik.chain, dis );
   eprintf( "++ goal frame\n" );
-  zVec3DFWrite( stderr, &cl0->data.ref.pos );
-  zMat3DFWrite( stderr, &ca0->data.ref.att );
-  zVec3DFWrite( stderr, &cl1->data.ref.pos );
-  zMat3DFWrite( stderr, &ca1->data.ref.att );
+  zVec3DFPrint( stderr, &cl0->data.ref.pos );
+  zMat3DFPrint( stderr, &ca0->data.ref.att );
+  zVec3DFPrint( stderr, &cl1->data.ref.pos );
+  zMat3DFPrint( stderr, &ca1->data.ref.att );
 
   eprintf( "++ final frame\n" );
-  zFrame3DFWrite( stderr, rkChainLinkWldFrame(ik.chain,1) );
-  zFrame3DFWrite( stderr, rkChainLinkWldFrame(ik.chain,2) );
+  zFrame3DFPrint( stderr, rkChainLinkWldFrame(ik.chain,1) );
+  zFrame3DFPrint( stderr, rkChainLinkWldFrame(ik.chain,2) );
 
   eprintf( "++ error\n" );
   zVec3DSub( &cl0->data.ref.pos, rkChainLinkWldPos(ik.chain,1), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
   zMat3DError( &ca0->data.ref.att, rkChainLinkWldAtt(ik.chain,1), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
   zVec3DSub( &cl1->data.ref.pos, rkChainLinkWldPos(ik.chain,2), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
   zMat3DError( &ca1->data.ref.att, rkChainLinkWldAtt(ik.chain,2), &err );
-  zVec3DFWrite( stderr, &err );
+  zVec3DFPrint( stderr, &err );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

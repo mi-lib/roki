@@ -32,9 +32,9 @@ rkIKCell *cell_reg(rkIK *ik, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKB
 
   cell = rkIKCellReg( ik, NULL, RK_IK_CELL_ATTR_NONE, rf, mf, vf, bf, NULL, NULL );
   printf( "registered cell #%d\n", cell->data.id );
-  printf( "workspace for coefficient matrix = (%dx%d).\n", _zMatRowSize(ik->_c_mat), _zMatColSize(ik->_c_mat) );
-  printf( "workspace for SRV vector = (%d).\n", _zVecSize(ik->_c_srv) );
-  printf( "workspace for residual error vector = (%d).\n", _zVecSize(ik->_c_we) );
+  printf( "workspace for coefficient matrix = (%dx%d).\n", zMatRowSizeNC(ik->_c_mat), zMatColSizeNC(ik->_c_mat) );
+  printf( "workspace for SRV vector = (%d).\n", zVecSizeNC(ik->_c_srv) );
+  printf( "workspace for residual error vector = (%d).\n", zVecSizeNC(ik->_c_we) );
   return cell;
 }
 
@@ -42,9 +42,9 @@ void cell_unreg(rkIK *ik, rkIKCell *cell)
 {
   rkIKCellUnreg( ik, cell );
   printf( "unregistered cell #%d\n", cell->data.id );
-  printf( "workspace for coefficient matrix = (%dx%d).\n", _zMatRowSize(ik->_c_mat), _zMatColSize(ik->_c_mat) );
-  printf( "workspace for SRV vector = (%d).\n", _zVecSize(ik->_c_srv) );
-  printf( "workspace for residual error vector = (%d).\n", _zVecSize(ik->_c_we) );
+  printf( "workspace for coefficient matrix = (%dx%d).\n", zMatRowSizeNC(ik->_c_mat), zMatColSizeNC(ik->_c_mat) );
+  printf( "workspace for SRV vector = (%d).\n", zVecSizeNC(ik->_c_srv) );
+  printf( "workspace for residual error vector = (%d).\n", zVecSizeNC(ik->_c_we) );
 }
 
 int main(void)
@@ -54,7 +54,7 @@ int main(void)
   rkIKCell *cell[5];
 
   chain_init( &r );
-  rkChainConnectionWrite( &r );
+  rkChainConnectionPrint( &r );
   rkIKCreate( &ik, &r );
 
   rkIKJointReg( &ik, 0, 100 );
@@ -71,9 +71,9 @@ int main(void)
   cell[4] = cell_reg( &ik, rkIKRefSetPos, rkIKJacobiLinkWldLin, rkIKLinkWldPosErr, rkIKBindLinkWldPos );
   rkIKDeactivate( &ik );
 
-  zIndexWrite( ik._j_idx );
-  zIndexWrite( ik._j_ofs );
-  zVecWrite( ik._j_wn );
+  zIndexPrint( ik._j_idx );
+  zIndexPrint( ik._j_ofs );
+  zVecPrint( ik._j_wn );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &r );

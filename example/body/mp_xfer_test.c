@@ -16,8 +16,8 @@ int main(void)
   rkMPXfer( &src, &f, &dest );
 
   printf( "*** before transfer ***\n" );
-  rkMPWrite( &src );
+  rkMPPrint( &src );
   printf( "*** after transfer ***\n" );
-  rkMPWrite( &dest );
+  rkMPPrint( &dest );
   return 0;
 }

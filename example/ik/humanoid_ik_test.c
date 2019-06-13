@@ -15,13 +15,13 @@ void ik_cell_output(FILE *fp, double dt, zVec3D *pg, zVec3D *pl, zVec3D *pr)
 {
   fprintf( fp, "%.10g 6 ", dt );
   fprintf( fp, " 0 1 1 1" );
-  zVec3DDataFWrite( fp, pg );
+  zVec3DDataFPrint( fp, pg );
   fprintf( fp, " 1 1 1 1 0 0 0" );
   fprintf( fp, " 2 1 1 1" );
-  zVec3DDataFWrite( fp, pl );
+  zVec3DDataFPrint( fp, pl );
   fprintf( fp, " 3 1 1 1 0 0 0" );
   fprintf( fp, " 4 1 1 1" );
-  zVec3DDataFWrite( fp, pr );
+  zVec3DDataFPrint( fp, pr );
   fprintf( fp, " 5 1 1 1 0 0 0\n" );
 }
 
@@ -37,7 +37,7 @@ void ik_solve(FILE *fout_vs, FILE *fout_cs, rkIK *ik, rkIKCell *entry[], zVec q,
   rkIKCellSetRefVec( entry[5], ZVEC3DZERO );
   rkIKSolve( ik, q, zTOL, 0 );
   fprintf( fout_vs, "%g ", DT );
-  zVecFWrite( fout_vs, q );
+  zVecFPrint( fout_vs, q );
   ik_cell_output( fout_cs, DT, pg, pl, pr );
 }
 
@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
   zVec q;
   FILE *fout_vs, *fout_cs;
 
-  rkChainReadFile( &robot, "../model/humanoid.zkc" );
-  rkIKConfReadFile( &ik, &robot, "../model/humanoid.zkc" );
+  rkChainScanFile( &robot, "../model/humanoid.zkc" );
+  rkIKConfScanFile( &ik, &robot, "../model/humanoid.zkc" );
   q = zVecAlloc( rkChainJointSize(&robot) );
   for( i=0; i<6; i++ )
     entry[i] = rkIKFindCell( &ik, i );

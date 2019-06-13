@@ -36,19 +36,19 @@ int main(void)
   zIndex idx;
 
   chain_init( &chain );
-  rkChainConnectionWrite( &chain );
+  rkChainConnectionPrint( &chain );
   dis = zVecCreateList( SIZE, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7 );
   idx = rkChainCreateDefaultJointIndex( &chain );
   printf( "++ input joint ++\n" );
-  zIndexWrite( idx );
-  zVecWrite( dis );
+  zIndexPrint( idx );
+  zVecPrint( dis );
   rkChainSetJointDis( &chain, idx, dis );
   rkChainUpdateFK( &chain );
-  rkChainPostureWrite( &chain );
+  rkChainPosturePrint( &chain );
   rkChainGetJointDis( &chain, idx, dis );
   printf( "++ output joint ++\n" );
-  zIndexWrite( idx );
-  zVecWrite( dis );
+  zIndexPrint( idx );
+  zVecPrint( dis );
   zIndexFree( idx );
   zVecFree( dis );
   rkChainDestroy( &chain );

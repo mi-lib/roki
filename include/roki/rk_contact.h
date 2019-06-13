@@ -98,10 +98,10 @@ __EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *
 
 #define RK_CONTACTINFO_TAG "contact"
 
-/*! \brief input/output of the information of a contact model.
+/*! \brief scan and print information of a contact model.
  *
- * rkContactInfoFRead() reads the information of a contact model
- * from the current position of the file \a fp, and copies them
+ * rkContactInfoFScan() scans information of a contact model
+ * from the current position of a file \a fp, and copies them
  * to \a ci. An acceptable data file format is as follows.
  *
  *  staticfriction   <value>  <- static friction coefficient
@@ -110,32 +110,32 @@ __EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *
  *  elasticity       <value>  <- elasticity coefficient
  *  viscosity        <value>  <- viscosity coefficient
  *
- * 'rebound', 'staticfriction' group and 'elasticity', 'viscosity'
+ * rebound-staticfriction group and elasticity-viscosity
  * group are exclusive with each other. When the function finds
  * one keyword in the former group, the contact type is
- * automatically set for 'rigid', while one in the latter is found,
- * the type is set for 'elastic'.
- * If inconsistency exists, the last found keyword has priority.
- * 'kineticfriction' is a common keyword or the two groups.
+ * automatically set for 'rigid', while one in the latter is
+ * found, the type is set for 'elastic'.
+ * If any inconsistency exists, the last found keyword has
+ * priority. kineticfriction is common for the two groups.
  *
- * rkContactInfoRead() reads the information of a contact model
- * from the standard in and copies them to \a ci.
+ * rkContactInfoScan() scans information of a contact model
+ * from the standard input and copies them to \a ci.
  *
- * rkContactInfoFWrite() writes the information of the contact
- * model \a ci to the current position of the file \a fp.
+ * rkContactInfoFPrint() prints information of a contact
+ * model \a ci out to the current position of a file \a fp.
  *
- * rkContactInfoWrite() writes the information of the contact
- * model \a ci simply to the standard out.
+ * rkContactInfoPrint() prints information of a contact
+ * model \a ci out to the standard output.
  * \return
- * rkContactInfoFRead() and rkContactInfoRead() return a pointer
+ * rkContactInfoFScan() and rkContactInfoScan() return a pointer
  * to \a ci.
  *
- * rkContactInfoFWrite() and rkContactInfoWrite() return no value.
+ * rkContactInfoFPrint() and rkContactInfoPrint() return no value.
  */
-__EXPORT rkContactInfo *rkContactInfoFRead(FILE *fp, rkContactInfo *ci);
-#define rkContactInfoRead(c) rkContactInfoFRead( stdin, (c) )
-__EXPORT void rkContactInfoFWrite(FILE *fp, rkContactInfo *ci);
-#define rkContactInfoWrite(c) rkContactInfoFWrite( stdout, (c) )
+__EXPORT rkContactInfo *rkContactInfoFScan(FILE *fp, rkContactInfo *ci);
+#define rkContactInfoScan(c) rkContactInfoFScan( stdin, (c) )
+__EXPORT void rkContactInfoFPrint(FILE *fp, rkContactInfo *ci);
+#define rkContactInfoPrint(c) rkContactInfoFPrint( stdout, (c) )
 
 /* ********************************************************** */
 /* CLASS: rkContactInfoPool
@@ -165,40 +165,41 @@ __EXPORT void rkContactInfoPoolDestroy(rkContactInfoPool *ci);
 __EXPORT rkContactInfo *rkContactInfoPoolAssoc(rkContactInfoPool *ci, char *stf1, char *stf2);
 __EXPORT rkContactInfo *rkContactInfoPoolAssocType(rkContactInfoPool *ci, char *stf1, char *stf2, char type);
 
-/*! \brief input/output of contact info pool.
+/*! \brief scan and print contact information pool.
  *
- * rkContactInfoPoolReadFile() reads the file \a filename and creates
- * a new contact information pool \a ci.
- * rkContactInfoPoolFRead() and rkContactInfoPoolFRead() read the
- * information from the current position of the file \a fp, and
+ * rkContactInfoPoolScanFile() scans a file \a filename and
+ * creates a new contact information pool \a ci.
+ * rkContactInfoPoolFScan() and rkContactInfoPoolFScan() scan
+ * information from the current position of a file \a fp, and
  * the standard input, respectively.
  *
- * An acceptable data file for these functions should contain at
- * least one contact information set in .ztk format, tagged by
- * [contact].
- * See also rkContactInfoFRead().
+ * An acceptable data file for these functions should contain
+ * at least one contact information set in .ztk format, tagged
+ * by [contact].
+ * See also rkContactInfoFScan().
  *
- * rkContactInfoPoolWriteFile() writes the information of \a ci to
- * the file \a filename.
- * rkContactInfoPoolFWrite() and rkContactInfoPoolWrite() write the
- * information of \a ci to the current position of the file \a fp and
- * the standard output, respectively, in the same format with
- * rkContactInfoPoolWriteFile().
+ * rkContactInfoPoolPrintFile() prints information of \a ci
+ * out to a file \a filename.
+ * rkContactInfoPoolFPrint() and rkContactInfoPoolPrint() print
+ * information of \a ci out to the current position of a file
+ * \a fp and the standard output, respectively, in the same
+ * format with rkContactInfoPoolPrintFile().
  * \return
- * rkContactInfoPoolReadFile() and rkContactInfoPoolWriteFile() return
- * a boolean according to whether the operation succeeds or not.
+ * rkContactInfoPoolScanFile() and rkContactInfoPoolPrintFile()
+ * return a boolean according to whether the operation succeeds
+ * or not.
  *
- * rkContactInfoPoolFRead() family return a pointer \a ci, while
- * rkContactInfoPoolFWrite() family returns no value.
+ * rkContactInfoPoolFScan() family returns a pointer \a ci, while
+ * rkContactInfoPoolFPrint() family returns no value.
  * \sa
- * rkContactInfoFRead
+ * rkContactInfoFScan
  */
-__EXPORT bool rkContactInfoPoolReadFile(rkContactInfoPool *ci, char filename[]);
-__EXPORT rkContactInfoPool *rkContactInfoPoolFRead(FILE *fp, rkContactInfoPool *ci);
-#define rkContactInfoPoolRead(c) rkContactInfoPoolFRead( stdin, (c) )
-__EXPORT bool rkContactInfoPoolWriteFile(rkContactInfoPool *ci, char filename[]);
-__EXPORT void rkContactInfoPoolFWrite(FILE *fp, rkContactInfoPool *ci);
-#define rkContactInfoPoolWrite(c) rkContactInfoPoolFWrite( stdout, (c) )
+__EXPORT bool rkContactInfoPoolScanFile(rkContactInfoPool *ci, char filename[]);
+__EXPORT rkContactInfoPool *rkContactInfoPoolFScan(FILE *fp, rkContactInfoPool *ci);
+#define rkContactInfoPoolScan(c) rkContactInfoPoolFScan( stdin, (c) )
+__EXPORT bool rkContactInfoPoolPrintFile(rkContactInfoPool *ci, char filename[]);
+__EXPORT void rkContactInfoPoolFPrint(FILE *fp, rkContactInfoPool *ci);
+#define rkContactInfoPoolPrint(c) rkContactInfoPoolFPrint( stdout, (c) )
 
 __END_DECLS
 
