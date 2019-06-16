@@ -84,11 +84,11 @@ typedef struct{
   void (*_subdis)(void*,double*,double*); /* subtract displacements */
   void (*_cntdis)(void*,double*,double); /* continuous update */
 
-  zFrame3D *(*_xfer)(void*,zFrame3D*,zFrame3D*); /* frame transfer */
-  void (*_incvel)(void*,zVec6D*); /* motion rate transfer */
+  zFrame3D *(*_xform)(void*,zFrame3D*,zFrame3D*); /* frame transformation */
+  void (*_incvel)(void*,zVec6D*); /* motion rate transformation */
   void (*_incaccvel)(void*,zVec3D*,zVec6D*);
   void (*_incacc)(void*,zVec6D*);
-  void (*_trq)(void*,zVec6D*);        /* joint torque transfer */
+  void (*_trq)(void*,zVec6D*);        /* joint torque transformation */
   void (*_torsion)(zFrame3D*,zVec6D*,double*); /* inverse computation of torsion and displacement */
 
   void (*_setfric)(void*,double*);  /* set friction torque */
@@ -256,12 +256,12 @@ __EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 void rkJointNeutral(rkJoint *j);
 bool rkJointIsNeutral(rkJoint *j);
 
-/*! \brief transfer joint frame, velocity, acceleration and torque.
+/*! \brief transform a joint frame, velocity, acceleration and torque.
  *
- * rkJointXfer() transfers a 3D frame \a fo in accordance with
+ * rkJointXform() transforms a 3D frame \a fo in accordance with
  * the displacement of a joint \a j. The result is put into \a f.
  *
- * Transfer rule depends on the joint type.
+ * Transformation rule depends on the joint type.
  * Fixed joint just copies \a fo to \a f.
  * Revolutional joint revolves \a fo about the z-axis in radian.
  * Prismatic joint translates \a fo along the z-axis.
@@ -287,11 +287,11 @@ bool rkJointIsNeutral(rkJoint *j);
  * \a f exerted at joint and the restitution force originating from
  * joint impedance.
  * \return
- * rkJointXfer() returns a pointer \a f.
+ * rkJointXform() returns a pointer \a f.
  * \sa
  * rkJointCreate
  */
-#define rkJointXfer(j,fo,f)       (j)->com->_xfer( (j)->prp, fo, f )
+#define rkJointXform(j,fo,f)      (j)->com->_xform( (j)->prp, fo, f )
 #define rkJointIncVel(j,v)        (j)->com->_incvel( (j)->prp, v)
 #define rkJointIncAccOnVel(j,w,a) (j)->com->_incaccvel( (j)->prp, w, a )
 #define rkJointIncAcc(j,a)        (j)->com->_incacc( (j)->prp, a )
@@ -373,7 +373,7 @@ __EXPORT double rkJointTorsionDisRevol(zFrame3D *dev, zVec6D *t);
 __EXPORT double rkJointTorsionDisPrism(zFrame3D *dev, zVec6D *t);
 
 /* for ABI */
-__EXPORT zMat6D *rkJointXferMat6D(zFrame3D *f, zMat6D *i, zMat6D *m);
+__EXPORT zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m);
 /* __EXPORT void _rkJointUpdateWrench(void *prp, zMat6D *i, zVec6D *b, zVec6D *acc, zVec6D *w); */
 __EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc);
 

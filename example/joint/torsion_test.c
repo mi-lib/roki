@@ -15,7 +15,7 @@ void check(rkJoint *joint, zVec6D *t, double dis[], zFrame3D *f)
   zMulMat3DVec6D( zFrame3DAtt(f), t, &tc );
   zVec6DToFrame3DAA( &tc, &fo );
   rkJointSetDis( joint, dis );
-  rkJointXfer( joint, &fo, &fc );
+  rkJointXform( joint, &fo, &fc );
   zFrame3DError( &fc, f, &err );
   printf( "(error)=" );
   zVec6DDataNLPrint( &err );

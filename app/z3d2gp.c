@@ -48,7 +48,7 @@ void conv_chain(char *filename)
     if( rkLinkShapeIsEmpty( l ) ) continue;
     zListForEach( rkLinkShapeList(l), sp ){
       zShape3DClone( zShapeListCellShape(sp), &s, NULL );
-      zShape3DXfer( zShapeListCellShape(sp), rkLinkWldFrame(l), &s );
+      zShape3DXform( zShapeListCellShape(sp), rkLinkWldFrame(l), &s );
       output_shape( &s );
       zShape3DDestroy( &s );
     }

@@ -113,7 +113,7 @@ zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i)
 /* update link frame with respect to the world frame. */
 void rkLinkUpdateFrame(rkLink *l, zFrame3D *pwf)
 {
-  rkJointXfer( rkLinkJoint(l), rkLinkOrgFrame(l), rkLinkAdjFrame(l) );
+  rkJointXform( rkLinkJoint(l), rkLinkOrgFrame(l), rkLinkAdjFrame(l) );
   zFrame3DCascade( pwf, rkLinkAdjFrame(l), rkLinkWldFrame(l) );
   rkBodyUpdateCOM( rkLinkBody(l) );
 
@@ -126,7 +126,7 @@ void rkLinkUpdateFrame(rkLink *l, zFrame3D *pwf)
 void _rkLinkUpdateVel(rkLink *l, zVec6D *pvel)
 {
   /* velocity */
-  zXfer6DLin( rkLinkAdjFrame(l), pvel, rkLinkVel(l) );
+  zXform6DLin( rkLinkAdjFrame(l), pvel, rkLinkVel(l) );
   /* joint motion rate */
   rkJointIncVel( rkLinkJoint(l), rkLinkVel(l) );
   /* COM velocity and acceleration */
@@ -193,7 +193,7 @@ void rkLinkUpdateWrench(rkLink *l)
   if( ( child = rkLinkChild(l) ) ){
     rkLinkUpdateWrench( child );
     for( ; child; child=rkLinkSibl(child) ){
-      zXfer6DAng( rkLinkAdjFrame(child), rkLinkWrench(child), &w );
+      zXform6DAng( rkLinkAdjFrame(child), rkLinkWrench(child), &w );
       zVec6DAddDRC( rkLinkWrench(l), &w );
     }
   }
@@ -217,7 +217,7 @@ void rkLinkConfToJointDis(rkLink *link)
   } else{
     zFrame3DCopy( rkLinkOrgFrame(link), &org );
   }
-  zFrame3DXfer( &org, rkLinkWldFrame(link), &dev );
+  zFrame3DXform( &org, rkLinkWldFrame(link), &dev );
   rkJointTorsion( rkLinkJoint(link), &dev, &tor, dis );
   rkJointSetDis( rkLinkJoint(link), dis );
   /* recursive computation */

@@ -13,11 +13,11 @@ int main(void)
     0, 0, 1.0/6.0 );
   zFrame3DIdent( &f );
   zVec3DCreate( zFrame3DPos(&f),-0.5,-0.5,-0.5 );
-  rkMPXfer( &src, &f, &dest );
+  rkMPXform( &src, &f, &dest );
 
-  printf( "*** before transfer ***\n" );
+  printf( "*** before transformation ***\n" );
   rkMPPrint( &src );
-  printf( "*** after transfer ***\n" );
+  printf( "*** after transformation ***\n" );
   rkMPPrint( &dest );
   return 0;
 }

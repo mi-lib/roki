@@ -48,9 +48,9 @@ rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, zShape3D
 
   if( !zPH3DClone( zShape3DPH(cell->data.shape), &cell->data.ph ) )
     return NULL;
-  zPH3DXfer( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
+  zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
 
-  zBox3DXfer( zShape3DBB(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.obb );
+  zBox3DXform( zShape3DBB(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.obb );
   zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
   return cell;
 }
@@ -82,7 +82,7 @@ void rkCDCellUpdateBB(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ||
       cell->data._bb_update_flag == true ) return;
-  zBox3DXfer( zShape3DBB(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.obb );
+  zBox3DXform( zShape3DBB(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.obb );
   zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
   cell->data._bb_update_flag = true;
 }
@@ -92,7 +92,7 @@ void rkCDCellUpdatePH(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ||
       cell->data._ph_update_flag == true ) return;
-  zPH3DXfer( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
+  zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
   cell->data._ph_update_flag = true;
 }
 
@@ -101,12 +101,12 @@ void rkCDCellUpdate(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ) return;
   if( cell->data._bb_update_flag == false ){
-    zBox3DXfer( zShape3DBB(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.obb );
+    zBox3DXform( zShape3DBB(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.obb );
     zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
     cell->data._bb_update_flag = true;
   }
   if( cell->data._ph_update_flag == false ){
-    zPH3DXfer( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
+    zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
     cell->data._ph_update_flag = true;
   }
 }
@@ -463,16 +463,16 @@ rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkCDCell *
       zVec3DCopy( &cp->data._axis[0], &v->data._axis[0] );
       zVec3DCopy( &cp->data._axis[1], &v->data._axis[1] );
       zVec3DCopy( &cp->data._axis[2], &v->data._axis[2] );
-      zXfer3DInv( rkLinkWldFrame(cell1->data.link), zPH3DVert(&cell0->data.ph, v_id), &vert );
+      zXform3DInv( rkLinkWldFrame(cell1->data.link), zPH3DVert(&cell0->data.ph, v_id), &vert );
       zVec3DSub( &cp->data._pro, &vert, &sub );
       zVec3DProj( &sub, &v->data._norm, &pro );
       zVec3DAdd( &vert, &pro, &v->data._pro );
       zMulMat3DVec3D( rkLinkWldAtt(cell1->data.link), &v->data._norm, &v->data.norm );
-      zXfer3D( rkLinkWldFrame(cell1->data.link), &v->data._pro, &v->data.pro );
-      zXfer3D( rkLinkWldFrame(cell1->data.link), &v->data._ref, &v->data.ref );
-      zXfer3D( rkLinkWldFrame(cell1->data.link), &v->data._axis[0], &v->data.axis[0] );
-      zXfer3D( rkLinkWldFrame(cell1->data.link), &v->data._axis[1], &v->data.axis[1] );
-      zXfer3D( rkLinkWldFrame(cell1->data.link), &v->data._axis[2], &v->data.axis[2] );
+      zXform3D( rkLinkWldFrame(cell1->data.link), &v->data._pro, &v->data.pro );
+      zXform3D( rkLinkWldFrame(cell1->data.link), &v->data._ref, &v->data.ref );
+      zXform3D( rkLinkWldFrame(cell1->data.link), &v->data._axis[0], &v->data.axis[0] );
+      zXform3D( rkLinkWldFrame(cell1->data.link), &v->data._axis[1], &v->data.axis[1] );
+      zXform3D( rkLinkWldFrame(cell1->data.link), &v->data._axis[2], &v->data.axis[2] );
       v->data.type = cp->data.type;
       flag = true;
     }
@@ -485,11 +485,11 @@ rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkCDCell *
     zVec3DCopy( &v->data.norm, &v->data.axis[0] );
     zVec3DOrthoSpace( &v->data.axis[0], &v->data.axis[1], &v->data.axis[2] );
     zMulMat3DTVec3D( rkLinkWldAtt(cell1->data.link), &v->data.norm, &v->data._norm );
-    zXfer3DInv( rkLinkWldFrame(cell1->data.link), &v->data.pro, &v->data._pro );
-    zXfer3DInv( rkLinkWldFrame(cell1->data.link), &v->data.ref, &v->data._ref );
-    zXfer3DInv( rkLinkWldFrame(cell1->data.link), &v->data.axis[0], &v->data._axis[0] );
-    zXfer3DInv( rkLinkWldFrame(cell1->data.link), &v->data.axis[1], &v->data._axis[1] );
-    zXfer3DInv( rkLinkWldFrame(cell1->data.link), &v->data.axis[2], &v->data._axis[2] );
+    zXform3DInv( rkLinkWldFrame(cell1->data.link), &v->data.pro, &v->data._pro );
+    zXform3DInv( rkLinkWldFrame(cell1->data.link), &v->data.ref, &v->data._ref );
+    zXform3DInv( rkLinkWldFrame(cell1->data.link), &v->data.axis[0], &v->data._axis[0] );
+    zXform3DInv( rkLinkWldFrame(cell1->data.link), &v->data.axis[1], &v->data._axis[1] );
+    zXform3DInv( rkLinkWldFrame(cell1->data.link), &v->data.axis[2], &v->data._axis[2] );
     v->data.type = cd->def_type;
   }
   zListInsertHead( vlist, v );

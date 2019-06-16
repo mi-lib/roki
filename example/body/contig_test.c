@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
   /* for assertion */
   zShape3DClone( zMShape3DShape(&ms,0), &sc, NULL );
-  zShape3DXfer( zMShape3DShape(&ms,0), rkBodyFrame(&body), &sc );
+  zShape3DXform( zMShape3DShape(&ms,0), rkBodyFrame(&body), &sc );
   fp1 = fopen( "p", "w" );
   fp2 = fopen( "cp", "w" );
   for( i=0; i<N; i++ ){

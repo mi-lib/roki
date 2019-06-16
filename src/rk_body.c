@@ -13,11 +13,11 @@
 
 static zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest);
 
-/* transfer a mass property set to that with respect to a frame. */
-rkMP *rkMPXfer(rkMP *src, zFrame3D *f, rkMP *dest)
+/* transform mass properties to that with respect to a frame. */
+rkMP *rkMPXform(rkMP *src, zFrame3D *f, rkMP *dest)
 {
   rkMPSetMass( dest, rkMPMass(src) );
-  zXfer3D( f, rkMPCOM(src), rkMPCOM(dest) );
+  zXform3D( f, rkMPCOM(src), rkMPCOM(dest) );
   zRotMat3D( zFrame3DAtt(f), rkMPInertia(src), rkMPInertia(dest) );
   return dest;
 }
@@ -173,10 +173,10 @@ rkBody *rkBodyCombine(rkBody *b1, rkBody *b2, zFrame3D *f, rkBody *b)
   rkMP mp1, mp2;
   zFrame3D df;
 
-  zFrame3DXfer( f, rkBodyFrame(b1), &df );
-  rkMPXfer( rkBodyMP(b1), &df, &mp1 );
-  zFrame3DXfer( f, rkBodyFrame(b2), &df );
-  rkMPXfer( rkBodyMP(b2), &df, &mp2 );
+  zFrame3DXform( f, rkBodyFrame(b1), &df );
+  rkMPXform( rkBodyMP(b1), &df, &mp1 );
+  zFrame3DXform( f, rkBodyFrame(b2), &df );
+  rkMPXform( rkBodyMP(b2), &df, &mp2 );
   rkMPCombine( &mp1, &mp2, rkBodyMP(b) );
   rkBodySetFrame( b, f );
   return b;
@@ -189,8 +189,8 @@ rkBody *rkBodyCombineDRC(rkBody *b, rkBody *sb)
   zFrame3D df;
 
   rkMPCopy( rkBodyMP(b), &mp1 );
-  zFrame3DXfer( rkBodyFrame(b), rkBodyFrame(sb), &df );
-  rkMPXfer( rkBodyMP(sb), &df, &mp2 );
+  zFrame3DXform( rkBodyFrame(b), rkBodyFrame(sb), &df );
+  rkMPXform( rkBodyMP(sb), &df, &mp2 );
   rkMPCombine( &mp1, &mp2, rkBodyMP(b) );
   return b;
 }
@@ -198,7 +198,7 @@ rkBody *rkBodyCombineDRC(rkBody *b, rkBody *sb)
 /* update COM position of a body with respect to the world frame. */
 zVec3D *rkBodyUpdateCOM(rkBody *body)
 {
-  return zXfer3D( rkBodyFrame(body), rkBodyCOM(body), rkBodyWldCOM(body) );
+  return zXform3D( rkBodyFrame(body), rkBodyCOM(body), rkBodyWldCOM(body) );
 }
 
 /* update COM rate of a body with respect to the inertial frame. */
@@ -272,6 +272,6 @@ zVec3D *rkBodyContigVert(rkBody *body, zVec3D *p, double *d)
 {
   zVec3D pc;
 
-  zXfer3DInv( rkBodyFrame(body), p, &pc );
+  zXform3DInv( rkBodyFrame(body), p, &pc );
   return zShapeListContigVert( rkBodyShapeList(body), &pc, d );
 }

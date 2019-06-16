@@ -9,9 +9,7 @@
 static zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv);
 
 /* (static)
- * _rkIKImpSRV
- * - strict referential velocity for impedance control.
- */
+ * strict referential velocity for impedance control. */
 zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv)
 {
   zVec3D dv;
@@ -23,9 +21,7 @@ zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv)
   return srv;
 }
 
-/* rkIKImpWldAtt
- * - attitude control with respect to the world frame.
- */
+/* attitude control with respect to the world frame. */
 zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
 {
   zVec3D v, err;
@@ -38,15 +34,13 @@ zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
   return _rkIKImpSRV( &err, &v, priv, srv );
 }
 
-/* rkIKImpWldPos
- * - position control with respect to the world frame.
- */
+/* position control with respect to the world frame. */
 zVec3D *rkIKImpWldPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
 {
   zVec3D v, err;
 
   /* position error */
-  zXfer3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &v );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &v );
   zVec3DSub( &ref->pos, &v, &err );
   /* velocity */
   rkChainLinkPointVel( chain, attr->id, &attr->ap, &v );
@@ -54,9 +48,7 @@ zVec3D *rkIKImpWldPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
   return _rkIKImpSRV( &err, &v, priv, srv );
 }
 
-/* rkIKImpWldCOM
- * - COM position control with respect to the world frame.
- */
+/* COM position control with respect to the world frame. */
 zVec3D *rkIKImpWldCOM(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
 {
   zVec3D err;

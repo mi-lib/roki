@@ -112,7 +112,7 @@ void link_am_test(rkChain *chain, zMat jacobi, zVec3D *v)
   zVec3D tp;
 
   rkChainLinkAMJacobi( chain, TIP, ZVEC3DZERO, jacobi );
-  zXfer3DInv( rkChainLinkWldFrame(chain,TIP), ZVEC3DZERO, &tp );
+  zXform3DInv( rkChainLinkWldFrame(chain,TIP), ZVEC3DZERO, &tp );
   rkLinkAM( rkChainLink(chain,TIP), &tp, v );
   zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,TIP), v );
 }

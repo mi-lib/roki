@@ -20,7 +20,7 @@ static void _rkJointCatDisPrism(void *prp, double *dis, double k, double *val);
 static void _rkJointSubDisPrism(void *prp, double *dis, double *sdis);
 static void _rkJointSetDisCNTPrism(void *prp, double *val, double dt);
 
-static zFrame3D *_rkJointXferPrism(void *prp, zFrame3D *fo, zFrame3D *f);
+static zFrame3D *_rkJointXformPrism(void *prp, zFrame3D *fo, zFrame3D *f);
 static void _rkJointIncVelPrism(void *prp, zVec6D *vel);
 static void _rkJointIncAccOnVelPrism(void *prp, zVec3D *w, zVec6D *acc);
 static void _rkJointIncAccPrism(void *prp, zVec6D *acc);
@@ -107,8 +107,8 @@ void _rkJointSetDisCNTPrism(void *prp, double *val, double dt)
   _rkc(prp)->acc = ( _rkc(prp)->vel - oldvel ) / dt;
 }
 
-/* joint frame transfer function */
-zFrame3D *_rkJointXferPrism(void *prp, zFrame3D *fo, zFrame3D *f)
+/* joint frame transformation */
+zFrame3D *_rkJointXformPrism(void *prp, zFrame3D *fo, zFrame3D *f)
 {
   zVec3DCat( zFrame3DPos(fo),
     _rkc(prp)->dis, &zFrame3DAtt(fo)->v[2], zFrame3DPos(f) );
@@ -116,7 +116,7 @@ zFrame3D *_rkJointXferPrism(void *prp, zFrame3D *fo, zFrame3D *f)
   return f;
 }
 
-/* joint velocity transfer function */
+/* joint velocity transformation */
 void _rkJointIncVelPrism(void *prp, zVec6D *vel)
 {
   vel->e[zZ] += _rkc(prp)->vel;
@@ -128,13 +128,13 @@ void _rkJointIncAccOnVelPrism(void *prp, zVec3D *w, zVec6D *acc)
   acc->e[zY] -= 2 * _rkc(prp)->vel * w->e[zX];
 }
 
-/* joint acceleration transfer function */
+/* joint acceleration transformation */
 void _rkJointIncAccPrism(void *prp, zVec6D *acc)
 {
   acc->e[zZ] += _rkc(prp)->acc;
 }
 
-/* joint torque transfer function */
+/* joint torque transformation */
 void _rkJointCalcTrqPrism(void *prp, zVec6D *f)
 {
   _rkc(prp)->trq = f->e[zZ];
@@ -251,7 +251,7 @@ static rkJointCom rk_joint_prism = {
   _rkJointCatDisPrism,
   _rkJointSubDisPrism,
   _rkJointSetDisCNTPrism,
-  _rkJointXferPrism,
+  _rkJointXformPrism,
   _rkJointIncVelPrism,
   _rkJointIncAccOnVelPrism,
   _rkJointIncAccPrism,
@@ -337,7 +337,7 @@ void _rkJointABIAddAbiPrism(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *p
   zMat6DDyad( &tmpm, &tmpv, &tmpv2 );
   zMat6DAddDRC( &tmpm, m );
 
-  rkJointXferMat6D( f, &tmpm, &tmpm );
+  rkJointXformMat6D( f, &tmpm, &tmpm );
   zMat6DAddDRC( pm, &tmpm );
 }
 

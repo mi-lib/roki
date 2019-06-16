@@ -437,7 +437,7 @@ zVec3D *rkChainZMP(rkChain *c, double z, zVec3D *zmp)
   zVec3DOuterProd( &dz, rkChainRootTorque(c), zmp );
   zVec3DCatDRC( zmp, z-rkChainRootPos(c)->e[zZ], rkChainRootForce(c) );
   zVec3DDivDRC( zmp, f );
-  return zXfer3DDRC( rkChainRootFrame(c), zmp );
+  return zXform3DDRC( rkChainRootFrame(c), zmp );
 }
 
 /* net torque around vertical axis exerted to a kinematic chain. */
@@ -457,7 +457,7 @@ zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am)
 
   zVec3DClear( am );
   for( i=0; i<rkChainNum(c); i++ ){
-    zXfer3DInv( rkChainLinkWldFrame(c,i), p, &tp );
+    zXform3DInv( rkChainLinkWldFrame(c,i), p, &tp );
     rkLinkAM( rkChainLink(c,i), &tp, &tmp );
     zMulMat3DVec3DDRC( rkChainLinkWldAtt(c,i), &tmp );
     zVec3DAddDRC( am, &tmp );
@@ -528,7 +528,7 @@ zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl)
     l = rkChainLink(chain,i);
     zListForEach( rkLinkShapeList(l), sc ){
       for( j=0; j<zShape3DVertNum(sc->data); j++ ){
-        zXfer3D( rkLinkWldFrame(l), zShape3DVert(sc->data,j), &v );
+        zXform3D( rkLinkWldFrame(l), zShape3DVert(sc->data,j), &v );
         if( !zVec3DListInsert( vl, &v ) ){
           zVec3DListDestroy( vl );
           return NULL;

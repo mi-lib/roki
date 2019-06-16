@@ -38,18 +38,18 @@ typedef struct _rkMP{
 
 #define rkMPCopy(src,dst)      ( *(dst) = *(src) )
 
-/*! \brief transfer a mass property set to that with respect to a frame.
+/*! \brief transform mass properties to that with respect to a frame.
  *
- * rkMPXfer() transfers a mass property set \a src to that
- * with respect to a given frame \a f.
+ * rkMPXform() transforms a set of mass properties \a src
+ * to that with respect to a frame \a f.
  * The mass of \a dest will be the same with that of \a src.
- * The COM of \a src will be transfered to that of \a dest
+ * The COM of \a src will be transformed to that of \a dest
  * by \a f.
  * The inertia tensor of \a src will be rotated to that of
  * \a dest with respect to the attitude of \a f.
  * \return \a dest
  */
-__EXPORT rkMP *rkMPXfer(rkMP *src, zFrame3D *f, rkMP *dest);
+__EXPORT rkMP *rkMPXform(rkMP *src, zFrame3D *f, rkMP *dest);
 
 /*! \brief combine two mass property sets in the same frame.
  */
@@ -91,7 +91,7 @@ __EXPORT void rkMPFPrint(FILE *fp, rkMP *mp);
 
 typedef struct{
   rkMP mp;           /*!< \brief mass property */
-  zFrame3D frame;    /*!< \brief absolute transformation */
+  zFrame3D frame;    /*!< \brief absolute transformation frame */
   zVec6D vel;        /*!< \brief velocity */
   zVec6D acc;        /*!< \brief acceleration */
   zVec3D com;        /*!< \brief center of mass (COM) */
@@ -211,7 +211,7 @@ __EXPORT rkBody *rkBodyCombineDRC(rkBody *b, rkBody *sb);
 /*! \brief update body COM state.
  *
  * rkBodyUpdateCOM() updates the COM position of a body \a body by
- * transferring the local COM position of \a body to that with respect
+ * transforming the local COM position of \a body to that with respect
  * to the world frame. The result is stored into the internal member
  * of \a body, which can be referred by rkBodyWldCOM().
  *

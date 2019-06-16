@@ -1,8 +1,4 @@
-/*
- * zkcconv - .zkc file converter
- * (C)Copyright, Zhidao since 1999
- *
- * convert .zkc file in which all parameters are denoted
+/* convert .zkc file in which all parameters are denoted
  * with respect to the world frame to that with a standard notation.
  */
 
@@ -25,7 +21,7 @@ void zkcconv_mass(rkLink *l)
   zFrame3D *wf; /* world frame temporarily stored in link_base_frame ) */
 
   wf = rkLinkAdjFrame( l );
-  zXfer3DInvDRC( wf, rkLinkCOM(l) );
+  zXform3DInvDRC( wf, rkLinkCOM(l) );
   zRotMat3DInv( zFrame3DAtt(wf), rkLinkInertia(l), rkLinkInertia(l) );
 
   if( rkLinkChild(l) )
@@ -42,7 +38,7 @@ void zkcconv_frame(rkLink *l)
     zkcconv_frame( rkLinkChild(l) );
 
   if( rkLinkParent(l) ){
-    zFrame3DXfer( rkLinkAdjFrame(rkLinkParent(l)), rkLinkAdjFrame(l), &frm );
+    zFrame3DXform( rkLinkAdjFrame(rkLinkParent(l)), rkLinkAdjFrame(l), &frm );
     zFrame3DCopy( &frm, rkLinkAdjFrame(l) );
   }
   if( rkLinkSibl(l) )

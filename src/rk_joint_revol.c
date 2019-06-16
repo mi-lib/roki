@@ -20,7 +20,7 @@ static void _rkJointCatDisRevol(void *prp, double *dis, double k, double *val);
 static void _rkJointSubDisRevol(void *prp, double *dis, double *sdis);
 static void _rkJointSetDisCNTRevol(void *prp, double *val, double dt);
 
-static zFrame3D *_rkJointXferRevol(void *prp, zFrame3D *fo, zFrame3D *f);
+static zFrame3D *_rkJointXformRevol(void *prp, zFrame3D *fo, zFrame3D *f);
 static void _rkJointIncVelRevol(void *prp, zVec6D *vel);
 static void _rkJointIncAccOnVelRevol(void *prp, zVec3D *w, zVec6D *acc);
 static void _rkJointIncAccRevol(void *prp, zVec6D *acc);
@@ -111,8 +111,8 @@ void _rkJointSetDisCNTRevol(void *prp, double *val, double dt)
   _rkc(prp)->acc = ( _rkc(prp)->vel - oldvel ) / dt;
 }
 
-/* joint frame transfer function */
-zFrame3D *_rkJointXferRevol(void *prp, zFrame3D *fo, zFrame3D *f)
+/* joint frame transformation */
+zFrame3D *_rkJointXformRevol(void *prp, zFrame3D *fo, zFrame3D *f)
 {
   /* position */
   zVec3DCopy( zFrame3DPos(fo), zFrame3DPos(f) );
@@ -125,7 +125,7 @@ zFrame3D *_rkJointXferRevol(void *prp, zFrame3D *fo, zFrame3D *f)
   return f;
 }
 
-/* joint velocity transfer function */
+/* joint velocity transformation */
 void _rkJointIncVelRevol(void *prp, zVec6D *vel)
 {
   vel->e[zZA] += _rkc(prp)->vel;
@@ -137,13 +137,13 @@ void _rkJointIncAccOnVelRevol(void *prp, zVec3D *w, zVec6D *acc)
   acc->e[zYA] -= _rkc(prp)->vel * w->e[zX];
 }
 
-/* joint acceleration transfer function */
+/* joint acceleration transformation */
 void _rkJointIncAccRevol(void *prp, zVec6D *acc)
 {
   acc->e[zZA] += _rkc(prp)->acc;
 }
 
-/* joint torque transfer function */
+/* joint torque transformation */
 void _rkJointCalcTrqRevol(void *prp, zVec6D *f)
 {
   _rkc(prp)->trq = f->e[zZA];
@@ -258,7 +258,7 @@ static rkJointCom rk_joint_revol = {
   _rkJointCatDisRevol,
   _rkJointSubDisRevol,
   _rkJointSetDisCNTRevol,
-  _rkJointXferRevol,
+  _rkJointXformRevol,
   _rkJointIncVelRevol,
   _rkJointIncAccOnVelRevol,
   _rkJointIncAccRevol,
@@ -344,7 +344,7 @@ void _rkJointABIAddAbiRevol(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *p
   zMat6DDyad( &tmpm, &tmpv, &tmpv2 );
   zMat6DAddDRC( &tmpm, m );
 
-  rkJointXferMat6D( f, &tmpm, &tmpm );
+  rkJointXformMat6D( f, &tmpm, &tmpm );
   zMat6DAddDRC( pm, &tmpm );
 }
 

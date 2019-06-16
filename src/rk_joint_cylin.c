@@ -20,7 +20,7 @@ static void _rkJointCatDisCylin(void *prp, double *dis, double k, double *val);
 static void _rkJointSubDisCylin(void *prp, double *dis, double *sdis);
 static void _rkJointSetDisCNTCylin(void *prp, double *val, double dt);
 
-static zFrame3D *_rkJointXferCylin(void *prp, zFrame3D *fo, zFrame3D *f);
+static zFrame3D *_rkJointXformCylin(void *prp, zFrame3D *fo, zFrame3D *f);
 static void _rkJointIncVelCylin(void *prp, zVec6D *vel);
 static void _rkJointIncAccOnVelCylin(void *prp, zVec3D *w, zVec6D *acc);
 static void _rkJointIncAccCylin(void *prp, zVec6D *acc);
@@ -116,8 +116,8 @@ void _rkJointSetDisCNTCylin(void *prp, double *val, double dt)
   _rkc(prp)->acc[1] = ( _rkc(prp)->vel[1] - oldvel[1] ) / dt;
 }
 
-/* joint frame transfer function */
-zFrame3D *_rkJointXferCylin(void *prp, zFrame3D *fo, zFrame3D *f)
+/* joint frame transformation */
+zFrame3D *_rkJointXformCylin(void *prp, zFrame3D *fo, zFrame3D *f)
 {
   /* rotation */
   zVec3DMul( &zFrame3DAtt(fo)->v[0], _rkc(prp)->_c, &zFrame3DAtt(f)->v[0] );
@@ -131,7 +131,7 @@ zFrame3D *_rkJointXferCylin(void *prp, zFrame3D *fo, zFrame3D *f)
   return f;
 }
 
-/* joint velocity transfer function */
+/* joint velocity transformation */
 void _rkJointIncVelCylin(void *prp, zVec6D *vel)
 {
   vel->e[zZ ] += _rkc(prp)->vel[0];
@@ -146,14 +146,14 @@ void _rkJointIncAccOnVelCylin(void *prp, zVec3D *w, zVec6D *acc)
   acc->e[zYA] -= _rkc(prp)->vel[1] * w->e[zX];
 }
 
-/* joint acceleration transfer function */
+/* joint acceleration transformation */
 void _rkJointIncAccCylin(void *prp, zVec6D *acc)
 {
   acc->e[zZ ] += _rkc(prp)->acc[0];
   acc->e[zZA] += _rkc(prp)->acc[1];
 }
 
-/* joint torque transfer function */
+/* joint torque transformation */
 void _rkJointCalcTrqCylin(void *prp, zVec6D *f)
 {
   _rkc(prp)->trq[0] = f->e[zZ];
@@ -288,7 +288,7 @@ static rkJointCom rk_joint_cylin = {
   _rkJointCatDisCylin,
   _rkJointSubDisCylin,
   _rkJointSetDisCNTCylin,
-  _rkJointXferCylin,
+  _rkJointXformCylin,
   _rkJointIncVelCylin,
   _rkJointIncAccOnVelCylin,
   _rkJointIncAccCylin,
@@ -385,7 +385,7 @@ void _rkJointABIAddAbiCylin(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *p
   zMat6DDyad( &tmpm2, &tmpv, &v61 );
   zMat6DAddDRC( &tmpm, &tmpm2 );
 
-  rkJointXferMat6D( f, &tmpm, &tmpm );
+  rkJointXformMat6D( f, &tmpm, &tmpm );
   zMat6DAddDRC( pm, &tmpm );
 }
 

@@ -12,7 +12,7 @@ static void _rkJointCatDisFixed(void *prp, double *dis, double k, double *val);
 static void _rkJointSubDisFixed(void *prp, double *dis, double *sdis);
 static void _rkJointSetDisCNTFixed(void *prp, double *val, double dt);
 static void _rkJointGetMotorFixed(void *prp, rkMotor **m);
-static zFrame3D *_rkJointXferFixed(void *prp, zFrame3D *fo, zFrame3D *f);
+static zFrame3D *_rkJointXformFixed(void *prp, zFrame3D *fo, zFrame3D *f);
 static void _rkJointIncVelFixed(void *prp, zVec6D *vel);
 static void _rkJointIncAccOnVelFixed(void *prp, zVec3D *w, zVec6D *acc);
 static void _rkJointIncAccFixed(void *prp, zVec6D *acc);
@@ -38,19 +38,19 @@ void _rkJointGetMotorFixed(void *prp, rkMotor **m){
   *m = NULL;
 }
 
-/* joint frame transfer function */
-zFrame3D *_rkJointXferFixed(void *prp, zFrame3D *fo, zFrame3D *f)
+/* joint frame transformation */
+zFrame3D *_rkJointXformFixed(void *prp, zFrame3D *fo, zFrame3D *f)
 { /* suppose f is the same with fo */
   zFrame3DCopy( fo, f );
   return f;
 }
 
-/* joint motion rate transfer function */
+/* joint motion rate transformation */
 void _rkJointIncVelFixed(void *prp, zVec6D *vel){}
 void _rkJointIncAccOnVelFixed(void *prp, zVec3D *w, zVec6D *acc){}
 void _rkJointIncAccFixed(void *prp, zVec6D *acc){}
 
-/* joint torque transfer function */
+/* joint torque transformation */
 void _rkJointCalcTrqFixed(void *prp, zVec6D *f){}
 
 /* inverse computation of joint torsion and displacement */
@@ -93,7 +93,7 @@ static rkJointCom rk_joint_fixed = {
   _rkJointCatDisFixed,
   _rkJointSubDisFixed,
   _rkJointSetDisCNTFixed,
-  _rkJointXferFixed,
+  _rkJointXformFixed,
   _rkJointIncVelFixed,
   _rkJointIncAccOnVelFixed,
   _rkJointIncAccFixed,
@@ -147,7 +147,7 @@ void _rkJointABIAddAbiFixed(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *p
 {
   zMat6D tmpm;
 
-  rkJointXferMat6D( f, m, &tmpm );
+  rkJointXformMat6D( f, m, &tmpm );
   zMat6DAddDRC( pm, &tmpm );
 }
 

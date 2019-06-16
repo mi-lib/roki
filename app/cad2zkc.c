@@ -125,9 +125,9 @@ void cad2zkc_conv_one(cad2zkc_t *data)
     zEndl();
     return;
   }
-  zFrame3DXfer( &data->parent->f, &data->f, &f );
+  zFrame3DXform( &data->parent->f, &data->f, &f );
   rkMPSetMass( &mp, rkMPMass(&data->mp) );
-  zXfer3DInv( &data->f, rkMPCOM(&data->mp), rkMPCOM(&mp) );
+  zXform3DInv( &data->f, rkMPCOM(&data->mp), rkMPCOM(&mp) );
   zMulMat3DTMat3D( zFrame3DAtt(&data->f), rkMPInertia(&data->mp), &ri );
   zMulMat3DMat3D( &ri, zFrame3DAtt(&data->f), rkMPInertia(&mp) );
   printf( "jointtype: revolute\n" );

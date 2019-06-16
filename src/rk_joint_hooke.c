@@ -22,7 +22,7 @@ static void _rkJointCatDisHooke(void *prp, double *dis, double k, double *val);
 static void _rkJointSubDisHooke(void *prp, double *dis, double *sdis);
 static void _rkJointSetDisCNTHooke(void *prp, double *val, double dt);
 
-static zFrame3D *_rkJointXferHooke(void *prp, zFrame3D *fo, zFrame3D *f);
+static zFrame3D *_rkJointXformHooke(void *prp, zFrame3D *fo, zFrame3D *f);
 static void _rkJointIncVelHooke(void *prp, zVec6D *vel);
 static void _rkJointIncAccOnVelHooke(void *prp, zVec3D *w, zVec6D *acc);
 static void _rkJointIncAccHooke(void *prp, zVec6D *acc);
@@ -128,8 +128,8 @@ void _rkJointSetDisCNTHooke(void *prp, double *val, double dt)
   _rkc(prp)->acc[1] = ( _rkc(prp)->vel[1] - oldvel[1] ) / dt;
 }
 
-/* joint frame transfer function */
-zFrame3D *_rkJointXferHooke(void *prp, zFrame3D *fo, zFrame3D *f)
+/* joint frame transformation */
+zFrame3D *_rkJointXformHooke(void *prp, zFrame3D *fo, zFrame3D *f)
 {
   zMat3D m;
 
@@ -142,7 +142,7 @@ zFrame3D *_rkJointXferHooke(void *prp, zFrame3D *fo, zFrame3D *f)
   return f;
 }
 
-/* joint motion rate transfer function */
+/* joint motion rate transformation */
 void _rkJointIncVelHooke(void *prp, zVec6D *vel)
 {
   zVec3D v;
@@ -174,7 +174,7 @@ void _rkJointIncAccHooke(void *prp, zVec6D *acc)
   zVec3DAddDRC( zVec6DAng(acc), &v1 );
 }
 
-/* joint torque transfer function */
+/* joint torque transformation */
 void _rkJointCalcTrqHooke(void *prp, zVec6D *f)
 {
   rkJointPrpHooke *p;
@@ -334,7 +334,7 @@ static rkJointCom rk_joint_hooke = {
   _rkJointCatDisHooke,
   _rkJointSubDisHooke,
   _rkJointSetDisCNTHooke,
-  _rkJointXferHooke,
+  _rkJointXformHooke,
   _rkJointIncVelHooke,
   _rkJointIncAccOnVelHooke,
   _rkJointIncAccHooke,

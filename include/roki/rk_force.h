@@ -62,19 +62,17 @@ zListClass( rkWrenchList, rkWrench, rkWrenchData );
 __EXPORT rkWrench *rkWrenchListPop(rkWrenchList *wl);
 #define rkWrenchListDestroy(l) zListDestroy( rkWrench, l )
 
-/*! \brief convert wrench list to a net wrench.
+/*! \brief shift and add wrench.
  *
- * rkWrenchToForce6D() converts the properties of the force list
- * cell \a cell, a 6D force acting at a certain point, to the
- * equivalent 6D force vector \a force acting at the original point.
+ * rkWrenchShift() shifts a wrench of a list cell \a cell to the
+ * equivalent wrench \a w acting at the original point.
  *
- * rkWrenchListToForce6D() converts \a list to the resultant 6D
- * force \a force acting at the original point.
+ * rkWrenchListNet() accumulates a list of wrenches \a list to
+ * the resultant net 6D force \a w acting at the original point.
  * \retval
- * rkWrenchToForce6D() and rkWrenchListToForce6D() return a
- * pointer to \a force.
+ * rkWrenchShift() and rkWrenchListNet() return a pointer \a force.
  */
-__EXPORT zVec6D *rkWrenchXfer(rkWrench *cell, zVec6D *w);
+__EXPORT zVec6D *rkWrenchShift(rkWrench *cell, zVec6D *w);
 __EXPORT zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w);
 
 /*! \brief print out a wrench.

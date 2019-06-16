@@ -20,7 +20,7 @@ static void _rkJointCatDisFloat(void *prp, double *dis, double k, double *val);
 static void _rkJointSubDisFloat(void *prp, double *dis, double *sdis);
 static void _rkJointSetDisCNTFloat(void *prp, double *val, double dt);
 
-static zFrame3D *_rkJointXferFloat(void *prp, zFrame3D *fo, zFrame3D *f);
+static zFrame3D *_rkJointXformFloat(void *prp, zFrame3D *fo, zFrame3D *f);
 static void _rkJointIncVelFloat(void *prp, zVec6D *vel);
 static void _rkJointIncAccOnVelFloat(void *prp, zVec3D *w, zVec6D *acc);
 static void _rkJointIncAccFloat(void *prp, zVec6D *acc);
@@ -130,17 +130,17 @@ void _rkJointSetDisCNTFloat(void *prp, double *val, double dt)
   zVec6DDif( &v_old, &_rkc(prp)->vel, dt, &_rkc(prp)->acc );
 }
 
-/* joint frame transfer function */
-zFrame3D *_rkJointXferFloat(void *prp, zFrame3D *fo, zFrame3D *f)
+/* joint frame transformation */
+zFrame3D *_rkJointXformFloat(void *prp, zFrame3D *fo, zFrame3D *f)
 {
   /* position */
-  zXfer3D( fo, zVec6DLin(&_rkc(prp)->dis), zFrame3DPos(f) );
+  zXform3D( fo, zVec6DLin(&_rkc(prp)->dis), zFrame3DPos(f) );
   /* attitude */
   zMulMat3DMat3D( zFrame3DAtt(fo), &_rkc(prp)->_att, zFrame3DAtt(f) );
   return f;
 }
 
-/* joint velocity transfer function */
+/* joint velocity transformation */
 void _rkJointIncVelFloat(void *prp, zVec6D *vel)
 {
   zVec6D vl;
@@ -162,7 +162,7 @@ void _rkJointIncAccOnVelFloat(void *prp, zVec3D *w, zVec6D *acc)
   zVec3DAddDRC( zVec6DAng(acc), &tmp );
 }
 
-/* joint acceleration transfer function */
+/* joint acceleration transformation */
 void _rkJointIncAccFloat(void *prp, zVec6D *acc)
 {
   zVec6D al;
@@ -171,7 +171,7 @@ void _rkJointIncAccFloat(void *prp, zVec6D *acc)
   zVec6DAddDRC( acc, &al );
 }
 
-/* joint torque transfer function */
+/* joint torque transformation */
 void _rkJointCalcTrqFloat(void *prp, zVec6D *f)
 {
   zMulMat3DVec6D( &_rkc(prp)->_att, f, &_rkc(prp)->trq );
@@ -259,7 +259,7 @@ static rkJointCom rk_joint_float = {
   _rkJointCatDisFloat,
   _rkJointSubDisFloat,
   _rkJointSetDisCNTFloat,
-  _rkJointXferFloat,
+  _rkJointXformFloat,
   _rkJointIncVelFloat,
   _rkJointIncAccOnVelFloat,
   _rkJointIncAccFloat,

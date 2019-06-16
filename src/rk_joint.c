@@ -175,7 +175,7 @@ double rkJointTorsionDisPrism(zFrame3D *dev, zVec6D *t)
 }
 
 /* for ABI */
-zMat6D *rkJointXferMat6D(zFrame3D *f, zMat6D *i, zMat6D *m)
+zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m)
 {
   zMat3D tmpm, tmpm2;
 

@@ -26,7 +26,7 @@ bool zkc2z3dConvert(rkChain *chain, char basename[])
     l = rkChainLink(chain,i);
     zListForEach( rkLinkShapeList(l), sc ){
       zShape3DClone( sc->data, &s, zShape3DOptic(sc->data) );
-      zShape3DXfer( sc->data, rkChainLinkWldFrame(chain,i), &s );
+      zShape3DXform( sc->data, rkChainLinkWldFrame(chain,i), &s );
       fprintf( fp, "[shape]\n" );
       zShape3DFPrint( fp, &s );
       zShape3DDestroy( &s );

@@ -23,7 +23,7 @@ static void _rkJointCatDisBrFloat(void *prp, double *dis, double k, double *val)
 static void _rkJointSubDisBrFloat(void *prp, double *dis, double *sdis);
 static void _rkJointSetDisCNTBrFloat(void *prp, double *val, double dt);
 
-static zFrame3D *_rkJointXferBrFloat(void *prp, zFrame3D *fo, zFrame3D *f);
+static zFrame3D *_rkJointXformBrFloat(void *prp, zFrame3D *fo, zFrame3D *f);
 static void _rkJointIncVelBrFloat(void *prp, zVec6D *vel);
 static void _rkJointIncAccOnVelBrFloat(void *prp, zVec3D *w, zVec6D *acc);
 static void _rkJointIncAccBrFloat(void *prp, zVec6D *acc);
@@ -134,10 +134,10 @@ void _rkJointSetDisCNTBrFloat(void *prp, double *val, double dt)
 }
 
 /* joint frame transfer function */
-zFrame3D *_rkJointXferBrFloat(void *prp, zFrame3D *fo, zFrame3D *f)
+zFrame3D *_rkJointXformBrFloat(void *prp, zFrame3D *fo, zFrame3D *f)
 {
   /* position */
-  zXfer3D( fo, zVec6DLin(&_rkc(prp)->dis), zFrame3DPos(f) );
+  zXform3D( fo, zVec6DLin(&_rkc(prp)->dis), zFrame3DPos(f) );
   /* attitude */
   zMulMat3DMat3D( zFrame3DAtt(fo), &_rkc(prp)->_att, zFrame3DAtt(f) );
   return f;
@@ -270,7 +270,7 @@ static rkJointCom rk_joint_brfloat = {
   _rkJointCatDisBrFloat,
   _rkJointSubDisBrFloat,
   _rkJointSetDisCNTBrFloat,
-  _rkJointXferBrFloat,
+  _rkJointXformBrFloat,
   _rkJointIncVelBrFloat,
   _rkJointIncAccOnVelBrFloat,
   _rkJointIncAccBrFloat,
@@ -376,7 +376,7 @@ void _rkJointABIAddAbiBrFloatFixed(void *prp, zMat6D *m, zFrame3D *f, zMat h, zM
 {
   zMat6D tmpm;
 
-  rkJointXferMat6D( f, m, &tmpm );
+  rkJointXformMat6D( f, m, &tmpm );
   zMat6DAddDRC( pm, &tmpm );
 }
 

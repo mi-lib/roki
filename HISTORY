@@ -1,3 +1,5 @@
+2019. 6.16. Renamed rkWrenchXfer to rkWrenchShift. [rk_force]
+2019. 6.16. Reflected renaming of *Xfer* to *Xform*. [rk_body, rk_joint, rk_joint_fixed, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher, rk_joint_float, rk_joint_brfloat, rk_link, rk_chain, rk_jacobi, rk_ik_cell, rk_cd, app]
 2019. 6.13. Debugged rkGravitySet. [rk_g3d]
 2019. 6.13. Renamed *Read and *Write to *Scan and *Print, respectively. [rk_contact, rk_force, rk_body, rk_joint, rk_joint_fixed, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher, rk_joint_float, rk_link, rk_chain, rk_ik_seq]
 2019. 3.25. Renamed _rkChainLinkVelAccClear to _rkChainClearLinkRate. [rk_abi]

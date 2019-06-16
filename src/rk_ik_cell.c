@@ -116,7 +116,7 @@ zVec3D *rkIKLinkWldPosErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRe
 { /* position error of a link in the world frame */
   zVec3D p;
 
-  zXfer3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &p );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &p );
   return zVec3DSub( &ref->pos, &p, err );
 }
 
@@ -129,7 +129,7 @@ zVec3D *rkIKLinkL2LPosErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRe
 { /* position error of a link with respect to another link */
   zVec3D p;
 
-  zXfer3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->ap, &p );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->ap, &p );
   zVec3DSubDRC( &p, rkChainLinkWldPos(chain,attr->id) );
   return zVec3DSub( &ref->pos, &p, err );
 }
@@ -165,7 +165,7 @@ zVec3D *rkIKAMCOMErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *re
 
 void rkIKBindLinkWldPos(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref)
 { /* current position of a link in the world frame */
-  zXfer3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &ref->pos );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &ref->pos );
 }
 
 void rkIKBindLinkWldAtt(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref)
@@ -177,7 +177,7 @@ void rkIKBindLinkL2LPos(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef 
 { /* current position of a link with respect to another link */
   zVec3D p;
 
-  zXfer3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->ap, &p );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->ap, &p );
   zVec3DSub( &p, rkChainLinkWldPos(chain,attr->id), &ref->pos );
 }
 
