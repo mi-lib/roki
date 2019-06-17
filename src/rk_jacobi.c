@@ -71,7 +71,7 @@ zMat rkChainLinkWldAngJacobi(rkChain *c, int id, zMat jacobi)
   rkLink *l;
   zVec3D s;
 
-  zMatClear( jacobi );
+  zMatZero( jacobi );
   for( l=rkChainLink(c,id); ; l=rkLinkParent(l) ){
     __rk_jacobi_ang_col( l, rkLinkWldFrame(l), jacobi, __rk_jacobi_set_vector, &s );
     if( l == rkChainRoot(c) ) break;
@@ -85,7 +85,7 @@ zMat rkChainLinkWldLinJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi)
   rkLink *l;
   zVec3D s, tp;
 
-  zMatClear( jacobi );
+  zMatZero( jacobi );
   zXform3D( rkChainLinkWldFrame(c,id), p, &tp );
   for( l=rkChainLink(c,id); ; l=rkLinkParent(l) ){
     __rk_jacobi_lin_col( l, rkLinkWldFrame(l), &tp, 0, jacobi, __rk_jacobi_set_vector, &s );
@@ -101,7 +101,7 @@ zMat rkChainLinkToLinkAngJacobi(rkChain *c, int from, int to, zMat jacobi)
   rkLink *l;
   zVec3D s;
 
-  zMatClear( jacobi );
+  zMatZero( jacobi );
   for( l=rkChainLink(c,to); l!=rkChainRoot(c); l=rkLinkParent(l) ){
     if( l == rkChainLink(c,from) ) return jacobi;
     __rk_jacobi_ang_col( l, rkLinkWldFrame(l), jacobi, __rk_jacobi_set_vector, &s );
@@ -118,7 +118,7 @@ zMat rkChainLinkToLinkLinJacobi(rkChain *c, int from, int to, zVec3D *p, zMat ja
   rkLink *l;
   zVec3D s, tp;
 
-  zMatClear( jacobi );
+  zMatZero( jacobi );
   zXform3D( rkChainLinkWldFrame(c,to), p, &tp );
   for( l=rkChainLink(c,to); ; l=rkLinkParent(l) ){
     if( l == rkChainLink(c,from) ) return jacobi;
@@ -140,7 +140,7 @@ zMat rkChainCOMJacobi(rkChain *c, zMat jacobi)
   zVec3D s;
   double m;
 
-  zMatClear( jacobi );
+  zMatZero( jacobi );
   for( i=0; i<rkChainNum(c); i++ ){
     if( rkChainLinkMass(c,i) == 0 ) continue;
     m = rkChainLinkMass(c,i) / rkChainMass(c);
@@ -182,7 +182,7 @@ zMat _rkChainLinkAMJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi)
 /* link angular momentum Jacobian matrix. */
 zMat rkChainLinkAMJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi)
 {
-  zMatClear( jacobi );
+  zMatZero( jacobi );
   return _rkChainLinkAMJacobi( c, id, p, jacobi );
 }
 
@@ -191,7 +191,7 @@ zMat rkChainAMJacobi(rkChain *c, zVec3D *p, zMat jacobi)
 {
   register int i;
 
-  zMatClear( jacobi );
+  zMatZero( jacobi );
   for( i=0; i<rkChainNum(c); i++ )
     _rkChainLinkAMJacobi( c, i, p, jacobi );
   return jacobi;

@@ -33,7 +33,7 @@ zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w)
   rkWrench *cell;
   zVec6D n;
 
-  zVec6DClear( w );
+  zVec6DZero( w );
   zListForEach( list, cell ){
     rkWrenchShift( cell, &n );
     zVec6DAddDRC( w, &n );

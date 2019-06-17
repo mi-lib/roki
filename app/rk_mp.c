@@ -138,8 +138,8 @@ void rk_mpCalc(rkChain *chain, zIndex index, rkMP *mp)
   int i;
 
   rkMPMass(mp) = 0;
-  zVec3DClear( rkMPCOM(mp) );
-  zMat3DClear( rkMPInertia(mp) );
+  zVec3DZero( rkMPCOM(mp) );
+  zMat3DZero( rkMPInertia(mp) );
 
   for( i=0; i<zArraySize(index); i++ ){
     l = rkChainLink( chain, zIndexElemNC(index,i) );

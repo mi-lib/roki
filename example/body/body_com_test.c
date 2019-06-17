@@ -60,7 +60,7 @@ void pattern2(rkBody *body, double t)
   vx = 1; x = vx*t;
   vy = 1; y = vy*t;
   vz = 1; z = vz*t;
-  zVec3DClear( rkBodyPos(body) );
+  zVec3DZero( rkBodyPos(body) );
   zVec3DCreate( &aa, x, y, z );
   zMat3DFromAA( rkBodyAtt(body), &aa );
   zVec6DCreate( rkBodyVel(body), 0, 0, 0, vx, vy, vz );
@@ -95,7 +95,7 @@ void pattern4(rkBody *body, double t)
   ax = 0.1; vx = ax * t; x = 0.5*ax*t*t;
   ay = 0.2; vy = ay * t; y = 0.5*ay*t*t;
   az = 0.3; vz = az * t; z = 0.5*az*t*t;
-  zVec3DClear( rkBodyPos(body) );
+  zVec3DZero( rkBodyPos(body) );
   zVec3DCreate( &aa, x, y, z );
   zMat3DFromAA( rkBodyAtt(body), &aa );
   zVec6DCreate( rkBodyVel(body), 0, 0, 0, vx, vy, vz );

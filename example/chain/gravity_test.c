@@ -34,14 +34,14 @@ int main(void)
     rkChainFK( &chain, dis );
     zVec3DDataPrint( rkChainGravityDir( &chain, &a ) );
   }
-  zVecClear( dis );
+  zVecZero( dis );
   for( i=0; i<=STEP; i++ ){
     angle = zPI*2*i/STEP;
     zVecSetElem( dis, 4, angle );
     rkChainFK( &chain, dis );
     zVec3DDataPrint( rkChainGravityDir( &chain, &a ) );
   }
-  zVecClear( dis );
+  zVecZero( dis );
   for( i=0; i<=STEP; i++ ){
     angle = zPI*2*i/STEP;
     zVecSetElem( dis, 5, angle );

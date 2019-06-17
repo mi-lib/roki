@@ -13,7 +13,7 @@ static void _rkLinkABIAddBias(rkLink *link);
 static void _rkLinkABIUpdateBackward(rkLink *link);
 static void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa);
 
-static void _rkChainClearLinkRate(rkChain *chain);
+static void _rkChainZeroLinkRate(rkChain *chain);
 
 static void _rkLinkABIFindBackwardPathAddExForce(rkLink *link);
 static void _rkLinkABISubBiasNetWrenchAddExForce(rkLink *link);
@@ -110,7 +110,7 @@ void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel)
   zVec6DAddDRC( &ap->w, &ap->w0 );
 
   /* c */
-  zVec6DClear( &ap->c );
+  zVec6DZero( &ap->c );
   zMulMat3DTVec3D( rkLinkAdjAtt(link), zVec6DAng(pvel), &tmp );
   rkJointIncAccOnVel( rkLinkJoint(link), &tmp, &ap->c );
   zVec3DTripleProd( zVec6DAng(pvel), zVec6DAng(pvel), rkLinkAdjPos(link), &tmp );
@@ -223,20 +223,20 @@ void rkLinkABIUpdateForwardGetWrench(rkLink *link, zVec6D *pa)
     rkLinkABIUpdateForwardGetWrench( rkLinkChild(link), rkLinkAcc(link) );
 }
 
-/* clear velocity and acceleration of links of a kinematic chain. */
-void _rkChainClearLinkRate(rkChain *chain)
+/* zero velocity and acceleration of links of a kinematic chain. */
+void _rkChainZeroLinkRate(rkChain *chain)
 {
   register int i;
 
   for( i=0; i<rkChainNum(chain); i++ )
-    rkLinkClearRate( rkChainLink(chain,i) );
+    rkLinkZeroRate( rkChainLink(chain,i) );
 }
 
 /* update ABI and acceleration of a kinematic chain. */
 void rkChainABIUpdate(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainClearLinkRate( chain );
+    _rkChainZeroLinkRate( chain );
     return;
   }
   rkChainABIUpdateInit( chain );
@@ -248,7 +248,7 @@ void rkChainABIUpdate(rkChain *chain)
 void rkChainABIUpdateGetWrench(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainClearLinkRate( chain );
+    _rkChainZeroLinkRate( chain );
     return;
   }
   rkChainABIUpdateInit( chain );
@@ -260,7 +260,7 @@ void rkChainABIUpdateGetWrench(rkChain *chain)
 zVec rkChainABI(rkChain *chain, zVec dis, zVec vel, zVec acc)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainClearLinkRate( chain );
+    _rkChainZeroLinkRate( chain );
     return NULL;
   }
   rkChainSetJointDisAll( chain, dis );
@@ -335,7 +335,7 @@ void _rkChainABIUpdateBackwardAddExForce(rkChain *chain)
 void rkChainABIUpdateAddExForce(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainClearLinkRate( chain );
+    _rkChainZeroLinkRate( chain );
     return;
   }
   _rkChainABIUpdateBackwardAddExForce( chain );
@@ -345,7 +345,7 @@ void rkChainABIUpdateAddExForce(rkChain *chain)
 void rkChainABIUpdateAddExForceGetWrench(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainClearLinkRate( chain );
+    _rkChainZeroLinkRate( chain );
     return;
   }
   _rkChainABIUpdateBackwardAddExForce( chain );
@@ -416,7 +416,7 @@ void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWren
   }
   _rkLinkABIUpdateBackwardAddExForce( rkChainRoot(chain) );
 
-  /* clear wlist */
+  /* clean-up wrench list */
   if( link && w )   zListPurge( &rkLinkABIPrp(link)->wlist, w );
   if( link2 && w2 ) zListPurge( &rkLinkABIPrp(link2)->wlist, w2 );
 }
@@ -424,7 +424,7 @@ void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWren
 void rkChainABIUpdateAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2)
 {
   if( rkChainJointSize(chain) == 0 ){
-    _rkChainClearLinkRate( chain );
+    _rkChainZeroLinkRate( chain );
     return;
   }
   _rkChainABIUpdateBackwardAddExForceTwo( chain, link, w, link2, w2 );

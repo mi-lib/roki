@@ -154,11 +154,11 @@ __EXPORT void rkLinkDestroy(rkLink *l);
  */
 __EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc);
 
-/*! \brief clear velocity and acceleration of a link.
+/*! \brief zero velocity and acceleration of a link.
  *
- * rkLinkClearRate() zeroes velocity and acceleration of a link.
+ * rkLinkZeroRate() zeroes velocity and acceleration of a link.
  */
-#define rkLinkClearRate(l) rkBodyClearRate( rkLinkBody(l) )
+#define rkLinkZeroRate(l) rkBodyZeroRate( rkLinkBody(l) )
 
 /*! \brief copy state of a link.
  *

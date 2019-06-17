@@ -620,7 +620,7 @@ void _rkCDIntegrationNormBREP(zBREP *b1, zBREP *b2, zVec3D *norm)
   zVec3D v, v1, v2;
   zBREPFaceListCell *fc;
 
-  zVec3DClear( norm );
+  zVec3DZero( norm );
   zListForEach( &b1->flist, fc ){
     zVec3DSub( &fc->data.v[1]->data.p, &fc->data.v[0]->data.p, &v1 );
     zVec3DSub( &fc->data.v[2]->data.p, &fc->data.v[0]->data.p, &v2 );

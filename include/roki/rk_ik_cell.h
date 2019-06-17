@@ -116,7 +116,7 @@ __EXPORT void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef
 #define rkIKCellSetRefVecForce(c,v) \
   rkIKCellSetRefForce(c,(v)->e[0],(v)->e[1],(v)->e[2])
 
-__EXPORT void rkIKCellAcmClear(rkIKCell *cell);
+__EXPORT void rkIKCellAcmZero(rkIKCell *cell);
 
 #define rkIKCellCMat(c,r,mat) \
   (c)->data._cmat_fp( r, &(c)->data.attr, mat )

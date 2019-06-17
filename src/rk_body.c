@@ -148,8 +148,8 @@ rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *so, zMShape3D *sc)
   return cln;
 }
 
-/* clear velocity and acceleration of a body. */
-void rkBodyClearRate(rkBody *body)
+/* zero velocity and acceleration of a body. */
+void rkBodyZeroRate(rkBody *body)
 {
   rkBodySetVel( body, ZVEC6DZERO );
   rkBodySetAcc( body, ZVEC6DZERO );

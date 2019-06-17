@@ -321,19 +321,19 @@ void _rkJointMotorSetInputCylin(void *prp, double *val){
   rkMotorSetInput( &_rkc(prp)->m, val );
 }
 void _rkJointMotorInertiaCylin(void *prp, double *val){
-  zRawVecClear( val, 4 );
+  zRawVecZero( val, 4 );
   rkMotorInertia( &_rkc(prp)->m, val );
 }
 void _rkJointMotorInputTrqCylin(void *prp, double *val){
-  zRawVecClear( val, 2 );
+  zRawVecZero( val, 2 );
   rkMotorInputTrq( &_rkc(prp)->m, val );
 }
 void _rkJointMotorResistanceCylin(void *prp, double *val){
-  zRawVecClear( val, 2 );
+  zRawVecZero( val, 2 );
   rkMotorRegistance( &_rkc(prp)->m, _rkc(prp)->dis, _rkc(prp)->vel, val );
 }
 void _rkJointMotorDrivingTrqCylin(void *prp, double *val){
-  zRawVecClear( val, 2 );
+  zRawVecZero( val, 2 );
   rkMotorDrivingTrq( &_rkc(prp)->m, _rkc(prp)->dis, _rkc(prp)->vel, _rkc(prp)->acc, val );
 }
 

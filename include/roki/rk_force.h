@@ -32,14 +32,14 @@ zListClass( rkWrenchList, rkWrench, rkWrenchData );
 #define rkWrenchSetTorque(c,m) zVec3DCopy( m, rkWrenchTorque(c) )
 #define rkWrenchSetPos(c,p)    zVec3DCopy( p, rkWrenchPos(c) )
 
-#define rkWrenchClear(c) do{\
+#define rkWrenchZero(c) do{\
   rkWrenchSetW( c, ZVEC6DZERO );\
   rkWrenchSetPos( c, ZVEC3DZERO );\
 } while(0)
 
 #define rkWrenchInit(c) do{\
   zListCellInit( c );\
-  rkWrenchClear( c );\
+  rkWrenchZero( c );\
 } while(0)
 
 /*! \brief push from and pop to wrench list.

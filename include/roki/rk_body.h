@@ -146,8 +146,7 @@ typedef struct{
 
 /*! \brief initialize and destroy body object.
  *
- * rkBodyInit() initializes a body object \a body by clearing all
- * internal properties.
+ * rkBodyInit() initializes a body object \a body.
  *
  * rkBodyDestroy() destroys a body object \a body by freeing the
  * memory allocated for its name and external forces.
@@ -171,13 +170,13 @@ __EXPORT void rkBodyDestroy(rkBody *body);
  */
 __EXPORT rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *so, zMShape3D *sc);
 
-/*! \brief clear velocity and acceleration of a body.
+/*! \brief zero velocity and acceleration of a body.
  *
- * rkBodyClearRate() zeroes velocity and acceleration of a body.
+ * rkBodyZeroRate() zeroes velocity and acceleration of a body.
  * \return
- * rkBodyClearRate() returns no value.
+ * rkBodyZeroRate() returns no value.
  */
-__EXPORT void rkBodyClearRate(rkBody *body);
+__EXPORT void rkBodyZeroRate(rkBody *body);
 
 /*! \brief copy state of a body.
  *

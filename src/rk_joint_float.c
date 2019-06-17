@@ -180,7 +180,7 @@ void _rkJointCalcTrqFloat(void *prp, zVec6D *f)
 /* inverse computation of joint torsion and displacement */
 void _rkJointTorsionFloat(zFrame3D *dev, zVec6D *t, double dis[])
 {
-  zVec6DClear( t );
+  zVec6DZero( t );
   zFrame3DToVec6DAA( dev, (zVec6D*)dis );
 }
 
@@ -287,10 +287,10 @@ static void _rkJointMotorDrivingTrqFloat(void *prp, double *val);
 
 byte _rkJointMotorFloat(void *prp){return RK_MOTOR_INVALID;}
 void _rkJointMotorSetInputFloat(void *prp, double *val){}
-void _rkJointMotorInertiaFloat(void *prp, double *val){ zMat6DClear( (zMat6D *)val ); }
-void _rkJointMotorInputTrqFloat(void *prp, double *val){ zVec6DClear( (zVec6D *)val ); }
-void _rkJointMotorResistanceFloat(void *prp, double *val){ zVec6DClear( (zVec6D *)val ); }
-void _rkJointMotorDrivingTrqFloat(void *prp, double *val){ zVec6DClear( (zVec6D *)val ); }
+void _rkJointMotorInertiaFloat(void *prp, double *val){ zMat6DZero( (zMat6D *)val ); }
+void _rkJointMotorInputTrqFloat(void *prp, double *val){ zVec6DZero( (zVec6D *)val ); }
+void _rkJointMotorResistanceFloat(void *prp, double *val){ zVec6DZero( (zVec6D *)val ); }
+void _rkJointMotorDrivingTrqFloat(void *prp, double *val){ zVec6DZero( (zVec6D *)val ); }
 
 static rkJointMotorCom rk_joint_motor_float = {
   _rkJointMotorFloat,

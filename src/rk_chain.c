@@ -455,7 +455,7 @@ zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am)
   register int i;
   zVec3D tp, tmp;
 
-  zVec3DClear( am );
+  zVec3DZero( am );
   for( i=0; i<rkChainNum(c); i++ ){
     zXform3DInv( rkChainLinkWldFrame(c,i), p, &tp );
     rkLinkAM( rkChainLink(c,i), &tp, &tmp );
@@ -482,7 +482,7 @@ zVec6D *rkChainCalcExtWrench(rkChain *c, zVec6D *w)
   register int i;
   zVec6D ew;
 
-  zVec6DClear( w );
+  zVec6DZero( w );
   for( i=0; i<rkChainNum(c); i++ ){
     rkLinkCalcExtWrench( rkChainLink(c,i), &ew );
     if( zVec6DEqual( &ew, ZVEC6DZERO ) ) continue;

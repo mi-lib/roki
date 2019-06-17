@@ -30,7 +30,7 @@ void _rkIKInit(rkIK *ik)
 
   zListInit( &ik->clist );
   ik->_c_mat_cell = NULL;
-  zVec3DClear( &ik->_c_srv_cell );
+  zVec3DZero( &ik->_c_srv_cell );
 
   ik->_j_idx = NULL;
   ik->_j_ofs = NULL;
@@ -242,13 +242,13 @@ void rkIKBind(rkIK *ik)
     rkIKCellBind( cp, ik->chain );
 }
 
-/* clear accumulator of each cell. */
-void rkIKAcmClear(rkIK *ik)
+/* zero accumulator of each cell. */
+void rkIKAcmZero(rkIK *ik)
 {
   rkIKCell *cp;
 
   zListForEach( &ik->clist, cp )
-    rkIKCellAcmClear( cp );
+    rkIKCellAcmZero( cp );
 }
 
 /* form the motion rate contraint equation. */
@@ -364,7 +364,7 @@ int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter)
 
   rkChainGetJointDisAll( ik->chain, dis );
   ZITERINIT( iter );
-  rkIKAcmClear( ik );
+  rkIKAcmZero( ik );
   for( i=0; i<iter; i++ ){
     rkIKSolveOne( ik, dis, 1.0 );
     if( zIsTol( ik->eval - rest, tol ) )

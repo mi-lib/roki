@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   rkIKJointReg( &ik, 2, 0.01 );
 
   attr.id = 3;
-  zVec3DClear( &attr.ap );
+  zVec3DZero( &attr.ap );
   cell[0] = rkIKCellRegWldPos( &ik, &attr, RK_IK_CELL_ATTR_ID );
   cell[1] = rkIKCellRegWldAtt( &ik, &attr, RK_IK_CELL_ATTR_ID );
 

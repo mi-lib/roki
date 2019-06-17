@@ -367,19 +367,19 @@ void _rkJointMotorSetInputHooke(void *prp, double *val){
   rkMotorSetInput( &_rkc(prp)->m, val );
 }
 void _rkJointMotorInertiaHooke(void *prp, double *val){
-  zRawVecClear( val, 4 );
+  zRawVecZero( val, 4 );
   rkMotorInertia( &_rkc(prp)->m, val );
 }
 void _rkJointMotorInputTrqHooke(void *prp, double *val){
-  zRawVecClear( val, 2 );
+  zRawVecZero( val, 2 );
   rkMotorInputTrq( &_rkc(prp)->m, val );
 }
 void _rkJointMotorResistanceHooke(void *prp, double *val){
-  zRawVecClear( val, 2 );
+  zRawVecZero( val, 2 );
   rkMotorRegistance( &_rkc(prp)->m, _rkc(prp)->dis, _rkc(prp)->vel, val );
 }
 void _rkJointMotorDrivingTrqHooke(void *prp, double *val){
-  zRawVecClear( val, 2 );
+  zRawVecZero( val, 2 );
   rkMotorDrivingTrq( &_rkc(prp)->m, _rkc(prp)->dis, _rkc(prp)->vel, _rkc(prp)->acc, val );
 }
 
