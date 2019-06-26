@@ -245,6 +245,8 @@ bool _rkLinkFScan(FILE *fp, void *instance, char *buf, bool *success)
   _rkLinkParam *prm;
   rkLink *pl, *cl;
   zShape3D *sp;
+  zVec3D axis;
+  double angle;
 
   prm = instance;
   if( strcmp( buf, "name" ) == 0 ){
@@ -280,7 +282,14 @@ bool _rkLinkFScan(FILE *fp, void *instance, char *buf, bool *success)
     zVec3DFScan( fp, rkLinkOrgPos(prm->l) );
   else if( strcmp( buf, "att" ) == 0 )
     zMat3DFScan( fp, rkLinkOrgAtt(prm->l) );
-  else if( strcmp( buf, "frame" ) == 0 )
+  else if( strcmp( buf, "rot" ) == 0 ){
+    zVec3DFScan( fp, &axis );
+    angle = zDeg2Rad( zFDouble( fp ) );
+    if( zVec3DNormalizeDRC( &axis ) > 0 ){
+      zVec3DMulDRC( &axis, angle );
+      zMat3DRot( rkLinkOrgAtt(prm->l), &axis, rkLinkOrgAtt(prm->l) );
+    }
+  } else if( strcmp( buf, "frame" ) == 0 )
     zFrame3DFScan( fp, rkLinkOrgFrame(prm->l) );
   else if( strcmp( buf, "DH" ) == 0 )
     zFrame3DDHFScan( fp, rkLinkOrgFrame(prm->l) );
