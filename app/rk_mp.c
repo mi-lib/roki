@@ -44,7 +44,7 @@ bool rk_mpInitFK(rkChain *chain)
 
 bool rk_mpCommandArgs(int argc, char *argv[])
 {
-  zStrList arglist;
+  zStrAddrList arglist;
   char *mfile, *vfile;
 
   if( argc <= 1 ) rk_mpUsage();
@@ -67,7 +67,7 @@ bool rk_mpCommandArgs(int argc, char *argv[])
     return 1;
   if( option[RK_MP_VFILE].flag )
     if( !rk_mpInitFK( &chain ) ) return 1;
-  zStrListDestroy( &arglist, false );
+  zStrAddrListDestroy( &arglist );
   return true;
 }
 

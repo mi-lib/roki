@@ -36,7 +36,7 @@ void rk_ik_usage(void)
 
 FILE *rk_ik_command_args(int argc, char *argv[])
 {
-  zStrList arglist;
+  zStrAddrList arglist;
   char *modelfile, *conffile, *entryfile, *outputfile;
   FILE *fout;
 
@@ -73,7 +73,7 @@ FILE *rk_ik_command_args(int argc, char *argv[])
     ZOPENERROR( option[RK_IK_OUTPUTFILE].arg );
     exit( 1 );
   }
-  zStrListDestroy( &arglist, false );
+  zStrAddrListDestroy( &arglist );
   return fout;
 }
 

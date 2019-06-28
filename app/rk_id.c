@@ -72,7 +72,7 @@ bool rk_idOpenLogfile(void)
 
 bool rk_idCommandArgs(int argc, char *argv[])
 {
-  zStrList arglist;
+  zStrAddrList arglist;
   char *chainfile, *seqfile;
 
   if( argc <= 1 ) rk_idUsage();
@@ -101,7 +101,7 @@ bool rk_idCommandArgs(int argc, char *argv[])
     ZOPENERROR( option[RK_ID_INITFILE].arg );
     return false;
   }
-  zStrListDestroy( &arglist, false );
+  zStrAddrListDestroy( &arglist );
   return true;
 }
 

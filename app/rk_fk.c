@@ -58,7 +58,7 @@ FILE *rk_fkOpenLogfile(char *linkname)
 
 FILE *rk_fkCommandArgs(int argc, char *argv[])
 {
-  zStrList arglist;
+  zStrAddrList arglist;
   char *chainfile, *linkname, *seqfile;
   FILE *fp;
 
@@ -101,7 +101,7 @@ FILE *rk_fkCommandArgs(int argc, char *argv[])
     ZOPENERROR( option[RK_FK_INITFILE].arg );
     return NULL;
   }
-  zStrListDestroy( &arglist, false );
+  zStrAddrListDestroy( &arglist );
   return fp;
 }
 

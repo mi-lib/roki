@@ -1,3 +1,4 @@
+2019. 6.28. Reflected new specifications of zStrList and zStrAddrList. [app]
 2019. 6.27. Modified _rkLinkFScan to accept 'rot' key. [rk_link]
 2019. 6.17. Renamed *Clear* to *Zero*. [rk_force, rk_body, rk_link, rk_ik_cell, rk_ik, rk_abi]
 2019. 6.17. Reflected renaming of *Clear to *Zero in ZM. [rk_joint, rk_joint_cylin, rk_joint_hooke, rk_joint_spher, rk_joint_float, rk_joint_float, rk_joint_brfloat, rk_chain, rk_jacobi, rk_cd, app]
