@@ -370,7 +370,7 @@ void rkLinkPostureFPrint(FILE *fp, rkLink *l)
 #define RK_LINK_CONNECTION_INDENT 2
 void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n)
 {
-  zIndentF( fp, n );
+  zFIndent( fp, n );
   fprintf( fp, "|-%s (%s:%d)\n", zName(l), rkJointTypeExpr(rkLinkJointType(l)), rkLinkOffset(l) );
 
   if( rkLinkChild( l ) )
