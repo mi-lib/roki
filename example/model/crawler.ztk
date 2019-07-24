@@ -6,7 +6,7 @@ name: green
 ambient: 0.1:0.2:0.1
 diffuse: 0.1:0.3:0.1
 specular: 0.1:0.1:0.1
-exp: 1
+esr: 1
 shininess: 0
 alpha: 1
 
@@ -15,7 +15,7 @@ name: black
 ambient: 0.1:0.1:0.1
 diffuse: 0.3:0.3:0.3
 specular: 0.1:0.1:0.1
-exp: 1
+esr: 1
 shininess: 0
 alpha: 1
 

@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
   char basename[BUFSIZ];
 
   if( argc == 1 ) z3d2zkcUsage( argv[0] );
-  if( !zMShape3DScanFile( &ms, argv[1] ) )
+  if( !zMShape3DReadZTK( &ms, argv[1] ) )
     return EXIT_FAILURE;
   zGetBasename( argv[1], basename, BUFSIZ );
   z3d2zkcConvert( &ms, basename );

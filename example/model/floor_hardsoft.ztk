@@ -6,7 +6,7 @@ name: blue
 ambient: 0.1:0.1:0.3
 diffuse: 0.2:0.2:0.4
 specular: 0.1:0.1:0.1
-exp: 1
+esr: 1
 shininess: 0
 alpha: 1
 
@@ -15,7 +15,7 @@ name: light
 ambient: 0.4:0.4:0.7
 diffuse: 0.6:0.6:1.0
 specular: 0.3:0.3:0.3
-exp: 1
+esr: 1
 shininess: 0
 alpha: 1
 

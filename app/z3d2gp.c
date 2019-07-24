@@ -26,7 +26,7 @@ void conv_mshape(char *filename)
   register int i;
   zMShape3D ms;
 
-  if( !zMShape3DScanFile( &ms, filename ) )
+  if( !zMShape3DReadZTK( &ms, filename ) )
     exit( EXIT_FAILURE );
   for( i=0; i<zMShape3DShapeNum(&ms); i++ )
     output_shape( zMShape3DShape(&ms,i) );

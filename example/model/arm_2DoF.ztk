@@ -6,7 +6,7 @@ name: white
 ambient: 0.8:0.8:0.8
 diffuse: 1:1:1
 specular: 0.4:0.4:0.4
-exp: 1
+esr: 1
 shininess: 0
 alpha: 1
 
@@ -15,7 +15,7 @@ name: white2
 ambient: 0.5:0.5:0.5
 diffuse: 0.7:0.7:0.7
 specular: 0.3:0.3:0.3
-exp: 1
+esr: 1
 shininess: 0
 alpha: 1
 
@@ -24,7 +24,7 @@ name: gray
 ambient: 0.2:0.1:0.1
 diffuse: 0.4:0.2:0.1
 specular: 0.1:0.1:0.1
-exp: 1
+esr: 1
 shininess: 0
 alpha: 1
 
@@ -33,7 +33,7 @@ name: gray2
 ambient: 0.3:0.2:0.1
 diffuse: 0.5:0.3:0.2
 specular: 0.1:0.1:0.1
-exp: 1
+esr: 1
 shininess: 0
 alpha: 1
 
@@ -132,11 +132,11 @@ radius : 0.05
 name : motor1
 type: dc
 motorconstant : 2.58e-2
-admitance : 0.42373
+admittance : 0.42373
 maxvoltage : 24.0
 minvoltage : -24.0
-ratio : 120.0
-inertia : 1.65e-6
+gearratio : 120.0
+rotorinertia : 1.65e-6
 gearinertia : 5.38e-6
 
 [link]
@@ -163,8 +163,8 @@ name: link#01
 jointtype: revolute
 min: -180.0000000000
 max: 180.0000000000
-stiff: 0.0000000000
-viscos: 2.2
+stiffness: 0.0000000000
+viscosity: 2.2
 coulomb: 4.32
 staticfriction: 4.92
 motor: motor1
@@ -190,8 +190,8 @@ name: link#02
 jointtype: revolute
 min: -180.0000000000
 max: 180.0000000000
-stiff: 0.0000000000
-viscos: 2.2
+stiffness: 0.0000000000
+viscosity: 2.2
 coulomb: 4.32
 staticfriction: 4.92
 motor: motor1

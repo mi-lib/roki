@@ -6,7 +6,7 @@ name: brown
 ambient: 0.4, 0.3, 0.2
 diffuse: 0.4, 0.2, 0.0
 specular: 0.0, 0.0, 0.0
-exp: 0.7
+esr: 0.7
 alpha: 1
 
 [optic]
@@ -14,7 +14,7 @@ name: silver
 ambient: 0.8, 0.8, 0.8
 diffuse: 0.4, 0.4, 0.4
 specular: 0.0, 0.0, 0.0
-exp: 0.8
+esr: 0.8
 alpha: 1
 
 [shape]

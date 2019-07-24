@@ -738,7 +738,7 @@ bool rkChainMShape3DScanFile(rkChain *chain, char filename[])
     ZALLOCERROR();
     return false;
   }
-  if( !zMShape3DScanFile( ms, filename ) ){
+  if( !zMShape3DReadZTK( ms, filename ) ){
     ZRUNERROR( RK_ERR_CHAIN_INVSHAPE );
     return false;
   }

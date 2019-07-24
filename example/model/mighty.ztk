@@ -1,4 +1,4 @@
-[robot]
+[chain]
 name : mighty
 
 [optic]
@@ -6,7 +6,7 @@ name: black
 ambient: 0.1, 0.1, 0.1
 diffuse: 0.0, 0.0, 0.0
 specular: 0.1, 0.1, 0.1
-exp: 0.6
+esr: 0.6
 alpha: 1.0
 
 [optic]
@@ -14,7 +14,7 @@ name: white
 ambient: 1.0, 1.0, 1.0
 diffuse: 1.0, 1.0, 1.0
 specular: 0.6, 0.6, 0.6
-exp: 1.0
+esr: 1.0
 alpha: 1.0
 
 [optic]
@@ -22,7 +22,7 @@ name: brown
 ambient: 0.7, 0.5, 0.5
 diffuse: 0.7, 0.5, 0.5
 specular: 0.1, 0.1, 0.1
-exp: 1.0
+esr: 1.0
 alpha: 1.0
 
 [optic]
@@ -30,13 +30,12 @@ name: cream
 ambient: 1.0, 1.0, 0.9
 diffuse: 1.0, 1.0, 0.9
 specular: 0.4, 0.4, 0.3
-exp: 1.0
+esr: 1.0
 alpha: 1.0
 
 [shape]
 name: body
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: { 0.08837, 0.02200, 0.10700 }
 vert 1: { 0.08599, 0.02546, 0.10900 }
@@ -453,7 +452,6 @@ face 160 161 166
 [shape]
 name: back
 type: polyhedron
-bb: AABB
 optic: black
 vert 0: { 0.07300, 0.01484, 0.00600 }
 vert 1: { 0.08040, 0.02677, 0.03685 }
@@ -505,7 +503,6 @@ face 22 27 26
 [shape]
 name: backpack
 type: polyhedron
-bb: AABB
 optic: white
 vert 0: {-0.00650, 0.06100, 0.18450 }
 vert 1: {-0.00650, 0.06100, 0.10900 }
@@ -600,7 +597,6 @@ face 21 23 24
 [shape]
 name: left_shoulder
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: {-0.01700,-0.02600,-0.02400 }
 vert 1: { 0.00400,-0.02600,-0.02400 }
@@ -656,7 +652,6 @@ face 0 11 10
 [shape]
 name: right_shoulder
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: {-0.01700,-0.02600, 0.02400 }
 vert 1: { 0.00400,-0.02600, 0.02400 }
@@ -712,7 +707,6 @@ face 0 11 10
 [shape]
 name: left_upperarm
 type: polyhedron
-bb: AABB
 optic: cream
 vert 0: { 0.018, 0.030, 0.0275 }
 vert 1: { 0.018,-0.009, 0.0275 }
@@ -794,7 +788,6 @@ face 25 26 33
 [shape]
 name: right_upperarm
 type: polyhedron
-bb: AABB
 optic: cream
 vert 0: { 0.018, 0.030, -0.0275 }
 vert 1: { 0.018,-0.009, -0.0275 }
@@ -876,7 +869,6 @@ face 25 26 33
 [shape]
 name: left_forearm
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: {-0.019,-0.0085,-0.0275 }
 vert 1: {-0.0085,-0.019,-0.0275 }
@@ -926,7 +918,6 @@ face 7 15 6
 [shape]
 name: right_forearm
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: {-0.019,-0.0085, 0.0275 }
 vert 1: {-0.0085,-0.019, 0.0275 }
@@ -976,7 +967,6 @@ face 7 15 6
 [shape]
 name: left_hand
 type: polyhedron
-bb: AABB
 optic: white
 vert 0: { 0.014,-0.012, 0 }
 vert 1: { 0.014, 0.012, 0 }
@@ -1012,7 +1002,6 @@ face 0 11 5
 [shape]
 name: right_hand
 type: polyhedron
-bb: AABB
 optic: white
 vert 0: { 0.014, 0.012, 0 }
 vert 1: { 0.014,-0.012, 0 }
@@ -1048,7 +1037,6 @@ face 0 11 5
 [shape]
 name: left_thigh
 type: polyhedron
-bb: AABB
 optic: cream
 vert 0: { 0.042, 0.037, 0.005 }
 vert 1: { 0.025, 0.037, 0.033 }
@@ -1153,7 +1141,6 @@ face 37 38 30
 [shape]
 name: right_thigh
 type: polyhedron
-bb: AABB
 optic: cream
 vert 0: { 0.042, 0.037,-0.005 }
 vert 1: { 0.025, 0.037,-0.033 }
@@ -1258,7 +1245,6 @@ face 37 38 30
 [shape]
 name: left_shin
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: { 0.0128,-0.019, 0.019 }
 vert 1: { 0.021,-0.041, 0.019 }
@@ -1320,7 +1306,6 @@ face 3 20 15
 [shape]
 name: right_shin
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: { 0.0128,-0.019,-0.019 }
 vert 1: { 0.021,-0.041,-0.019 }
@@ -1382,7 +1367,6 @@ face 3 20 15
 [shape]
 name: left_foot
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: {-0.018,-0.036, 0.070 }
 vert 1: {-0.018, 0.009, 0.070 }
@@ -1546,7 +1530,6 @@ face 61 62 69
 [shape]
 name: right_foot
 type: polyhedron
-bb: AABB
 optic: brown
 vert 0: {-0.018,-0.036,-0.070 }
 vert 1: {-0.018, 0.009,-0.070 }
@@ -1710,7 +1693,6 @@ face 61 62 69
 [shape]
 name: left_sole
 type: polyhedron
-bb: AABB
 optic: black
 vert 0: { 0.0564, 0.036, 0 }
 vert 1: {-0.0426, 0.036, 0 }
@@ -1736,7 +1718,6 @@ face 4 6 7
 [shape]
 name: right_sole
 type: polyhedron
-bb: AABB
 optic: black
 vert 0: { 0.0564,-0.036, 0 }
 vert 1: {-0.0426,-0.036, 0 }
@@ -1790,44 +1771,44 @@ face 4 6 7
 name : RE-max17
 type: dc
 motorconstant : 2.17e-2
-admitance : 0.025189
+admittance : 0.025189
 maxvoltage : 24.0
 minvoltage : -24.0
-ratio : 100.0
-inertia : 1.69e-7
+gearratio : 100.0
+rotorinertia : 1.69e-7
 gearinertia : 3.0e-7
 
 [motor]
 name : RE-max21
 type: dc
 motorconstant : 2.53e-2
-admitance : 0.045872
+admittance : 0.045872
 maxvoltage : 24.0
 minvoltage : -24.0
-ratio : 100.0
-inertia : 2.97e-7
+gearratio : 100.0
+rotorinertia : 2.97e-7
 gearinertia : 3.0e-7
 
 [motor]
 name : RE-max21-belt
 type: dc
 motorconstant : 2.53e-2
-admitance : 0.045872
+admittance : 0.045872
 maxvoltage : 24.0
 minvoltage : -24.0
-ratio : 120.0
-inertia : 3.0e-7
+gearratio : 120.0
+rotorinertia : 3.0e-7
 gearinertia : 4.27e-7
 
 [motor]
 name : RE-max24-belt
 type: dc
 motorconstant : 3.01e-2
-admitance : 0.076336
+admittance : 0.076336
 maxvoltage : 24.0
 minvoltage : -24.0
-ratio : 120.0
-inertia : 4.99e-7
+gearratio : 120.0
+rotorinertia : 4.99e-7
 gearinertia : 4.27e-7
 
 [link]
@@ -1855,8 +1836,8 @@ name: left_shoulder_flexion
 jointtype: revolute
 max: 90
 min:-90
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21-belt
@@ -1881,8 +1862,8 @@ name: left_shoulder_abduction
 jointtype: revolute
 max: 90
 min: 0
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21-belt
@@ -1907,8 +1888,8 @@ name: left_elbow_rotation
 jointtype: revolute
 max: 90
 min:-90
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max17
@@ -1932,8 +1913,8 @@ name: left_elbow_flexion
 jointtype: revolute
 max: 90
 min: 0
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21-belt
@@ -1970,8 +1951,8 @@ name: left_hip_flexion
 jointtype: revolute
 max: 90
 min:-30
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt
@@ -1995,8 +1976,8 @@ name: left_hip_abduction
 jointtype: revolute
 max: 90
 min:-30
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt
@@ -2021,8 +2002,8 @@ name: left_knee_rotation
 jointtype: revolute
 max: 90
 min:-90
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21
@@ -2046,8 +2027,8 @@ name: left_knee_flexion
 jointtype: revolute
 max: 100
 min:  0
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt
@@ -2072,8 +2053,8 @@ name: left_ankle_flexion
 jointtype: revolute
 max: 90
 min:-20
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21
@@ -2097,8 +2078,8 @@ name: left_ankle_abduction
 jointtype: revolute
 max: 20
 min:-90
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt
@@ -2135,8 +2116,8 @@ name: right_shoulder_flexion
 jointtype: revolute
 max: 90
 min:-90
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21-belt
@@ -2161,8 +2142,8 @@ name: right_shoulder_abduction
 jointtype: revolute
 max: 90
 min: 0
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21-belt
@@ -2187,8 +2168,8 @@ name: right_elbow_rotation
 jointtype: revolute
 max: 90
 min:-90
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max17
@@ -2212,8 +2193,8 @@ name: right_elbow_flexion
 jointtype: revolute
 max: 90
 min: 0
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21-belt
@@ -2250,8 +2231,8 @@ name: right_hip_flexion
 jointtype: revolute
 max: 90
 min:-30
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt
@@ -2275,8 +2256,8 @@ name: right_hip_abduction
 jointtype: revolute
 max: 90
 min:-30
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt
@@ -2301,8 +2282,8 @@ name: right_knee_rotation
 jointtype: revolute
 max: 90
 min:-90
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max21
@@ -2326,8 +2307,8 @@ name: right_knee_flexion
 jointtype: revolute
 max: 100
 min:   0
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt
@@ -2352,8 +2333,8 @@ name: right_ankle_flexion
 jointtype: revolute
 max: 90
 min:-20
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt
@@ -2377,8 +2358,8 @@ name: right_ankle_abduction
 jointtype: revolute
 max: 20
 min:-90
-stiff: 0.0000000000
-viscos: 0.0
+stiffness: 0.0000000000
+viscosity: 0.0
 coulomb: 1.0
 staticfriction: 1.2
 motor: RE-max24-belt

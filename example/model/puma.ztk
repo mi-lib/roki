@@ -6,33 +6,32 @@ name: white
 ambient:  1.0, 1.0, 1.0
 diffuse:  1.0, 1.0, 1.0
 specular: 0.0, 0.0, 0.0
-exp: 1.0
+esr: 1.0
 
 [optic]
 name: yellow
 ambient:  0.9, 0.9, 0.6
 diffuse:  0.9, 0.9, 0.6
 specular: 0.0, 0.0, 0.0
-exp: 1.0
+esr: 1.0
 
 [optic]
 name: lightyellow
 ambient:  1.0, 1.0, 0.6
 diffuse:  0.9, 0.9, 0.6
 specular: 0.6, 0.6, 0.0
-exp: 1.0
+esr: 1.0
 
 [optic]
 name: gray
 ambient:  0.8, 0.8, 0.8
 diffuse:  0.6, 0.6, 0.6
 specular: 0.0, 0.0, 0.0
-exp: 1.0
+esr: 1.0
 
 [shape]
 name: base
 type: cylinder
-bb: AABB
 optic: gray
 center: 0, 0, 0.0
 center: 0, 0, 0.05
@@ -41,7 +40,6 @@ radius: 0.1
 [shape]
 name: post
 type: cylinder
-bb: AABB
 optic: gray
 center: 0, 0, 0
 center: 0, 0, 0.25
@@ -50,7 +48,6 @@ radius: 0.05
 [shape]
 name: shoulderroot
 type: sphere
-bb: AABB
 optic: gray
 center: 0, 0,-0.049
 radius: 0.05
@@ -58,7 +55,6 @@ radius: 0.05
 [shape]
 name: shoulder
 type: cylinder
-bb: AABB
 optic: gray
 center: 0, 0,-0.12
 center: 0, 0, 0.02
@@ -67,7 +63,6 @@ radius: 0.04
 [shape]
 name: upperarm
 type: polyhedron
-bb: AABB
 optic: white
 vert 0: -0.10, 0.00,  0.02
 vert 1: -0.08, 0.04,  0.02
@@ -129,7 +124,6 @@ face 9 10 19
 [shape]
 name: forearm
 type: polyhedron
-bb: AABB
 optic: yellow
 vert 0: 0.04,-0.04, 0.02
 vert 1:-0.01,-0.04, 0.02
@@ -161,7 +155,6 @@ face 4 5 0
 [shape]
 name: hand
 type: cone
-bb: AABB
 optic: lightyellow
 center: 0 0 -0.02
 vert: 0 0 0

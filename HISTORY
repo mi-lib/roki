@@ -1,3 +1,5 @@
+2019. 7.23. Added a member bb to rkCDCellDat class and modified _rkCDCellCreate, rkCDCellUpdateBB and rkCDCellUpdate. [rk_cd]
+2019. 7.10. Reflected renaming of zMShape3DScanFile to zMShape3DReadZTK. [rk_chain]
 2019. 7. 8. Reflected renaming of zIndentF to zFIndent. [rk_link]
 2019. 6.28. Reflected new specifications of zStrList and zStrAddrList. [app]
 2019. 6.27. Modified _rkLinkFScan to accept 'rot' key. [rk_link]

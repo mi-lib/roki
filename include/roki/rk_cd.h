@@ -25,6 +25,7 @@ typedef struct{
   rkLink *link;      /*!< the link which the shape belongs to */
   rkChain *chain;    /*!< the chain which the shape belongs to */
   rkCDCellType type; /*!< stationary or movable shape */
+  zBox3D bb;         /*!< bounding box in local frame */
   zAABox3D aabb;     /*!< axis aligned bounding box in the world frame */
   zBox3D obb;        /*!< oriented bounding box in the world frame */
   zPH3D ph;          /*!< polyhedron in the world frame */
