@@ -6,68 +6,6 @@
 
 #define ZTK_TAG_RKMOTOR "motor"
 
-
-
-/* read a 6D spatial vector from a ZTK format processor. */
-zVec6D *zVec6DFromZTK(zVec6D *v, ZTK *ztk)
-{
-  v->e[0] = ZTKDouble(ztk);
-  v->e[1] = ZTKDouble(ztk);
-  v->e[2] = ZTKDouble(ztk);
-  v->e[3] = ZTKDouble(ztk);
-  v->e[4] = ZTKDouble(ztk);
-  v->e[5] = ZTKDouble(ztk);
-  return v;
-}
-
-/* read a 3x3 matrix from a ZTK format processor. */
-zMat3D *zMat3DFromZTK(zMat3D *m, ZTK *ztk)
-{
-  m->e[0][0] = ZTKDouble(ztk);
-  m->e[1][0] = ZTKDouble(ztk);
-  m->e[2][0] = ZTKDouble(ztk);
-  m->e[0][1] = ZTKDouble(ztk);
-  m->e[1][1] = ZTKDouble(ztk);
-  m->e[2][1] = ZTKDouble(ztk);
-  m->e[0][2] = ZTKDouble(ztk);
-  m->e[1][2] = ZTKDouble(ztk);
-  m->e[2][2] = ZTKDouble(ztk);
-  return m;
-}
-
-/* read a 3D frame from a ZTK format processor. */
-zFrame3D *zFrame3DFromZTK(zFrame3D *f, ZTK *ztk)
-{
-  zFrame3DAtt(f)->e[0][0] = ZTKDouble(ztk);
-  zFrame3DAtt(f)->e[1][0] = ZTKDouble(ztk);
-  zFrame3DAtt(f)->e[2][0] = ZTKDouble(ztk);
-  zFrame3DPos(f)->e[0]    = ZTKDouble(ztk);
-  zFrame3DAtt(f)->e[0][1] = ZTKDouble(ztk);
-  zFrame3DAtt(f)->e[1][1] = ZTKDouble(ztk);
-  zFrame3DAtt(f)->e[2][1] = ZTKDouble(ztk);
-  zFrame3DPos(f)->e[1]    = ZTKDouble(ztk);
-  zFrame3DAtt(f)->e[0][2] = ZTKDouble(ztk);
-  zFrame3DAtt(f)->e[1][2] = ZTKDouble(ztk);
-  zFrame3DAtt(f)->e[2][2] = ZTKDouble(ztk);
-  zFrame3DPos(f)->e[2]    = ZTKDouble(ztk);
-  return f;
-}
-
-/* read DH parameters from a ZTK format processor. */
-zFrame3D *zFrame3DDHFromZTK(zFrame3D *f, ZTK *ztk)
-{
-  double a, alpha, d, theta;
-
-  a = ZTKDouble(ztk);
-  alpha = zDeg2Rad( ZTKDouble(ztk) );
-  d = ZTKDouble(ztk);
-  theta = zDeg2Rad( ZTKDouble(ztk) );
-  return zFrame3DFromDH( f, a, alpha, d, theta );
-}
-
-
-
-
 /* DC motor */
 
 static void *_rkMotorDCMotorConstantFromZTK(void *obj, int i, void *arg, ZTK *ztk){

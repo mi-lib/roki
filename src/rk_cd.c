@@ -275,7 +275,7 @@ void rkCDPairPrint(rkCD *cd)
   printf( "number : flag : chain1 link1 shape1 : chain2 link2 shape2\n" );
   zListForEach( &cd->plist, cp ){
     printf( "%d : %s : %s %s %s : %s %s %s\n", i,
-      zBoolExpr(cp->data.is_col),
+      zBoolStr(cp->data.is_col),
         zName(cp->data.cell[0]->data.chain),  zName(cp->data.cell[0]->data.link), zName(cp->data.cell[0]->data.shape),
         zName(cp->data.cell[1]->data.chain),  zName(cp->data.cell[1]->data.link), zName(cp->data.cell[1]->data.shape) );
     i++;
@@ -294,7 +294,7 @@ void rkCDPairVertPrint(rkCD *cd)
   printf( "number : flag : chain1 shape1 : chain2 shape2\n" );
   zListForEach( &cd->plist, cp ){
     printf( "%d : %s : %s %s : %s %s\n", i,
-      zBoolExpr(cp->data.is_col),
+      zBoolStr(cp->data.is_col),
       zName(cp->data.cell[0]->data.chain), zName(cp->data.cell[0]->data.shape),
       zName(cp->data.cell[1]->data.chain), zName(cp->data.cell[1]->data.shape) );
     zListForEach( &cp->data.vlist, v ){
