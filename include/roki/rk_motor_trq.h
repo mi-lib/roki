@@ -16,10 +16,11 @@ typedef struct {
   /* value */
   double input;
   /* properties */
-  double max, min; /* maximum & minimum input */
-} rkMotorPrpTRQ;
+  double min; /*!< \brief minimum input torque */
+  double max; /*!< \brief maximum input torque */
+} rkMotorPrpTrq;
 
-__EXPORT rkMotor *rkMotorCreateTRQ(rkMotor *motor);
+extern rkMotorCom rk_motor_trq;
 
 __END_DECLS
 

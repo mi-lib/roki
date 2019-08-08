@@ -7,47 +7,34 @@
 
 #include <roki/rk_motor.h>
 
-static void _rkMotorSetInputNone(void *prp, double *val);
+static void _rkMotorInitNone(void *prp){}
+static void *_rkMotorAllocNone(void){ return NULL; }
+static void _rkMotorCopyNone(void *src, void *dst){}
 
-static void _rkMotorInertiaNone(void *prp, double *val);
-static void _rkMotorInputTrqNone(void *prp, double *val);
-static void _rkMotorRegistanceNone(void *prp, double *dis, double *vel, double *val);
-static void _rkMotorDrivingTrqNone(void *prp, double *dis, double *vel, double *acc, double *val);
+static void _rkMotorSetInputNone(void *prp, double *val){}
 
-static void _rkMotorStateCopyNone(void *src, void *dst);
+static void _rkMotorInertiaNone(void *prp, double *val){}
+static void _rkMotorInputTrqNone(void *prp, double *val){}
+static void _rkMotorRegistanceNone(void *prp, double *dis, double *vel, double *val){}
+static void _rkMotorDrivingTrqNone(void *prp, double *dis, double *vel, double *acc, double *val){}
 
-static bool _rkMotorQueryFScanNone(FILE *fp, char *key, void *prp);
-static void _rkMotorFPrintNone(FILE *fp, void *prp);
-
-
-void _rkMotorSetInputNone(void *prp, double *val){}
-
-void _rkMotorInertiaNone(void *prp, double *val){}
-void _rkMotorInputTrqNone(void *prp, double *val){}
-void _rkMotorRegistanceNone(void *prp, double *dis, double *vel, double *val){}
-void _rkMotorDrivingTrqNone(void *prp, double *dis, double *vel, double *acc, double *val){}
-
-void _rkMotorStateCopyNone(void *src, void *dst){}
-
-bool _rkMotorQueryFScanNone(FILE *fp, char *key, void *prp){
+static bool _rkMotorQueryFScanNone(FILE *fp, char *key, void *prp){
   return false;
 }
 
-void _rkMotorFPrintNone(FILE *fp, void *prp){}
+static void _rkMotorFPrintNone(FILE *fp, void *prp){}
 
-static rkMotorCom rk_motor_none = {
+rkMotorCom rk_motor_none = {
+  "none",
   0,
+  _rkMotorInitNone,
+  _rkMotorAllocNone,
+  _rkMotorCopyNone,
   _rkMotorSetInputNone,
   _rkMotorInputTrqNone,
   _rkMotorInertiaNone,
   _rkMotorRegistanceNone,
   _rkMotorDrivingTrqNone,
-  _rkMotorStateCopyNone,
   _rkMotorQueryFScanNone,
   _rkMotorFPrintNone,
 };
-
-rkMotor *rkMotorCreateNone(rkMotor *m){
-  m->com = &rk_motor_none;
-  return m;
-}

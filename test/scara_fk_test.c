@@ -3,18 +3,18 @@
 #define L1 1.2
 #define L2 0.8
 
-void link_init(rkLink *l, int id, char *name, byte jtype)
+void link_init(rkLink *l, int id, char *name, rkJointCom *com)
 {
   rkLinkInit( l );
   zNameSet( l, name );
-  rkJointCreate( rkLinkJoint(l), jtype );
+  rkJointAssign( rkLinkJoint(l), com );
 }
 
 void scara_build(rkLink l[])
 {
-  link_init( &l[0], 1, "l1", RK_JOINT_REVOL );
-  link_init( &l[1], 2, "l2", RK_JOINT_REVOL );
-  link_init( &l[2], 3, "tip", RK_JOINT_FIXED );
+  link_init( &l[0], 1, "l1", &rk_joint_revol );
+  link_init( &l[1], 2, "l2", &rk_joint_revol );
+  link_init( &l[2], 3, "tip", &rk_joint_fixed );
   zVec3DCreate( rkLinkOrgPos(&l[1]), 0, L1, 0 );
   zVec3DCreate( rkLinkOrgPos(&l[2]), 0, L2, 0 );
   rkLinkAddChild( &l[0], &l[1] );

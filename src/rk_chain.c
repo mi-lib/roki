@@ -30,7 +30,7 @@ void rkChainDestroy(rkChain *c)
   register int i;
 
   if( !c ) return;
-  zNameDestroy(c);
+  zNameFree(c);
   for( i=0; i<rkChainNum(c); i++ )
     rkLinkDestroy( rkChainLink(c,i) );
   zArrayFree( &c->link );
@@ -97,13 +97,13 @@ zIndex rkChainCreateDefaultJointIndex(rkChain *c)
   zIndex index;
 
   for( count=0, i=0; i<rkChainNum(c); i++ )
-    if( rkChainLinkJointType(c,i) != RK_JOINT_FIXED ) count++;
+    if( rkChainLinkJointSize(c,i) > 0 ) count++;
   if( !( index = zIndexCreate( count ) ) ){
     ZALLOCERROR();
     return NULL;
   }
   for( count=0, i=0; i<rkChainNum(c); i++ )
-    if( rkChainLinkJointType(c,i) != RK_JOINT_FIXED ){
+    if( rkChainLinkJointSize(c,i) > 0 ){
       zIndexSetElemNC( index, count, i );
       count++;
     }
@@ -749,10 +749,9 @@ bool rkChainMShape3DScanFile(rkChain *chain, char filename[])
   }
   rkLinkInit( rkChainRoot(chain) );
   zNameSet( rkChainRoot(chain), "base" );
-  rkJointCreate( rkLinkJoint(rkChainRoot(chain)), RK_JOINT_FIXED );
-  for( i=0; i<zMShape3DShapeNum(ms); i++ ){
+  rkJointAssign( rkLinkJoint(rkChainRoot(chain)), &rk_joint_fixed );
+  for( i=0; i<zMShape3DShapeNum(ms); i++ )
     rkLinkShapePush( rkChainRoot(chain), zMShape3DShape(ms,i) );
-  }
   return true;
 }
 

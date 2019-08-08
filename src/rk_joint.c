@@ -7,61 +7,38 @@
 #include <roki/rk_joint.h>
 
 /* ********************************************************** */
-/* joint type
- * ********************************************************** */
-static char *__rkjointtypename[] = {
-  "fix", "revolute", "prism", "cylinder", "hooke", "sphere", "float", "breakablefloat",
-  NULL
-};
-
-/* convert joint type to a string. */
-char *rkJointTypeExpr(byte type)
-{
-  return __rkjointtypename[zLimit(type,RK_JOINT_FIXED,RK_JOINT_BRFLOAT)];
-}
-
-/* convert a string to joint type. */
-byte rkJointTypeFromStr(char *str)
-{
-  char **jp;
-  byte type;
-
-  for( type=RK_JOINT_FIXED, jp=__rkjointtypename; *jp; jp++, type++ )
-    if( !strcmp( str, *jp ) ) return type;
-  return RK_JOINT_FIXED;
-}
-
-/* ********************************************************** */
 /* CLASS: rkJoint
  * joint class
  * ********************************************************** */
 
-static rkJoint *(* rk_joint_create[])(rkJoint*) = {
-  rkJointCreateFixed,
-  rkJointCreateRevol,
-  rkJointCreatePrism,
-  rkJointCreateCylin,
-  rkJointCreateHooke,
-  rkJointCreateSpher,
-  rkJointCreateFloat,
-  rkJointCreateBrFloat,
-};
-
-/* create a joint object. */
-rkJoint *rkJointCreate(rkJoint *j, byte type)
+rkJoint *rkJointAssign(rkJoint *j, rkJointCom *com)
 {
-  if( type < RK_JOINT_FIXED || type > RK_JOINT_BRFLOAT ){
-    ZRUNERROR( RK_ERR_JOINT_INVTYPE, type );
-    return NULL;
-  }
   rkJointInit( j );
-  if( !rk_joint_create[( (j)->type = type )]( j ) ){
-    ZRUNERROR( RK_ERR_JOINT_FAILED );
-    rkJointDestroy( j );
-    return NULL;
-  }
+  if( ( j->prp = ( j->com = com )->_alloc() ) )
+    j->com->_init( j->prp );
   rkJointNeutral( j );
   return j;
+}
+
+rkJoint *rkJointQueryAssign(rkJoint *j, char *str)
+{
+  rkJointCom *com[] = {
+    &rk_joint_fixed,
+    &rk_joint_revol,
+    &rk_joint_prism,
+    &rk_joint_cylin,
+    &rk_joint_hooke,
+    &rk_joint_spher,
+    &rk_joint_float,
+    &rk_joint_brfloat,
+    NULL,
+  };
+  register int i;
+
+  for( i=0; com[i]; i++ )
+    if( strcmp( com[i]->typestr, str ) == 0 )
+      return rkJointAssign( j, com[i] );
+  return NULL;
 }
 
 /* destroy a joint object. */
@@ -95,18 +72,10 @@ rkJoint *rkJointClone(rkJoint *org, rkJoint *cln)
 {
   rkMotor *morg, *mcln;
 
-  if( !rkJointCreate( cln, rkJointType(org) ) ){
-    ZALLOCERROR();
-    return NULL;
-  }
+  if( !rkJointAssign( cln, org->com ) ) return NULL;
   rkJointCopyState( org, cln );
-  rkJointGetMotor( org, &morg );
-  rkJointGetMotor( cln, &mcln );
-  if( morg != NULL && mcln != NULL )
-    if( !rkMotorClone( morg, mcln ) ){
-      ZALLOCERROR();
-      return NULL;
-    }
+  if( ( morg = rkJointGetMotor( org ) ) && ( mcln = rkJointGetMotor( cln ) ) )
+    rkMotorClone( morg, mcln );
   return cln;
 }
 

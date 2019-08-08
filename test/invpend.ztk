@@ -6,7 +6,7 @@ name: brown
 ambient: 0.4, 0.3, 0.2
 diffuse: 0.4, 0.2, 0.0
 specular: 0.0, 0.0, 0.0
-exp: 0.7
+esr: 0.7
 alpha: 1
 
 [optic]
@@ -14,7 +14,7 @@ name: silver
 ambient: 0.8, 0.8, 0.8
 diffuse: 0.4, 0.4, 0.4
 specular: 0.0, 0.0, 0.0
-exp: 0.8
+esr: 0.8
 alpha: 1
 
 [shape]
@@ -37,6 +37,7 @@ depth: 0.49
 [shape]
 type : cylinder
 name : pendulum
+optic: silver
 center: { 0.0, 0.0, 0.0 }
 center: { 0.39, 0.0, 0.0 }
 radius: 0.01
@@ -54,10 +55,8 @@ shape: base
 [link]
 name: arm
 jointtype: revolute
-min: -180
-max: 180
 stiffness: 0
-viscos: 0
+viscosity: 0
 mass: 0
 inertia: {
   0, 0, 0,
@@ -76,10 +75,8 @@ parent: base
 [link]
 name: pendulum
 jointtype: revolute
-min: -360
-max: 360
 stiffness: 0
-viscos: 0
+viscosity: 0
 mass: 0.085
 inertia: {
  0, 0, 0,

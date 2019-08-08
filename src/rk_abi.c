@@ -190,7 +190,9 @@ void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
   zVec6DAddDRC( &jac, &ap->c );
 
   /* update acceleration */
-  if( rkLinkJointType(link) >= RK_JOINT_SPHER ){
+  if( rkLinkJoint(link)->com == &rk_joint_spher ||
+      rkLinkJoint(link)->com == &rk_joint_float ||
+      rkLinkJoint(link)->com == &rk_joint_brfloat ){
     zMulMat3DTMat3D(rkLinkOrgAtt(link), rkLinkAdjAtt(link), &att);
     rkJointABIQAcc( rkLinkJoint(link), &att, &ap->i, &ap->b, &jac, ap->iaxi, rkLinkAcc(link) );
   } else

@@ -105,7 +105,7 @@ void cad2zkc_list_destroy(cad2zkc_list_t *list)
 
   while( !zListIsEmpty( list ) ){
     zListDeleteHead( list, &cell );
-    zNameDestroy( &cell->data );
+    zNameFree( &cell->data );
     zFree( cell );
   }
 }

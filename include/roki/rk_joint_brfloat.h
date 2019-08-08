@@ -25,7 +25,7 @@ typedef struct{
   double ep_f, ep_t; /* threshold to break joint */
 } rkJointPrpBrFloat;
 
-__EXPORT rkJoint *rkJointCreateBrFloat(rkJoint *joint);
+extern rkJointCom rk_joint_brfloat;
 
 __END_DECLS
 

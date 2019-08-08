@@ -6,80 +6,96 @@
 
 #include <roki/rk_joint.h>
 
-static void _rkJointLimValFixed(void *prp, double *testval, double *limval);
-static void _rkJointValFixed(void *prp, double *val);
-static void _rkJointCatDisFixed(void *prp, double *dis, double k, double *val);
-static void _rkJointSubDisFixed(void *prp, double *dis, double *sdis);
-static void _rkJointSetDisCNTFixed(void *prp, double *val, double dt);
-static void _rkJointGetMotorFixed(void *prp, rkMotor **m);
-static zFrame3D *_rkJointXformFixed(void *prp, zFrame3D *fo, zFrame3D *f);
-static void _rkJointIncVelFixed(void *prp, zVec6D *vel);
-static void _rkJointIncAccOnVelFixed(void *prp, zVec3D *w, zVec6D *acc);
-static void _rkJointIncAccFixed(void *prp, zVec6D *acc);
-static void _rkJointCalcTrqFixed(void *prp, zVec6D *f);
-static void _rkJointTorsionFixed(zFrame3D *dev, zVec6D *t, double dis[]);
-static void _rkJointRefFixed(void *prp, rkJointRef *ref);
-static bool _rkJointQueryFScanFixed(FILE *fp, char *key, void *prp, rkMotor *marray, int nm);
-static void _rkJointFPrintFixed(FILE *fp, void *prp, char *name);
+static void _rkJointInitFixed(void *prp){}
+
+static void *_rkJointAllocFixed(void){ return NULL; }
 
 /* limit joint displacement (dummy) */
-void _rkJointLimValFixed(void *prp, double *testval, double *limval){}
+static void _rkJointLimValFixed(void *prp, double *testval, double *limval){}
 
 /* set/get joint displacement, velocity, acceleration and torque (dummy) */
-void _rkJointValFixed(void *prp, double *val){}
+static void _rkJointValFixed(void *prp, double *val){}
 
 /* continuously update joint displacement */
-void _rkJointCatDisFixed(void *prp, double *dis, double k, double *val){}
-void _rkJointSubDisFixed(void *prp, double *dis, double *sdis){}
-void _rkJointSetDisCNTFixed(void *prp, double *val, double dt){}
-
-/* get motor */
-void _rkJointGetMotorFixed(void *prp, rkMotor **m){
-  *m = NULL;
-}
+static void _rkJointCatDisFixed(void *prp, double *dis, double k, double *val){}
+static void _rkJointSubDisFixed(void *prp, double *dis, double *sdis){}
+static void _rkJointSetDisCNTFixed(void *prp, double *val, double dt){}
 
 /* joint frame transformation */
-zFrame3D *_rkJointXformFixed(void *prp, zFrame3D *fo, zFrame3D *f)
-{ /* suppose f is the same with fo */
+static zFrame3D *_rkJointXformFixed(void *prp, zFrame3D *fo, zFrame3D *f){
+  /* suppose f is the same with fo */
   zFrame3DCopy( fo, f );
   return f;
 }
 
 /* joint motion rate transformation */
-void _rkJointIncVelFixed(void *prp, zVec6D *vel){}
-void _rkJointIncAccOnVelFixed(void *prp, zVec3D *w, zVec6D *acc){}
-void _rkJointIncAccFixed(void *prp, zVec6D *acc){}
+static void _rkJointIncVelFixed(void *prp, zVec6D *vel){}
+static void _rkJointIncAccOnVelFixed(void *prp, zVec3D *w, zVec6D *acc){}
+static void _rkJointIncAccFixed(void *prp, zVec6D *acc){}
 
 /* joint torque transformation */
-void _rkJointCalcTrqFixed(void *prp, zVec6D *f){}
+static void _rkJointCalcTrqFixed(void *prp, zVec6D *f){}
 
 /* inverse computation of joint torsion and displacement */
-void _rkJointTorsionFixed(zFrame3D *dev, zVec6D *t, double dis[])
-{
+static void _rkJointTorsionFixed(zFrame3D *dev, zVec6D *t, double dis[]){
   zVec6D to;
-
   zFrame3DToVec6DAA( dev, &to );
   zMulMat3DTVec6D( zFrame3DAtt(dev), &to, t );
 }
 
-/* referential displacement for static friction computation */
-void _rkJointRefFixed(void *prp, rkJointRef *ref){}
-
-/* query joint properties */
-bool _rkJointQueryFScanFixed(FILE *fp, char *key, void *prp, rkMotor *marray, int nm){
-  return false;
-}
-
-void _rkJointFPrintFixed(FILE *fp, void *prp, char *name){}
-
+/* joint axes */
 static zVec3D* (*_rk_joint_axis_fixed_ang[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
 static zVec3D* (*_rk_joint_axis_fixed_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
-static rkJointCom rk_joint_fixed = {
+
+/* pivot for static friction computation */
+static void _rkJointFrictionPivotFixed(void *prp, rkJointFrictionPivot *fp){}
+
+/* motor */
+static rkMotor *_rkJointGetMotorFixed(void *prp){ return NULL; }
+
+static void _rkJointMotorSetInputFixed(void *prp, double *val){}
+static void _rkJointMotorInertiaFixed(void *prp, double *val){}
+static void _rkJointMotorInputTrqFixed(void *prp, double *val){}
+static void _rkJointMotorResistanceFixed(void *prp, double *val){}
+static void _rkJointMotorDrivingTrqFixed(void *prp, double *val){}
+
+/* ABI */
+static void _rkJointABIAxisInertiaFixed(void *prp, zMat6D *m, zMat h, zMat ih){}
+
+static void _rkJointABIAddAbiFixed(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm){
+  zMat6D tmpm;
+  rkJointXformMat6D( f, m, &tmpm );
+  zMat6DAddDRC( pm, &tmpm );
+}
+
+static void _rkJointABIAddBiasFixed(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb){
+  zVec6D tmpv;
+  zMulMat3DVec6D( zFrame3DAtt(f), b, &tmpv );
+  zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
+  zVec6DAddDRC( pb, &tmpv );
+}
+
+static void _rkJointABIDrivingTorqueFixed(void *prp){}
+static void _rkJointABIQAccFixed(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
+  zVec6DCopy( jac, acc );
+}
+
+/* query joint properties */
+static bool _rkJointQueryFScanFixed(FILE *fp, char *key, void *prp, rkMotor *marray, int nm){
+  return false;
+}
+
+static void _rkJointFPrintFixed(FILE *fp, void *prp, char *name){}
+
+rkJointCom rk_joint_fixed = {
+  "fix",
   0,
+  _rkJointInitFixed,
+  _rkJointAllocFixed,
   _rkJointLimValFixed,
   _rkJointValFixed,
   _rkJointValFixed,
@@ -89,7 +105,6 @@ static rkJointCom rk_joint_fixed = {
   _rkJointValFixed,
   _rkJointValFixed,
   _rkJointValFixed,
-  _rkJointGetMotorFixed,
   _rkJointCatDisFixed,
   _rkJointSubDisFixed,
   _rkJointSetDisCNTFixed,
@@ -99,89 +114,30 @@ static rkJointCom rk_joint_fixed = {
   _rkJointIncAccFixed,
   _rkJointCalcTrqFixed,
   _rkJointTorsionFixed,
-  _rkJointValFixed,
-  _rkJointValFixed,
-  _rkJointValFixed,
-  _rkJointValFixed,
-  _rkJointRefFixed,
-  _rkJointRefFixed,
   _rk_joint_axis_fixed_ang,
   _rk_joint_axis_fixed_lin,
-  _rkJointQueryFScanFixed,
-  _rkJointFPrintFixed,
-};
 
-/* motor */
-static byte _rkJointMotorFixed(void *prp);
-static void _rkJointMotorSetInputFixed(void *prp, double *val);
-static void _rkJointMotorInertiaFixed(void *prp, double *val);
-static void _rkJointMotorInputTrqFixed(void *prp, double *val);
-static void _rkJointMotorResistanceFixed(void *prp, double *val);
-static void _rkJointMotorDrivingTrqFixed(void *prp, double *val);
+  _rkJointFrictionPivotFixed,
+  _rkJointFrictionPivotFixed,
+  _rkJointValFixed,
+  _rkJointValFixed,
+  _rkJointValFixed,
+  _rkJointValFixed,
 
-byte _rkJointMotorFixed(void *prp){return RK_MOTOR_INVALID;}
-void _rkJointMotorSetInputFixed(void *prp, double *val){}
-void _rkJointMotorInertiaFixed(void *prp, double *val){}
-void _rkJointMotorInputTrqFixed(void *prp, double *val){}
-void _rkJointMotorResistanceFixed(void *prp, double *val){}
-void _rkJointMotorDrivingTrqFixed(void *prp, double *val){}
-
-static rkJointMotorCom rk_joint_motor_fixed = {
-  _rkJointMotorFixed,
+  _rkJointGetMotorFixed,
   _rkJointMotorSetInputFixed,
   _rkJointMotorInertiaFixed,
   _rkJointMotorInputTrqFixed,
   _rkJointMotorResistanceFixed,
   _rkJointMotorDrivingTrqFixed,
-};
 
-/* ABI */
-static void _rkJointABIAxisInertiaFixed(void *prp, zMat6D *m, zMat h, zMat ih);
-static void _rkJointABIAddAbiFixed(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm);
-static void _rkJointABIAddBiasFixed(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb);
-static void _rkJointABIDrivingTorqueFixed(void *prp);
-static void _rkJointABIQAccFixed(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc);
-
-void _rkJointABIAxisInertiaFixed(void *prp, zMat6D *m, zMat h, zMat ih){}
-void _rkJointABIAddAbiFixed(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm)
-{
-  zMat6D tmpm;
-
-  rkJointXformMat6D( f, m, &tmpm );
-  zMat6DAddDRC( pm, &tmpm );
-}
-
-void _rkJointABIAddBiasFixed(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb)
-{
-  zVec6D tmpv;
-
-  zMulMat3DVec6D( zFrame3DAtt(f), b, &tmpv );
-  zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
-  zVec6DAddDRC( pb, &tmpv );
-}
-
-void _rkJointABIDrivingTorqueFixed(void *prp){}
-void _rkJointABIQAccFixed(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc)
-{
-  zVec6DCopy( jac, acc );
-}
-
-static rkJointABICom rk_joint_abi_fixed = {
   _rkJointABIAxisInertiaFixed,
   _rkJointABIAddAbiFixed,
   _rkJointABIAddBiasFixed,
   _rkJointABIDrivingTorqueFixed,
   _rkJointABIQAccFixed,
   _rkJointUpdateWrench,
-};
 
-/* rkJointCreateFixed
- * - create fixed joint instance.
- */
-rkJoint *rkJointCreateFixed(rkJoint *j)
-{
-  j->com = &rk_joint_fixed;
-  j->mcom = &rk_joint_motor_fixed;
-  j->acom = &rk_joint_abi_fixed;
-  return j;
-}
+  _rkJointQueryFScanFixed,
+  _rkJointFPrintFixed,
+};

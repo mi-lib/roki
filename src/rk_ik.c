@@ -108,7 +108,7 @@ bool _rkIKAllocJointIndex(rkIK *ik)
   double *wp;
 
   for( count=0, i=0; i<rkChainNum(ik->chain); i++ ){
-    if( rkChainLinkJointType(ik->chain,i) == RK_JOINT_FIXED )
+    if( rkChainLinkJointSize(ik->chain,i) == 0 )
       ik->joint_sw[i] = false;
     if( ik->joint_sw[i] ) count++;
   }
@@ -164,7 +164,7 @@ bool rkIKJointRegAll(rkIK *ik, double weight)
   register int i;
 
   for( i=0; i<rkChainNum(ik->chain); i++ )
-    if( rkChainLinkJointType(ik->chain,i) != RK_JOINT_FIXED )
+    if( rkChainLinkJointSize(ik->chain,i) > 0 )
       if( !rkIKJointReg( ik, i, weight ) ) return false;
   return true;
 }
@@ -484,8 +484,7 @@ bool _rkIKConfParseJoint(FILE *fp, char *buf, rkIK *ik)
     rkJointQueryFScan( fp, "dis", rkLinkJoint(l), NULL, 0 );
     return true;
   } else
-    return rkLinkJointType(l) != RK_JOINT_FIXED ?
-      rkIKJointReg( ik, l - rkChainRoot(ik->chain), w ) : false;
+    return rkLinkJointSize(l) > 0 ? rkIKJointReg( ik, l - rkChainRoot(ik->chain), w ) : false;
 }
 
 bool _rkIKConfParseConstraint(FILE *fp, char *buf, rkChain *chain, rkIKCellAttr *attr, int *mask)

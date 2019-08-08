@@ -8,74 +8,36 @@
 #include <roki/rk_motor.h>
 
 /* ********************************************************** */
-/* motor type
- * ********************************************************** */
-static char *__rkmotortypename[] = {
-  "none", "trq", "dc",
-  NULL,
-};
-
-char *rkMotorTypeExpr(byte type)
-{
-  return __rkmotortypename[zLimit(type,RK_MOTOR_NONE,RK_MOTOR_DC)];
-}
-
-byte rkMotorTypeFromStr(char *str)
-{
-  char **jp;
-  byte type;
-
-  for( type=RK_MOTOR_NONE, jp=__rkmotortypename; *jp; jp++, type++ )
-    if( strcmp( str, *jp ) == 0 ) return type;
-  return RK_MOTOR_NONE;
-}
-
-/* ********************************************************** */
 /* CLASS: rkMotor
  * geared DC motor model class
  * ********************************************************** */
-static rkMotor *(* rk_motor_create[])(rkMotor*) = {
-  rkMotorCreateNone,
-  rkMotorCreateTRQ,
-  rkMotorCreateDC,
-};
-
-rkMotor *rkMotorCreate(rkMotor *m, byte type)
+rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com)
 {
-  if( type < RK_MOTOR_NONE || type > RK_MOTOR_DC ){
-    ZRUNERROR( RK_ERR_MOTOR_INVTYPE, type );
-    return NULL;
-  }
-  rkMotorInit( m );
-  if( !rk_motor_create[( m->type = type )]( m ) ){
-    ZRUNERROR( RK_ERR_MOTOR_FAILED );
-    rkMotorDestroy( m );
-    return NULL;
-  }
+  if( ( m->prp = ( m->com = com )->_alloc() ) )
+    m->com->_init( m->prp );
   return m;
 }
 
 void rkMotorDestroy(rkMotor *m)
 {
-  zNameDestroy( m );
+  zNameFree( m );
   zFree( m->prp );
   rkMotorInit( m );
 }
 
 rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln)
 {
-  if( cln->type > RK_MOTOR_NONE ) return NULL;
-  if( !rkMotorCreate( cln, rkMotorType(org) ) ) return NULL;
+  rkMotorAssign( cln, org->com );
   zNameSet( cln, zName(org) );
-  rkMotorStateCopy( org, cln );
+  org->com->_copy( org->prp, cln->prp );
   return cln;
 }
 
 void rkMotorFPrint(FILE *fp, rkMotor *m)
 {
   fprintf( fp, "name: %s\n", zName(m) );
-  fprintf( fp, "type: %s\n", rkMotorTypeExpr( rkMotorType(m) ) );
-  (m)->com->_print( fp, (m)->prp );
+  fprintf( fp, "type: %s\n", rkMotorTypeStr(m) );
+  (m)->com->_fprint( fp, (m)->prp );
 }
 
 /* ********************************************************** */
@@ -94,7 +56,6 @@ rkMotorArray *rkMotorArrayClone(rkMotorArray *org)
   zArrayAlloc( cln, rkMotor, zArraySize(org) );
   if( zArraySize(cln) != zArraySize(org) ) return NULL;
   for( i=0; i<zArraySize(cln); i++ ){
-    rkMotorType(zArrayElemNC(cln,i)) = RK_MOTOR_NONE;
     if( !rkMotorClone( zArrayElemNC(org,i), zArrayElemNC(cln,i) ) )
       return NULL;
   }
@@ -121,8 +82,15 @@ typedef struct{
 
 bool __rkMotorArrayMotorFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
+  rkMotorCom *com[] = {
+    &rk_motor_none,
+    &rk_motor_dc,
+    &rk_motor_trq,
+    NULL,
+  };
   _rkMotorArrayMotorParam *prm;
   rkMotor *cm;
+  register int k;
 
   prm = instance;
   if( strcmp( buf, "name" ) == 0 ){
@@ -141,8 +109,11 @@ bool __rkMotorArrayMotorFScan(FILE *fp, void *instance, char *buf, bool *success
     }
   } else if( strcmp( buf, "type" ) == 0 ){
     zFToken( fp, buf, BUFSIZ );
-    if( !rkMotorCreate( prm->m, rkMotorTypeFromStr(buf) ) )
-      return ( *success = false );
+    for( k=0; com[k]; k++ )
+      if( strcmp( buf, com[k]->typestr ) == 0 ){
+        rkMotorAssign( prm->m, com[k] );
+        return *success = true;
+      }
   } else if( !rkMotorQueryFScan( fp, buf, prm->m ) )
     return false;
   return true;

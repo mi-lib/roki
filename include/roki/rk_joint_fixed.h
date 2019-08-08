@@ -11,7 +11,7 @@
 
 __BEGIN_DECLS
 
-__EXPORT rkJoint *rkJointCreateFixed(rkJoint *joint);
+extern rkJointCom rk_joint_fixed;
 
 __END_DECLS
 

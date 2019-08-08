@@ -12,7 +12,7 @@
 
 __BEGIN_DECLS
 
-__EXPORT rkMotor *rkMotorCreateNone(rkMotor *motor);
+extern rkMotorCom rk_motor_none;
 
 __END_DECLS
 

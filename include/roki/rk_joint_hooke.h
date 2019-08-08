@@ -17,7 +17,9 @@ typedef struct{
   double dis[2], vel[2], acc[2], trq[2];
   double min[2], max[2]; /* limiter */
   /* joint stiffness, viscosity and coulomb friction */
-  double stiff[2], viscos[2], coulomb[2];
+  double stiffness[2];
+  double viscosity[2];
+  double coulomb[2];
   /* trigonometric values */
   double _s[2], _c[2];
   /* friction */
@@ -28,11 +30,11 @@ typedef struct{
   rkMotor m;
 
   /* for forward dynamics */
-  rkJointRef _ref[2];
+  rkJointFrictionPivot _fp[2];
   double _u[2];
 } rkJointPrpHooke;
 
-__EXPORT rkJoint *rkJointCreateHooke(rkJoint *joint);
+extern rkJointCom rk_joint_hooke;
 
 __END_DECLS
 

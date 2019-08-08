@@ -58,8 +58,8 @@ typedef struct _rkLink{
 
 #define rkLinkOffset(l)        (l)->offset
 #define rkLinkJoint(l)         ( &(l)->joint )
-#define rkLinkJointType(l)     rkJointType( rkLinkJoint(l) )
 #define rkLinkJointSize(l)     rkJointSize( rkLinkJoint(l) )
+#define rkLinkJointTypeStr(l)  rkJointTypeStr( rkLinkJoint(l) )
 #define rkLinkBody(l)          ( &(l)->body )
 #define rkLinkMP(l)            ( &rkLinkBody(l)->mp )
 #define rkLinkMass(l)          rkBodyMass( rkLinkBody(l) )

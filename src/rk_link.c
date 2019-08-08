@@ -33,7 +33,7 @@ void rkLinkInit(rkLink *l)
 /* destroy a link. */
 void rkLinkDestroy(rkLink *l)
 {
-  zNameDestroy( l );
+  zNameFree( l );
   rkJointDestroy( rkLinkJoint(l) );
   rkLinkExtWrenchDestroy( l );
   rkLinkShapeDestroy( l );
@@ -264,8 +264,7 @@ bool _rkLinkFScan(FILE *fp, void *instance, char *buf, bool *success)
       return ( *success = false );
     }
   } else if( strcmp( buf, "jointtype" ) == 0 )
-    rkJointCreate( rkLinkJoint(prm->l),
-      rkJointTypeFromStr( zFToken( fp, buf, BUFSIZ ) ) );
+    rkJointQueryAssign( rkLinkJoint(prm->l), zFToken( fp, buf, BUFSIZ ) );
   else if( strcmp( buf, "mass" ) == 0 )
     rkLinkSetMass( prm->l, zFDouble( fp ) );
   else if( strcmp( buf, "stuff" ) == 0 ){
@@ -325,7 +324,7 @@ rkLink *rkLinkFScan(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarra
   prm.ns = ns;
   prm.marray = marray;
   prm.nm = nm;
-  rkJointCreate( rkLinkJoint(l), RK_JOINT_FIXED );
+  rkJointAssign( rkLinkJoint(l), &rk_joint_fixed );
   if( !zFieldFScan( fp, _rkLinkFScan, &prm ) ) return NULL;
   if( zNamePtr(l) ) return l;
   ZRUNERROR( RK_ERR_LINK_UNNAMED );
@@ -342,7 +341,7 @@ void rkLinkFPrint(FILE *fp, rkLink *l)
     return;
   }
   fprintf( fp, "name: %s\n", zName(l) );
-  fprintf( fp, "jointtype: %s\n", rkJointTypeExpr( rkLinkJointType(l) ) );
+  fprintf( fp, "jointtype: %s\n", rkJointTypeStr( rkLinkJoint(l) ) );
   rkJointFPrint( fp, rkLinkJoint(l), NULL );
   rkMPFPrint( fp, rkLinkMP(l) );
   if( rkLinkStuff(l) ) fprintf( fp, "stuff: %s\n", rkLinkStuff(l) );
@@ -371,7 +370,7 @@ void rkLinkPostureFPrint(FILE *fp, rkLink *l)
 void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n)
 {
   zFIndent( fp, n );
-  fprintf( fp, "|-%s (%s:%d)\n", zName(l), rkJointTypeExpr(rkLinkJointType(l)), rkLinkOffset(l) );
+  fprintf( fp, "|-%s (%s:%d)\n", zName(l), rkJointTypeStr(rkLinkJoint(l)), rkLinkOffset(l) );
 
   if( rkLinkChild( l ) )
     rkLinkConnectionFPrint( fp, rkLinkChild(l), n+RK_LINK_CONNECTION_INDENT );
