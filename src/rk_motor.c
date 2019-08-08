@@ -18,6 +18,23 @@ rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com)
   return m;
 }
 
+rkMotor *rkMotorQueryAssign(rkMotor *m, char *str)
+{
+  rkMotorCom *com[] = {
+    &rk_motor_none,
+    &rk_motor_dc,
+    &rk_motor_trq,
+    NULL,
+  };
+  register int i;
+
+  for( i=0; com[i]; i++ )
+    if( strcmp( str, com[i]->typestr ) == 0 )
+      return rkMotorAssign( m, com[i] );
+  ZRUNERROR( RK_ERR_MOTOR_UNKNOWNTYPE, str );
+  return NULL;
+}
+
 void rkMotorDestroy(rkMotor *m)
 {
   zNameFree( m );
@@ -82,15 +99,8 @@ typedef struct{
 
 bool __rkMotorArrayMotorFScan(FILE *fp, void *instance, char *buf, bool *success)
 {
-  rkMotorCom *com[] = {
-    &rk_motor_none,
-    &rk_motor_dc,
-    &rk_motor_trq,
-    NULL,
-  };
   _rkMotorArrayMotorParam *prm;
   rkMotor *cm;
-  register int k;
 
   prm = instance;
   if( strcmp( buf, "name" ) == 0 ){
@@ -108,12 +118,8 @@ bool __rkMotorArrayMotorFScan(FILE *fp, void *instance, char *buf, bool *success
       return ( *success = false );
     }
   } else if( strcmp( buf, "type" ) == 0 ){
-    zFToken( fp, buf, BUFSIZ );
-    for( k=0; com[k]; k++ )
-      if( strcmp( buf, com[k]->typestr ) == 0 ){
-        rkMotorAssign( prm->m, com[k] );
-        return *success = true;
-      }
+    if( !rkMotorQueryAssign( prm->m, zFToken( fp, buf, BUFSIZ ) ) )
+      return ( *success = false );
   } else if( !rkMotorQueryFScan( fp, buf, prm->m ) )
     return false;
   return true;

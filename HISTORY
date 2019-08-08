@@ -1,3 +1,5 @@
+2019. 8. 8. Defined RK_ERR_MOTOR_UNKNOWNTYPE and expired RK_ERR_MOTOR_INVTYPE. [rk_errmsg]
+2019. 8. 8. Added rkMotorQueryAssign. [rk_motor]
 2019. 8. 8. Added rkJointTypeStr, rkLinkJointTypeStr and rkChainLinkJointTypeStr. [rk_joint, rk_link, rk_chain]
 2019. 8. 8. Debugged rkMotorAssign. [rk_motor]
 2019. 8. 8. Debugged rkJointAssign. [rk_joint]

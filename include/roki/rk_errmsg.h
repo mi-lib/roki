@@ -23,7 +23,7 @@
 #define RK_ERR_CONTACT_UNBOUND   "unbound contact info"
 
 #define RK_ERR_MOTOR_UNKNOWN     "motor %s not found"
-#define RK_ERR_MOTOR_INVTYPE     "invalid motor type specified - %d"
+#define RK_ERR_MOTOR_UNKNOWNTYPE "%s: unknown motor type"
 #define RK_ERR_MOTOR_FAILED      "cannot create motor instance"
 #define RK_ERR_MOTOR_OUTOFRANGE  "motor identifier out of range %d/%d"
 #define RK_ERR_MOTOR_UNNAMED     "unnamed motor exists"

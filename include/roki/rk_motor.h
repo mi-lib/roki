@@ -50,6 +50,7 @@ typedef struct{
   (m)->com = NULL;\
 } while(0)
 __EXPORT rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com);
+__EXPORT rkMotor *rkMotorQueryAssign(rkMotor *m, char *str);
 __EXPORT void rkMotorDestroy(rkMotor *m);
 
 __EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
