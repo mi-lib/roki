@@ -1,12 +1,12 @@
 #include <roki/rk_chain.h>
 
-void zkc2z3dUsage(char *cmd)
+void chain2mshapeUsage(char *cmd)
 {
   eprintf( "Usage: %s <.zkc file>\n", cmd );
   exit( EXIT_SUCCESS );
 }
 
-bool zkc2z3dConvert(rkChain *chain, char basename[])
+bool chain2mshapeConvert(rkChain *chain, char basename[])
 {
   FILE *fp;
   register int i;
@@ -41,11 +41,11 @@ int main(int argc, char *argv[])
   rkChain chain;
   char basename[BUFSIZ];
 
-  if( argc == 1 ) zkc2z3dUsage( argv[0] );
+  if( argc == 1 ) chain2mshapeUsage( argv[0] );
   if( !rkChainScanFile( &chain, argv[1] ) )
     return EXIT_FAILURE;
   zGetBasename( argv[1], basename, BUFSIZ );
-  zkc2z3dConvert( &chain, basename );
+  chain2mshapeConvert( &chain, basename );
   rkChainDestroy( &chain );
   return EXIT_SUCCESS;
 }

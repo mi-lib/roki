@@ -73,7 +73,7 @@ __EXPORT void rkMotorFPrint(FILE *fp, rkMotor *m);
 /* CLASS: rkMotorArray
  * ********************************************************** */
 
-#define RK_MOTOR_TAG "motor"
+#define ZTK_TAG_RKMOTOR "motor"
 zArrayClass( rkMotorArray, rkMotor );
 
 __EXPORT rkMotorArray *rkMotorArrayClone(rkMotorArray *org);

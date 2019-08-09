@@ -4,8 +4,6 @@
 
 #define RK_WARN_CHAIN_EMPTY "empty chain specified."
 
-#define ZTK_TAG_RKMOTOR "motor"
-
 /* DC motor */
 
 static void *_rkMotorDCMotorConstantFromZTK(void *obj, int i, void *arg, ZTK *ztk){
@@ -1184,7 +1182,7 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
   return chain;
 }
 
-rkChain *rkChainReadZTK(rkChain *chain, char filename[])
+rkChain *rkChainScanZTK(rkChain *chain, char filename[])
 {
   ZTK ztk;
 
@@ -1206,7 +1204,7 @@ rkChain *rkChainReadZTK(rkChain *chain, char filename[])
   return chain;
 }
 
-void _rkChainFPrint(FILE *fp, rkChain *chain)
+void rkChainFPrint(FILE *fp, rkChain *chain)
 {
   register int i;
 
@@ -1222,7 +1220,7 @@ void _rkChainFPrint(FILE *fp, rkChain *chain)
   }
 }
 
-rkChain *rkChainReadInitZTK(rkChain *chain, char filename[])
+rkChain *rkChainScanInitZTK(rkChain *chain, char filename[])
 {
   /* dummy */
   return chain;
@@ -1233,9 +1231,9 @@ int main(int argc, char *argv[])
   rkChain chain;
 
   if( argc <= 1 ) return 0;
-  rkChainReadZTK( &chain, argv[1] );
-  rkChainReadInitZTK( &chain, argv[1] );
-  _rkChainFPrint( stdout, &chain );
+  rkChainScanZTK( &chain, argv[1] );
+  rkChainScanInitZTK( &chain, argv[1] );
+  rkChainFPrint( stdout, &chain );
   rkChainDestroy( &chain );
   return 0;
 }

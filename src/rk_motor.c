@@ -84,7 +84,7 @@ rkMotorArray *_rkMotorArrayFAlloc(FILE *fp, rkMotorArray *m)
   register int i;
   int n;
 
-  n = zFCountTag( fp, RK_MOTOR_TAG );
+  n = zFCountTag( fp, ZTK_TAG_RKMOTOR );
   zArrayAlloc( m, rkMotor, n );
   if( n > 0 && !zArrayBuf(m) ) return NULL;
   for( i=0; i<n; i++ )
@@ -153,7 +153,7 @@ bool _rkMotorArrayFScan(FILE *fp, void *instance, char *buf, bool *success)
   _rkMotorArrayParam *prm;
 
   prm = instance;
-  if( strcmp( buf, RK_MOTOR_TAG ) == 0 ){
+  if( strcmp( buf, ZTK_TAG_RKMOTOR ) == 0 ){
     if( !_rkMotorArrayMotorFScan( fp, prm->m, prm->nm++ ) )
       return ( *success = false );
   }
@@ -180,7 +180,7 @@ void rkMotorArrayFPrint(FILE *fp, rkMotorArray *m)
   register int i;
 
   for( i=0; i<zArraySize(m); i++ ){
-    fprintf( fp, "[%s]\n", RK_MOTOR_TAG );
+    fprintf( fp, "[%s]\n", ZTK_TAG_RKMOTOR );
     rkMotorFPrint( fp, zArrayElemNC(m,i) );
   }
 }
