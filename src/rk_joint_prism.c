@@ -276,20 +276,86 @@ static bool _rkJointQueryFScanPrism(FILE *fp, char *buf, void *prp, rkMotor *mar
   return true;
 }
 
+static void *_rkJointPrismDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  double val;
+  val = zDeg2Rad( ZTKDouble(ztk) );
+  _rkJointSetDisPrism( _rkc(prp), &val );
+  return prp;
+}
+static void *_rkJointPrismMinFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->min = zDeg2Rad(ZTKDouble(ztk));
+  return prp;
+}
+static void *_rkJointPrismMaxFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->max = zDeg2Rad(ZTKDouble(ztk));
+  return prp;
+}
+static void *_rkJointPrismStiffnessFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->stiffness = zDeg2Rad(ZTKDouble(ztk));
+  return prp;
+}
+static void *_rkJointPrismViscosityFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->viscosity = zDeg2Rad(ZTKDouble(ztk));
+  return prp;
+}
+static void *_rkJointPrismCoulombFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->coulomb = zDeg2Rad(ZTKDouble(ztk));
+  return prp;
+}
+static void *_rkJointPrismStaticFricFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->sf = zDeg2Rad(ZTKDouble(ztk));
+  return prp;
+}
+static void *_rkJointPrismMotorFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  rkMotor *mp;
+  if( !( mp = rkMotorArrayFind( arg, ZTKVal(ztk) ) ) ) return NULL;
+  return rkMotorClone( mp, &_rkc(prp)->m ) ? prp : NULL;
+}
+
+static void _rkJointPrismDisFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->dis );
+}
+static void _rkJointPrismMinFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->min );
+}
+static void _rkJointPrismMaxFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->max );
+}
+static void _rkJointPrismStiffnessFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->stiffness );
+}
+static void _rkJointPrismViscosityFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->viscosity );
+}
+static void _rkJointPrismCoulombFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->coulomb );
+}
+static void _rkJointPrismStaticFricFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->sf );
+}
+static void _rkJointPrismMotorFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
+}
+
+static ZTKPrp __ztk_prp_rkjoint_prism[] = {
+  { "dis", 1, _rkJointPrismDisFromZTK, _rkJointPrismDisFPrint },
+  { "min", 1, _rkJointPrismMinFromZTK, _rkJointPrismMinFPrint },
+  { "max", 1, _rkJointPrismMaxFromZTK, _rkJointPrismMaxFPrint },
+  { "stiffness", 1, _rkJointPrismStiffnessFromZTK, _rkJointPrismStiffnessFPrint },
+  { "viscosity", 1, _rkJointPrismViscosityFromZTK, _rkJointPrismViscosityFPrint },
+  { "coulomb", 1, _rkJointPrismCoulombFromZTK, _rkJointPrismCoulombFPrint },
+  { "staticfriction", 1, _rkJointPrismStaticFricFromZTK, _rkJointPrismStaticFricFPrint },
+  { "motor", 1, _rkJointPrismMotorFromZTK, _rkJointPrismMotorFPrint },
+};
+
+static void *_rkJointFromZTKPrism(void *prp, rkMotorArray *motorarray, ZTK *ztk)
+{
+  return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_prism );
+}
+
 static void _rkJointFPrintPrism(FILE *fp, void *prp, char *name)
 {
-  rkJointPrpPrism *v;
-
-  v = prp;
-  if( !zIsTiny( v->dis ) )
-    fprintf( fp, "%s: %.10f\n", name, v->dis );
-  if( zIsInf( v->min ) != -1 )
-    fprintf( fp, "min: %.10f\n", v->min );
-  if( zIsInf( v->max ) != 1 )
-    fprintf( fp, "max: %.10f\n", v->max );
-  fprintf( fp, "stiffness: %.10f\n", v->stiffness );
-  fprintf( fp, "viscosity: %.10f\n", v->viscosity );
-  fprintf( fp, "coulomb: %.10f\n", v->coulomb );
+  ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_prism );
 }
 
 rkJointCom rk_joint_prism = {
@@ -340,7 +406,13 @@ rkJointCom rk_joint_prism = {
   _rkJointUpdateWrench,
 
   _rkJointQueryFScanPrism,
+  _rkJointFromZTKPrism,
   _rkJointFPrintPrism,
 };
+
+bool rkJointRegZTKPrism(ZTK *ztk, char *tag)
+{
+  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_prism ) ? true : false;
+}
 
 #undef _rkc

@@ -271,13 +271,45 @@ static bool _rkJointQueryFScanBrFloat(FILE *fp, char *buf, void *prp, rkMotor *m
   return false;
 }
 
-static void _rkJointFPrintBrFloat(FILE *fp, void *prp, char *name){
-  if( !zVec6DIsTiny( &_rkc(prp)->dis ) )
-    fprintf( fp, "%s: %.10f %.10f %.10f %.10f %.10f %.10f\n", name,
-      _rkc(prp)->dis.e[zX],  _rkc(prp)->dis.e[zY],  _rkc(prp)->dis.e[zZ],
-      _rkc(prp)->dis.e[zXA], _rkc(prp)->dis.e[zYA], _rkc(prp)->dis.e[zZA] );
-  fprintf( fp, "forcethreshold: %.10f\n", _rkc(prp)->ep_f );
-  fprintf( fp, "torquethreshold: %.10f\n", _rkc(prp)->ep_t );
+static void *_rkJointBrFloatDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  zVec6D dis;
+  zVec6DFromZTK( &dis, ztk );
+  _rkJointSetDisBrFloat( prp, dis.e );
+  return prp;
+}
+static void *_rkJointBrFloatForceThFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->ep_f = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkJointBrFloatTorqueThFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->ep_t = ZTKDouble(ztk);
+  return prp;
+}
+
+static void _rkJointBrFloatDisFPrint(FILE *fp, int i, void *prp){
+  zVec6DDataNLFPrint( fp, &_rkc(prp)->dis );
+}
+static void _rkJointBrFloatForceThFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->ep_f );
+}
+static void _rkJointBrFloatTorqueThFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->ep_t );
+}
+
+static ZTKPrp __ztk_prp_rkjoint_brfloat[] = {
+  { "dis", 1, _rkJointBrFloatDisFromZTK, _rkJointBrFloatDisFPrint },
+  { "forcethreshold", 1, _rkJointBrFloatForceThFromZTK, _rkJointBrFloatForceThFPrint },
+  { "torquethreshold", 1, _rkJointBrFloatTorqueThFromZTK, _rkJointBrFloatTorqueThFPrint },
+};
+
+static void *_rkJointFromZTKBrFloat(void *prp, rkMotorArray *motorarray, ZTK *ztk)
+{
+  return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_brfloat );
+}
+
+static void _rkJointFPrintBrFloat(FILE *fp, void *prp, char *name)
+{
+  ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_brfloat );
 }
 
 rkJointCom rk_joint_brfloat = {
@@ -328,7 +360,13 @@ rkJointCom rk_joint_brfloat = {
   _rkJointUpdateWrenchBrFloatFixed,
 
   _rkJointQueryFScanBrFloat,
+  _rkJointFromZTKBrFloat,
   _rkJointFPrintBrFloat,
 };
+
+bool rkJointRegZTKBrFloat(ZTK *ztk, char *tag)
+{
+  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_brfloat ) ? true : false;
+}
 
 #undef _rkc

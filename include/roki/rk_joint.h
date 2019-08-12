@@ -83,6 +83,7 @@ typedef struct{
 
   /* I/O */
   bool (*_query)(FILE*,char*,void*,rkMotor*,int);  /* query */
+  void *(*_fromZTK)(void*,rkMotorArray*,ZTK*);
   void (*_fprint)(FILE*,void*,char*);  /* print */
 } rkJointCom;
 
@@ -272,6 +273,20 @@ __EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
 #define rkJointAngAxis(j,i,f,a) (j)->com->_angaxis[i]( (j)->prp, f, a )
 #define rkJointLinAxis(j,i,f,a) (j)->com->_linaxis[i]( (j)->prp, f, a )
 
+__EXPORT zVec3D *_rkJointAxisNull(void *prp, zFrame3D *f, zVec3D *a);
+__EXPORT zVec3D *_rkJointAxisZ(void *prp, zFrame3D *f, zVec3D *a);
+
+__EXPORT double rkJointTorsionDisRevol(zFrame3D *dev, zVec6D *t);
+__EXPORT double rkJointTorsionDisPrism(zFrame3D *dev, zVec6D *t);
+
+/* NOTE: The following macros and functions are for sharing
+ * some operation codes. Do not use them in users programs. */
+#define _rkJointRestTrq(s,v,c,dis,vel) ( -s*dis -v*vel -c*zSgn(vel) )
+
+/* for ABI */
+__EXPORT zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m);
+__EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc);
+
 /*! \brief scan and print out joint displacement and properties.
  *
  * rkJointQueryFScan() scans joint properties of \a j identified
@@ -315,20 +330,10 @@ __EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
 #define rkJointFPrint(f,j,n) ( (n) ? (j)->com->_fprint( f, (j)->prp, n ) : (j)->com->_fprint( f, (j)->prp, "dis" ) )
 #define rkJointPrint(j,n)    rkJointFPrint( stdout, j, n )
 
-/* NOTE: The following macros and functions are for sharing
- * some operation codes. Do not use them in users programs. */
-#define _rkJointRestTrq(s,v,c,dis,vel) ( -s*dis -v*vel -c*zSgn(vel) )
+#define rkJointPrpFromZTK(prp, motorarray, ztk, ztkprp) \
+  ( ZTKEncodeKey( prp, motorarray, ztk, ztkprp ) ? prp : NULL )
 
-__EXPORT zVec3D *_rkJointAxisNull(void *prp, zFrame3D *f, zVec3D *a);
-__EXPORT zVec3D *_rkJointAxisZ(void *prp, zFrame3D *f, zVec3D *a);
-
-__EXPORT double rkJointTorsionDisRevol(zFrame3D *dev, zVec6D *t);
-__EXPORT double rkJointTorsionDisPrism(zFrame3D *dev, zVec6D *t);
-
-/* for ABI */
-__EXPORT zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m);
-/* __EXPORT void _rkJointUpdateWrench(void *prp, zMat6D *i, zVec6D *b, zVec6D *acc, zVec6D *w); */
-__EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc);
+__EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk);
 
 __END_DECLS
 

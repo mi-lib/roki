@@ -36,6 +36,8 @@ typedef struct{
 
 extern rkJointCom rk_joint_cylin;
 
+__EXPORT bool rkJointRegZTKCylin(ZTK *ztk, char *tag);
+
 __END_DECLS
 
 #endif /* __RK_JOINT_CYLIN_H__ */

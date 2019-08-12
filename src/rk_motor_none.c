@@ -22,6 +22,8 @@ static bool _rkMotorQueryFScanNone(FILE *fp, char *key, void *prp){
   return false;
 }
 
+static void *_rkMotorFromZTKNone(void *prp, ZTK *ztk){ return prp; }
+
 static void _rkMotorFPrintNone(FILE *fp, void *prp){}
 
 rkMotorCom rk_motor_none = {
@@ -36,5 +38,6 @@ rkMotorCom rk_motor_none = {
   _rkMotorRegistanceNone,
   _rkMotorDrivingTrqNone,
   _rkMotorQueryFScanNone,
+  _rkMotorFromZTKNone,
   _rkMotorFPrintNone,
 };

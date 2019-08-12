@@ -25,6 +25,8 @@ typedef struct{
 
 extern rkJointCom rk_joint_float;
 
+__EXPORT bool rkJointRegZTKFloat(ZTK *ztk, char *tag);
+
 __END_DECLS
 
 #endif /* __RK_JOINT_FLOAT_H__ */

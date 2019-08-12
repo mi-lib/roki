@@ -27,6 +27,8 @@ typedef struct{
 
 extern rkJointCom rk_joint_spher;
 
+__EXPORT bool rkJointRegZTKSpher(ZTK *ztk, char *tag);
+
 __END_DECLS
 
 #endif /* __RK_JOINT_SPHER_H__ */

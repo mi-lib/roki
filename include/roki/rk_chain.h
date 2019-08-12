@@ -11,8 +11,6 @@
 
 __BEGIN_DECLS
 
-zArrayClass( rkLinkArray, rkLink );
-
 /* ********************************************************** */
 /* CLASS: rkChain
  * kinematic chain class
@@ -441,8 +439,16 @@ __EXPORT rkChain *rkChainInitFScan(FILE *fp, rkChain *c);
  */
 __EXPORT bool rkChainMShape3DScanFile(rkChain *chain, char filename[]);
 
-__EXPORT bool rkChainPrintFile(rkChain *c, char filename[]);
-__EXPORT void rkChainFPrint(FILE *fp, rkChain *c);
+/* ****** ZTK ****** */
+
+#define ZTK_TAG_RKCHAIN "chain"
+
+__EXPORT bool rkChainRegZTK(ZTK *ztk);
+__EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
+__EXPORT rkChain *rkChainScanZTK(rkChain *chain, char filename[]);
+__EXPORT void rkChainFPrint(FILE *fp, rkChain *chain);
+__EXPORT bool rkChainPrintZTK(rkChain *c, char filename[]);
+
 __EXPORT bool rkChainInitPrintFile(rkChain *c, char filename[]);
 __EXPORT void rkChainInitFPrint(FILE *fp, rkChain *c);
 __EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *c);

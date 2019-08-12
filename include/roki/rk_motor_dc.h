@@ -39,6 +39,8 @@ typedef struct {
 
 extern rkMotorCom rk_motor_dc;
 
+__EXPORT bool rkMotorRegZTKDC(ZTK *ztk, char *tag);
+
 __END_DECLS
 
 #endif /* __RK_MOTOR_DC_H__ */

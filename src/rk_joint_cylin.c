@@ -320,17 +320,107 @@ static bool _rkJointQueryFScanCylin(FILE *fp, char *buf, void *prp, rkMotor *mar
   return true;
 }
 
-static void _rkJointFPrintCylin(FILE *fp, void *prp, char *name){
-  rkJointPrpCylin *v;
+static void *_rkJointCylinDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  double dis[2];
+  dis[0] = ZTKDouble(ztk);
+  dis[1] = zDeg2Rad(ZTKDouble(ztk));
+  _rkJointSetDisCylin( prp, dis );
+  return prp;
+}
+static void *_rkJointCylinMinFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->min[0] = ZTKDouble(ztk);
+  _rkc(prp)->min[1] = zDeg2Rad(ZTKDouble(ztk));
+  return prp;
+}
+static void *_rkJointCylinMaxFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->max[0] = ZTKDouble(ztk);
+  _rkc(prp)->max[1] = zDeg2Rad(ZTKDouble(ztk));
+  return prp;
+}
+static void *_rkJointCylinStiffnessFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->stiffness[0] = ZTKDouble(ztk);
+  _rkc(prp)->stiffness[1] = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkJointCylinViscosityFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->viscosity[0] = ZTKDouble(ztk);
+  _rkc(prp)->viscosity[1] = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkJointCylinCoulombFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->coulomb[0] = ZTKDouble(ztk);
+  _rkc(prp)->coulomb[1] = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkJointCylinStaticFrictionFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->sf[0] = ZTKDouble(ztk);
+  _rkc(prp)->sf[1] = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkJointCylinMotorFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  rkMotor *mp;
+  if( !( mp = rkMotorArrayFind( arg, ZTKVal(ztk) ) ) ) return NULL;
+  return rkMotorClone( mp, &_rkc(prp)->m ) ? prp : NULL;
+}
 
-  v = prp;
-  if( !zIsTiny( v->dis[0] ) || !zIsTiny( v->dis[1] ) )
-    fprintf( fp, "%s: %.10f %.10f\n", name, v->dis[0], zRad2Deg(v->dis[1]) );
-  fprintf( fp, "min: %.10f %.10f\n", v->min[0], zRad2Deg(v->min[1]) );
-  fprintf( fp, "max: %.10f %.10f\n", v->max[0], zRad2Deg(v->max[1]) );
-  fprintf( fp, "stiffness: %.10f %.10f\n", v->stiffness[0], zDeg2Rad(v->stiffness[1]) );
-  fprintf( fp, "viscosity: %.10f %.10f\n", v->viscosity[0], zDeg2Rad(v->viscosity[1]) );
-  fprintf( fp, "coulomb: %.10f %.10f\n", v->coulomb[0], zDeg2Rad(v->coulomb[1]) );
+static void _rkJointCylinDisFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g %.10g\n",
+    _rkc(prp)->dis[0],
+    zRad2Deg(_rkc(prp)->dis[1]) );
+}
+static void _rkJointCylinMinFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g %.10g\n",
+    _rkc(prp)->min[0],
+    zRad2Deg(_rkc(prp)->min[1]) );
+}
+static void _rkJointCylinMaxFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g %.10g\n",
+    _rkc(prp)->max[0],
+    zRad2Deg(_rkc(prp)->max[1]) );
+}
+static void _rkJointCylinStiffnessFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g %.10g\n",
+    _rkc(prp)->stiffness[0],
+    _rkc(prp)->stiffness[1] );
+}
+static void _rkJointCylinViscosityFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g %.10g\n",
+    _rkc(prp)->viscosity[0],
+    _rkc(prp)->viscosity[1] );
+}
+static void _rkJointCylinCoulombFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g %.10g\n",
+    _rkc(prp)->coulomb[0],
+    _rkc(prp)->coulomb[1] );
+}
+static void _rkJointCylinStaticFrictionFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g %.10g\n",
+    _rkc(prp)->sf[0],
+    _rkc(prp)->sf[1] );
+}
+static void _rkJointCylinMotorFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
+}
+
+static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
+  { "dis", 1, _rkJointCylinDisFromZTK, _rkJointCylinDisFPrint },
+  { "min", 1, _rkJointCylinMinFromZTK, _rkJointCylinMinFPrint },
+  { "max", 1, _rkJointCylinMaxFromZTK, _rkJointCylinMaxFPrint },
+  { "stiffness", 1, _rkJointCylinStiffnessFromZTK, _rkJointCylinStiffnessFPrint },
+  { "viscosity", 1, _rkJointCylinViscosityFromZTK, _rkJointCylinViscosityFPrint },
+  { "coulomb", 1, _rkJointCylinCoulombFromZTK, _rkJointCylinCoulombFPrint },
+  { "staticfriction", 1, _rkJointCylinStaticFrictionFromZTK, _rkJointCylinStaticFrictionFPrint },
+  { "motor", 1, _rkJointCylinMotorFromZTK, _rkJointCylinMotorFPrint },
+};
+
+static void *_rkJointFromZTKCylin(void *prp, rkMotorArray *motorarray, ZTK *ztk)
+{
+  return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_cylin );
+}
+
+static void _rkJointFPrintCylin(FILE *fp, void *prp, char *name)
+{
+  ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_cylin );
 }
 
 rkJointCom rk_joint_cylin = {
@@ -381,7 +471,13 @@ rkJointCom rk_joint_cylin = {
   _rkJointUpdateWrench,
 
   _rkJointQueryFScanCylin,
+  _rkJointFromZTKCylin,
   _rkJointFPrintCylin,
 };
+
+bool rkJointRegZTKCylin(ZTK *ztk, char *tag)
+{
+  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_cylin ) ? true : false;
+}
 
 #undef _rkc

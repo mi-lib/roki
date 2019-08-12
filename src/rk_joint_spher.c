@@ -248,11 +248,38 @@ static bool _rkJointQueryFScanSpher(FILE *fp, char *buf, void *prp, rkMotor *mar
   return true;
 }
 
+static void *_rkJointSpherDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  zVec3D aa;
+  zVec3DFromZTK( &aa, ztk );
+  _rkJointSetDisSpher( _rkc(prp), aa.e );
+  return prp;
+}
+static void *_rkJointSpherMotorFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  rkMotor *mp;
+  if( !( mp = rkMotorArrayFind( arg, ZTKVal(ztk) ) ) ) return NULL;
+  return rkMotorClone( mp, &_rkc(prp)->m ) ? prp : NULL;
+}
+
+static void _rkJointSpherDisFPrint(FILE *fp, int i, void *prp){
+  zVec3DFPrint( fp, &_rkc(prp)->aa );
+}
+static void _rkJointSpherMotorFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
+}
+
+static ZTKPrp __ztk_prp_rkjoint_spher[] = {
+  { "dis", 1, _rkJointSpherDisFromZTK, _rkJointSpherDisFPrint },
+  { "motor", 1, _rkJointSpherMotorFromZTK, _rkJointSpherMotorFPrint },
+};
+
+static void *_rkJointFromZTKSpher(void *prp, rkMotorArray *motorarray, ZTK *ztk)
+{
+  return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_spher );
+}
+
 static void _rkJointFPrintSpher(FILE *fp, void *prp, char *name)
 {
-  if( !zVec3DIsTiny( &_rkc(prp)->aa ) )
-    fprintf( fp, "%s: %.10f %.10f %.10f\n", name,
-      _rkc(prp)->aa.e[zX], _rkc(prp)->aa.e[zY], _rkc(prp)->aa.e[zZ] );
+  ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_spher );
 }
 
 rkJointCom rk_joint_spher = {
@@ -303,7 +330,13 @@ rkJointCom rk_joint_spher = {
   _rkJointUpdateWrench,
 
   _rkJointQueryFScanSpher,
+  _rkJointFromZTKSpher,
   _rkJointFPrintSpher,
 };
+
+bool rkJointRegZTKSpher(ZTK *ztk, char *tag)
+{
+  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_spher ) ? true : false;
+}
 
 #undef _rkc

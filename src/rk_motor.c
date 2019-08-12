@@ -8,9 +8,9 @@
 #include <roki/rk_motor.h>
 
 /* ********************************************************** */
-/* CLASS: rkMotor
- * geared DC motor model class
+/* a class of motor model
  * ********************************************************** */
+
 rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com)
 {
   if( ( m->prp = ( m->com = com )->_alloc() ) )
@@ -50,15 +50,51 @@ rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln)
   return cln;
 }
 
-void rkMotorFPrint(FILE *fp, rkMotor *m)
+static void *_rkMotorNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zNameSet( (rkMotor*)obj, ZTKVal(ztk) );
+  return zNamePtr((rkMotor*)obj) ? obj : NULL;
+}
+static void *_rkMotorTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return rkMotorQueryAssign( obj, ZTKVal(ztk) );
+}
+
+static void _rkMotorNameFPrint(FILE *fp, int i, void *obj){
+  fprintf( fp, "%s\n", zName( (rkMotor*)obj ) );
+}
+static void _rkMotorTypeFPrint(FILE *fp, int i, void *obj){
+  fprintf( fp, "%s\n", rkMotorTypeStr( (rkMotor*)obj ) );
+}
+
+static ZTKPrp __ztk_prp_rkmotor[] = {
+  { "name", 1, _rkMotorNameFromZTK, _rkMotorNameFPrint },
+  { "type", 1, _rkMotorTypeFromZTK, _rkMotorTypeFPrint },
+};
+
+bool rkMotorRegZTK(ZTK *ztk)
 {
-  fprintf( fp, "name: %s\n", zName(m) );
-  fprintf( fp, "type: %s\n", rkMotorTypeStr(m) );
-  (m)->com->_fprint( fp, (m)->prp );
+  return ZTKDefRegPrp( ztk, ZTK_TAG_RKMOTOR, __ztk_prp_rkmotor ) &&
+         rkMotorRegZTKTrq( ztk, ZTK_TAG_RKMOTOR ) &&
+         rkMotorRegZTKDC( ztk, ZTK_TAG_RKMOTOR );
+}
+
+rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk)
+{
+  rkMotorInit( motor );
+  if( !ZTKEncodeKey( motor, NULL, ztk, __ztk_prp_rkmotor ) ) return NULL;
+  motor->com->_fromZTK( motor->prp, ztk );
+  return motor;
+}
+
+void rkMotorFPrint(FILE *fp, rkMotor *motor)
+{
+  if( !motor ) return;
+  ZTKPrpKeyFPrint( fp, motor, __ztk_prp_rkmotor );
+  motor->com->_fprint( fp, motor->prp );
+  fprintf( fp, "\n" );
 }
 
 /* ********************************************************** */
-/* CLASS: rkMotorArray
+/* array of motors
  * ********************************************************** */
 
 rkMotorArray *rkMotorArrayClone(rkMotorArray *org)
@@ -77,6 +113,17 @@ rkMotorArray *rkMotorArrayClone(rkMotorArray *org)
       return NULL;
   }
   return cln;
+}
+
+rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name)
+{
+  rkMotor *mp;
+  zArrayFindName( marray, name, mp );
+  if( !mp ){
+    ZRUNERROR( RK_ERR_MOTOR_UNKNOWN, name );
+    return NULL;
+  }
+  return mp;
 }
 
 rkMotorArray *_rkMotorArrayFAlloc(FILE *fp, rkMotorArray *m)

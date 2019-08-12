@@ -316,8 +316,6 @@ __EXPORT double rkBodyKE(rkBody *b);
  */
 __EXPORT zVec3D *rkBodyContigVert(rkBody *body, zVec3D *p, double *d);
 
-#define RK_BODY_TAG "body"
-
 __END_DECLS
 
 #endif /* __RK_BODY_H__ */

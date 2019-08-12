@@ -14,8 +14,8 @@
 __BEGIN_DECLS
 
 /* ********************************************************** */
-/* CLASS: rkMotor
- * geared DC motor model class
+/*! \struct rkMotor
+ * \brief a class of motor model
  * ********************************************************** */
 
 typedef struct{
@@ -32,6 +32,7 @@ typedef struct{
   void (* _dtrq)(void*,double*,double*,double*,double*); /*!< \brief driving torque */
 
   bool (* _query)(FILE*,char*,void*);
+  void *(* _fromZTK)(void*,ZTK*);
   void (* _fprint)(FILE*,void*);
 } rkMotorCom;
 
@@ -55,9 +56,7 @@ __EXPORT void rkMotorDestroy(rkMotor *m);
 
 __EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
 
-/* ********************************************************** */
-/* method
- * ********************************************************** */
+/* method */
 
 #define rkMotorSetInput(m,i)           (m)->com->_setinput( (m)->prp, (i) )
 #define rkMotorInertia(m,i)            (m)->com->_inertia( (m)->prp, (i) )
@@ -65,18 +64,25 @@ __EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
 #define rkMotorRegistance(m,d,v,r)     (m)->com->_regist( (m)->prp, (d), (v), (r) )
 #define rkMotorDrivingTrq(m,d,v,a,t)   (m)->com->_dtrq( (m)->prp, (d), (v), (a), (t) )
 
+__EXPORT bool rkMotorRegZTK(ZTK *ztk);
+__EXPORT rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk);
+
 #define rkMotorQueryFScan(f,k,m)       (m)->com->_query( f, k, (m)->prp )
 __EXPORT void rkMotorFPrint(FILE *fp, rkMotor *m);
 #define rkMotorPrint(m)                rkMotorFPrint( stdout, m )
 
 /* ********************************************************** */
-/* CLASS: rkMotorArray
+/*! \struct rkMotorArray
+ * \brief array of motors.
  * ********************************************************** */
 
 #define ZTK_TAG_RKMOTOR "motor"
 zArrayClass( rkMotorArray, rkMotor );
 
 __EXPORT rkMotorArray *rkMotorArrayClone(rkMotorArray *org);
+
+__EXPORT rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name);
+
 __EXPORT rkMotorArray *rkMotorArrayFScan(FILE *fp, rkMotorArray *m);
 __EXPORT void rkMotorArrayFPrint(FILE *fp, rkMotorArray *m);
 

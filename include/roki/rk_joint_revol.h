@@ -36,6 +36,8 @@ typedef struct{
 
 extern rkJointCom rk_joint_revol;
 
+__EXPORT bool rkJointRegZTKRevol(ZTK *ztk, char *tag);
+
 __END_DECLS
 
 #endif /* __RK_JOINT_REVOL_H__ */

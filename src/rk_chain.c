@@ -690,7 +690,7 @@ rkChain *_rkChainLinkFAlloc(FILE *fp, rkChain *c)
   register int i;
   int n;
 
-  n = zFCountTag( fp, RK_LINK_TAG );
+  n = zFCountTag( fp, ZTK_TAG_RKLINK );
   zArrayAlloc( &c->link, rkLink, n );
   if( !rkChainRoot(c) ){
     ZALLOCERROR();
@@ -755,8 +755,115 @@ bool rkChainMShape3DScanFile(rkChain *chain, char filename[])
   return true;
 }
 
+static void *_rkChainNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return zNameSet( (rkChain*)obj, ZTKVal(ztk) ) ? obj : NULL;
+}
+
+static void _rkChainNameFPrint(FILE *fp, int i, void *obj){
+  fprintf( fp, "%s\n", zName((rkChain*)obj) );
+}
+
+static ZTKPrp __ztk_prp_rkchain_chain[] = {
+  { "name", 1, _rkChainNameFromZTK, _rkChainNameFPrint },
+};
+
+static void *_rkChainChainFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return ZTKEncodeKey( obj, arg, ztk, __ztk_prp_rkchain_chain );
+}
+static void *_rkChainMotorFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return rkMotorFromZTK( zArrayElemNC(rkChainMotor((rkChain*)obj),i), ztk );
+}
+static void *_rkChainLinkFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return rkLinkFromZTK( rkChainLink((rkChain*)obj,i),
+    &((rkChain*)obj)->link,
+    rkChainShape((rkChain*)obj) ? &rkChainShape((rkChain*)obj)->shape : NULL,
+    rkChainMotor((rkChain*)obj), ztk ) ? obj : NULL;
+}
+
+static void _rkChainChainFPrint(FILE *fp, int i, void *obj){
+  ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_chain );
+}
+
+static ZTKPrp __ztk_prp_rkchain[] = {
+  { ZTK_TAG_RKCHAIN, 1, _rkChainChainFromZTK, _rkChainChainFPrint },
+  { ZTK_TAG_OPTIC, -1, NULL, NULL },
+  { ZTK_TAG_SHAPE, -1, NULL, NULL },
+  { ZTK_TAG_RKMOTOR, -1, _rkChainMotorFromZTK, NULL },
+  { ZTK_TAG_RKLINK, -1, _rkChainLinkFromZTK, NULL },
+};
+
+bool rkChainRegZTK(ZTK *ztk)
+{
+  return ZTKDefRegPrp( ztk, ZTK_TAG_RKCHAIN, __ztk_prp_rkchain_chain ) &&
+         zMShape3DRegZTK( ztk ) &&
+         rkMotorRegZTK( ztk ) &&
+         rkLinkRegZTK( ztk ) ? true : false;
+}
+
+rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
+{
+  int num_motor, num_link;
+
+  if( ( num_motor = ZTKCountTag( ztk, ZTK_TAG_RKMOTOR ) ) > 0 ){
+    if( !( rkChainMotor(chain) = zAlloc( rkMotorArray, 1 ) ) ){
+      ZALLOCERROR();
+      return NULL;
+    }
+    zArrayAlloc( rkChainMotor(chain), rkMotor, num_motor );
+    if( zArraySize(rkChainMotor(chain)) != num_motor ) return NULL;
+  }
+  num_link = ZTKCountTag( ztk, ZTK_TAG_RKLINK );
+  zArrayAlloc( &chain->link, rkLink, num_link );
+  if( rkChainNum(chain) != num_link ) return NULL;
+  if( rkChainNum(chain) == 0 ){
+    ZRUNWARN( RK_WARN_CHAIN_EMPTY );
+    return NULL;
+  }
+  ZTKEncodeTag( chain, NULL, ztk, __ztk_prp_rkchain );
+  return chain;
+}
+
+rkChain *rkChainScanZTK(rkChain *chain, char filename[])
+{
+  ZTK ztk;
+
+  ZTKInit( &ztk );
+  rkChainRegZTK( &ztk );
+  ZTKParse( &ztk, filename );
+  /* read shapes */
+  rkChainInit( chain );
+  if( ZTKCountTag( &ztk, ZTK_TAG_SHAPE ) > 0 ){
+    if( !( rkChainShape(chain) = zAlloc( zMShape3D, 1 ) ) ){
+      ZALLOCERROR();
+      return NULL;
+    }
+    if( !zMShape3DFromZTK( rkChainShape(chain), &ztk ) ) return NULL;
+  }
+  /* read motors and links */
+  chain = rkChainFromZTK( chain, &ztk );
+  ZTKDestroy( &ztk );
+  return chain;
+}
+
+/* print information of a kinematic chain out to the current position of a file. */
+void rkChainFPrint(FILE *fp, rkChain *chain)
+{
+  register int i;
+
+  ZTKPrpTagFPrint( fp, chain, __ztk_prp_rkchain );
+  fprintf( fp, "\n" );
+  if( rkChainShape(chain) )
+    zMShape3DFPrint( fp, rkChainShape(chain) );
+  if( rkChainMotor(chain) )
+    rkMotorArrayFPrint( fp, rkChainMotor(chain) ); /* this is not good. rkMotorArray class should be redesigned. */
+  for( i=0; i<rkChainNum(chain); i++ ){
+    fprintf( fp, "[%s]\n", ZTK_TAG_RKLINK );
+    rkLinkFPrint( fp, rkChainLink(chain,i) );
+  }
+}
+
 /* print information of a kinematic chain out to a file. */
-bool rkChainPrintFile(rkChain *c, char filename[])
+bool rkChainPrintZTK(rkChain *c, char filename[])
 {
   char name[BUFSIZ];
   FILE *fp;
@@ -767,30 +874,8 @@ bool rkChainPrintFile(rkChain *c, char filename[])
   return true;
 }
 
-/* print information of a kinematic chain out to a file. */
-void rkChainFPrint(FILE *fp, rkChain *c)
-{
-  register int i;
-
-  fprintf( fp, "[chain]\n" );
-  if( zNamePtr(c) )
-    fprintf( fp, "name : %s\n\n", zName(c) );
-  if( rkChainShape(c) )
-    zMShape3DFPrint( fp, rkChainShape(c) );
-  if( rkChainMotor(c) )
-    rkMotorArrayFPrint( fp, rkChainMotor(c) );
-
-  for( i=0; i<rkChainNum(c); i++ ){
-    fprintf( fp, "[link]\n" );
-    rkLinkFPrint( fp, rkChainLink(c,i) );
-  }
-  if( rkChainRoot(c) ){
-    fprintf( fp, "[init]\n" );
-    rkChainInitFPrint( fp, c );
-  }
-}
-
 /* print information of initial configuration of a kinematic chain out to a file. */
+/* to be abolished. */
 bool rkChainInitPrintFile(rkChain *c, char filename[])
 {
   char name[BUFSIZ];

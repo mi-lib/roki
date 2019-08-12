@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
   zkcconv_frame( rkChainRoot( &chain ) );
 
   if( argc > 3 )
-    rkChainPrintFile( &chain, argv[2] );
+    rkChainPrintZTK( &chain, argv[2] );
   else
     rkChainPrint( &chain );
   rkChainDestroy( &chain );

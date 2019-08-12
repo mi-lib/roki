@@ -331,27 +331,162 @@ rkLink *rkLinkFScan(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarra
   return NULL;
 }
 
-/* print link properties out to a file. */
-void rkLinkFPrint(FILE *fp, rkLink *l)
+typedef struct{
+  rkLinkArray *larray;
+  zShape3DArray *sarray;
+} _rkLinkRefPrp;
+
+static void *_rkLinkNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  rkLink *link;
+  zArrayFindName( ((_rkLinkRefPrp*)arg)->larray, ZTKVal(ztk), link );
+  if( link ){
+    ZRUNWARN( RK_WARN_LINK_DUP, ZTKVal(ztk) );
+    return NULL;
+  }
+  zNameSet( (rkLink*)obj, ZTKVal(ztk) );
+  return zNamePtr((rkLink*)obj) ? obj : NULL;
+}
+static void *_rkLinkJointTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return rkJointQueryAssign( rkLinkJoint((rkLink*)obj), ZTKVal(ztk) );
+}
+static void *_rkLinkMassFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  rkLinkSetMass( (rkLink*)obj, ZTKDouble(ztk) );
+  return obj;
+}
+static void *_rkLinkStuffFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return rkLinkSetStuff( (rkLink*)obj, ZTKVal(ztk) ) ? obj : NULL;
+}
+static void *_rkLinkCOMFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zVec3DFromZTK( rkLinkCOM((rkLink*)obj), ztk );
+  return obj;
+}
+static void *_rkLinkInertiaFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zMat3DFromZTK( rkLinkInertia((rkLink*)obj), ztk );
+  return obj;
+}
+static void *_rkLinkPosFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zVec3DFromZTK( rkLinkOrgPos((rkLink*)obj), ztk );
+  return obj;
+}
+static void *_rkLinkAttFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zMat3DFromZTK( rkLinkOrgAtt((rkLink*)obj), ztk );
+  return obj;
+}
+static void *_rkLinkRotFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zVec3D axis;
+  double angle;
+  zVec3DFromZTK( &axis, ztk );
+  angle = zDeg2Rad( ZTKDouble( ztk ) );
+  if( zVec3DNormalizeDRC( &axis ) > 0 ){
+    zVec3DMulDRC( &axis, angle );
+    zMat3DRot( rkLinkOrgAtt((rkLink*)obj), &axis, rkLinkOrgAtt((rkLink*)obj) );
+  }
+  return obj;
+}
+static void *_rkLinkFrameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zFrame3DFromZTK( rkLinkOrgFrame((rkLink*)obj), ztk );
+  return obj;
+}
+static void *_rkLinkDHFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zFrame3DDHFromZTK( rkLinkOrgFrame((rkLink*)obj), ztk );
+  return obj;
+}
+static void *_rkLinkParentFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  rkLink *parent;
+  zArrayFindName( ((_rkLinkRefPrp*)arg)->larray, ZTKVal(ztk), parent );
+  if( !parent ){
+    ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
+    return NULL;
+  }
+  rkLinkAddChild( parent, (rkLink*)obj );
+  return obj;
+}
+static void *_rkLinkShapeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zShape3D *sp;
+  zShape3DArrayFind( ((_rkLinkRefPrp*)arg)->sarray, ZTKVal(ztk), sp );
+  if( !sp ){
+    ZRUNERROR( RK_ERR_SHAPE_UNKNOWN, ZTKVal(ztk) );
+    return NULL;
+  }
+  return rkLinkShapePush( (rkLink*)obj, sp ) ? obj : NULL;
+}
+
+static void _rkLinkNameFPrint(FILE *fp, int i, void *obj){
+  fprintf( fp, "%s\n", zName((rkLink*)obj) );
+}
+static void _rkLinkJointTypeFPrint(FILE *fp, int i, void *obj){
+  fprintf( fp, "%s\n", rkLinkJointTypeStr((rkLink*)obj) );
+}
+static void _rkLinkMassFPrint(FILE *fp, int i, void *obj){
+  fprintf( fp, "%.10g\n", rkLinkMass((rkLink*)obj) );
+}
+static void _rkLinkStuffFPrint(FILE *fp, int i, void *obj){
+  fprintf( fp, "%s\n", rkLinkStuff((rkLink*)obj) );
+}
+static void _rkLinkCOMFPrint(FILE *fp, int i, void *obj){
+  zVec3DFPrint( fp, rkLinkCOM((rkLink*)obj) );
+}
+static void _rkLinkInertiaFPrint(FILE *fp, int i, void *obj){
+  zMat3DFPrint( fp, rkLinkInertia((rkLink*)obj) );
+}
+static void _rkLinkPosFPrint(FILE *fp, int i, void *obj){
+  zVec3DFPrint( fp, rkLinkOrgPos((rkLink*)obj) );
+}
+static void _rkLinkAttFPrint(FILE *fp, int i, void *obj){
+  zMat3DFPrint( fp, rkLinkOrgAtt((rkLink*)obj) );
+}
+
+static ZTKPrp __ztk_prp_rklink[] = {
+  { "name", 1, _rkLinkNameFromZTK, _rkLinkNameFPrint },
+  { "jointtype", 1, _rkLinkJointTypeFromZTK, _rkLinkJointTypeFPrint },
+  { "mass", 1, _rkLinkMassFromZTK, _rkLinkMassFPrint },
+  { "stuff", 1, _rkLinkStuffFromZTK, _rkLinkStuffFPrint },
+  { "COM", 1, _rkLinkCOMFromZTK, _rkLinkCOMFPrint },
+  { "inertia", 1, _rkLinkInertiaFromZTK, _rkLinkInertiaFPrint },
+  { "pos", 1, _rkLinkPosFromZTK, _rkLinkPosFPrint },
+  { "att", 1, _rkLinkAttFromZTK, _rkLinkAttFPrint },
+  { "rot", -1, _rkLinkRotFromZTK, NULL },
+  { "frame", 1, _rkLinkFrameFromZTK, NULL },
+  { "DH", 1, _rkLinkDHFromZTK, NULL },
+  { "parent", 1, _rkLinkParentFromZTK, NULL },
+  { "shape", -1, _rkLinkShapeFromZTK, NULL },
+};
+
+bool rkLinkRegZTK(ZTK *ztk)
+{
+  return rkJointRegZTKRevol( ztk, ZTK_TAG_RKLINK ) &&
+         rkJointRegZTKPrism( ztk, ZTK_TAG_RKLINK ) &&
+         rkJointRegZTKCylin( ztk, ZTK_TAG_RKLINK ) &&
+         rkJointRegZTKHooke( ztk, ZTK_TAG_RKLINK ) &&
+         rkJointRegZTKSpher( ztk, ZTK_TAG_RKLINK ) &&
+         rkJointRegZTKFloat( ztk, ZTK_TAG_RKLINK ) &&
+         rkJointRegZTKBrFloat( ztk, ZTK_TAG_RKLINK ) &&
+         ZTKDefRegPrp( ztk, ZTK_TAG_RKLINK, __ztk_prp_rklink ) ? true : false;
+}
+
+rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk)
+{
+  _rkLinkRefPrp prp;
+
+  rkLinkInit( link );
+  prp.larray = larray;
+  prp.sarray = sarray;
+  if( !ZTKEncodeKey( link, &prp, ztk, __ztk_prp_rklink ) ) return NULL;
+  rkJointFromZTK( rkLinkJoint(link), motorarray, ztk );
+  return link;
+}
+
+void rkLinkFPrint(FILE *fp, rkLink *link)
 {
   zShapeListCell *cp;
 
-  if( !l ){
-    fprintf( fp, "(null link)\n" );
-    return;
-  }
-  fprintf( fp, "name: %s\n", zName(l) );
-  fprintf( fp, "jointtype: %s\n", rkJointTypeStr( rkLinkJoint(l) ) );
-  rkJointFPrint( fp, rkLinkJoint(l), NULL );
-  rkMPFPrint( fp, rkLinkMP(l) );
-  if( rkLinkStuff(l) ) fprintf( fp, "stuff: %s\n", rkLinkStuff(l) );
-  fprintf( fp, "frame: " );
-  zFrame3DFPrint( fp, rkLinkOrgFrame(l) );
-  if( !rkLinkShapeIsEmpty(l) )
-    zListForEach( rkLinkShapeList(l), cp )
-      fprintf( fp, "shape: %s\n", zName( zShapeListCellShape(cp) ) );
-  if( rkLinkParent(l) )
-    fprintf( fp, "parent: %s\n", zName( rkLinkParent(l) ) );
+  ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink );
+  rkJointFPrint( fp, rkLinkJoint(link), zName(link) );
+  if( !rkLinkShapeIsEmpty(link) )
+    zListForEach( rkLinkShapeList(link), cp )
+      fprintf( fp, "%s: %s\n", ZTK_TAG_SHAPE, zName( zShapeListCellShape(cp) ) );
+  if( rkLinkParent(link) )
+    fprintf( fp, "parent: %s\n", zName(rkLinkParent(link)) );
   fprintf( fp, "\n" );
 }
 

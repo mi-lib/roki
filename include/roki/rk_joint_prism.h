@@ -34,6 +34,8 @@ typedef struct{
 
 extern rkJointCom rk_joint_prism;
 
+__EXPORT bool rkJointRegZTKPrism(ZTK *ztk, char *tag);
+
 __END_DECLS
 
 #endif /* __RK_JOINT_PRISM_H__ */

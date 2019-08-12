@@ -90,6 +90,91 @@ static bool _rkMotorQueryFScanDC(FILE *fp, char *key, void *prp)
   return true;
 }
 
+/* ZTK */
+
+static void *_rkMotorDCMotorConstantFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->k = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorDCAdmittanceFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->admit = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorDCMaxVoltageFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->maxvol = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorDCMinVoltageFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->minvol = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorDCGearRatioFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->decratio = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorDCRotorInertiaFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->inertia = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorDCGearInertiaFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->inertia_gear = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorDCCompKFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->_comp_k = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorDCCompLFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->_comp_l = ZTKDouble(ztk);
+  return prp;
+}
+
+static void _rkMotorDCMotorConstantFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->k );
+}
+static void _rkMotorDCAdmittanceFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->admit );
+}
+static void _rkMotorDCMaxVoltageFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->maxvol );
+}
+static void _rkMotorDCMinVoltageFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->minvol );
+}
+static void _rkMotorDCGearRatioFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->decratio );
+}
+static void _rkMotorDCRotorInertiaFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->inertia );
+}
+static void _rkMotorDCGearInertiaFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->inertia_gear );
+}
+static void _rkMotorDCCompKFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->_comp_k );
+}
+static void _rkMotorDCCompLFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->_comp_l );
+}
+
+static ZTKPrp __ztk_prp_rkmotor_dc[] = {
+  { "motorconstant", 1, _rkMotorDCMotorConstantFromZTK, _rkMotorDCMotorConstantFPrint },
+  { "admittance", 1, _rkMotorDCAdmittanceFromZTK, _rkMotorDCAdmittanceFPrint },
+  { "maxvoltage", 1, _rkMotorDCMaxVoltageFromZTK, _rkMotorDCMaxVoltageFPrint },
+  { "minvoltage", 1, _rkMotorDCMinVoltageFromZTK, _rkMotorDCMinVoltageFPrint },
+  { "gearratio", 1, _rkMotorDCGearRatioFromZTK, _rkMotorDCGearRatioFPrint },
+  { "rotorinertia", 1, _rkMotorDCRotorInertiaFromZTK, _rkMotorDCRotorInertiaFPrint },
+  { "gearinertia", 1, _rkMotorDCGearInertiaFromZTK, _rkMotorDCGearInertiaFPrint },
+  { "compk", 1, _rkMotorDCCompKFromZTK, _rkMotorDCCompKFPrint },
+  { "compl", 1, _rkMotorDCCompLFromZTK, _rkMotorDCCompLFPrint },
+};
+
+static void *_rkMotorFromZTKDC(void *prp, ZTK *ztk)
+{
+  return ZTKEncodeKey( prp, NULL, ztk, __ztk_prp_rkmotor_dc );
+}
+
+#if 0
 static void _rkMotorFPrintDC(FILE *fp, void *prp)
 {
   fprintf( fp, "motorconstant: %.10g\n", _rkc(prp)->k            );
@@ -103,6 +188,12 @@ static void _rkMotorFPrintDC(FILE *fp, void *prp)
   fprintf( fp, "compl: %.10g\n"        , _rkc(prp)->_comp_l      );
   fprintf( fp, "\n" );
 }
+#else
+static void _rkMotorFPrintDC(FILE *fp, void *prp)
+{
+  ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkmotor_dc );
+}
+#endif
 
 rkMotorCom rk_motor_dc = {
   "dc",
@@ -116,7 +207,13 @@ rkMotorCom rk_motor_dc = {
   _rkMotorRegistanceDC,
   _rkMotorDrivingTrqDC,
   _rkMotorQueryFScanDC,
+  _rkMotorFromZTKDC,
   _rkMotorFPrintDC,
 };
+
+bool rkMotorRegZTKDC(ZTK *ztk, char *tag)
+{
+  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkmotor_dc );
+}
 
 #undef _rkc

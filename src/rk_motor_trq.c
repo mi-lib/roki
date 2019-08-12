@@ -53,10 +53,45 @@ static bool _rkMotorQueryFScanTrq(FILE *fp, char *key, void *prp)
   return true;
 }
 
+/* ZTK */
+
+static void *_rkMotorTrqMaxFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->max = ZTKDouble(ztk);
+  return prp;
+}
+static void *_rkMotorTrqMinFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+  _rkc(prp)->min = ZTKDouble(ztk);
+  return prp;
+}
+
+static void _rkMotorTrqMaxFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->max );
+}
+static void _rkMotorTrqMinFPrint(FILE *fp, int i, void *prp){
+  fprintf( fp, "%.10g\n", _rkc(prp)->min );
+}
+
+static ZTKPrp __ztk_prp_rkmotor_trq[] = {
+  { "max", 1, _rkMotorTrqMaxFromZTK, _rkMotorTrqMaxFPrint },
+  { "min", 1, _rkMotorTrqMinFromZTK, _rkMotorTrqMinFPrint },
+};
+
+static void *_rkMotorFromZTKTrq(void *prp, ZTK *ztk)
+{
+  return ZTKEncodeKey( prp, NULL, ztk, __ztk_prp_rkmotor_trq );
+}
+
+#if 0
 static void _rkMotorFPrintTrq(FILE *fp, void *prp)
 {
   fprintf( fp, "\n" );
 }
+#else
+static void _rkMotorFPrintTrq(FILE *fp, void *prp)
+{
+  ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkmotor_trq );
+}
+#endif
 
 rkMotorCom rk_motor_trq = {
   "trq",
@@ -70,7 +105,13 @@ rkMotorCom rk_motor_trq = {
   _rkMotorRegistanceTrq,
   _rkMotorDrivingTrqTrq,
   _rkMotorQueryFScanTrq,
+  _rkMotorFromZTKTrq,
   _rkMotorFPrintTrq,
 };
+
+bool rkMotorRegZTKTrq(ZTK *ztk, char *tag)
+{
+  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkmotor_trq );
+}
 
 #undef _rkc

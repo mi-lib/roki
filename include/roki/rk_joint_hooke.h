@@ -36,6 +36,8 @@ typedef struct{
 
 extern rkJointCom rk_joint_hooke;
 
+__EXPORT bool rkJointRegZTKHooke(ZTK *ztk, char *tag);
+
 __END_DECLS
 
 #endif /* __RK_JOINT_HOOKE_H__ */

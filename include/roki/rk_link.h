@@ -359,7 +359,16 @@ __EXPORT void rkLinkConfToJointDis(rkLink *l);
 #define rkLinkAM(l,p,m) rkBodyAM( rkLinkBody(l), (p), (m) )
 #define rkLinkKE(l)     rkBodyKE( rkLinkBody(l) )
 
-#define RK_LINK_TAG "link"
+/* ********************************************************** */
+/*! \struct rkLinkArray
+ * \brief array of links
+ * ********************************************************** */
+
+zArrayClass( rkLinkArray, rkLink );
+
+/* ***** ZTK ***** */
+
+#define ZTK_TAG_RKLINK "link"
 
 /*! \brief scan and print link properties.
  *
@@ -436,11 +445,15 @@ __EXPORT void rkLinkConfToJointDis(rkLink *l);
  * rkLinkExtForcePrint() return no values.
  */
 __EXPORT rkLink *rkLinkFScan(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarray, int ns, rkMotor *marray, int nm);
+
+__EXPORT bool rkLinkRegZTK(ZTK *ztk);
+__EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk);
 __EXPORT void rkLinkFPrint(FILE *fp, rkLink *l);
+#define rkLinkPrint(l) rkLinkFPrint( stdout, (l) )
+
 __EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *l);
 __EXPORT void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n);
 __EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l);
-#define rkLinkPrint(l)             rkLinkFPrint( stdout, (l) )
 #define rkLinkPosturePrint(l)      rkLinkPostureFPrint( stdout, (l) )
 #define rkLinkConnectionPrint(l,n) rkLinkConnectionFPrint( stdout, (l), (n) )
 #define rkLinkExtWrenchPrint(l)     rkLinkExtWrenchFPrint( stdout, (l) )
