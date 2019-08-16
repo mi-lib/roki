@@ -230,19 +230,19 @@ static bool _rkJointQueryFScanFloat(FILE *fp, char *buf, void *prp, rkMotor *mar
   return false;
 }
 
-static void *_rkJointFloatDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointDisFromZTKFloat(void *prp, int i, void *arg, ZTK *ztk){
   zVec6D dis;
   zVec6DFromZTK( &dis, ztk );
   _rkJointSetDisFloat( prp, dis.e );
   return prp;
 }
 
-static void _rkJointFloatDisFPrint(FILE *fp, int i, void *prp){
+static void _rkJointDisFPrintFloat(FILE *fp, int i, void *prp){
   zVec6DDataNLFPrint( fp, &_rkc(prp)->dis );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_float[] = {
-  { "dis", 1, _rkJointFloatDisFromZTK, _rkJointFloatDisFPrint },
+  { "dis", 1, _rkJointDisFromZTKFloat, _rkJointDisFPrintFloat },
 };
 
 static void *_rkJointFromZTKFloat(void *prp, rkMotorArray *motorarray, ZTK *ztk)
@@ -303,7 +303,9 @@ rkJointCom rk_joint_float = {
   _rkJointUpdateWrench,
 
   _rkJointQueryFScanFloat,
+  _rkJointDisFromZTKFloat,
   _rkJointFromZTKFloat,
+  _rkJointDisFPrintFloat,
   _rkJointFPrintFloat,
 };
 

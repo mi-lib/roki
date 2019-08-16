@@ -442,6 +442,7 @@ __EXPORT bool rkChainMShape3DScanFile(rkChain *chain, char filename[]);
 /* ****** ZTK ****** */
 
 #define ZTK_TAG_RKCHAIN "chain"
+#define ZTK_TAG_INIT "init"
 
 __EXPORT bool rkChainRegZTK(ZTK *ztk);
 __EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
@@ -449,8 +450,11 @@ __EXPORT rkChain *rkChainScanZTK(rkChain *chain, char filename[]);
 __EXPORT void rkChainFPrint(FILE *fp, rkChain *chain);
 __EXPORT bool rkChainPrintZTK(rkChain *c, char filename[]);
 
-__EXPORT bool rkChainInitPrintFile(rkChain *c, char filename[]);
-__EXPORT void rkChainInitFPrint(FILE *fp, rkChain *c);
+__EXPORT rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk);
+__EXPORT rkChain *rkChainInitScanZTK(rkChain *chain, char filename[]);
+__EXPORT void rkChainInitFPrint(FILE *fp, rkChain *chain);
+__EXPORT bool rkChainInitPrintZTK(rkChain *chain, char filename[]);
+
 __EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *c);
 __EXPORT void rkChainConnectionFPrint(FILE *fp, rkChain *c);
 __EXPORT void rkChainExtWrenchFPrint(FILE *fp, rkChain *c);

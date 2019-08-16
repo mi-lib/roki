@@ -83,7 +83,9 @@ typedef struct{
 
   /* I/O */
   bool (*_query)(FILE*,char*,void*,rkMotor*,int);  /* query */
+  void *(*_dis_fromZTK)(void*,int,void*,ZTK*);
   void *(*_fromZTK)(void*,rkMotorArray*,ZTK*);
+  void (*_dis_fprint)(FILE*,int,void*);
   void (*_fprint)(FILE*,void*,char*);  /* print */
 } rkJointCom;
 
@@ -153,27 +155,26 @@ __EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
  * \return
  * None of those functions return any value.
  */
-#define rkJointLimDis(j,t,v)    (j)->com->_limdis( (j)->prp, t, v )
+#define rkJointLimDis(j,t,v)        (j)->com->_limdis( (j)->prp, t, v )
+#define rkJointSetDis(j,v)          (j)->com->_setdis( (j)->prp, v )
+#define rkJointSetVel(j,v)          (j)->com->_setvel( (j)->prp, v )
+#define rkJointSetAcc(j,v)          (j)->com->_setacc( (j)->prp, v )
+#define rkJointSetTrq(j,v)          (j)->com->_settrq( (j)->prp, v )
+#define rkJointGetDis(j,v)          (j)->com->_getdis( (j)->prp, v )
+#define rkJointGetVel(j,v)          (j)->com->_getvel( (j)->prp, v )
+#define rkJointGetAcc(j,v)          (j)->com->_getacc( (j)->prp, v )
+#define rkJointGetTrq(j,v)          (j)->com->_gettrq( (j)->prp, v )
 
-#define rkJointSetDis(j,v)      (j)->com->_setdis( (j)->prp, v )
-#define rkJointSetVel(j,v)      (j)->com->_setvel( (j)->prp, v )
-#define rkJointSetAcc(j,v)      (j)->com->_setacc( (j)->prp, v )
-#define rkJointSetTrq(j,v)      (j)->com->_settrq( (j)->prp, v )
-#define rkJointGetDis(j,v)      (j)->com->_getdis( (j)->prp, v )
-#define rkJointGetVel(j,v)      (j)->com->_getvel( (j)->prp, v )
-#define rkJointGetAcc(j,v)      (j)->com->_getacc( (j)->prp, v )
-#define rkJointGetTrq(j,v)      (j)->com->_gettrq( (j)->prp, v )
+#define rkJointCatDis(j,d,k,v)      (j)->com->_catdis( (j)->prp, d, k, v )
+#define rkJointSubDis(j,d,sd)       (j)->com->_subdis( (j)->prp, d, sd )
+#define rkJointSetDisCNT(j,v,t)     (j)->com->_cntdis( (j)->prp, v, t )
 
-#define rkJointCatDis(j,d,k,v)  (j)->com->_catdis( (j)->prp, d, k, v )
-#define rkJointSubDis(j,d,sd)   (j)->com->_subdis( (j)->prp, d, sd )
-#define rkJointSetDisCNT(j,v,t) (j)->com->_cntdis( (j)->prp, v, t )
-
-#define rkJointSetFricPivot(j,r) (j)->com->_setfrictionpivot( (j)->prp, r )
-#define rkJointGetFricPivot(j,r) (j)->com->_getfrictionpivot( (j)->prp, r )
-#define rkJointSetFric(j,f)  (j)->com->_setfric( (j)->prp, f )
-#define rkJointGetFric(j,f)  (j)->com->_getfric( (j)->prp, f )
-#define rkJointGetSFric(j,f) (j)->com->_getsfric( (j)->prp, f )
-#define rkJointGetKFric(j,f) (j)->com->_getkfric( (j)->prp, f )
+#define rkJointSetFricPivot(j,r)    (j)->com->_setfrictionpivot( (j)->prp, r )
+#define rkJointGetFricPivot(j,r)    (j)->com->_getfrictionpivot( (j)->prp, r )
+#define rkJointSetFric(j,f)         (j)->com->_setfric( (j)->prp, f )
+#define rkJointGetFric(j,f)         (j)->com->_getfric( (j)->prp, f )
+#define rkJointGetSFric(j,f)        (j)->com->_getsfric( (j)->prp, f )
+#define rkJointGetKFric(j,f)        (j)->com->_getkfric( (j)->prp, f )
 
 /* motor */
 #define rkJointGetMotor(j)          (j)->com->_getmotor( (j)->prp )
@@ -327,6 +328,7 @@ __EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc
  * rkJointFPrint() and rkJointPrint() return no value.
  */
 #define rkJointQueryFScan(f,b,j,ma,mn) (j)->com->_query( f, b, (j)->prp, (ma), (mn) )
+
 #define rkJointFPrint(f,j,n) ( (n) ? (j)->com->_fprint( f, (j)->prp, n ) : (j)->com->_fprint( f, (j)->prp, "dis" ) )
 #define rkJointPrint(j,n)    rkJointFPrint( stdout, j, n )
 

@@ -89,8 +89,7 @@ static bool _rkJointQueryFScanFixed(FILE *fp, char *key, void *prp, rkMotor *mar
   return false;
 }
 
-static void *_rkJointFromZTKFixed(void *prp, rkMotorArray *motorarray, ZTK *ztk)
-{
+static void *_rkJointFromZTKFixed(void *prp, rkMotorArray *motorarray, ZTK *ztk){
   return prp;
 }
 
@@ -144,6 +143,8 @@ rkJointCom rk_joint_fixed = {
   _rkJointUpdateWrench,
 
   _rkJointQueryFScanFixed,
+  NULL,
   _rkJointFromZTKFixed,
+  NULL,
   _rkJointFPrintFixed,
 };

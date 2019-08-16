@@ -271,35 +271,35 @@ static bool _rkJointQueryFScanBrFloat(FILE *fp, char *buf, void *prp, rkMotor *m
   return false;
 }
 
-static void *_rkJointBrFloatDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointDisFromZTKBrFloat(void *prp, int i, void *arg, ZTK *ztk){
   zVec6D dis;
   zVec6DFromZTK( &dis, ztk );
   _rkJointSetDisBrFloat( prp, dis.e );
   return prp;
 }
-static void *_rkJointBrFloatForceThFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointForceThFromZTKBrFloat(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->ep_f = ZTKDouble(ztk);
   return prp;
 }
-static void *_rkJointBrFloatTorqueThFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointTorqueThFromZTKBrFloat(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->ep_t = ZTKDouble(ztk);
   return prp;
 }
 
-static void _rkJointBrFloatDisFPrint(FILE *fp, int i, void *prp){
+static void _rkJointDisFPrintBrFloat(FILE *fp, int i, void *prp){
   zVec6DDataNLFPrint( fp, &_rkc(prp)->dis );
 }
-static void _rkJointBrFloatForceThFPrint(FILE *fp, int i, void *prp){
+static void _rkJointForceThFPrintBrFloat(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->ep_f );
 }
-static void _rkJointBrFloatTorqueThFPrint(FILE *fp, int i, void *prp){
+static void _rkJointTorqueThFPrintBrFloat(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->ep_t );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_brfloat[] = {
-  { "dis", 1, _rkJointBrFloatDisFromZTK, _rkJointBrFloatDisFPrint },
-  { "forcethreshold", 1, _rkJointBrFloatForceThFromZTK, _rkJointBrFloatForceThFPrint },
-  { "torquethreshold", 1, _rkJointBrFloatTorqueThFromZTK, _rkJointBrFloatTorqueThFPrint },
+  { "dis", 1, _rkJointDisFromZTKBrFloat, _rkJointDisFPrintBrFloat },
+  { "forcethreshold", 1, _rkJointForceThFromZTKBrFloat, _rkJointForceThFPrintBrFloat },
+  { "torquethreshold", 1, _rkJointTorqueThFromZTKBrFloat, _rkJointTorqueThFPrintBrFloat },
 };
 
 static void *_rkJointFromZTKBrFloat(void *prp, rkMotorArray *motorarray, ZTK *ztk)
@@ -360,7 +360,9 @@ rkJointCom rk_joint_brfloat = {
   _rkJointUpdateWrenchBrFloatFixed,
 
   _rkJointQueryFScanBrFloat,
+  _rkJointDisFromZTKBrFloat,
   _rkJointFromZTKBrFloat,
+  _rkJointDisFPrintBrFloat,
   _rkJointFPrintBrFloat,
 };
 

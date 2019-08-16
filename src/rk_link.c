@@ -403,7 +403,7 @@ static void *_rkLinkParentFromZTK(void *obj, int i, void *arg, ZTK *ztk){
 }
 static void *_rkLinkShapeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   zShape3D *sp;
-  zShape3DArrayFind( ((_rkLinkRefPrp*)arg)->sarray, ZTKVal(ztk), sp );
+  zArrayFindName( ((_rkLinkRefPrp*)arg)->sarray, ZTKVal(ztk), sp );
   if( !sp ){
     ZRUNERROR( RK_ERR_SHAPE_UNKNOWN, ZTKVal(ztk) );
     return NULL;
