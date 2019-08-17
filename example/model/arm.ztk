@@ -74,7 +74,7 @@ shape: base
 
 [link]
 name : link1
-jointtype : sphere
+jointtype : spherical
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,
@@ -86,7 +86,7 @@ shape: shaft
 
 [link]
 name : link2
-jointtype : sphere
+jointtype : spherical
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,
@@ -98,7 +98,7 @@ shape: shaft
 
 [link]
 name : link3
-jointtype : sphere
+jointtype : spherical
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,
@@ -110,7 +110,7 @@ shape: shaft
 
 [link]
 name : link4
-jointtype : sphere
+jointtype : spherical
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,

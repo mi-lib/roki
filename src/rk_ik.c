@@ -569,3 +569,102 @@ bool rkIKConfScanFile(rkIK *ik, rkChain *chain, char *filename)
   fclose( fp );
   return result;
 }
+
+/* ZTK */
+
+static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  rkLink *link;
+  double w = RK_IK_JOINT_WEIGHT_DEFAULT;
+  char *linkname;
+
+  linkname = ZTKVal(ztk);
+  if( ZTKValNext(ztk) ) w = ZTKDouble(ztk);
+  if( strcmp( linkname, "all" ) == 0 )
+    return rkIKJointRegAll( (rkIK*)obj, w ) ? obj : NULL;
+  zArrayFindName( &((rkIK*)obj)->chain->link, linkname, link );
+  if( !link ){
+    ZRUNERROR( RK_ERR_LINK_UNKNOWN, linkname );
+    return NULL;
+  }
+  if( w == 0 ){
+    rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link)->prp, 0, NULL, ztk );
+    return obj;
+  }
+  if( rkLinkJointSize(link) == 0 ) return NULL;
+  return rkIKJointReg( (rkIK*)obj, link - rkChainRoot(((rkIK*)obj)->chain), w ) ? obj : NULL;
+}
+static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  struct _rkIKLookup *lookup;
+  rkIKCellAttr attr;
+  int mask = RK_IK_CELL_ATTR_NONE;
+  rkLink *link;
+  int linknum = 0;
+
+  if( !( lookup = _rkIKLookupCell( ZTKVal(ztk) ) ) ) return NULL;
+  ZTKValNext( ztk );
+  while( ztk->val_cp ){
+    if( ZTKValCmp( ztk, "at" ) ){
+      ZTKValNext( ztk );
+      zVec3DFromZTK( &attr.ap, ztk );
+      mask |= RK_IK_CELL_ATTR_AP;
+    } else
+    if( ZTKValCmp( ztk, "w" ) ){
+      ZTKValNext( ztk );
+      zVec3DFromZTK( &attr.w, ztk );
+      mask |= RK_IK_CELL_ATTR_WEIGHT;
+    } else
+    if( ZTKValCmp( ztk, "f" ) ){
+      ZTKValNext( ztk );
+      mask |= RK_IK_CELL_ATTR_FORCE;
+    } else{
+      zArrayFindName( &((rkIK*)obj)->chain->link, ZTKVal(ztk), link );
+      if( !link ){
+        ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
+        return NULL;
+      }
+      if( linknum++ == 0 ){
+        attr.id = link - rkChainRoot(((rkIK*)obj)->chain);
+        mask |= RK_IK_CELL_ATTR_ID;
+      } else{
+        attr.id_sub = link - rkChainRoot(((rkIK*)obj)->chain);
+        mask |= RK_IK_CELL_ATTR_ID_SUB;
+      }
+      ZTKValNext( ztk );
+    }
+  }
+  return lookup->ik_cell_reg( obj, &attr, mask ) ? obj : NULL;
+}
+
+static ZTKPrp __ztk_prp_rkik[] = {
+  { "joint", -1, _rkIKJointFromZTK, NULL },
+  { "constraint", -1, _rkIKConstraintFromZTK, NULL },
+};
+
+static void *_rkIKFromZTK(void *obj, int i, void *arg, ZTK *ztk)
+{
+  if( !ZTKEncodeKey( obj, NULL, ztk, __ztk_prp_rkik ) ) return NULL;
+  return obj;
+}
+
+static ZTKPrp __ztk_prp_tag_rkik[] = {
+  { ZTK_TAG_RKIK, 1, _rkIKFromZTK, NULL },
+};
+
+rkIK *rkIKConfFromZTK(rkIK *ik, ZTK *ztk)
+{
+  ZTKEncodeTag( ik, NULL, ztk, __ztk_prp_tag_rkik );
+  return ik;
+}
+
+rkIK *rkIKConfScanZTK(rkIK *ik, rkChain *chain, char filename[])
+{
+  ZTK ztk;
+
+  if( !rkIKCreate( ik, chain ) ) return NULL;
+  ZTKInit( &ztk );
+  if( !ZTKDefRegPrp( &ztk, ZTK_TAG_RKIK, __ztk_prp_rkik ) ) return NULL;
+  ZTKParse( &ztk, filename );
+  ik = rkIKConfFromZTK( ik, &ztk );
+  ZTKDestroy( &ztk );
+  return ik;
+}

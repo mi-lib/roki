@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 
   if( !rkChainScanFile( &chain, "../model/arm.ztk" ) )
     return 1;
-  rkIKConfScanFile( &ik, &chain, "iktest.ztk" );
+  rkIKConfScanZTK( &ik, &chain, "iktest.ztk" );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

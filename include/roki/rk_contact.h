@@ -96,7 +96,7 @@ __EXPORT rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, double e, 
  */
 __EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *stf2);
 
-#define RK_CONTACTINFO_TAG "contact"
+#define ZTK_TAG_RKCONTACTINFO "contact"
 
 /*! \brief scan and print information of a contact model.
  *
@@ -138,38 +138,38 @@ __EXPORT void rkContactInfoFPrint(FILE *fp, rkContactInfo *ci);
 #define rkContactInfoPrint(c) rkContactInfoFPrint( stdout, (c) )
 
 /* ********************************************************** */
-/* CLASS: rkContactInfoPool
- * contact model pool class
+/* CLASS: rkContactInfoArray
+ * array class of contact information set
  * ********************************************************** */
 
-zArrayClass( rkContactInfoPool, rkContactInfo );
+zArrayClass( rkContactInfoArray, rkContactInfo );
 
-/*! \brief destroy contact info pool.
+/*! \brief destroy contact info array.
  *
- * rkContactInfoPoolDestroy() destroys the internal objects and
- * array of the contact information pool \a ci.
+ * rkContactInfoArrayDestroy() destroys the internal objects and
+ * array of the contact information array \a ci.
  * \return
- * rkContactInfoPoolDestroy() returns no value.
+ * rkContactInfoArrayDestroy() returns no value.
  */
-__EXPORT void rkContactInfoPoolDestroy(rkContactInfoPool *ci);
+__EXPORT void rkContactInfoArrayDestroy(rkContactInfoArray *ci);
 
 /*! \brief associate contact info to a pair of keys
  *
- * rkContactInfoPoolAssoc() finds the contact information set from
- * the information pool \a ci by a pair of keys \a stf1 and \a stf2.
+ * rkContactInfoArrayAssoc() finds the contact information set from
+ * the information array \a ci by a pair of keys \a stf1 and \a stf2.
  * \return
  * The contact information set with which the pair of \a stf1 and
  * \a stf2 is associated is returned. Unless any of the information
  * set in \a ci matches the pair, the null pointer is returned.
  */
-__EXPORT rkContactInfo *rkContactInfoPoolAssoc(rkContactInfoPool *ci, char *stf1, char *stf2);
-__EXPORT rkContactInfo *rkContactInfoPoolAssocType(rkContactInfoPool *ci, char *stf1, char *stf2, char type);
+__EXPORT rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *ci, char *stf1, char *stf2);
+__EXPORT rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *ci, char *stf1, char *stf2, char type);
 
-/*! \brief scan and print contact information pool.
+/*! \brief scan and print contact information array.
  *
- * rkContactInfoPoolScanFile() scans a file \a filename and
- * creates a new contact information pool \a ci.
- * rkContactInfoPoolFScan() and rkContactInfoPoolFScan() scan
+ * rkContactInfoArrayScanFile() scans a file \a filename and
+ * creates a new contact information array \a ci.
+ * rkContactInfoArrayFScan() and rkContactInfoArrayFScan() scan
  * information from the current position of a file \a fp, and
  * the standard input, respectively.
  *
@@ -178,28 +178,34 @@ __EXPORT rkContactInfo *rkContactInfoPoolAssocType(rkContactInfoPool *ci, char *
  * by [contact].
  * See also rkContactInfoFScan().
  *
- * rkContactInfoPoolPrintFile() prints information of \a ci
+ * rkContactInfoArrayPrintFile() prints information of \a ci
  * out to a file \a filename.
- * rkContactInfoPoolFPrint() and rkContactInfoPoolPrint() print
+ * rkContactInfoArrayFPrint() and rkContactInfoArrayPrint() print
  * information of \a ci out to the current position of a file
  * \a fp and the standard output, respectively, in the same
- * format with rkContactInfoPoolPrintFile().
+ * format with rkContactInfoArrayPrintFile().
  * \return
- * rkContactInfoPoolScanFile() and rkContactInfoPoolPrintFile()
+ * rkContactInfoArrayScanFile() and rkContactInfoArrayPrintFile()
  * return a boolean according to whether the operation succeeds
  * or not.
  *
- * rkContactInfoPoolFScan() family returns a pointer \a ci, while
- * rkContactInfoPoolFPrint() family returns no value.
+ * rkContactInfoArrayFScan() family returns a pointer \a ci, while
+ * rkContactInfoArrayFPrint() family returns no value.
  * \sa
  * rkContactInfoFScan
  */
-__EXPORT bool rkContactInfoPoolScanFile(rkContactInfoPool *ci, char filename[]);
-__EXPORT rkContactInfoPool *rkContactInfoPoolFScan(FILE *fp, rkContactInfoPool *ci);
-#define rkContactInfoPoolScan(c) rkContactInfoPoolFScan( stdin, (c) )
-__EXPORT bool rkContactInfoPoolPrintFile(rkContactInfoPool *ci, char filename[]);
-__EXPORT void rkContactInfoPoolFPrint(FILE *fp, rkContactInfoPool *ci);
-#define rkContactInfoPoolPrint(c) rkContactInfoPoolFPrint( stdout, (c) )
+__EXPORT bool rkContactInfoArrayScanFile(rkContactInfoArray *ci, char filename[]);
+__EXPORT rkContactInfoArray *rkContactInfoArrayFScan(FILE *fp, rkContactInfoArray *ci);
+#define rkContactInfoArrayScan(c) rkContactInfoArrayFScan( stdin, (c) )
+
+/* ZTK */
+
+__EXPORT rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *ztk);
+__EXPORT rkContactInfoArray *rkContactInfoArrayScanZTK(rkContactInfoArray *carray, char filename[]);
+
+__EXPORT bool rkContactInfoArrayPrintZTK(rkContactInfoArray *ci, char filename[]);
+__EXPORT void rkContactInfoArrayFPrint(FILE *fp, rkContactInfoArray *ci);
+#define rkContactInfoArrayPrint(c) rkContactInfoArrayFPrint( stdout, (c) )
 
 __END_DECLS
 

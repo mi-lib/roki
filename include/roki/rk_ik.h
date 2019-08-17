@@ -234,6 +234,13 @@ __EXPORT bool rkIKConfFScan(FILE *fp, rkIK *ik, rkChain *chain);
 /*! \brief scan IK configuration from the current position of a file. */
 __EXPORT bool rkIKConfScanFile(rkIK *ik, rkChain *chain, char *filename);
 
+/* ZTK */
+
+#define ZTK_TAG_RKIK "ik"
+
+__EXPORT rkIK *rkIKConfFromZTK(rkIK *ik, ZTK *ztk);
+__EXPORT rkIK *rkIKConfScanZTK(rkIK *ik, rkChain *chain, char filename[]);
+
 __END_DECLS
 
 #include <roki/rk_ik_seq.h> /* inverse kinematics sequence */

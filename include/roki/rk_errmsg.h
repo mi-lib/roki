@@ -15,6 +15,7 @@
 #define RK_WARN_TWOFOLDNAME      "twofolded name %s exists"
 
 #define RK_WARN_CONTACT_DUPKEY   "duplicate contact information with keys %s and %s"
+#define RK_WARN_CONTACT_EMPTY    "empty set of contact information specified."
 
 #define RK_WARN_LINK_DUP         "%s: name of a link duplicated."
 

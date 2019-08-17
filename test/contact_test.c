@@ -20,28 +20,28 @@ void assert_assoc(void)
   rkContactInfoDestroy( &ci2 );
 }
 
-void assert_pool(void)
+void assert_array(void)
 {
-  rkContactInfoPool cip;
+  rkContactInfoArray cip;
 
   eprintf( "(duplicate error expected.)\n" );
-  zAssert( rkContactInfoPoolScanFile, rkContactInfoPoolScanFile( &cip, "contact" ) );
-  zAssert( rkContactInfoPoolAssoc,
-    rkContactInfoPoolAssoc( &cip, "stf1", "stf2" ) &&
-    rkContactInfoPoolAssoc( &cip, "stf3", "stf4" ) &&
-    !rkContactInfoPoolAssoc( &cip, "stf1", "stf1" ) &&
-    !rkContactInfoPoolAssoc( &cip, "stf1", "stf4" ) );
-  zAssert( rkContactInfoPoolAssocType,
-    rkContactInfoPoolAssocType( &cip, "stf1", "stf2", RK_CONTACT_ELASTIC ) &&
-    rkContactInfoPoolAssocType( &cip, "stf1", "stf2", RK_CONTACT_RIGID ) &&
-    rkContactInfoPoolAssocType( &cip, "stf3", "stf4", RK_CONTACT_RIGID ) &&
-    !rkContactInfoPoolAssocType( &cip, "stf3", "stf4", RK_CONTACT_ELASTIC ) );
-  rkContactInfoPoolDestroy( &cip );
+  zAssert( rkContactInfoArrayScanZTK, rkContactInfoArrayScanZTK( &cip, "contact" ) );
+  zAssert( rkContactInfoArrayAssoc,
+    rkContactInfoArrayAssoc( &cip, "stf1", "stf2" ) &&
+    rkContactInfoArrayAssoc( &cip, "stf3", "stf4" ) &&
+    !rkContactInfoArrayAssoc( &cip, "stf1", "stf1" ) &&
+    !rkContactInfoArrayAssoc( &cip, "stf1", "stf4" ) );
+  zAssert( rkContactInfoArrayAssocType,
+    rkContactInfoArrayAssocType( &cip, "stf1", "stf2", RK_CONTACT_ELASTIC ) &&
+    rkContactInfoArrayAssocType( &cip, "stf1", "stf2", RK_CONTACT_RIGID ) &&
+    rkContactInfoArrayAssocType( &cip, "stf3", "stf4", RK_CONTACT_RIGID ) &&
+    !rkContactInfoArrayAssocType( &cip, "stf3", "stf4", RK_CONTACT_ELASTIC ) );
+  rkContactInfoArrayDestroy( &cip );
 }
 
 int main(void)
 {
   assert_assoc();
-  assert_pool();
+  assert_array();
   return EXIT_SUCCESS;
 }
