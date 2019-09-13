@@ -663,8 +663,8 @@ rkIK *rkIKConfScanZTK(rkIK *ik, rkChain *chain, char filename[])
   if( !rkIKCreate( ik, chain ) ) return NULL;
   ZTKInit( &ztk );
   if( !ZTKDefRegPrp( &ztk, ZTK_TAG_RKIK, __ztk_prp_rkik ) ) return NULL;
-  ZTKParse( &ztk, filename );
-  ik = rkIKConfFromZTK( ik, &ztk );
+  if( ZTKParse( &ztk, filename ) )
+    ik = rkIKConfFromZTK( ik, &ztk );
   ZTKDestroy( &ztk );
   return ik;
 }

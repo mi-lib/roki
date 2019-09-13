@@ -136,7 +136,7 @@ void _rkLinkABIAddBias(rkLink *link)
 {
   zVec6D icb;
 
-  /* IH (HIH)-1 (u - H^T (Ic + b)) */
+  /* IH (HIH)^-1 (u - H^T (Ic + b)) */
   zMulMat6DVec6D( &rkLinkABIPrp(link)->i, &rkLinkABIPrp(link)->c, &icb );
   zVec6DAddDRC( &icb, &rkLinkABIPrp(link)->b );
   rkJointABIAddBias( rkLinkJoint(link), &rkLinkABIPrp(link)->i, &icb, rkLinkAdjFrame(link), rkLinkABIPrp(link)->iaxi, &rkLinkABIPrp(rkLinkParent(link))->b );
@@ -181,7 +181,8 @@ void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 
   ap = rkLinkABIPrp(link);
   /*J^Ta+c*/
-  zXform6DLin( rkLinkAdjFrame(link), pa, &jac );
+  zVec6DLinShift( pa, rkLinkAdjPos(link), &jac );
+  zMulMat3DTVec6DDRC( rkLinkAdjAtt(link), &jac );
   zVec6DAddDRC( &jac, &ap->c );
   /* update acceleration */
   rkJointABIQAcc( rkLinkJoint(link), &ap->i, &ap->b, &jac, ap->iaxi, rkLinkAcc(link) );
@@ -192,7 +193,7 @@ void rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 {
   _rkLinkABIUpdateForward( link, pa );
 
-  /* recursive forward computation of ABI */
+  /* forward recursive computation of ABI */
   if( rkLinkSibl(link) )
     rkLinkABIUpdateForward( rkLinkSibl(link), pa );
   if( rkLinkChild(link) )
@@ -206,7 +207,7 @@ void rkLinkABIUpdateForwardGetWrench(rkLink *link, zVec6D *pa)
   /* link wrench */
   rkJointUpdateWrench( rkLinkJoint(link), &rkLinkABIPrp(link)->i, &rkLinkABIPrp(link)->b, rkLinkAcc(link) );
 
-  /* recursive forward computation of ABI */
+  /* forward recursive computation of ABI */
   if( rkLinkSibl(link) )
     rkLinkABIUpdateForwardGetWrench( rkLinkSibl(link), pa );
   if( rkLinkChild(link) )

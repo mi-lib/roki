@@ -895,19 +895,21 @@ rkChain *rkChainScanZTK(rkChain *chain, char filename[])
   ZTK ztk;
 
   ZTKInit( &ztk );
-  rkChainRegZTK( &ztk );
-  ZTKParse( &ztk, filename );
-  /* read optical infos and shapes */
-  rkChainInit( chain );
-  if( ZTKCountTag( &ztk, ZTK_TAG_SHAPE ) > 0 ){
-    if( !( rkChainShape(chain) = zAlloc( zMShape3D, 1 ) ) ){
-      ZALLOCERROR();
-      return NULL;
+  if( !rkChainRegZTK( &ztk ) ) return NULL;
+  if( ZTKParse( &ztk, filename ) ){
+    /* read optical infos and shapes */
+    rkChainInit( chain );
+    if( ZTKCountTag( &ztk, ZTK_TAG_SHAPE ) > 0 ){
+      if( !( rkChainShape(chain) = zAlloc( zMShape3D, 1 ) ) ){
+        ZALLOCERROR();
+        return NULL;
+      }
+      if( !zMShape3DFromZTK( rkChainShape(chain), &ztk ) ) return NULL;
     }
-    if( !zMShape3DFromZTK( rkChainShape(chain), &ztk ) ) return NULL;
-  }
-  /* read robot name, motors and links */
-  chain = rkChainFromZTK( chain, &ztk );
+    /* read robot name, motors and links */
+    chain = rkChainFromZTK( chain, &ztk );
+  } else
+    chain = NULL;
   ZTKDestroy( &ztk );
   return chain;
 }
