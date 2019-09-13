@@ -78,7 +78,7 @@ typedef struct{
   void (*_addabi)(void*,zMat6D*,zFrame3D*,zMat,zMat6D*);
   void (*_addbias)(void*,zMat6D*,zVec6D*,zFrame3D*,zMat,zVec6D*);
   void (*_dtrq)(void*);
-  void (*_qacc)(void*,zMat3D*,zMat6D*,zVec6D*,zVec6D*,zMat,zVec6D*);
+  void (*_qacc)(void*,zMat6D*,zVec6D*,zVec6D*,zMat,zVec6D*);
   void (*_wrench)(struct _rkJoint*,zMat6D*,zVec6D*,zVec6D*);
 
   /* I/O */
@@ -189,7 +189,7 @@ __EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 #define rkJointABIAddAbi(j,i,f,h,pi)    (j)->com->_addabi( (j)->prp, i, f, h, pi )
 #define rkJointABIAddBias(j,i,b,f,h,pb) (j)->com->_addbias( (j)->prp, i, b, f, h, pb )
 #define rkJointABIDrivingTorque(j)      (j)->com->_dtrq( (j)->prp )
-#define rkJointABIQAcc(j,r,i,b,c,h,a)   (j)->com->_qacc( (j)->prp, r, i, b, c, h, a )
+#define rkJointABIQAcc(j,i,b,c,h,a)     (j)->com->_qacc( (j)->prp, i, b, c, h, a )
 #define rkJointUpdateWrench(j,i,b,a)    (j)->com->_wrench( j, i, b, a )
 
 /*! \brief neutral configuration of joint.

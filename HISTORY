@@ -1,3 +1,5 @@
+2019. 9.13. Modified _rkLinkABIUpdateForward to use zXform6DLin. [rk_abi]
+2019. 9.13. Modified _qacc method of rkJoint class. [rk_joint, rk_joint_fixed, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher, rk_joint_float, rk_joint_brfloat]
 2019. 8.18. Renamed rkContactInfoArrayPrintFile to rkContactInfoArrayPrintZTK. [rk_contact]
 2019. 8.18. Added rkContactInfoArrayFromZTK and rkContactInfoArrayScanZTK. [rk_contact]
 2019. 8.18. Added RK_WARN_CONTACT_EMPTY. [rk_errmsg]

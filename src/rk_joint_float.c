@@ -206,17 +206,17 @@ static void _rkJointABIAddBiasFloat(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f
 
 static void _rkJointABIDrivingTorqueFloat(void *prp){}
 
-static void _rkJointABIQAccFloat(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
+static void _rkJointABIQAccFloat(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   zVec6D tmpv, tmpv2;
   register int i;
   /* acc */
-  zVec6DRev(b, &tmpv2);
-  for(i=zX;i<=zZA;i++)
+  zVec6DRev( b, &tmpv2 );
+  for( i=zX; i<=zZA; i++ )
     tmpv.e[i] = zVec6DInnerProd( (zVec6D *)&zMatElemNC(h,i,0), &tmpv2 );
   zVec6DCopy( &tmpv, acc );
   /* q */
-  zVec6DSubDRC(&tmpv, jac);
-  zMulMat3DVec6D( r, &tmpv, &_rkc(prp)->acc );
+  zVec6DSubDRC( &tmpv, jac );
+  zMulMat3DVec6D( &_rkc(prp)->_att, &tmpv, &_rkc(prp)->acc );
 }
 
 /* query joint properties */

@@ -80,7 +80,7 @@ static void _rkJointABIAddBiasFixed(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f
 }
 
 static void _rkJointABIDrivingTorqueFixed(void *prp){}
-static void _rkJointABIQAccFixed(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
+static void _rkJointABIQAccFixed(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   zVec6DCopy( jac, acc );
 }
 

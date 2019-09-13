@@ -256,7 +256,7 @@ static void _rkJointABIDrivingTorqueHooke(void *prp){
   eprintf("under construction error: abi update for hooke joint\n");
 }
 
-static void _rkJointABIQAccHooke(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){}
+static void _rkJointABIQAccHooke(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){}
 
 /* query joint properties */
 static bool _rkJointQueryFScanHooke(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)

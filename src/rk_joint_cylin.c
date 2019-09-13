@@ -251,7 +251,7 @@ static void _rkJointABIDrivingTorqueCylin(void *prp){
   _rkc(prp)->_u[1] += _rkc(prp)->tf[1];
 }
 
-static void _rkJointABIQAccCylin(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
+static void _rkJointABIQAccCylin(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   double u[2];
   zVec6D v31, v61;
 

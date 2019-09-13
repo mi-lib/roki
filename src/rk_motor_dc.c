@@ -174,26 +174,10 @@ static void *_rkMotorFromZTKDC(void *prp, ZTK *ztk)
   return ZTKEncodeKey( prp, NULL, ztk, __ztk_prp_rkmotor_dc );
 }
 
-#if 0
-static void _rkMotorFPrintDC(FILE *fp, void *prp)
-{
-  fprintf( fp, "motorconstant: %.10g\n", _rkc(prp)->k            );
-  fprintf( fp, "admitance: %.10g\n"    , _rkc(prp)->admit        );
-  fprintf( fp, "maxvoltage: %.10g\n"   , _rkc(prp)->maxvol       );
-  fprintf( fp, "minvoltage: %.10g\n"   , _rkc(prp)->minvol       );
-  fprintf( fp, "ratio: %.10g\n"        , _rkc(prp)->decratio     );
-  fprintf( fp, "inertia: %.10g\n"      , _rkc(prp)->inertia      );
-  fprintf( fp, "gearinertia: %.10g\n"  , _rkc(prp)->inertia_gear );
-  fprintf( fp, "compk: %.10g\n"        , _rkc(prp)->_comp_k      );
-  fprintf( fp, "compl: %.10g\n"        , _rkc(prp)->_comp_l      );
-  fprintf( fp, "\n" );
-}
-#else
 static void _rkMotorFPrintDC(FILE *fp, void *prp)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkmotor_dc );
 }
-#endif
 
 rkMotorCom rk_motor_dc = {
   "dc",

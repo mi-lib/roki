@@ -218,7 +218,7 @@ static void _rkJointABIDrivingTorqueSpher(void *prp){
   eprintf("under construction error: abi update for spherical joint\n");
 }
 
-static void _rkJointABIQAccSpher(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){}
+static void _rkJointABIQAccSpher(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){}
 
 /* query joint properties */
 static bool _rkJointQueryFScanSpher(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)

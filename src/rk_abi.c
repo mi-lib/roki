@@ -178,25 +178,13 @@ void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 {
   rkABIPrp *ap;
   zVec6D jac;
-  zMat3D att;
 
   ap = rkLinkABIPrp(link);
   /*J^Ta+c*/
-  zVec3DOuterProd( zVec6DAng( pa ), rkLinkAdjPos( link ), zVec6DLin( &jac ) );
-  zVec3DAddDRC( zVec6DLin( &jac ), zVec6DLin( pa ) );
-  zVec3DCopy( zVec6DAng( pa ), zVec6DAng( &jac ) );
-  zMulMat3DTVec6DDRC( rkLinkAdjAtt( link ), &jac );
-
+  zXform6DLin( rkLinkAdjFrame(link), pa, &jac );
   zVec6DAddDRC( &jac, &ap->c );
-
   /* update acceleration */
-  if( rkLinkJoint(link)->com == &rk_joint_spher ||
-      rkLinkJoint(link)->com == &rk_joint_float ||
-      rkLinkJoint(link)->com == &rk_joint_brfloat ){
-    zMulMat3DTMat3D(rkLinkOrgAtt(link), rkLinkAdjAtt(link), &att);
-    rkJointABIQAcc( rkLinkJoint(link), &att, &ap->i, &ap->b, &jac, ap->iaxi, rkLinkAcc(link) );
-  } else
-    rkJointABIQAcc( rkLinkJoint(link), NULL, &ap->i, &ap->b, &jac, ap->iaxi, rkLinkAcc(link) );
+  rkJointABIQAcc( rkLinkJoint(link), &ap->i, &ap->b, &jac, ap->iaxi, rkLinkAcc(link) );
 }
 
 /* forward computation to update acceleration from ABI of a link. */

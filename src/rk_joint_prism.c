@@ -218,7 +218,7 @@ static void _rkJointABIDrivingTorquePrism(void *prp)
   _rkc(prp)->_u += _rkc(prp)->tf;
 }
 
-static void _rkJointABIQAccPrism(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc)
+static void _rkJointABIQAccPrism(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc)
 {
   zVec6D tmpv;
 

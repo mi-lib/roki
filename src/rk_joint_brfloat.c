@@ -209,17 +209,17 @@ static void _rkJointABIAxisInertiaBrFloat(void *prp, zMat6D *m, zMat h, zMat ih)
 static void _rkJointABIAddAbiBrFloat(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm){}
 static void _rkJointABIAddBiasBrFloat(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb){}
 static void _rkJointABIDrivingTorqueBrFloat(void *prp){}
-static void _rkJointABIQAccBrFloat(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
+static void _rkJointABIQAccBrFloat(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   zVec6D tmpv, tmpv2;
   register int i;
   /* acc */
-  zVec6DRev(b, &tmpv2);
-  for(i=zX;i<=zZA;i++)
+  zVec6DRev( b, &tmpv2 );
+  for( i=zX; i<=zZA; i++ )
     tmpv.e[i] = zVec6DInnerProd( (zVec6D *)&zMatElemNC(h,i,0), &tmpv2 );
   zVec6DCopy( &tmpv, acc );
   /* q */
   zVec6DSubDRC( &tmpv, jac );
-  zMulMat3DVec6D( r, &tmpv, &_rkc(prp)->acc );
+  zMulMat3DVec6D( &_rkc(prp)->_att, &tmpv, &_rkc(prp)->acc );
 }
 
 /* ABI for unbreakable joints */
@@ -237,7 +237,7 @@ static void _rkJointABIAddBiasBrFloatFixed(void *prp, zMat6D *m, zVec6D *b, zFra
   zVec6DAddDRC( pb, &tmpv );
 }
 static void _rkJointABIDrivingTorqueBrFloatFixed(void *prp){}
-static void _rkJointABIQAccBrFloatFixed(void *prp, zMat3D *r, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
+static void _rkJointABIQAccBrFloatFixed(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   zVec6DCopy( jac, acc );
 }
 static void _rkJointUpdateWrenchBrFloatFixed(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc){

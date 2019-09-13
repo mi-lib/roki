@@ -81,17 +81,10 @@ static void *_rkMotorFromZTKTrq(void *prp, ZTK *ztk)
   return ZTKEncodeKey( prp, NULL, ztk, __ztk_prp_rkmotor_trq );
 }
 
-#if 0
-static void _rkMotorFPrintTrq(FILE *fp, void *prp)
-{
-  fprintf( fp, "\n" );
-}
-#else
 static void _rkMotorFPrintTrq(FILE *fp, void *prp)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkmotor_trq );
 }
-#endif
 
 rkMotorCom rk_motor_trq = {
   "trq",
