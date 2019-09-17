@@ -178,11 +178,11 @@ __EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 
 /* motor */
 #define rkJointGetMotor(j)          (j)->com->_getmotor( (j)->prp )
-#define rkJointMotorSetInput(j,i)   (j)->com->_setinput( (j)->prp, i )
-#define rkJointMotorInertia(j,i)    (j)->com->_inertia( (j)->prp, i )
-#define rkJointMotorInputTrq(j,t)   (j)->com->_inputtrq( (j)->prp, t )
-#define rkJointMotorRegistance(j,r) (j)->com->_regist( (j)->prp, r )
-#define rkJointMotorDrivingTrq(j,t) (j)->com->_dtrq( (j)->prp, t )
+#define rkJointMotorSetInput(j,i)   (j)->com->_setmotorinput( (j)->prp, i )
+#define rkJointMotorInertia(j,i)    (j)->com->_motorinertia( (j)->prp, i )
+#define rkJointMotorInputTrq(j,t)   (j)->com->_motorinputtrq( (j)->prp, t )
+#define rkJointMotorRegistance(j,r) (j)->com->_motorregist( (j)->prp, r )
+#define rkJointMotorDrivingTrq(j,t) (j)->com->_motordestrq( (j)->prp, t )
 
 /* ABI */
 #define rkJointABIAxisInertia(j,m,h,ih) (j)->com->_axinertia( (j)->prp, m, h, ih )
