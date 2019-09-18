@@ -1,3 +1,5 @@
+2019. 9.18. Modified rk_ikcell_merge along with the new specification of zFSkipComment. [app]
+2019. 9.18. Modified _rkIKConfFieldIsTerminated along with the new specification of zFToken. [rk_ik]
 2019. 9.18. Defined RK_MOTOR_COM_ARRAY. [rk_motor]
 2019. 9.18. Defined RK_JOINT_COM_ARRAY. [rk_joint]
 2019. 9.18. Renamed rkJointABIAddAbi to rkJointABIAddABI. [rk_joint, rk_abi]

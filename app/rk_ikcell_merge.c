@@ -47,7 +47,7 @@ void ikcell_merge_exec(int fpnum, ikcell_file_t *file)
 
   while( 1 ){
     for( num=0, i=0; i<fpnum; i++ ){
-      if( !zFSkipDefaultComment( file[i].fp ) ) return;
+      if( !zFSkipComment( file[i].fp ) ) return;
       num += ( file[i].num = zFInt( file[i].fp ) );
     }
     printf( "%d", num );

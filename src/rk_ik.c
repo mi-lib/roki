@@ -450,7 +450,6 @@ bool _rkIKConfFieldIsTerminated(FILE *fp, char *buf)
   long cur;
   bool ret = false;
 
-  if( !zFSkipDefaultComment( fp ) ) return true;
   cur = ftell( fp );
   if( !zFToken( fp, buf, BUFSIZ ) ) return true;
   if( zTokenIsTag( buf ) ||
