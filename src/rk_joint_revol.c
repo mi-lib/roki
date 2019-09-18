@@ -6,80 +6,80 @@
 
 #include <roki/rk_joint.h>
 
-#define _rkc(p) ((rkJointPrpRevol *)p)
+#define _rkc(p) ((rkJointRevolPrp *)p)
 
-static void _rkJointInitRevol(void *prp){
+static void _rkJointRevolInit(void *prp){
   _rkc(prp)->max = HUGE_VAL;
   _rkc(prp)->min =-HUGE_VAL;
   rkMotorAssign( &_rkc(prp)->m, &rk_motor_none );
 }
 
-static void *_rkJointAllocRevol(void){ return zAlloc( rkJointPrpRevol, 1 ); }
+static void *_rkJointRevolAlloc(void){ return zAlloc( rkJointRevolPrp, 1 ); }
 
 /* limit joint displacement */
-static void _rkJointLimDisRevol(void *prp, double *testval, double *limval){
+static void _rkJointRevolLimDis(void *prp, double *testval, double *limval){
   double angle;
   angle = zPhaseNormalize( *testval );
   *limval = zLimit( angle, _rkc(prp)->min, _rkc(prp)->max );
 }
 
 /* set joint displacement, velocity, acceleration and torque */
-static void _rkJointSetDisRevol(void *prp, double *val){
-  _rkJointLimDisRevol( prp, val, &_rkc(prp)->dis );
+static void _rkJointRevolSetDis(void *prp, double *val){
+  _rkJointRevolLimDis( prp, val, &_rkc(prp)->dis );
   zSinCos( _rkc(prp)->dis, &_rkc(prp)->_s, &_rkc(prp)->_c );
 }
 
-static void _rkJointSetVelRevol(void *prp, double *val){
+static void _rkJointRevolSetVel(void *prp, double *val){
   _rkc(prp)->vel = *val;
 }
 
-static void _rkJointSetAccRevol(void *prp, double *val){
+static void _rkJointRevolSetAcc(void *prp, double *val){
   _rkc(prp)->acc = *val;
 }
 
-static void _rkJointSetTrqRevol(void *prp, double *val){
+static void _rkJointRevolSetTrq(void *prp, double *val){
   _rkc(prp)->trq = *val;
 }
 
 /* get joint displacement, velocity, acceleration and torque */
-static void _rkJointGetDisRevol(void *prp, double *val){
+static void _rkJointRevolGetDis(void *prp, double *val){
   *val = _rkc(prp)->dis;
 }
 
-static void _rkJointGetVelRevol(void *prp, double *val){
+static void _rkJointRevolGetVel(void *prp, double *val){
   *val = _rkc(prp)->vel;
 }
 
-static void _rkJointGetAccRevol(void *prp, double *val){
+static void _rkJointRevolGetAcc(void *prp, double *val){
   *val = _rkc(prp)->acc;
 }
 
-static void _rkJointGetTrqRevol(void *prp, double *val){
+static void _rkJointRevolGetTrq(void *prp, double *val){
   *val = _rkc(prp)->trq;
 }
 
-static void _rkJointCatDisRevol(void *prp, double *dis, double k, double *val){
+static void _rkJointRevolCatDis(void *prp, double *dis, double k, double *val){
   *dis += k * *val;
 }
 
-static void _rkJointSubDisRevol(void *prp, double *dis, double *sdis){
+static void _rkJointRevolSubDis(void *prp, double *dis, double *sdis){
   *dis -= *sdis;
 }
 
 /* continuously update joint displacement */
-static void _rkJointSetDisCNTRevol(void *prp, double *val, double dt)
+static void _rkJointRevolSetDisCNT(void *prp, double *val, double dt)
 {
   double olddis, oldvel;
 
-  _rkJointGetDisRevol( prp, &olddis );
-  _rkJointGetVelRevol( prp, &oldvel );
-  _rkJointSetDisRevol( prp, val );
+  _rkJointRevolGetDis( prp, &olddis );
+  _rkJointRevolGetVel( prp, &oldvel );
+  _rkJointRevolSetDis( prp, val );
   _rkc(prp)->vel = ( *val - olddis ) / dt;
   _rkc(prp)->acc = ( _rkc(prp)->vel - oldvel ) / dt;
 }
 
 /* joint frame transformation */
-static zFrame3D *_rkJointXformRevol(void *prp, zFrame3D *fo, zFrame3D *f)
+static zFrame3D *_rkJointRevolXform(void *prp, zFrame3D *fo, zFrame3D *f)
 {
   /* position */
   zVec3DCopy( zFrame3DPos(fo), zFrame3DPos(f) );
@@ -93,94 +93,94 @@ static zFrame3D *_rkJointXformRevol(void *prp, zFrame3D *fo, zFrame3D *f)
 }
 
 /* joint velocity transformation */
-static void _rkJointIncVelRevol(void *prp, zVec6D *vel){
+static void _rkJointRevolIncVel(void *prp, zVec6D *vel){
   vel->e[zZA] += _rkc(prp)->vel;
 }
 
-static void _rkJointIncAccOnVelRevol(void *prp, zVec3D *w, zVec6D *acc){
+static void _rkJointRevolIncAccOnVel(void *prp, zVec3D *w, zVec6D *acc){
   acc->e[zXA] += _rkc(prp)->vel * w->e[zY];
   acc->e[zYA] -= _rkc(prp)->vel * w->e[zX];
 }
 
 /* joint acceleration transformation */
-static void _rkJointIncAccRevol(void *prp, zVec6D *acc){
+static void _rkJointRevolIncAcc(void *prp, zVec6D *acc){
   acc->e[zZA] += _rkc(prp)->acc;
 }
 
 /* joint torque transformation */
-static void _rkJointCalcTrqRevol(void *prp, zVec6D *f){
+static void _rkJointRevolCalcTrq(void *prp, zVec6D *f){
   _rkc(prp)->trq = f->e[zZA];
 }
 
 /* inverse computation of joint torsion and displacement */
-static void _rkJointTorsionRevol(zFrame3D *dev, zVec6D *t, double dis[]){
+static void _rkJointRevolTorsion(zFrame3D *dev, zVec6D *t, double dis[]){
   zMulMat3DTVec3D( zFrame3DAtt(dev), zFrame3DPos(dev), zVec6DLin(t) );
-  dis[0] = rkJointTorsionDisRevol( dev, t );
+  dis[0] = rkJointRevolTorsionDis( dev, t );
 }
 
-static zVec3D* (*_rk_joint_axis_revol_ang[])(void*,zFrame3D*,zVec3D*) = {
+static zVec3D* (*_rk_joint_revol_axis_ang[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisZ,
 };
 
-static zVec3D* (*_rk_joint_axis_revol_lin[])(void*,zFrame3D*,zVec3D*) = {
+static zVec3D* (*_rk_joint_revol_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
 
-static void _rkJointSetFrictionPivotRevol(void *prp, rkJointFrictionPivot *fp){
+static void _rkJointRevolSetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   _rkc(prp)->_fp = *fp;
 }
 
-static void _rkJointGetFrictionPivotRevol(void *prp, rkJointFrictionPivot *fp){
+static void _rkJointRevolGetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   *fp = _rkc(prp)->_fp;
 }
 
-static void _rkJointSetFricRevol(void *prp, double *val){
+static void _rkJointRevolSetFric(void *prp, double *val){
   _rkc(prp)->tf = *val;
 }
 
-static void _rkJointGetFricRevol(void *prp, double *val){
+static void _rkJointRevolGetFric(void *prp, double *val){
   *val = _rkc(prp)->tf;
 }
 
-static void _rkJointGetSFricRevol(void *prp, double *val){
+static void _rkJointRevolGetSFric(void *prp, double *val){
   *val = _rkc(prp)->sf;
 }
 
-static void _rkJointGetKFricRevol(void *prp, double *val){
+static void _rkJointRevolGetKFric(void *prp, double *val){
   *val = _rkJointRestTrq( _rkc(prp)->stiffness, _rkc(prp)->viscosity, _rkc(prp)->coulomb, _rkc(prp)->dis, _rkc(prp)->vel );
 }
 
 /* motor */
-static rkMotor *_rkJointGetMotorRevol(void *prp){ return &_rkc(prp)->m; }
+static rkMotor *_rkJointRevolGetMotor(void *prp){ return &_rkc(prp)->m; }
 
-static void _rkJointMotorSetInputRevol(void *prp, double *val){
+static void _rkJointRevolMotorSetInput(void *prp, double *val){
   rkMotorSetInput( &_rkc(prp)->m, val );
 }
 
-static void _rkJointMotorInertiaRevol(void *prp, double *val){
+static void _rkJointRevolMotorInertia(void *prp, double *val){
   *val = 0.0;
   rkMotorInertia( &_rkc(prp)->m, val );
 }
 
-static void _rkJointMotorInputTrqRevol(void *prp, double *val){
+static void _rkJointRevolMotorInputTrq(void *prp, double *val){
   *val = 0.0;
   rkMotorInputTrq( &_rkc(prp)->m, val );
 }
 
-static void _rkJointMotorResistanceRevol(void *prp, double *val){
+static void _rkJointRevolMotorResistance(void *prp, double *val){
   *val = 0.0;
   rkMotorRegistance( &_rkc(prp)->m, &_rkc(prp)->dis, &_rkc(prp)->vel, val );
 }
 
-static void _rkJointMotorDrivingTrqRevol(void *prp, double *val){
+static void _rkJointRevolMotorDrivingTrq(void *prp, double *val){
   *val = 0.0;
   rkMotorDrivingTrq( &_rkc(prp)->m, &_rkc(prp)->dis, &_rkc(prp)->vel, &_rkc(prp)->acc, val );
 }
 
 /* ABI */
-static void _rkJointABIAxisInertiaRevol(void *prp, zMat6D *m, zMat h, zMat ih)
+static void _rkJointRevolABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih)
 {
-  _rkJointMotorInertiaRevol( prp, zMatBuf(h) );
+  _rkJointRevolMotorInertia( prp, zMatBuf(h) );
   zMatElemNC(h,0,0) += m->e[1][1].e[2][2];
   if( !zIsTiny( zMatElemNC(h,0,0) ) )
     zMatElemNC(ih,0,0) = 1.0 / zMatElemNC(h,0,0);
@@ -188,7 +188,7 @@ static void _rkJointABIAxisInertiaRevol(void *prp, zMat6D *m, zMat h, zMat ih)
     zMatElemNC(ih,0,0) = 0.0;
 }
 
-static void _rkJointABIAddAbiRevol(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm)
+static void _rkJointRevolABIAddABI(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm)
 {
   zVec6D tmpv, tmpv2;
   zMat6D tmpm;
@@ -202,7 +202,7 @@ static void _rkJointABIAddAbiRevol(void *prp, zMat6D *m, zFrame3D *f, zMat h, zM
   zMat6DAddDRC( pm, &tmpm );
 }
 
-static void _rkJointABIAddBiasRevol(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb)
+static void _rkJointRevolABIAddBias(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb)
 {
   zVec6D tmpv, tmpv2;
 
@@ -216,17 +216,17 @@ static void _rkJointABIAddBiasRevol(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f
   zVec6DAddDRC( pb, &tmpv );
 }
 
-static void _rkJointABIDrivingTorqueRevol(void *prp)
+static void _rkJointRevolABIDrivingTorque(void *prp)
 {
   double val;
 
-  _rkJointMotorInputTrqRevol( prp, &_rkc(prp)->_u );
-  _rkJointMotorResistanceRevol( prp, &val );
+  _rkJointRevolMotorInputTrq( prp, &_rkc(prp)->_u );
+  _rkJointRevolMotorResistance( prp, &val );
   _rkc(prp)->_u -= val;
   _rkc(prp)->_u += _rkc(prp)->tf;
 }
 
-static void _rkJointABIQAccRevol(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc)
+static void _rkJointRevolABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc)
 {
   zVec6D tmpv;
 
@@ -239,14 +239,14 @@ static void _rkJointABIQAccRevol(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, z
 }
 
 /* query joint properties */
-static bool _rkJointQueryFScanRevol(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
+static bool _rkJointRevolQueryFScan(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
 {
   double val;
   rkMotor *mp;
 
   if( strcmp( buf, "dis" ) == 0 ){
     val = zDeg2Rad( zFDouble(fp) );
-    _rkJointSetDisRevol( prp, &val );
+    _rkJointRevolSetDis( prp, &val );
   } else
   if( strcmp( buf, "min" ) == 0 )
     _rkc(prp)->min = zDeg2Rad(zFDouble(fp));
@@ -284,84 +284,89 @@ static bool _rkJointQueryFScanRevol(FILE *fp, char *buf, void *prp, rkMotor *mar
   return true;
 }
 
-static void *_rkJointDisFromZTKRevol(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   double val;
   val = zDeg2Rad( ZTKDouble(ztk) );
-  _rkJointSetDisRevol( prp, &val );
+  _rkJointRevolSetDis( prp, &val );
   return prp;
 }
-static void *_rkJointMinFromZTKRevol(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolMinFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->min = zDeg2Rad(ZTKDouble(ztk));
   return prp;
 }
-static void *_rkJointMaxFromZTKRevol(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolMaxFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->max = zDeg2Rad(ZTKDouble(ztk));
   return prp;
 }
-static void *_rkJointStiffnessFromZTKRevol(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolStiffnessFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->stiffness = ZTKDouble(ztk);
   return prp;
 }
-static void *_rkJointViscosityFromZTKRevol(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolViscosityFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->viscosity = ZTKDouble(ztk);
   return prp;
 }
-static void *_rkJointCoulombFromZTKRevol(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolCoulombFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->coulomb = ZTKDouble(ztk);
   return prp;
 }
-static void *_rkJointStaticFricFromZTKRevol(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolStaticFricFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->sf = ZTKDouble(ztk);
   return prp;
 }
-static void *_rkJointMotorFromZTKRevol(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolMotorFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   rkMotor *mp;
   if( !( mp = rkMotorArrayFind( arg, ZTKVal(ztk) ) ) ) return NULL;
   return rkMotorClone( mp, &_rkc(prp)->m ) ? prp : NULL;
 }
 
-static void _rkJointDisFPrintRevol(FILE *fp, int i, void *prp){
+static void _rkJointRevolDisFPrint(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", zRad2Deg(_rkc(prp)->dis) );
 }
-static void _rkJointMinFPrintRevol(FILE *fp, int i, void *prp){
+static void _rkJointRevolMinFPrint(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", zRad2Deg(_rkc(prp)->min) );
 }
-static void _rkJointMaxFPrintRevol(FILE *fp, int i, void *prp){
+static void _rkJointRevolMaxFPrint(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", zRad2Deg(_rkc(prp)->max) );
 }
-static void _rkJointStiffnessFPrintRevol(FILE *fp, int i, void *prp){
+static void _rkJointRevolStiffnessFPrint(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->stiffness );
 }
-static void _rkJointViscosityFPrintRevol(FILE *fp, int i, void *prp){
+static void _rkJointRevolViscosityFPrint(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->viscosity );
 }
-static void _rkJointCoulombFPrintRevol(FILE *fp, int i, void *prp){
+static void _rkJointRevolCoulombFPrint(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->coulomb );
 }
-static void _rkJointStaticFricFPrintRevol(FILE *fp, int i, void *prp){
+static void _rkJointRevolStaticFricFPrint(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->sf );
 }
-static void _rkJointMotorFPrintRevol(FILE *fp, int i, void *prp){
+static void _rkJointRevolMotorFPrint(FILE *fp, int i, void *prp){
   fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_revol[] = {
-  { "dis", 1, _rkJointDisFromZTKRevol, _rkJointDisFPrintRevol },
-  { "min", 1, _rkJointMinFromZTKRevol, _rkJointMinFPrintRevol },
-  { "max", 1, _rkJointMaxFromZTKRevol, _rkJointMaxFPrintRevol },
-  { "stiffness", 1, _rkJointStiffnessFromZTKRevol, _rkJointStiffnessFPrintRevol },
-  { "viscosity", 1, _rkJointViscosityFromZTKRevol, _rkJointViscosityFPrintRevol },
-  { "coulomb", 1, _rkJointCoulombFromZTKRevol, _rkJointCoulombFPrintRevol },
-  { "staticfriction", 1, _rkJointStaticFricFromZTKRevol, _rkJointStaticFricFPrintRevol },
-  { "motor", 1, _rkJointMotorFromZTKRevol, _rkJointMotorFPrintRevol },
+  { "dis", 1, _rkJointRevolDisFromZTK, _rkJointRevolDisFPrint },
+  { "min", 1, _rkJointRevolMinFromZTK, _rkJointRevolMinFPrint },
+  { "max", 1, _rkJointRevolMaxFromZTK, _rkJointRevolMaxFPrint },
+  { "stiffness", 1, _rkJointRevolStiffnessFromZTK, _rkJointRevolStiffnessFPrint },
+  { "viscosity", 1, _rkJointRevolViscosityFromZTK, _rkJointRevolViscosityFPrint },
+  { "coulomb", 1, _rkJointRevolCoulombFromZTK, _rkJointRevolCoulombFPrint },
+  { "staticfriction", 1, _rkJointRevolStaticFricFromZTK, _rkJointRevolStaticFricFPrint },
+  { "motor", 1, _rkJointRevolMotorFromZTK, _rkJointRevolMotorFPrint },
 };
 
-static void *_rkJointFromZTKRevol(void *prp, rkMotorArray *motorarray, ZTK *ztk)
+static bool _rkJointRevolRegZTK(ZTK *ztk, char *tag)
+{
+  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_revol ) ? true : false;
+}
+
+static void *_rkJointRevolFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 {
   return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_revol );
 }
 
-static void _rkJointFPrintRevol(FILE *fp, void *prp, char *name)
+static void _rkJointRevolFPrint(FILE *fp, void *prp, char *name)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_revol );
 }
@@ -369,60 +374,56 @@ static void _rkJointFPrintRevol(FILE *fp, void *prp, char *name)
 rkJointCom rk_joint_revol = {
   "revolute",
   1,
-  _rkJointInitRevol,
-  _rkJointAllocRevol,
-  _rkJointLimDisRevol,
-  _rkJointSetDisRevol,
-  _rkJointSetVelRevol,
-  _rkJointSetAccRevol,
-  _rkJointSetTrqRevol,
-  _rkJointGetDisRevol,
-  _rkJointGetVelRevol,
-  _rkJointGetAccRevol,
-  _rkJointGetTrqRevol,
-  _rkJointCatDisRevol,
-  _rkJointSubDisRevol,
-  _rkJointSetDisCNTRevol,
-  _rkJointXformRevol,
-  _rkJointIncVelRevol,
-  _rkJointIncAccOnVelRevol,
-  _rkJointIncAccRevol,
-  _rkJointCalcTrqRevol,
-  _rkJointTorsionRevol,
-  _rk_joint_axis_revol_ang,
-  _rk_joint_axis_revol_lin,
+  _rkJointRevolInit,
+  _rkJointRevolAlloc,
+  _rkJointRevolLimDis,
+  _rkJointRevolSetDis,
+  _rkJointRevolSetVel,
+  _rkJointRevolSetAcc,
+  _rkJointRevolSetTrq,
+  _rkJointRevolGetDis,
+  _rkJointRevolGetVel,
+  _rkJointRevolGetAcc,
+  _rkJointRevolGetTrq,
+  _rkJointRevolCatDis,
+  _rkJointRevolSubDis,
+  _rkJointRevolSetDisCNT,
+  _rkJointRevolXform,
+  _rkJointRevolIncVel,
+  _rkJointRevolIncAccOnVel,
+  _rkJointRevolIncAcc,
+  _rkJointRevolCalcTrq,
+  _rkJointRevolTorsion,
+  _rk_joint_revol_axis_ang,
+  _rk_joint_revol_axis_lin,
 
-  _rkJointSetFrictionPivotRevol,
-  _rkJointGetFrictionPivotRevol,
-  _rkJointSetFricRevol,
-  _rkJointGetFricRevol,
-  _rkJointGetSFricRevol,
-  _rkJointGetKFricRevol,
+  _rkJointRevolSetFrictionPivot,
+  _rkJointRevolGetFrictionPivot,
+  _rkJointRevolSetFric,
+  _rkJointRevolGetFric,
+  _rkJointRevolGetSFric,
+  _rkJointRevolGetKFric,
 
-  _rkJointGetMotorRevol,
-  _rkJointMotorSetInputRevol,
-  _rkJointMotorInertiaRevol,
-  _rkJointMotorInputTrqRevol,
-  _rkJointMotorResistanceRevol,
-  _rkJointMotorDrivingTrqRevol,
+  _rkJointRevolGetMotor,
+  _rkJointRevolMotorSetInput,
+  _rkJointRevolMotorInertia,
+  _rkJointRevolMotorInputTrq,
+  _rkJointRevolMotorResistance,
+  _rkJointRevolMotorDrivingTrq,
 
-  _rkJointABIAxisInertiaRevol,
-  _rkJointABIAddAbiRevol,
-  _rkJointABIAddBiasRevol,
-  _rkJointABIDrivingTorqueRevol,
-  _rkJointABIQAccRevol,
+  _rkJointRevolABIAxisInertia,
+  _rkJointRevolABIAddABI,
+  _rkJointRevolABIAddBias,
+  _rkJointRevolABIDrivingTorque,
+  _rkJointRevolABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointQueryFScanRevol,
-  _rkJointDisFromZTKRevol,
-  _rkJointFromZTKRevol,
-  _rkJointDisFPrintRevol,
-  _rkJointFPrintRevol,
+  _rkJointRevolQueryFScan,
+  _rkJointRevolRegZTK,
+  _rkJointRevolDisFromZTK,
+  _rkJointRevolFromZTK,
+  _rkJointRevolDisFPrint,
+  _rkJointRevolFPrint,
 };
-
-bool rkJointRegZTKRevol(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_revol ) ? true : false;
-}
 
 #undef _rkc

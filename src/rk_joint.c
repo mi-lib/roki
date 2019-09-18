@@ -22,22 +22,12 @@ rkJoint *rkJointAssign(rkJoint *j, rkJointCom *com)
 
 rkJoint *rkJointQueryAssign(rkJoint *j, char *str)
 {
-  rkJointCom *com[] = {
-    &rk_joint_fixed,
-    &rk_joint_revol,
-    &rk_joint_prism,
-    &rk_joint_cylin,
-    &rk_joint_hooke,
-    &rk_joint_spher,
-    &rk_joint_float,
-    &rk_joint_brfloat,
-    NULL,
-  };
+  RK_JOINT_COM_ARRAY;
   register int i;
 
-  for( i=0; com[i]; i++ )
-    if( strcmp( com[i]->typestr, str ) == 0 )
-      return rkJointAssign( j, com[i] );
+  for( i=0; _rk_joint_com[i]; i++ )
+    if( strcmp( _rk_joint_com[i]->typestr, str ) == 0 )
+      return rkJointAssign( j, _rk_joint_com[i] );
   return NULL;
 }
 
@@ -106,13 +96,13 @@ zVec3D *_rkJointAxisNull(void *prp, zFrame3D *f, zVec3D *a){
 }
 
 zVec3D *_rkJointAxisZ(void *prp, zFrame3D *f, zVec3D *a){
-  zVec3DCopy( &zFrame3DAtt(f)->e[2], a );
+  zVec3DCopy( &zFrame3DAtt(f)->e[zZ], a );
   return a;
 }
 
 /* joint torsion */
 
-double rkJointTorsionDisRevol(zFrame3D *dev, zVec6D *t)
+double rkJointRevolTorsionDis(zFrame3D *dev, zVec6D *t)
 {
   zMat3D rm;
   zVec3D aa;
@@ -132,7 +122,7 @@ double rkJointTorsionDisRevol(zFrame3D *dev, zVec6D *t)
     + zVec3DAngle( &rm.v[zY], &zFrame3DAtt(dev)->v[zY], &rm.v[zZ] ) );
 }
 
-double rkJointTorsionDisPrism(zFrame3D *dev, zVec6D *t)
+double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t)
 {
   double q;
 
@@ -168,6 +158,16 @@ void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc)
 {
   zMulMat6DVec6D( i, acc, rkJointWrench(j) );
   zVec6DAddDRC( rkJointWrench(j), b );
+}
+
+bool rkJointRegZTK(ZTK *ztk, char *tag)
+{
+  RK_JOINT_COM_ARRAY;
+  register int i;
+
+  for( i=0; _rk_joint_com[i]; i++ )
+    if( !_rk_joint_com[i]->_regZTK( ztk, tag ) ) return false;
+  return true;
 }
 
 rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)

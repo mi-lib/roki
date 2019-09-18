@@ -156,7 +156,7 @@ void _rkLinkABIUpdateBackward(rkLink *link)
   if( !rkLinkParent(link) ) return;
 
   /* add ABI and bias acceleration to parent prp */
-  rkJointABIAddAbi( rkLinkJoint(link), &ap->i, rkLinkAdjFrame( link ), ap->iaxi, &rkLinkABIPrp(rkLinkParent(link))->i );
+  rkJointABIAddABI( rkLinkJoint(link), &ap->i, rkLinkAdjFrame( link ), ap->iaxi, &rkLinkABIPrp(rkLinkParent(link))->i );
   rkJointABIDrivingTorque( rkLinkJoint(link) );
   _rkLinkABIAddBias( link );
 }

@@ -20,17 +20,12 @@ rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com)
 
 rkMotor *rkMotorQueryAssign(rkMotor *m, char *str)
 {
-  rkMotorCom *com[] = {
-    &rk_motor_none,
-    &rk_motor_dc,
-    &rk_motor_trq,
-    NULL,
-  };
+  RK_MOTOR_COM_ARRAY;
   register int i;
 
-  for( i=0; com[i]; i++ )
-    if( strcmp( str, com[i]->typestr ) == 0 )
-      return rkMotorAssign( m, com[i] );
+  for( i=0; _rk_motor_com[i]; i++ )
+    if( strcmp( str, _rk_motor_com[i]->typestr ) == 0 )
+      return rkMotorAssign( m, _rk_motor_com[i] );
   ZRUNERROR( RK_ERR_MOTOR_UNKNOWNTYPE, str );
   return NULL;
 }
@@ -72,9 +67,13 @@ static ZTKPrp __ztk_prp_rkmotor[] = {
 
 bool rkMotorRegZTK(ZTK *ztk)
 {
-  return ZTKDefRegPrp( ztk, ZTK_TAG_RKMOTOR, __ztk_prp_rkmotor ) &&
-         rkMotorRegZTKTrq( ztk, ZTK_TAG_RKMOTOR ) &&
-         rkMotorRegZTKDC( ztk, ZTK_TAG_RKMOTOR );
+  RK_MOTOR_COM_ARRAY;
+  register int i;
+
+  if( !ZTKDefRegPrp( ztk, ZTK_TAG_RKMOTOR, __ztk_prp_rkmotor ) ) return false;
+  for( i=0; _rk_motor_com[i]; i++ )
+    if( !_rk_motor_com[i]->_regZTK( ztk, ZTK_TAG_RKMOTOR ) ) return false;
+  return true;
 }
 
 rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk)

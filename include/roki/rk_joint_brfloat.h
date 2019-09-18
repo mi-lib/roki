@@ -23,11 +23,9 @@ typedef struct{
   zMat3D _att; /* internal matrix */
 
   double ep_f, ep_t; /* threshold to break joint */
-} rkJointPrpBrFloat;
+} rkJointBrFloatPrp;
 
 extern rkJointCom rk_joint_brfloat;
-
-__EXPORT bool rkJointRegZTKBrFloat(ZTK *ztk, char *tag);
 
 __END_DECLS
 

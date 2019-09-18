@@ -32,11 +32,9 @@ typedef struct{
   /* for forward dynamics */
   rkJointFrictionPivot _fp;
   double _u;
-} rkJointPrpRevol;
+} rkJointRevolPrp;
 
 extern rkJointCom rk_joint_revol;
-
-__EXPORT bool rkJointRegZTKRevol(ZTK *ztk, char *tag);
 
 __END_DECLS
 

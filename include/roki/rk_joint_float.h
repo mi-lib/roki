@@ -21,11 +21,9 @@ typedef struct{
   zVec6D dis, vel, acc, trq;
 
   zMat3D _att; /* internal matrix */
-} rkJointPrpFloat;
+} rkJointFloatPrp;
 
 extern rkJointCom rk_joint_float;
-
-__EXPORT bool rkJointRegZTKFloat(ZTK *ztk, char *tag);
 
 __END_DECLS
 

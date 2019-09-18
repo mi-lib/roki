@@ -23,11 +23,9 @@ typedef struct{
 
   /* for forward dynamics */
   double _u[3];
-} rkJointPrpSpher;
+} rkJointSpherPrp;
 
 extern rkJointCom rk_joint_spher;
-
-__EXPORT bool rkJointRegZTKSpher(ZTK *ztk, char *tag);
 
 __END_DECLS
 

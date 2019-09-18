@@ -7,37 +7,40 @@
 
 #include <roki/rk_motor.h>
 
-static void _rkMotorInitNone(void *prp){}
-static void *_rkMotorAllocNone(void){ return NULL; }
-static void _rkMotorCopyNone(void *src, void *dst){}
+static void _rkMotorNoneInit(void *prp){}
+static void *_rkMotorNoneAlloc(void){ return NULL; }
+static void _rkMotorNoneCopy(void *src, void *dst){}
 
-static void _rkMotorSetInputNone(void *prp, double *val){}
+static void _rkMotorNoneSetInput(void *prp, double *val){}
 
-static void _rkMotorInertiaNone(void *prp, double *val){}
-static void _rkMotorInputTrqNone(void *prp, double *val){}
-static void _rkMotorRegistanceNone(void *prp, double *dis, double *vel, double *val){}
-static void _rkMotorDrivingTrqNone(void *prp, double *dis, double *vel, double *acc, double *val){}
+static void _rkMotorNoneInertia(void *prp, double *val){}
+static void _rkMotorNoneInputTrq(void *prp, double *val){}
+static void _rkMotorNoneRegistance(void *prp, double *dis, double *vel, double *val){}
+static void _rkMotorNoneDrivingTrq(void *prp, double *dis, double *vel, double *acc, double *val){}
 
-static bool _rkMotorQueryFScanNone(FILE *fp, char *key, void *prp){
+static bool _rkMotorNoneQueryFScan(FILE *fp, char *key, void *prp){
   return false;
 }
 
-static void *_rkMotorFromZTKNone(void *prp, ZTK *ztk){ return prp; }
+static bool _rkMotorNoneRegZTK(ZTK *ztk, char *tag){ return true; }
 
-static void _rkMotorFPrintNone(FILE *fp, void *prp){}
+static void *_rkMotorNoneFromZTK(void *prp, ZTK *ztk){ return prp; }
+
+static void _rkMotorNoneFPrint(FILE *fp, void *prp){}
 
 rkMotorCom rk_motor_none = {
   "none",
   0,
-  _rkMotorInitNone,
-  _rkMotorAllocNone,
-  _rkMotorCopyNone,
-  _rkMotorSetInputNone,
-  _rkMotorInputTrqNone,
-  _rkMotorInertiaNone,
-  _rkMotorRegistanceNone,
-  _rkMotorDrivingTrqNone,
-  _rkMotorQueryFScanNone,
-  _rkMotorFromZTKNone,
-  _rkMotorFPrintNone,
+  _rkMotorNoneInit,
+  _rkMotorNoneAlloc,
+  _rkMotorNoneCopy,
+  _rkMotorNoneSetInput,
+  _rkMotorNoneInputTrq,
+  _rkMotorNoneInertia,
+  _rkMotorNoneRegistance,
+  _rkMotorNoneDrivingTrq,
+  _rkMotorNoneQueryFScan,
+  _rkMotorNoneRegZTK,
+  _rkMotorNoneFromZTK,
+  _rkMotorNoneFPrint,
 };

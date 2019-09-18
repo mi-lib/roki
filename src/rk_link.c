@@ -454,13 +454,7 @@ static ZTKPrp __ztk_prp_rklink[] = {
 
 bool rkLinkRegZTK(ZTK *ztk)
 {
-  return rkJointRegZTKRevol( ztk, ZTK_TAG_RKLINK ) &&
-         rkJointRegZTKPrism( ztk, ZTK_TAG_RKLINK ) &&
-         rkJointRegZTKCylin( ztk, ZTK_TAG_RKLINK ) &&
-         rkJointRegZTKHooke( ztk, ZTK_TAG_RKLINK ) &&
-         rkJointRegZTKSpher( ztk, ZTK_TAG_RKLINK ) &&
-         rkJointRegZTKFloat( ztk, ZTK_TAG_RKLINK ) &&
-         rkJointRegZTKBrFloat( ztk, ZTK_TAG_RKLINK ) &&
+  return rkJointRegZTK( ztk, ZTK_TAG_RKLINK ) &&
          ZTKDefRegPrp( ztk, ZTK_TAG_RKLINK, __ztk_prp_rklink ) ? true : false;
 }
 

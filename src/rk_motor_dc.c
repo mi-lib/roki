@@ -7,7 +7,7 @@
 
 #include <roki/rk_motor.h>
 
-#define _rkc(p) ((rkMotorPrpDC *)p)
+#define _rkc(p) ((rkMotorDCPrp *)p)
 
 #define RK_MOTOR_DC_DEFAULT_K     2.58e-2
 #define RK_MOTOR_DC_DEFAULT_R     0.42373
@@ -19,7 +19,7 @@
 #define RK_MOTOR_DC_DEFAULT_COMPK 100.0
 #define RK_MOTOR_DC_DEFAULT_COMPL 1.0
 
-static void _rkMotorInitDC(void *prp)
+static void _rkMotorDCInit(void *prp)
 {
   _rkc(prp)->k            = RK_MOTOR_DC_DEFAULT_K;
   _rkc(prp)->admit        = RK_MOTOR_DC_DEFAULT_R;
@@ -34,38 +34,38 @@ static void _rkMotorInitDC(void *prp)
   _rkc(prp)->tf = 0.0;
 }
 
-static void *_rkMotorAllocDC(void){ return zAlloc( rkMotorPrpDC, 1 ); }
+static void *_rkMotorDCAlloc(void){ return zAlloc( rkMotorDCPrp, 1 ); }
 
-static void _rkMotorCopyDC(void *src, void *dst){
-  memcpy( dst, src, sizeof(rkMotorPrpDC) );
+static void _rkMotorDCCopy(void *src, void *dst){
+  memcpy( dst, src, sizeof(rkMotorDCPrp) );
 }
 
-static void _rkMotorSetInputDC(void *prp, double *val){
+static void _rkMotorDCSetInput(void *prp, double *val){
   _rkc(prp)->e = zLimit( *val, _rkc(prp)->minvol, _rkc(prp)->maxvol );
 }
 
-static void _rkMotorInertiaDC(void *prp, double *val){
+static void _rkMotorDCInertia(void *prp, double *val){
   *val = zSqr( _rkc(prp)->decratio ) * ( _rkc(prp)->inertia + _rkc(prp)->inertia_gear );
 }
 
-static void _rkMotorInputTrqDC(void *prp, double *val){
+static void _rkMotorDCInputTrq(void *prp, double *val){
   *val = _rkc(prp)->admit * _rkc(prp)->decratio * _rkc(prp)->k * _rkc(prp)->e;
 }
 
-static void _rkMotorRegistanceDC(void *prp, double *dis, double *vel, double *val){
+static void _rkMotorDCRegistance(void *prp, double *dis, double *vel, double *val){
   *val = _rkc(prp)->admit * zSqr( _rkc(prp)->decratio * _rkc(prp)->k ) * (*vel);
 }
 
-static void _rkMotorDrivingTrqDC(void *prp, double *dis, double *vel, double *acc, double *val){
+static void _rkMotorDCDrivingTrq(void *prp, double *dis, double *vel, double *acc, double *val){
   double temp;
-  _rkMotorInputTrqDC( prp, val );
-  _rkMotorRegistanceDC( prp, dis, vel, &temp );
+  _rkMotorDCInputTrq( prp, val );
+  _rkMotorDCRegistance( prp, dis, vel, &temp );
   *val -= temp;
-  _rkMotorInertiaDC( prp, &temp );
+  _rkMotorDCInertia( prp, &temp );
   *val -= temp * (*acc);
 }
 
-static bool _rkMotorQueryFScanDC(FILE *fp, char *key, void *prp)
+static bool _rkMotorDCQueryFScan(FILE *fp, char *key, void *prp)
 {
   if( strcmp( key, "motorconstant" ) == 0 )
     _rkc(prp)->k = zFDouble( fp );
@@ -169,12 +169,17 @@ static ZTKPrp __ztk_prp_rkmotor_dc[] = {
   { "compl", 1, _rkMotorDCCompLFromZTK, _rkMotorDCCompLFPrint },
 };
 
-static void *_rkMotorFromZTKDC(void *prp, ZTK *ztk)
+static bool _rkMotorDCRegZTK(ZTK *ztk, char *tag)
+{
+  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkmotor_dc );
+}
+
+static void *_rkMotorDCFromZTK(void *prp, ZTK *ztk)
 {
   return ZTKEncodeKey( prp, NULL, ztk, __ztk_prp_rkmotor_dc );
 }
 
-static void _rkMotorFPrintDC(FILE *fp, void *prp)
+static void _rkMotorDCFPrint(FILE *fp, void *prp)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkmotor_dc );
 }
@@ -182,22 +187,18 @@ static void _rkMotorFPrintDC(FILE *fp, void *prp)
 rkMotorCom rk_motor_dc = {
   "dc",
   1,
-  _rkMotorInitDC,
-  _rkMotorAllocDC,
-  _rkMotorCopyDC,
-  _rkMotorSetInputDC,
-  _rkMotorInertiaDC,
-  _rkMotorInputTrqDC,
-  _rkMotorRegistanceDC,
-  _rkMotorDrivingTrqDC,
-  _rkMotorQueryFScanDC,
-  _rkMotorFromZTKDC,
-  _rkMotorFPrintDC,
+  _rkMotorDCInit,
+  _rkMotorDCAlloc,
+  _rkMotorDCCopy,
+  _rkMotorDCSetInput,
+  _rkMotorDCInertia,
+  _rkMotorDCInputTrq,
+  _rkMotorDCRegistance,
+  _rkMotorDCDrivingTrq,
+  _rkMotorDCQueryFScan,
+  _rkMotorDCRegZTK,
+  _rkMotorDCFromZTK,
+  _rkMotorDCFPrint,
 };
-
-bool rkMotorRegZTKDC(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkmotor_dc );
-}
 
 #undef _rkc

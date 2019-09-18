@@ -30,11 +30,9 @@ typedef struct{
   /* for forward dynamics */
   rkJointFrictionPivot _fp;
   double _u;
-} rkJointPrpPrism;
+} rkJointPrismPrp;
 
 extern rkJointCom rk_joint_prism;
-
-__EXPORT bool rkJointRegZTKPrism(ZTK *ztk, char *tag);
 
 __END_DECLS
 

@@ -18,11 +18,9 @@ typedef struct {
   /* properties */
   double min; /*!< \brief minimum input torque */
   double max; /*!< \brief maximum input torque */
-} rkMotorPrpTrq;
+} rkMotorTrqPrp;
 
 extern rkMotorCom rk_motor_trq;
-
-__EXPORT bool rkMotorRegZTKTrq(ZTK *ztk, char *tag);
 
 __END_DECLS
 

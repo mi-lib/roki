@@ -32,6 +32,7 @@ typedef struct{
   void (* _dtrq)(void*,double*,double*,double*,double*); /*!< \brief driving torque */
 
   bool (* _query)(FILE*,char*,void*);
+  bool (* _regZTK)(ZTK*,char*);
   void *(* _fromZTK)(void*,ZTK*);
   void (* _fprint)(FILE*,void*);
 } rkMotorCom;
@@ -91,5 +92,18 @@ __END_DECLS
 #include <roki/rk_motor_none.h> /* for unactuated joints */
 #include <roki/rk_motor_trq.h>  /* direct torque motor */
 #include <roki/rk_motor_dc.h>   /* DC motor */
+
+__BEGIN_DECLS
+
+/* add the handle to the following list when you create a new motor class. */
+#define RK_MOTOR_COM_ARRAY \
+rkMotorCom *_rk_motor_com[] = {\
+  &rk_motor_none,\
+  &rk_motor_dc,\
+  &rk_motor_trq,\
+  NULL,\
+}
+
+__END_DECLS
 
 #endif /* __RK_MOTOR_H__ */

@@ -32,11 +32,9 @@ typedef struct{
   /* forward dynamics */
   rkJointFrictionPivot _fp[2];
   double _u[2];
-} rkJointPrpCylin;
+} rkJointCylinPrp;
 
 extern rkJointCom rk_joint_cylin;
-
-__EXPORT bool rkJointRegZTKCylin(ZTK *ztk, char *tag);
 
 __END_DECLS
 
