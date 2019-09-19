@@ -139,7 +139,7 @@ int main(void)
   zVec q, dq, ddq;
 
   zRandInit();
-  rkChainScanFile( &invpend, "invpend.ztk" );
+  rkChainReadZTK( &invpend, "invpend.ztk" );
   q   = zVecAlloc( rkChainJointSize(&invpend) );
   dq  = zVecAlloc( rkChainJointSize(&invpend) );
   ddq = zVecAlloc( rkChainJointSize(&invpend) );

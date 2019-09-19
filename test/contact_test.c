@@ -25,7 +25,7 @@ void assert_array(void)
   rkContactInfoArray cip;
 
   eprintf( "(duplicate error expected.)\n" );
-  zAssert( rkContactInfoArrayScanZTK, rkContactInfoArrayScanZTK( &cip, "contact" ) );
+  zAssert( rkContactInfoArrayReadZTK, rkContactInfoArrayReadZTK( &cip, "contact" ) );
   zAssert( rkContactInfoArrayAssoc,
     rkContactInfoArrayAssoc( &cip, "stf1", "stf2" ) &&
     rkContactInfoArrayAssoc( &cip, "stf3", "stf4" ) &&
