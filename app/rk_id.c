@@ -91,13 +91,13 @@ bool rk_idCommandArgs(int argc, char *argv[])
     option[RK_ID_SEQFILE].arg  = seqfile;
   }
 
-  if( !rkChainScanFile( &chain, option[RK_ID_CHAINFILE].arg ) ){
+  if( !rkChainReadZTK( &chain, option[RK_ID_CHAINFILE].arg ) ){
     ZOPENERROR( option[RK_ID_CHAINFILE].arg );
     return false;
   }
   if( !rk_idLoadSequence() || !rk_idOpenLogfile() ) return false;
   if( option[RK_ID_INITFILE].flag &&
-      !rkChainInitScanFile( &chain, option[RK_ID_INITFILE].arg ) ){
+      !rkChainInitReadZTK( &chain, option[RK_ID_INITFILE].arg ) ){
     ZOPENERROR( option[RK_ID_INITFILE].arg );
     return false;
   }

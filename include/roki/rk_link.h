@@ -372,9 +372,7 @@ zArrayClass( rkLinkArray, rkLink );
 
 /*! \brief scan and print link properties.
  *
- * rkLinkFScan() scans properties of a link \a l from the
- * current position of a file \a fp. An acceptable keywords
- * and their meanings are as follows.
+ * An acceptable keywords and their meanings are as follows.
  *
  *  name: <name>
  *   link name.
@@ -416,9 +414,8 @@ zArrayClass( rkLinkArray, rkLink );
  * 3. non-existing shape name is specified.
  * 4. link name is not defined.
  *
- * rkLinkFPrint() prints out properties of a link \a l to
+ * rkLinkFPrintZTK() prints out properties of a link \a l to
  * the current position of a file \a fp in the above format.
- * rkLinkPrint() prints the result out to the standard output.
  *
  * rkLinkPostureFPrint() prints out the posture of a link \a l
  * in the adjacent and world frames to the current position
@@ -439,17 +436,14 @@ zArrayClass( rkLinkArray, rkLink );
  * rkLinkFScan() returns a pointer \a l if succeeding, or the
  * null pointer otherwise.
  *
- * rkLinkFPrint(), rkLinkPrint(), rkLinkPostureFPrint(),
+ * rkLinkFPrintZTK(), rkLinkPostureFPrint(),
  * rkLinkPosturePrint(), rkLinkConnectionFPrint(),
  * rkLinkConnectionPrint(), rkLinkExtForceFPrint() and
  * rkLinkExtForcePrint() return no values.
  */
-__EXPORT rkLink *rkLinkFScan(FILE *fp, rkLink *l, rkLink *larray, int nl, zShape3D *sarray, int ns, rkMotor *marray, int nm);
-
 __EXPORT bool rkLinkRegZTK(ZTK *ztk);
 __EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk);
-__EXPORT void rkLinkFPrint(FILE *fp, rkLink *l);
-#define rkLinkPrint(l) rkLinkFPrint( stdout, (l) )
+__EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *l);
 
 __EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *l);
 __EXPORT void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n);

@@ -252,57 +252,6 @@ static void _rkJointHookeABIDrivingTorque(void *prp){
 
 static void _rkJointHookeABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){}
 
-/* query joint properties */
-static bool _rkJointHookeQueryFScan(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm)
-{
-  rkMotor *mp;
-
-  if( strcmp( buf, "dis" ) == 0 ){
-    _rkJointHookeSetDis1( prp, 0, zDeg2Rad(zFDouble(fp)) );
-    _rkJointHookeSetDis1( prp, 1, zDeg2Rad(zFDouble(fp)) );
-  } else
-  if( strcmp( buf, "min" ) == 0 ){
-    _rkc(prp)->min[0] = zDeg2Rad(zFDouble(fp));
-    _rkc(prp)->min[1] = zDeg2Rad(zFDouble(fp));
-  } else
-  if( strcmp( buf, "max" ) == 0 ){
-    _rkc(prp)->max[0] = zDeg2Rad(zFDouble(fp));
-    _rkc(prp)->max[1] = zDeg2Rad(zFDouble(fp));
-  } else
-  if( strcmp( buf, "stiffness" ) == 0 ){
-    _rkc(prp)->stiffness[0] = zFDouble(fp);
-    _rkc(prp)->stiffness[1] = zFDouble(fp);
-  } else
-  if( strcmp( buf, "viscosity" ) == 0 ){
-    _rkc(prp)->viscosity[0] = zFDouble(fp);
-    _rkc(prp)->viscosity[1] = zFDouble(fp);
-  } else
-  if( strcmp( buf, "coulomb" ) == 0 ){
-    _rkc(prp)->coulomb[0] = zFDouble(fp);
-    _rkc(prp)->coulomb[1] = zFDouble(fp);
-  } else
-  if( strcmp( buf, "staticfriction" ) == 0 ){
-    _rkc(prp)->sf[0] = zFDouble(fp);
-    _rkc(prp)->sf[1] = zFDouble(fp);
-  }
-  if( strcmp( buf, "motor" ) == 0 ){
-    zFToken( fp, buf, BUFSIZ );
-    zNameFind( marray, nm, buf, mp );
-    if( !mp ){
-      ZRUNERROR( RK_ERR_MOTOR_UNKNOWN, buf );
-      return true;
-    }
-    if( rkMotorSize(mp) != 2 ){
-      ZRUNERROR( RK_ERR_JOINT_SIZMISMATCH );
-      return true;
-    }
-    rkMotorClone( mp, &_rkc(prp)->m );
-  } else
-  if( !rkMotorQueryFScan( fp, buf, &_rkc(prp)->m ) )
-    return false;
-  return true;
-}
-
 static void *_rkJointHookeDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkJointHookeSetDis1( prp, 0, zDeg2Rad(ZTKDouble(ztk)) );
   _rkJointHookeSetDis1( prp, 1, zDeg2Rad(ZTKDouble(ztk)) );
@@ -344,40 +293,40 @@ static void *_rkJointHookeMotorFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   return rkMotorClone( mp, &_rkc(prp)->m ) ? prp : NULL;
 }
 
-static void _rkJointHookeDisFPrint(FILE *fp, int i, void *prp){
+static void _rkJointHookeDisFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g %.10g\n", zRad2Deg(_rkc(prp)->dis[0]), zRad2Deg(_rkc(prp)->dis[1]) );
 }
-static void _rkJointHookeMinFPrint(FILE *fp, int i, void *prp){
+static void _rkJointHookeMinFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g %.10g\n", zRad2Deg(_rkc(prp)->min[0]), zRad2Deg(_rkc(prp)->min[1]) );
 }
-static void _rkJointHookeMaxFPrint(FILE *fp, int i, void *prp){
+static void _rkJointHookeMaxFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g %.10g\n", zRad2Deg(_rkc(prp)->max[0]), zRad2Deg(_rkc(prp)->max[1]) );
 }
-static void _rkJointHookeStiffnessFPrint(FILE *fp, int i, void *prp){
+static void _rkJointHookeStiffnessFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g %.10g\n", _rkc(prp)->stiffness[0], _rkc(prp)->stiffness[1] );
 }
-static void _rkJointHookeViscosityFPrint(FILE *fp, int i, void *prp){
+static void _rkJointHookeViscosityFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g %.10g\n", _rkc(prp)->viscosity[0], _rkc(prp)->viscosity[1] );
 }
-static void _rkJointHookeCoulombFPrint(FILE *fp, int i, void *prp){
+static void _rkJointHookeCoulombFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g %.10g\n", _rkc(prp)->coulomb[0], _rkc(prp)->coulomb[1] );
 }
-static void _rkJointHookeStaticFrictionFPrint(FILE *fp, int i, void *prp){
+static void _rkJointHookeStaticFrictionFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g %.10g\n", _rkc(prp)->sf[0], _rkc(prp)->sf[1] );
 }
-static void _rkJointHookeMotorFPrint(FILE *fp, int i, void *prp){
+static void _rkJointHookeMotorFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_hooke[] = {
-  { "dis", 1, _rkJointHookeDisFromZTK, _rkJointHookeDisFPrint },
-  { "min", 1, _rkJointHookeMinFromZTK, _rkJointHookeMinFPrint },
-  { "max", 1, _rkJointHookeMaxFromZTK, _rkJointHookeMaxFPrint },
-  { "stiffness", 1, _rkJointHookeStiffnessFromZTK, _rkJointHookeStiffnessFPrint },
-  { "viscosity", 1, _rkJointHookeViscosityFromZTK, _rkJointHookeViscosityFPrint },
-  { "coulomb", 1, _rkJointHookeCoulombFromZTK, _rkJointHookeCoulombFPrint },
-  { "staticfriction", 1, _rkJointHookeStaticFrictionFromZTK, _rkJointHookeStaticFrictionFPrint },
-  { "motor", 1, _rkJointHookeMotorFromZTK, _rkJointHookeMotorFPrint },
+  { "dis", 1, _rkJointHookeDisFromZTK, _rkJointHookeDisFPrintZTK },
+  { "min", 1, _rkJointHookeMinFromZTK, _rkJointHookeMinFPrintZTK },
+  { "max", 1, _rkJointHookeMaxFromZTK, _rkJointHookeMaxFPrintZTK },
+  { "stiffness", 1, _rkJointHookeStiffnessFromZTK, _rkJointHookeStiffnessFPrintZTK },
+  { "viscosity", 1, _rkJointHookeViscosityFromZTK, _rkJointHookeViscosityFPrintZTK },
+  { "coulomb", 1, _rkJointHookeCoulombFromZTK, _rkJointHookeCoulombFPrintZTK },
+  { "staticfriction", 1, _rkJointHookeStaticFrictionFromZTK, _rkJointHookeStaticFrictionFPrintZTK },
+  { "motor", 1, _rkJointHookeMotorFromZTK, _rkJointHookeMotorFPrintZTK },
 };
 
 static bool _rkJointHookeRegZTK(ZTK *ztk, char *tag)
@@ -390,7 +339,7 @@ static void *_rkJointHookeFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
   return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_hooke );
 }
 
-static void _rkJointHookeFPrint(FILE *fp, void *prp, char *name)
+static void _rkJointHookeFPrintZTK(FILE *fp, void *prp, char *name)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_hooke );
 }
@@ -442,12 +391,11 @@ rkJointCom rk_joint_hooke = {
   _rkJointHookeABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointHookeQueryFScan,
   _rkJointHookeRegZTK,
   _rkJointHookeDisFromZTK,
   _rkJointHookeFromZTK,
-  _rkJointHookeDisFPrint,
-  _rkJointHookeFPrint,
+  _rkJointHookeDisFPrintZTK,
+  _rkJointHookeFPrintZTK,
 };
 
 #undef _rkc

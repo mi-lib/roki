@@ -20,7 +20,7 @@ bool chain2mshapeConvert(rkChain *chain, char basename[])
   }
   for( i=0; i<zMShape3DOpticNum(rkChainShape(chain)); i++ ){
     fprintf( fp, "[optic]\n" );
-    zOpticalInfoFPrint( fp, zMShape3DOptic(rkChainShape(chain),i) );
+    zOpticalInfoFPrintZTK( fp, zMShape3DOptic(rkChainShape(chain),i) );
   }
   for( i=0; i<rkChainNum(chain); i++ ){
     l = rkChainLink(chain,i);
@@ -28,7 +28,7 @@ bool chain2mshapeConvert(rkChain *chain, char basename[])
       zShape3DClone( sc->data, &s, zShape3DOptic(sc->data) );
       zShape3DXform( sc->data, rkChainLinkWldFrame(chain,i), &s );
       fprintf( fp, "[shape]\n" );
-      zShape3DFPrint( fp, &s );
+      zShape3DFPrintZTK( fp, &s );
       zShape3DDestroy( &s );
     }
   }
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
   char basename[BUFSIZ];
 
   if( argc == 1 ) chain2mshapeUsage( argv[0] );
-  if( !rkChainScanFile( &chain, argv[1] ) )
+  if( !rkChainReadZTK( &chain, argv[1] ) )
     return EXIT_FAILURE;
   zGetBasename( argv[1], basename, BUFSIZ );
   chain2mshapeConvert( &chain, basename );

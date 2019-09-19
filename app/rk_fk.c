@@ -85,7 +85,7 @@ FILE *rk_fkCommandArgs(int argc, char *argv[])
     option[RK_FK_SEQFILE].arg  = seqfile;
   }
 
-  if( !rkChainScanFile( &chain, option[RK_FK_CHAINFILE].arg ) ){
+  if( !rkChainReadZTK( &chain, option[RK_FK_CHAINFILE].arg ) ){
     ZOPENERROR( option[RK_FK_CHAINFILE].arg );
     return NULL;
   }
@@ -97,7 +97,7 @@ FILE *rk_fkCommandArgs(int argc, char *argv[])
   if( !rk_fkLoadSequence() ||
       !( fp = rk_fkOpenLogfile( option[RK_FK_LINKNAME].arg ) ) ) return NULL;
   if( option[RK_FK_INITFILE].flag &&
-      !rkChainInitScanFile( &chain, option[RK_FK_INITFILE].arg ) ){
+      !rkChainInitReadZTK( &chain, option[RK_FK_INITFILE].arg ) ){
     ZOPENERROR( option[RK_FK_INITFILE].arg );
     return NULL;
   }

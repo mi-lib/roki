@@ -219,17 +219,6 @@ static void _rkJointFloatABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, z
   zMulMat3DVec6D( &_rkc(prp)->_att, &tmpv, &_rkc(prp)->acc );
 }
 
-/* query joint properties */
-static bool _rkJointFloatQueryFScan(FILE *fp, char *buf, void *prp, rkMotor *marray, int nm){
-  zVec6D dis;
-  if( strcmp( buf, "dis" ) == 0 ){
-    zVec6DFScan( fp, &dis );
-    _rkJointFloatSetDis( prp, dis.e );
-    return true;
-  }
-  return false;
-}
-
 static void *_rkJointFloatDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   zVec6D dis;
   zVec6DFromZTK( &dis, ztk );
@@ -237,12 +226,12 @@ static void *_rkJointFloatDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   return prp;
 }
 
-static void _rkJointFloatDisFPrint(FILE *fp, int i, void *prp){
+static void _rkJointFloatDisFPrintZTK(FILE *fp, int i, void *prp){
   zVec6DDataNLFPrint( fp, &_rkc(prp)->dis );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_float[] = {
-  { "dis", 1, _rkJointFloatDisFromZTK, _rkJointFloatDisFPrint },
+  { "dis", 1, _rkJointFloatDisFromZTK, _rkJointFloatDisFPrintZTK },
 };
 
 static bool _rkJointFloatRegZTK(ZTK *ztk, char *tag)
@@ -255,7 +244,7 @@ static void *_rkJointFloatFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
   return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_float );
 }
 
-static void _rkJointFloatFPrint(FILE *fp, void *prp, char *name)
+static void _rkJointFloatFPrintZTK(FILE *fp, void *prp, char *name)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_float );
 }
@@ -307,12 +296,11 @@ rkJointCom rk_joint_float = {
   _rkJointFloatABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointFloatQueryFScan,
   _rkJointFloatRegZTK,
   _rkJointFloatDisFromZTK,
   _rkJointFloatFromZTK,
-  _rkJointFloatDisFPrint,
-  _rkJointFloatFPrint,
+  _rkJointFloatDisFPrintZTK,
+  _rkJointFloatFPrintZTK,
 };
 
 #undef _rkc

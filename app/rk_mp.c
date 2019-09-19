@@ -63,7 +63,7 @@ bool rk_mpCommandArgs(int argc, char *argv[])
     option[RK_MP_VFILE].flag = true;
     option[RK_MP_VFILE].arg  = vfile;
   }
-  if( !rkChainScanFile( &chain, option[RK_MP_MFILE].arg ) )
+  if( !rkChainReadZTK( &chain, option[RK_MP_MFILE].arg ) )
     return 1;
   if( option[RK_MP_VFILE].flag )
     if( !rk_mpInitFK( &chain ) ) return 1;

@@ -98,11 +98,11 @@ __EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *
 
 #define ZTK_TAG_RKCONTACTINFO "contact"
 
-/*! \brief scan and print information of a contact model.
+/*! \brief print information of a contact model out to the current position of a ZTK file.
  *
- * rkContactInfoFScan() scans information of a contact model
- * from the current position of a file \a fp, and copies them
- * to \a ci. An acceptable data file format is as follows.
+ * rkContactInfoFPrint() prints information of a contact
+ * model \a ci out to the current position of a file \a fp.
+ * An acceptable data file format is as follows.
  *
  *  staticfriction   <value>  <- static friction coefficient
  *  kineticfriction  <value>  <- kinetic friction coefficient
@@ -117,25 +117,10 @@ __EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *
  * found, the type is set for 'elastic'.
  * If any inconsistency exists, the last found keyword has
  * priority. kineticfriction is common for the two groups.
- *
- * rkContactInfoScan() scans information of a contact model
- * from the standard input and copies them to \a ci.
- *
- * rkContactInfoFPrint() prints information of a contact
- * model \a ci out to the current position of a file \a fp.
- *
- * rkContactInfoPrint() prints information of a contact
- * model \a ci out to the standard output.
  * \return
- * rkContactInfoFScan() and rkContactInfoScan() return a pointer
- * to \a ci.
- *
- * rkContactInfoFPrint() and rkContactInfoPrint() return no value.
+ * rkContactInfoFPrintZTK() returns no value.
  */
-__EXPORT rkContactInfo *rkContactInfoFScan(FILE *fp, rkContactInfo *ci);
-#define rkContactInfoScan(c) rkContactInfoFScan( stdin, (c) )
-__EXPORT void rkContactInfoFPrint(FILE *fp, rkContactInfo *ci);
-#define rkContactInfoPrint(c) rkContactInfoFPrint( stdout, (c) )
+__EXPORT void rkContactInfoFPrintZTK(FILE *fp, rkContactInfo *ci);
 
 /* ********************************************************** */
 /* CLASS: rkContactInfoArray
@@ -165,47 +150,17 @@ __EXPORT void rkContactInfoArrayDestroy(rkContactInfoArray *ci);
 __EXPORT rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *ci, char *stf1, char *stf2);
 __EXPORT rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *ci, char *stf1, char *stf2, char type);
 
-/*! \brief scan and print contact information array.
- *
- * rkContactInfoArrayScanFile() scans a file \a filename and
- * creates a new contact information array \a ci.
- * rkContactInfoArrayFScan() and rkContactInfoArrayFScan() scan
- * information from the current position of a file \a fp, and
- * the standard input, respectively.
- *
- * An acceptable data file for these functions should contain
- * at least one contact information set in .ztk format, tagged
- * by [contact].
- * See also rkContactInfoFScan().
- *
- * rkContactInfoArrayPrintFile() prints information of \a ci
- * out to a file \a filename.
- * rkContactInfoArrayFPrint() and rkContactInfoArrayPrint() print
- * information of \a ci out to the current position of a file
- * \a fp and the standard output, respectively, in the same
- * format with rkContactInfoArrayPrintFile().
- * \return
- * rkContactInfoArrayScanFile() and rkContactInfoArrayPrintFile()
- * return a boolean according to whether the operation succeeds
- * or not.
- *
- * rkContactInfoArrayFScan() family returns a pointer \a ci, while
- * rkContactInfoArrayFPrint() family returns no value.
- * \sa
- * rkContactInfoFScan
- */
-__EXPORT bool rkContactInfoArrayScanFile(rkContactInfoArray *ci, char filename[]);
-__EXPORT rkContactInfoArray *rkContactInfoArrayFScan(FILE *fp, rkContactInfoArray *ci);
-#define rkContactInfoArrayScan(c) rkContactInfoArrayFScan( stdin, (c) )
-
 /* ZTK */
 
+/* scan contact information array from a ZTK format processor. */
 __EXPORT rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *ztk);
-__EXPORT rkContactInfoArray *rkContactInfoArrayScanZTK(rkContactInfoArray *carray, char filename[]);
+/* print contact information array out to the current position of a ZTK format file. */
+__EXPORT void rkContactInfoArrayFPrintZTK(FILE *fp, rkContactInfoArray *ci);
 
-__EXPORT bool rkContactInfoArrayPrintZTK(rkContactInfoArray *ci, char filename[]);
-__EXPORT void rkContactInfoArrayFPrint(FILE *fp, rkContactInfoArray *ci);
-#define rkContactInfoArrayPrint(c) rkContactInfoArrayFPrint( stdout, (c) )
+/* read contact information array from a ZTK file. */
+__EXPORT rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, char filename[]);
+/* write contact information array to a ZTK file. */
+__EXPORT bool rkContactInfoArrayWriteZTK(rkContactInfoArray *ci, char filename[]);
 
 __END_DECLS
 

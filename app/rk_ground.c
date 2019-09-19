@@ -33,6 +33,6 @@ int main(int argc, char *argv[])
   c = 2 * zeta * sqrt( k * mass );
 
   rkContactInfoElasticCreate( &ci, k, c, ms, mu, NULL, NULL );
-  rkContactInfoPrint( &ci );
+  rkContactInfoFPrintZTK( stdout, &ci );
   return 0;
 }

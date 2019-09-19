@@ -428,14 +428,7 @@ static struct _rkIKLookup{
   { NULL, NULL },
 };
 
-static struct _rkIKLookup *_rkIKLookupCell(char *str);
-static bool _rkIKConfFieldIsTerminated(FILE *fp, char *buf);
-static bool _rkIKConfParseJoint(FILE *fp, char *buf, rkIK *ik);
-static bool _rkIKConfParseConstraint(FILE *fp, char *buf, rkChain *chain, rkIKCellAttr *attr, int *mask);
-static bool __rkIKConfFScan(FILE *fp, void *instance, char *buf, bool *success);
-static bool _rkIKConfFScan(FILE *fp, void *instance, char *buf, bool *success);
-
-struct _rkIKLookup *_rkIKLookupCell(char *str)
+static struct _rkIKLookup *_rkIKLookupCell(char *str)
 {
   struct _rkIKLookup *lookup;
 
@@ -443,130 +436,6 @@ struct _rkIKLookup *_rkIKLookupCell(char *str)
     if( strcmp( str, lookup->str ) == 0 ) return lookup;
   ZRUNERROR( RK_ERR_IK_UNKNOWN, str );
   return NULL;
-}
-
-bool _rkIKConfFieldIsTerminated(FILE *fp, char *buf)
-{
-  long cur;
-  bool ret = false;
-
-  cur = ftell( fp );
-  if( !zFToken( fp, buf, BUFSIZ ) ) return true;
-  if( zTokenIsTag( buf ) ||
-      strcmp( buf, "joint" ) == 0 ||
-      strcmp( buf, "constraint" ) == 0 ){
-    ret = true;
-  }
-  fseek( fp, cur, SEEK_SET );
-  return ret;
-}
-
-bool _rkIKConfParseJoint(FILE *fp, char *buf, rkIK *ik)
-{
-  rkLink *l;
-  double w = RK_IK_JOINT_WEIGHT_DEFAULT;
-
-  zFToken( fp, buf, BUFSIZ );
-  if( strcmp( buf, "all" ) == 0 ){
-    if( !_rkIKConfFieldIsTerminated( fp, buf ) )
-      w = zFDouble( fp );
-    return rkIKJointRegAll( ik, w );
-  }
-  zNameFind( rkChainRoot(ik->chain), rkChainNum(ik->chain), buf, l );
-  if( !l ){
-    ZRUNERROR( RK_ERR_LINK_UNKNOWN, buf );
-    return false;
-  }
-  if( !_rkIKConfFieldIsTerminated( fp, buf ) )
-    w = zFDouble( fp );
-  if( w == 0 ){
-    rkJointQueryFScan( fp, "dis", rkLinkJoint(l), NULL, 0 );
-    return true;
-  } else
-    return rkLinkJointSize(l) > 0 ? rkIKJointReg( ik, l - rkChainRoot(ik->chain), w ) : false;
-}
-
-bool _rkIKConfParseConstraint(FILE *fp, char *buf, rkChain *chain, rkIKCellAttr *attr, int *mask)
-{
-  rkLink *l;
-  int linknum = 0;
-
-  *mask = RK_IK_CELL_ATTR_NONE;
-  while( !_rkIKConfFieldIsTerminated( fp, buf ) ){
-    zFToken( fp, buf, BUFSIZ );
-    if( strcmp( buf, "at" ) == 0 ){
-      zVec3DFScan( fp, &attr->ap );
-      *mask |= RK_IK_CELL_ATTR_AP;
-    } else
-    if( strcmp( buf, "w" ) == 0 ){
-      zVec3DFScan( fp, &attr->w );
-      *mask |= RK_IK_CELL_ATTR_WEIGHT;
-    } else
-    if( strcmp( buf, "f" ) == 0 ){
-      *mask |= RK_IK_CELL_ATTR_FORCE;
-    } else{
-      zNameFind( rkChainRoot(chain), rkChainNum(chain), buf, l );
-      if( !l ){
-        ZRUNERROR( RK_ERR_LINK_UNKNOWN, buf );
-        return false;
-      }
-      if( linknum++ == 0 ){
-        attr->id = l - rkChainRoot(chain);
-        *mask |= RK_IK_CELL_ATTR_ID;
-      } else{
-        attr->id_sub = l - rkChainRoot(chain);
-        *mask |= RK_IK_CELL_ATTR_ID_SUB;
-      }
-    }
-  }
-  return true;
-}
-
-bool __rkIKConfFScan(FILE *fp, void *instance, char *buf, bool *success)
-{
-  rkIKCellAttr attr;
-  int mask;
-  struct _rkIKLookup *lookup;
-
-  if( strcmp( buf, "joint" ) == 0 )
-    return _rkIKConfParseJoint( fp, buf, instance );
-  if( strcmp( buf, "constraint" ) == 0 ){
-    zFToken( fp, buf, BUFSIZ );
-    if( !( lookup = _rkIKLookupCell( buf ) ) ) return false;
-    _rkIKConfParseConstraint( fp, buf, ((rkIK *)instance)->chain, &attr, &mask );
-    return lookup->ik_cell_reg( instance, &attr, mask ) ? true : false;
-  }
-  return false;
-}
-
-bool _rkIKConfFScan(FILE *fp, void *instance, char *buf, bool *success)
-{
-  if( strcmp( buf, "ik" ) == 0 )
-    return zFieldFScan( fp, __rkIKConfFScan, instance );
-  return true;
-}
-
-/* scan information of IK configuration from a file. */
-bool rkIKConfFScan(FILE *fp, rkIK *ik, rkChain *chain)
-{
-  if( !rkIKCreate( ik, chain ) ) return false;
-  rewind( fp );
-  return zTagFScan( fp, _rkIKConfFScan, ik );
-}
-
-/* scan information of IK configuration from a file. */
-bool rkIKConfScanFile(rkIK *ik, rkChain *chain, char *filename)
-{
-  FILE *fp;
-  bool result;
-
-  if( !( fp = zOpenZTKFile( filename, "r" ) ) ){
-    ZOPENERROR( filename );
-    return false;
-  }
-  result = rkIKConfFScan( fp, ik, chain );
-  fclose( fp );
-  return result;
 }
 
 /* ZTK */
@@ -641,7 +510,7 @@ static ZTKPrp __ztk_prp_rkik[] = {
 
 static void *_rkIKFromZTK(void *obj, int i, void *arg, ZTK *ztk)
 {
-  if( !ZTKEncodeKey( obj, NULL, ztk, __ztk_prp_rkik ) ) return NULL;
+  if( !ZTKEvalKey( obj, NULL, ztk, __ztk_prp_rkik ) ) return NULL;
   return obj;
 }
 
@@ -651,11 +520,11 @@ static ZTKPrp __ztk_prp_tag_rkik[] = {
 
 rkIK *rkIKConfFromZTK(rkIK *ik, ZTK *ztk)
 {
-  ZTKEncodeTag( ik, NULL, ztk, __ztk_prp_tag_rkik );
+  ZTKEvalTag( ik, NULL, ztk, __ztk_prp_tag_rkik );
   return ik;
 }
 
-rkIK *rkIKConfScanZTK(rkIK *ik, rkChain *chain, char filename[])
+rkIK *rkIKConfReadZTK(rkIK *ik, rkChain *chain, char filename[])
 {
   ZTK ztk;
 

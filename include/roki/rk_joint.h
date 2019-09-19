@@ -82,12 +82,11 @@ typedef struct{
   void (*_wrench)(struct _rkJoint*,zMat6D*,zVec6D*,zVec6D*);
 
   /* I/O */
-  bool (*_query)(FILE*,char*,void*,rkMotor*,int);  /* query */
   bool (*_regZTK)(ZTK*,char*);
   void *(*_dis_fromZTK)(void*,int,void*,ZTK*);
   void *(*_fromZTK)(void*,rkMotorArray*,ZTK*);
-  void (*_dis_fprint)(FILE*,int,void*);
-  void (*_fprint)(FILE*,void*,char*);  /* print */
+  void (*_dis_fprintZTK)(FILE*,int,void*);
+  void (*_fprintZTK)(FILE*,void*,char*);  /* print */
 } rkJointCom;
 
 typedef struct _rkJoint{
@@ -279,9 +278,6 @@ __EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc
 
 /*! \brief scan and print out joint displacement and properties.
  *
- * rkJointQueryFScan() scans joint properties of \a j identified
- * by a string \a key from the current position of a file \a fp.
- *
  * The candidates of \a key are listed as follows:
  *  "jointtype" for joint type. Refer rkJointTypeByStr().
  *  "dis" for the initial joint displacement.
@@ -295,39 +291,24 @@ __EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc
  * joint type, and hence, the joint type has to be identified
  * first of all.
  *
- * Values are internally held in meter for linear displacements
- * or in radian for angular displacements. Angular displacements
- * are converted to values in degree when denoted in files for
- * easier estimation. These functions automatically choose the
- * input and output unit for each value according to the joint
- * type of \a j.
- * Examples: For \a j as a cylindric joint, two values are
- * denoted in [m] and [deg] when values are displacements, or
- * in [N/m] and [N.m/deg] when values are stiffnesses.
- *
- * rkJointFPrint() prints the joint properties out to a file
+ * rkJointFPrintZTK() prints the joint properties out to a file
  * \a fp in accordance with the above rule. The field "dis" is
  * output only when any components of the joint displacement
  * are non-zero values.
  * \a name is used instead of the key "dis", unless it is the
  * null pointer.
  * \return
- * rkJointQueryFScan() returns the true value when \a key is
- * valid, or the false value otherwise.
- *
- * rkJointFPrint() and rkJointPrint() return no value.
+ * rkJointFPrintZTK() returns no value.
  */
-#define rkJointQueryFScan(f,b,j,ma,mn) (j)->com->_query( f, b, (j)->prp, (ma), (mn) )
-
-#define rkJointFPrint(f,j,n) ( (n) ? (j)->com->_fprint( f, (j)->prp, n ) : (j)->com->_fprint( f, (j)->prp, "dis" ) )
-#define rkJointPrint(j,n)    rkJointFPrint( stdout, j, n )
 
 #define rkJointPrpFromZTK(prp,motorarray,ztk,ztkprp) \
-  ( ZTKEncodeKey( prp, motorarray, ztk, ztkprp ) ? prp : NULL )
+  ( ZTKEvalKey( prp, motorarray, ztk, ztkprp ) ? prp : NULL )
 
 __EXPORT bool rkJointRegZTK(ZTK *ztk, char *tag);
 
 __EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk);
+
+#define rkJointFPrintZTK(f,j,n) ( (n) ? (j)->com->_fprintZTK( f, (j)->prp, n ) : (j)->com->_fprintZTK( f, (j)->prp, "dis" ) )
 
 __END_DECLS
 

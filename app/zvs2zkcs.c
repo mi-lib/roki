@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
   if( argc < 3 ) usage();
 
-  rkChainScanFile( &chain, argv[1] );
+  rkChainReadZTK( &chain, argv[1] );
   if( !( conf = zVecAlloc( rkChainNum(&chain) * 6 ) ) ){
     ZALLOCERROR();
     return 1;

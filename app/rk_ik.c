@@ -61,8 +61,8 @@ FILE *rk_ik_command_args(int argc, char *argv[])
     option[RK_IK_OUTPUTFILE].arg  = outputfile;
   }
 
-  if( !rkChainScanFile( &chain, option[RK_IK_MODELFILE].arg ) ) exit( 1 );
-  if( !rkIKConfScanFile( &ik, &chain, option[RK_IK_CONFFILE].arg ) ) exit( 1 );
+  if( !rkChainReadZTK( &chain, option[RK_IK_MODELFILE].arg ) ) exit( 1 );
+  if( !rkIKConfReadZTK( &ik, &chain, option[RK_IK_CONFFILE].arg ) ) exit( 1 );
   if( option[RK_IK_ENTRYFILE].flag )
     rkIKSeqScanFile( &ik_seq, option[RK_IK_ENTRYFILE].arg );
   else

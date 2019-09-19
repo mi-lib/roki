@@ -84,18 +84,13 @@ static void _rkJointFixedABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, z
   zVec6DCopy( jac, acc );
 }
 
-/* query joint properties */
-static bool _rkJointFixedQueryFScan(FILE *fp, char *key, void *prp, rkMotor *marray, int nm){
-  return false;
-}
-
 static bool _rkJointFixedRegZTK(ZTK *ztk, char *tag){ return true; }
 
 static void *_rkJointFixedFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk){
   return prp;
 }
 
-static void _rkJointFixedFPrint(FILE *fp, void *prp, char *name){}
+static void _rkJointFixedFPrintZTK(FILE *fp, void *prp, char *name){}
 
 rkJointCom rk_joint_fixed = {
   "fix",
@@ -144,10 +139,9 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointFixedQueryFScan,
   _rkJointFixedRegZTK,
   NULL,
   _rkJointFixedFromZTK,
   NULL,
-  _rkJointFixedFPrint,
+  _rkJointFixedFPrintZTK,
 };

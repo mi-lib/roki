@@ -229,17 +229,12 @@ __EXPORT int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter);
 
 #define RK_IK_JOINT_WEIGHT_DEFAULT 0.001
 
-/*! \brief scan IK configuration file. */
-__EXPORT bool rkIKConfFScan(FILE *fp, rkIK *ik, rkChain *chain);
-/*! \brief scan IK configuration from the current position of a file. */
-__EXPORT bool rkIKConfScanFile(rkIK *ik, rkChain *chain, char *filename);
-
 /* ZTK */
 
 #define ZTK_TAG_RKIK "ik"
 
 __EXPORT rkIK *rkIKConfFromZTK(rkIK *ik, ZTK *ztk);
-__EXPORT rkIK *rkIKConfScanZTK(rkIK *ik, rkChain *chain, char filename[]);
+__EXPORT rkIK *rkIKConfReadZTK(rkIK *ik, rkChain *chain, char filename[]);
 
 __END_DECLS
 

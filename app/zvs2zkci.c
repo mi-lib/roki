@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   zSeqListCell *cp;
 
   if( argc < 3 ) usage();
-  rkChainScanFile( &chain, argv[1] );
+  rkChainReadZTK( &chain, argv[1] );
   zSeqScanFile( &seq, argv[2] );
   if( argc > 3 ){
     if( !strcmp( argv[3], "last" ) )
@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
   } else
     cp = zListHead( &seq );
   if( argc > 4 )
-    rkChainInitScanFile( &chain, argv[4] );
+    rkChainInitReadZTK( &chain, argv[4] );
   rkChainFK( &chain, cp->data.v );
-  rkChainInitPrint( &chain );
+  rkChainInitFPrintZTK( stdout, &chain );
   return 0;
 }

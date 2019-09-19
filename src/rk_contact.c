@@ -11,8 +11,6 @@
  * contact model class
  * ********************************************************** */
 
-static bool _rkContactInfoFScan(FILE *fp, void *instance, char *buf, bool *success);
-
 /* create a rigid contact model. */
 rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, double sf, double kf, char *stf1, char *stf2)
 {
@@ -46,66 +44,6 @@ rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *stf2)
       ( strcmp( ci->__stf[0], stf2 ) == 0 && strcmp( ci->__stf[1], stf1 ) == 0 ) )
     return ci;
   return NULL;
-}
-
-/* scan information of a contact model (internal operation). */
-bool _rkContactInfoFScan(FILE *fp, void *instance, char *buf, bool *success)
-{
-  rkContactInfo *ci;
-
-  ci = instance;
-  if( strcmp( buf, "bind" ) == 0 ){
-    ci->__stf[0] = zStrClone( zFToken( fp, buf, BUFSIZ ) );
-    ci->__stf[1] = zStrClone( zFToken( fp, buf, BUFSIZ ) );
-  } else if( strcmp( buf, "staticfriction" ) == 0 ){
-    rkContactInfoSetSF( ci, zFDouble( fp ) );
-  } else if( strcmp( buf, "kineticfriction" ) == 0 ){
-    rkContactInfoSetKF( ci, zFDouble( fp ) );
-  } else if( strcmp( buf, "compensation" ) == 0 ){
-    rkContactInfoSetK( ci, zFDouble( fp ) );
-    rkContactInfoSetType( ci, RK_CONTACT_RIGID );
-  } else if( strcmp( buf, "relaxation" ) == 0 ){
-    rkContactInfoSetL( ci, zFDouble( fp ) );
-    rkContactInfoSetType( ci, RK_CONTACT_RIGID );
-  } else if( strcmp( buf, "elasticity" ) == 0 ){
-    rkContactInfoSetE( ci, zFDouble( fp ) );
-    rkContactInfoSetType( ci, RK_CONTACT_ELASTIC );
-  } else if( strcmp( buf, "viscosity" ) == 0 ){
-    rkContactInfoSetV( ci, zFDouble( fp ) );
-    rkContactInfoSetType( ci, RK_CONTACT_ELASTIC );
-  } else
-    return false;
-  return true;
-}
-
-/* scan information of a contact model. */
-rkContactInfo *rkContactInfoFScan(FILE *fp, rkContactInfo *ci)
-{
-  rkContactInfoInit( ci );
-  zFieldFScan( fp, _rkContactInfoFScan, ci );
-  if( ci->__stf[0] && ci->__stf[1] ) return ci;
-  ZRUNERROR( RK_ERR_CONTACT_UNBOUND );
-  return NULL;
-}
-
-/* print information of a contact model. */
-void rkContactInfoFPrint(FILE *fp, rkContactInfo *ci)
-{
-  fprintf( fp, "bind: %s %s\n", ci->__stf[0], ci->__stf[1] );
-  switch( rkContactInfoType(ci) ){
-  case RK_CONTACT_RIGID:
-    fprintf( fp, "compensation: %.10g\n", rkContactInfoK(ci) );
-    fprintf( fp, "relaxation: %.10g\n", rkContactInfoL(ci) );
-    break;
-  case RK_CONTACT_ELASTIC:
-    fprintf( fp, "elasticity: %.10g\n", rkContactInfoE(ci) );
-    fprintf( fp, "viscosity: %.10g\n", rkContactInfoV(ci) );
-    break;
-  default: ;
-  }
-  fprintf( fp, "staticfriction: %.10g\n", rkContactInfoSF(ci) );
-  fprintf( fp, "kineticfriction: %.10g\n", rkContactInfoKF(ci) );
-  fprintf( fp, "\n" );
 }
 
 /* ZTK */
@@ -162,16 +100,34 @@ static ZTKPrp __ztk_prp_rkcontactinfo[] = {
 
 static void *_rkContactInfoFromZTK(void *obj, int i, void *arg, ZTK *ztk)
 {
-  if( !ZTKEncodeKey( zArrayElem((rkContactInfoArray*)obj,i), arg, ztk, __ztk_prp_rkcontactinfo ) ) return NULL;
+  if( !ZTKEvalKey( zArrayElem((rkContactInfoArray*)obj,i), arg, ztk, __ztk_prp_rkcontactinfo ) ) return NULL;
   return obj;
+}
+
+/* print information of a contact model. */
+void rkContactInfoFPrintZTK(FILE *fp, rkContactInfo *ci)
+{
+  fprintf( fp, "bind: %s %s\n", ci->__stf[0], ci->__stf[1] );
+  switch( rkContactInfoType(ci) ){
+  case RK_CONTACT_RIGID:
+    fprintf( fp, "compensation: %.10g\n", rkContactInfoK(ci) );
+    fprintf( fp, "relaxation: %.10g\n", rkContactInfoL(ci) );
+    break;
+  case RK_CONTACT_ELASTIC:
+    fprintf( fp, "elasticity: %.10g\n", rkContactInfoE(ci) );
+    fprintf( fp, "viscosity: %.10g\n", rkContactInfoV(ci) );
+    break;
+  default: ;
+  }
+  fprintf( fp, "staticfriction: %.10g\n", rkContactInfoSF(ci) );
+  fprintf( fp, "kineticfriction: %.10g\n", rkContactInfoKF(ci) );
+  fprintf( fp, "\n" );
 }
 
 /* ********************************************************** */
 /* CLASS: rkContactInfoArray
  * contact model array class
  * ********************************************************** */
-
-static bool _rkContactInfoArrayFScan(FILE *fp, void *instance, char *buf, bool *success);
 
 /* destroy contact information array */
 void rkContactInfoArrayDestroy(rkContactInfoArray *carray)
@@ -209,63 +165,13 @@ rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *carray, char *stf
   return NULL;
 }
 
-/* scan contact information array from a file. */
-bool rkContactInfoArrayScanFile(rkContactInfoArray *carray, char filename[])
-{
-  FILE *fp;
-  rkContactInfoArray *result;
-
-  if( !( fp = zOpenZTKFile( filename, "r" ) ) )
-    return false;
-  result = rkContactInfoArrayFScan( fp, carray );
-  fclose( fp );
-  return result != NULL;
-}
-
-typedef struct{
-  rkContactInfoArray *carray;
-  int c;
-} _rkContactInfoArrayParam;
-
-bool _rkContactInfoArrayFScan(FILE *fp, void *instance, char *buf, bool *success)
-{
-  _rkContactInfoArrayParam *prm;
-  rkContactInfo *ci;
-
-  prm = instance;
-  ci = zArrayElemNC( prm->carray, prm->c++ );
-  if( strcmp( buf, ZTK_TAG_RKCONTACTINFO ) == 0 )
-    if( !rkContactInfoFScan( fp, ci ) )
-      return ( *success = false );
-  if( rkContactInfoArrayAssoc( prm->carray, ci->__stf[0], ci->__stf[1] ) != ci )
-    ZRUNWARN( RK_WARN_CONTACT_DUPKEY, ci->__stf[0], ci->__stf[1] );
-  return true;
-}
-
-/* scan contact information array from a file. */
-rkContactInfoArray *rkContactInfoArrayFScan(FILE *fp, rkContactInfoArray *carray)
-{
-  _rkContactInfoArrayParam prm;
-
-  zArrayAlloc( carray, rkContactInfo, zFCountTag( fp, ZTK_TAG_RKCONTACTINFO ) );
-  if( !zArrayBuf(carray) ){
-    ZALLOCERROR();
-    return NULL;
-  }
-  prm.carray = carray;
-  prm.c = 0;
-  if( zTagFScan( fp, _rkContactInfoArrayFScan, &prm ) )
-    return carray;
-  zArrayFree( carray );
-  return NULL;
-}
-
 /* ZTK */
 
 static ZTKPrp __ztk_prp_tag_rkcontactinfo[] = {
   { ZTK_TAG_RKCONTACTINFO, -1, _rkContactInfoFromZTK, NULL },
 };
 
+/* scan contact information array from a ZTK format processor. */
 rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *ztk)
 {
   int n;
@@ -276,11 +182,23 @@ rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *z
     return NULL;
   }
   zArrayAlloc( carray, rkContactInfo, n );
-  ZTKEncodeTag( carray, carray, ztk, __ztk_prp_tag_rkcontactinfo );
+  ZTKEvalTag( carray, carray, ztk, __ztk_prp_tag_rkcontactinfo );
   return carray;
 }
 
-rkContactInfoArray *rkContactInfoArrayScanZTK(rkContactInfoArray *carray, char filename[])
+/* print contact information array out to the current position of a ZTK format file. */
+void rkContactInfoArrayFPrintZTK(FILE *fp, rkContactInfoArray *carray)
+{
+  register int i;
+
+  for( i=0; i<zArraySize(carray); i++ ){
+    fprintf( fp, "[%s]\n", ZTK_TAG_RKCONTACTINFO );
+    rkContactInfoFPrintZTK( fp, zArrayElemNC(carray,i) );
+  }
+}
+
+/* read contact information array from a ZTK file. */
+rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, char filename[])
 {
   ZTK ztk;
 
@@ -294,24 +212,13 @@ rkContactInfoArray *rkContactInfoArrayScanZTK(rkContactInfoArray *carray, char f
   return carray;
 }
 
-/* print contact information array out to a file. */
-void rkContactInfoArrayFPrint(FILE *fp, rkContactInfoArray *carray)
-{
-  register int i;
-
-  for( i=0; i<zArraySize(carray); i++ ){
-    fprintf( fp, "[%s]\n", ZTK_TAG_RKCONTACTINFO );
-    rkContactInfoFPrint( fp, zArrayElemNC(carray,i) );
-  }
-}
-
-/* print contact information array out to a ZTK file. */
-bool rkContactInfoArrayPrintZTK(rkContactInfoArray *carray, char filename[])
+/* write contact information array to a ZTK file. */
+bool rkContactInfoArrayWriteZTK(rkContactInfoArray *carray, char filename[])
 {
   char name[BUFSIZ];
   FILE *fp;
 
   if( !( fp = zOpenZTKFile( name, "w" ) ) ) return false;
-  rkContactInfoArrayFPrint( fp, carray );
+  rkContactInfoArrayFPrintZTK( fp, carray );
   return true;
 }

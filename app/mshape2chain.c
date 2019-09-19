@@ -17,7 +17,7 @@ bool mshape2chainConvert(zMShape3D *ms, char basename[])
   }
   fprintf( fp, "[chain]\n" );
   fprintf( fp, "name: %s\n", basename );
-  zMShape3DFPrint( fp, ms );
+  zMShape3DFPrintZTK( fp, ms );
   fprintf( fp, "[link]\n" );
   fprintf( fp, "name: base\n" );
   fprintf( fp, "jointtype: fixed\n" );
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
   char basename[BUFSIZ];
 
   if( argc == 1 ) mshape2chainUsage( argv[0] );
-  if( !zMShape3DScanZTK( &ms, argv[1] ) )
+  if( !zMShape3DReadZTK( &ms, argv[1] ) )
     return EXIT_FAILURE;
   zGetBasename( argv[1], basename, BUFSIZ );
   mshape2chainConvert( &ms, basename );
