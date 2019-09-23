@@ -121,7 +121,7 @@ typedef struct{
 
 #define rkBodyExtWrench(b)    ( &(b)->extw )
 #define rkBodyShapeList(b)    ( &(b)->shapelist )
-#define rkBodyShapeNum(b)     zListNum( rkBodyShapeList(b) )
+#define rkBodyShapeNum(b)     zListSize( rkBodyShapeList(b) )
 #define rkBodyShapeIsEmpty(b) zListIsEmpty( rkBodyShapeList(b) )
 
 #define rkBodySetMass(b,m)    rkMPSetMass( &(b)->mp, m )

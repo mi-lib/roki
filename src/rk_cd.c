@@ -8,11 +8,8 @@
 
 #include <roki/rk_cd.h>
 
-static void _rkCDPairDestroy(rkCDPair *pair);
-
-/* (static)
- * initialize a collision detection cell. */
-void _rkCDCellInit(rkCDCell *cell)
+/* initialize a collision detection cell. */
+static void _rkCDCellInit(rkCDCell *cell)
 {
   cell->data.shape = NULL;
   cell->data.link = NULL;
@@ -23,9 +20,8 @@ void _rkCDCellInit(rkCDCell *cell)
   zPH3DInit( &cell->data.ph );
 }
 
-/* (static)
- * create a collision detection cell. */
-rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, zShape3D *shape, rkCDCellType type)
+/* create a collision detection cell. */
+static rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, zShape3D *shape, rkCDCellType type)
 {
   _rkCDCellInit( cell );
   cell->data.shape = shape;
@@ -51,9 +47,8 @@ rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, zShape3D
   return cell;
 }
 
-/* (static)
- * destroy a collision detection cell. */
-void _rkCDCellDestroy(rkCDCell *cell)
+/* destroy a collision detection cell. */
+static void _rkCDCellDestroy(rkCDCell *cell)
 {
   zPH3DDestroy( &cell->data.ph );
   _rkCDCellInit( cell );
@@ -117,6 +112,14 @@ rkCD *rkCDCreate(rkCD *cd)
   return cd;
 }
 
+/* destroy a pair of collision detection cells. */
+static void _rkCDPairDestroy(rkCDPair *pair)
+{
+  zListDestroy( rkCDVert, &pair->data.vlist );
+  zListDestroy( rkCDPlane, &pair->data.cplane );
+  zPH3DDestroy( &pair->data.colvol );
+}
+
 /* destroy a collision detector. */
 void rkCDDestroy(rkCD *cd)
 {
@@ -135,18 +138,8 @@ void rkCDDestroy(rkCD *cd)
   }
 }
 
-/* (static)
- * destroy a pair of collision detection cells. */
-void _rkCDPairDestroy(rkCDPair *pair)
-{
-  zListDestroy( rkCDVert, &pair->data.vlist );
-  zListDestroy( rkCDPlane, &pair->data.cplane );
-  zPH3DDestroy( &pair->data.colvol );
-}
-
-/* (static)
- * register a pair of collision detection cells. */
-rkCDPair *_rkCDPairReg(rkCD *cd, rkCDCell *c1, rkCDCell *c2)
+/* register a pair of collision detection cells. */
+static rkCDPair *_rkCDPairReg(rkCD *cd, rkCDCell *c1, rkCDCell *c2)
 {
   rkCDPair *pair;
 
@@ -164,9 +157,8 @@ rkCDPair *_rkCDPairReg(rkCD *cd, rkCDCell *c1, rkCDCell *c2)
   return pair;
 }
 
-/* (static)
- * register all pairs of collision detection cells. */
-rkCD *_rkCDPairCellReg(rkCD *cd, rkCDCell *cell)
+/* register all pairs of collision detection cells. */
+static rkCD *_rkCDPairCellReg(rkCD *cd, rkCDCell *cell)
 {
   rkCDCell *cp;
   zVec3D v1, v2;
@@ -316,11 +308,11 @@ rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
   zShapeListCell *sc;
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     zListForEach( &rkChainLink(chain,i)->body.shapelist, sc ){
       if( !rkCDCellReg( &cd->clist, chain, rkChainLink(chain,i), sc->data, type ) )
         return NULL;
-      if( zListNum(&cd->clist) > 1 )
+      if( zListSize(&cd->clist) > 1 )
         _rkCDPairCellReg( cd, zListHead(&cd->clist) );
     }
   return cd;
@@ -352,7 +344,7 @@ void rkCDChainUnreg(rkCD *cd, rkChain *chain)
   }
 }
 
-void _rkCDColChkAABB(rkCD *cd)
+static void _rkCDColChkAABB(rkCD *cd)
 {
   rkCDPair *cp;
 
@@ -365,7 +357,7 @@ void _rkCDColChkAABB(rkCD *cd)
   }
 }
 
-void _rkCDColChkOBB(rkCD *cd)
+static void _rkCDColChkOBB(rkCD *cd)
 {
   rkCDPair *cp;
 
@@ -375,7 +367,7 @@ void _rkCDColChkOBB(rkCD *cd)
       cp->data.is_col = false;
 }
 
-void _rkCDColChkGJK(rkCD *cd)
+static void _rkCDColChkGJK(rkCD *cd)
 {
   rkCDPair *cp;
   zVec3D v1, v2;
@@ -427,7 +419,7 @@ void rkCDColChkGJKOnly(rkCD *cd)
   }
 }
 
-bool _rkCDVertNorm(zPH3D *ph, zVec3D *vert, zVec3D *norm, zVec3D *pro)
+static bool _rkCDVertNorm(zPH3D *ph, zVec3D *vert, zVec3D *norm, zVec3D *pro)
 {
   zPH3DClosest( ph, vert, pro );
   zVec3DSub( pro, vert, norm );
@@ -437,7 +429,7 @@ bool _rkCDVertNorm(zPH3D *ph, zVec3D *vert, zVec3D *norm, zVec3D *pro)
   return true;
 }
 
-rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkCDCell *cell0, int v_id)
+static rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkCDCell *cell0, int v_id)
 {
   rkCDVert *v, *cp;
   zVec3D pro, sub, vert;
@@ -492,7 +484,7 @@ rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkCDCell *
   return v;
 }
 
-int _rkCDPairColChkVert(rkCD *cd, rkCDPair *cp)
+static int _rkCDPairColChkVert(rkCD *cd, rkCDPair *cp)
 {
   rkCDVertList temp;
   register int i;
@@ -517,7 +509,7 @@ int _rkCDPairColChkVert(rkCD *cd, rkCDPair *cp)
   return ret;
 }
 
-void _rkCDColChkVert(rkCD *cd)
+static void _rkCDColChkVert(rkCD *cd)
 {
   rkCDPair *cp;
 
@@ -541,7 +533,7 @@ void rkCDColChkVert(rkCD *cd)
   _rkCDColChkVert( cd );
 }
 
-void _rkCDColChkOBBVert(rkCD *cd)
+static void _rkCDColChkOBBVert(rkCD *cd)
 {
   rkCDPair *cp;
   rkCDVertList temp;
@@ -582,7 +574,7 @@ void rkCDColChkOBBVert(rkCD *cd)
   _rkCDColChkOBBVert( cd );
 }
 
-void _rkCDColVol(rkCD *cd)
+static void _rkCDColVol(rkCD *cd)
 {
   rkCDPair *cp;
 
@@ -611,7 +603,7 @@ void rkCDColVol(rkCD *cd)
   _rkCDColVol( cd );
 }
 
-void _rkCDIntegrationNormBREP(zBREP *b1, zBREP *b2, zVec3D *norm)
+static void _rkCDIntegrationNormBREP(zBREP *b1, zBREP *b2, zVec3D *norm)
 {
   zVec3D v, v1, v2;
   zBREPFaceListCell *fc;
@@ -636,7 +628,7 @@ void _rkCDIntegrationNormBREP(zBREP *b1, zBREP *b2, zVec3D *norm)
   }
 }
 
-zPH3D *_rkCDBREPMergeCH(zBREP *b1, zBREP *b2, zPH3D *ph)
+static zPH3D *_rkCDBREPMergeCH(zBREP *b1, zBREP *b2, zPH3D *ph)
 {
   zBREPVertListCell *vc;
   zVec3DAddrList vlist;
@@ -651,7 +643,7 @@ zPH3D *_rkCDBREPMergeCH(zBREP *b1, zBREP *b2, zPH3D *ph)
   return ph;
 }
 
-bool _rkCDColVolError(zPH3D *ph)
+static bool _rkCDColVolError(zPH3D *ph)
 {
   register int i, j;
   int v[3];
@@ -667,7 +659,7 @@ bool _rkCDColVolError(zPH3D *ph)
   return false;
 }
 
-int _rkCDPairColVolBREP(rkCDPair *cp)
+static int _rkCDPairColVolBREP(rkCDPair *cp)
 {
   zBREP brep[2];
   int ret = 0;
@@ -704,7 +696,7 @@ int _rkCDPairColVolBREP(rkCDPair *cp)
   return ret;
 }
 
-void _rkCDColVolBREP(rkCD *cd)
+static void _rkCDColVolBREP(rkCD *cd)
 {
   rkCDPair *cp;
 
@@ -718,7 +710,7 @@ void _rkCDColVolBREP(rkCD *cd)
     }
 }
 
-void _rkCDColVolBREPFast(rkCD *cd)
+static void _rkCDColVolBREPFast(rkCD *cd)
 {
   rkCDPair *cp;
   zBREP brep[2];
@@ -767,7 +759,7 @@ void rkCDColVolBREPFast(rkCD *cd)
   _rkCDColVolBREPFast( cd );
 }
 
-void _rkCDColVolBREPVert(rkCD *cd)
+static void _rkCDColVolBREPVert(rkCD *cd)
 {
   rkCDPair *cp;
 

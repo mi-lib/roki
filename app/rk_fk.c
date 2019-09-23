@@ -89,7 +89,7 @@ FILE *rk_fkCommandArgs(int argc, char *argv[])
     ZOPENERROR( option[RK_FK_CHAINFILE].arg );
     return NULL;
   }
-  zNameFind( rkChainRoot(&chain), rkChainNum(&chain), option[RK_FK_LINKNAME].arg, link );
+  zNameFind( rkChainRoot(&chain), rkChainLinkNum(&chain), option[RK_FK_LINKNAME].arg, link );
   if( !link ){
     ZRUNERROR( "unknown link name %s", option[RK_FK_LINKNAME].arg );
     return NULL;
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 
   rkChainFK( &chain, zListHead(&seq)->data.v );
   zListForEachRew( &seq, cp ){
-    printf( "step %d/%d\n", i, zListNum(&seq)-1 );
+    printf( "step %d/%d\n", i, zListSize(&seq)-1 );
     rkChainFK( &chain, cp->data.v );
     rk_fkOutput( fp, t );
     i++;

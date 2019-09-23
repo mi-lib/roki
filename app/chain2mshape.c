@@ -22,7 +22,7 @@ bool chain2mshapeConvert(rkChain *chain, char basename[])
     fprintf( fp, "[optic]\n" );
     zOpticalInfoFPrintZTK( fp, zMShape3DOptic(rkChainShape(chain),i) );
   }
-  for( i=0; i<rkChainNum(chain); i++ ){
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
     l = rkChainLink(chain,i);
     zListForEach( rkLinkShapeList(l), sc ){
       zShape3DClone( sc->data, &s, zShape3DOptic(sc->data) );

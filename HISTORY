@@ -1,3 +1,5 @@
+2019. 9.23. Renamed rkChainNum to rkChainLinkNum. [rk_chain, rk_jacobi, rk_ik, rk_cd, app]
+2019. 9.23. Reflecting renaming of zListSize. [rk_body, rk_chain, rk_ik, rk_cd, app]
 2019. 9.19. Reflected renaming of rkContactInfoArrayReadZTK and rkChainReadZTK. [test]
 2019. 9.19. Renamed rkIKConfScanZTK to rkIKConfReadZTK. [rk_ik]
 2019. 9.19. Reflected renaming of zMShape3DFPrintZTK and zOpticalInfoFPrintZTK. [rk_chain, app]

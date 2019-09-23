@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
 
   rkChainFK( &chain, zListHead(&seq)->data.v );
   zListForEachRew( &seq, cp ){
-    printf( "step %d/%d\n", i, zListNum(&seq)-1 );
+    printf( "step %d/%d\n", i, zListSize(&seq)-1 );
     rkChainFKCNT( &chain, cp->data.v, cp->data.dt );
     rk_idOutput( t, trq );
     i++;

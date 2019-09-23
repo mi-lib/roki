@@ -11,16 +11,8 @@
  * inverse kinematics class
  * ********************************************************** */
 
-static void _rkIKInit(rkIK *ik);
-static bool _rkIKAllocCMat(rkIK *ik);
-static bool _rkIKAllocJointIndex(rkIK *ik);
-static bool _rkIKJointReg(rkIK *ik, int id, bool sw, double weight);
-static bool _rkIKAllocSRV(rkIK *ik);
-
-static int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row);
-
 /* initialize inverse kinematics solver. */
-void _rkIKInit(rkIK *ik)
+static void _rkIKInit(rkIK *ik)
 {
   ik->chain = NULL;
   ik->joint_sw = NULL;
@@ -51,10 +43,10 @@ rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
 {
   _rkIKInit( ik );
   ik->chain = chain;
-  ik->joint_sw = zAlloc( bool, rkChainNum(chain) );
-  ik->joint_weight = zAlloc( double, rkChainNum(chain) );
+  ik->joint_sw = zAlloc( bool, rkChainLinkNum(chain) );
+  ik->joint_weight = zAlloc( double, rkChainLinkNum(chain) );
   ik->joint_vel = zVecAlloc( rkChainJointSize(chain) );
-  ik->_j_ofs = zIndexCreate( rkChainNum(chain) );
+  ik->_j_ofs = zIndexCreate( rkChainLinkNum(chain) );
   ik->_c_mat_cell = zMatAlloc( 3, rkChainJointSize(chain) );
   if( !ik->joint_sw || !ik->joint_weight ||
       !ik->joint_vel || !ik->_c_mat_cell ){
@@ -88,12 +80,12 @@ void rkIKDestroy(rkIK *ik)
 }
 
 /* allocate working memory for constraint coefficient matrix of inverse kinematics solver. */
-bool _rkIKAllocCMat(rkIK *ik)
+static bool _rkIKAllocCMat(rkIK *ik)
 {
-  if( zListNum(&ik->clist) == 0 || zArraySize(ik->_j_idx) == 0 )
+  if( zListSize(&ik->clist) == 0 || zArraySize(ik->_j_idx) == 0 )
     return true;
   zMatFree( ik->_c_mat );
-  if( !( ik->_c_mat = zMatAlloc( zListNum(&ik->clist)*3, zVecSizeNC(ik->_j_vel) ) ) ){
+  if( !( ik->_c_mat = zMatAlloc( zListSize(&ik->clist)*3, zVecSizeNC(ik->_j_vel) ) ) ){
     ZALLOCERROR();
     return false;
   }
@@ -101,13 +93,13 @@ bool _rkIKAllocCMat(rkIK *ik)
 }
 
 /* register/unregister a cooperating joint to inverse kinematics solver. */
-bool _rkIKAllocJointIndex(rkIK *ik)
+static bool _rkIKAllocJointIndex(rkIK *ik)
 {
   register int i, j;
   int count, ofs;
   double *wp;
 
-  for( count=0, i=0; i<rkChainNum(ik->chain); i++ ){
+  for( count=0, i=0; i<rkChainLinkNum(ik->chain); i++ ){
     if( rkChainLinkJointSize(ik->chain,i) == 0 )
       ik->joint_sw[i] = false;
     if( ik->joint_sw[i] ) count++;
@@ -118,7 +110,7 @@ bool _rkIKAllocJointIndex(rkIK *ik)
     ZALLOCERROR();
     return false;
   }
-  for( count=0, ofs=0, i=0; i<rkChainNum(ik->chain); i++ )
+  for( count=0, ofs=0, i=0; i<rkChainLinkNum(ik->chain); i++ )
     if( ik->joint_sw[i] ){
       zIndexSetElemNC( ik->_j_idx, count++, i );
       zIndexSetElemNC( ik->_j_ofs, i, ofs );
@@ -141,9 +133,10 @@ bool _rkIKAllocJointIndex(rkIK *ik)
       *wp++ = ik->joint_weight[zIndexElemNC(ik->_j_idx,i)];
   return _rkIKAllocCMat( ik );
 }
-bool _rkIKJointReg(rkIK *ik, int id, bool sw, double weight)
+
+static bool _rkIKJointReg(rkIK *ik, int id, bool sw, double weight)
 {
-  if( id < 0 || id >= rkChainNum(ik->chain) ){
+  if( id < 0 || id >= rkChainLinkNum(ik->chain) ){
     ZRUNERROR( RK_ERR_LINK_INVID, id );
     return false;
   }
@@ -163,21 +156,21 @@ bool rkIKJointRegAll(rkIK *ik, double weight)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(ik->chain); i++ )
+  for( i=0; i<rkChainLinkNum(ik->chain); i++ )
     if( rkChainLinkJointSize(ik->chain,i) > 0 )
       if( !rkIKJointReg( ik, i, weight ) ) return false;
   return true;
 }
 
 /* register constraint cell to inverse kinematics solver. */
-bool _rkIKAllocSRV(rkIK *ik)
+static bool _rkIKAllocSRV(rkIK *ik)
 {
-  if( zListNum(&ik->clist) == 0 ) return true;
+  if( zListSize(&ik->clist) == 0 ) return true;
   zVecFree( ik->_c_srv );
   zVecFree( ik->_c_we );
-  ik->_c_srv = zVecAlloc( zListNum(&ik->clist)*3 );
-  ik->_c_we = zVecAlloc( zListNum(&ik->clist)*3 );
-  ik->__c = zVecAlloc( zListNum(&ik->clist)*3 );
+  ik->_c_srv = zVecAlloc( zListSize(&ik->clist)*3 );
+  ik->_c_we = zVecAlloc( zListSize(&ik->clist)*3 );
+  ik->__c = zVecAlloc( zListSize(&ik->clist)*3 );
   if( !ik->_c_srv || !ik->_c_we || !ik->__c ){
     ZALLOCERROR();
     return false;
@@ -252,14 +245,14 @@ void rkIKAcmZero(rkIK *ik)
 }
 
 /* form the motion rate contraint equation. */
-int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row)
+static int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row)
 {
   register int i, j;
 
   if( !( ( RK_IK_CELL_XON << s ) & cell->data.attr.mode ) ) return 0;
   zVecSetElemNC( ik->_c_srv, row, ik->_c_srv_cell.e[s] );
   zVecSetElemNC( ik->_c_we, row, cell->data.attr.w.e[s] );
-  for( i=0; i<rkChainNum(ik->chain); i++ )
+  for( i=0; i<rkChainLinkNum(ik->chain); i++ )
     if( ik->joint_sw[i] ){
       for( j=0; j<rkChainLinkJointSize(ik->chain,i); j++ )
         zMatSetElemNC( ik->_c_mat, row, zIndexElemNC(ik->_j_ofs,i)+j,

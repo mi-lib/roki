@@ -80,7 +80,7 @@ zIndex rk_mpLinkList(rkChain *chain)
   int i;
 
   zListInit( &list );
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     printf( "[%2d] %s\n", i, zName(rkChainLink(chain,i)) );
   while( 1 ){
     printf( "enter link ID> " );
@@ -94,7 +94,7 @@ zIndex rk_mpLinkList(rkChain *chain)
     zListInsertHead( &list, cp );
   }
   if( zListIsEmpty( &list ) ) return NULL;
-  if( !( index = zIndexCreate( zListNum(&list) ) ) )
+  if( !( index = zIndexCreate( zListSize(&list) ) ) )
     ZALLOCERROR();
   else
     for( cp=zListTail(&list), i=0; i<zArraySize(index);

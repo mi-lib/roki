@@ -31,7 +31,7 @@ void rkChainDestroy(rkChain *c)
 
   if( !c ) return;
   zNameFree(c);
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     rkLinkDestroy( rkChainLink(c,i) );
   zArrayFree( &c->link );
   zMShape3DDestroy( rkChainShape(c) );
@@ -57,9 +57,9 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
     ZALLOCERROR();
     return NULL;
   }
-  zArrayAlloc( &cln->link, rkLink, rkChainNum(org) );
-  if( rkChainNum(cln) != rkChainNum(org) ) return NULL;
-  for( i=0; i<rkChainNum(cln); i++ )
+  zArrayAlloc( &cln->link, rkLink, rkChainLinkNum(org) );
+  if( rkChainLinkNum(cln) != rkChainLinkNum(org) ) return NULL;
+  for( i=0; i<rkChainLinkNum(cln); i++ )
     if( !rkLinkClone( rkChainLink(org,i), rkChainLink(cln,i), rkChainShape(org), rkChainShape(cln) ) )
       return NULL;
   rkChainSetMass( cln, rkChainMass(org) );
@@ -72,7 +72,7 @@ rkChain *rkChainCopyState(rkChain *src, rkChain *dst)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(src); i++ )
+  for( i=0; i<rkChainLinkNum(src); i++ )
     rkLinkCopyState( rkChainLink(src,i), rkChainLink(dst,i) );
   zVec3DCopy( rkChainWldCOM(src), rkChainWldCOM(dst) );
   zVec3DCopy( rkChainCOMVel(src), rkChainCOMVel(dst) );
@@ -85,7 +85,7 @@ int rkChainJointSize(rkChain *c)
 {
   register int i, size;
 
-  for( size=0, i=0; i<rkChainNum(c); i++ )
+  for( size=0, i=0; i<rkChainLinkNum(c); i++ )
     size += rkChainLinkJointSize(c,i);
   return size;
 }
@@ -96,13 +96,13 @@ zIndex rkChainCreateDefaultJointIndex(rkChain *c)
   register int i, count;
   zIndex index;
 
-  for( count=0, i=0; i<rkChainNum(c); i++ )
+  for( count=0, i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkJointSize(c,i) > 0 ) count++;
   if( !( index = zIndexCreate( count ) ) ){
     ZALLOCERROR();
     return NULL;
   }
-  for( count=0, i=0; i<rkChainNum(c); i++ )
+  for( count=0, i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkJointSize(c,i) > 0 ){
       zIndexSetElemNC( index, count, i );
       count++;
@@ -214,7 +214,7 @@ void rkChainSetJointDisAll(rkChain *c, zVec dis)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkChainLinkSetJointDis( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)) );
 }
@@ -224,7 +224,7 @@ void rkChainCatJointDisAll(rkChain *c, zVec dis, double k, zVec v)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkJointCatDis( rkChainLinkJoint(c,i), &zVecElemNC(dis,rkChainLinkOffset(c,i)), k, &zVecElemNC(v,rkChainLinkOffset(c,i)) );
 }
@@ -234,7 +234,7 @@ void rkChainSubJointDisAll(rkChain *c, zVec dis, zVec sdis)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkJointSubDis( rkChainLinkJoint(c,i), &zVecElemNC(dis,rkChainLinkOffset(c,i)), &zVecElemNC(sdis,rkChainLinkOffset(c,i)) );
 }
@@ -244,7 +244,7 @@ void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkChainLinkSetJointDisCNT( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)), dt );
 }
@@ -254,7 +254,7 @@ void rkChainSetJointVelAll(rkChain *c, zVec vel)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkJointSetVel( rkChainLinkJoint(c,i), &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
 }
@@ -264,7 +264,7 @@ void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 ){
       rkJointSetVel( rkChainLinkJoint(c,i), &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
       rkJointSetAcc( rkChainLinkJoint(c,i), &zVecElemNC(acc,rkChainLinkOffset(c,i)) );
@@ -276,7 +276,7 @@ zVec rkChainGetJointDisAll(rkChain *c, zVec dis)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkChainLinkGetJointDis( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)) );
   return dis;
@@ -287,7 +287,7 @@ zVec rkChainGetJointVelAll(rkChain *c, zVec vel)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkChainLinkGetJointVel( c, i, &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
   return vel;
@@ -298,7 +298,7 @@ zVec rkChainGetJointAccAll(rkChain *c, zVec acc)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkChainLinkGetJointAcc( c, i, &zVecElemNC(acc,rkChainLinkOffset(c,i)) );
   return acc;
@@ -309,7 +309,7 @@ zVec rkChainGetJointTrqAll(rkChain *c, zVec trq)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 )
       rkChainLinkGetJointTrq( c, i, &zVecElemNC(trq,rkChainLinkOffset(c,i)) );
   return trq;
@@ -320,7 +320,7 @@ zVec rkChainGetConf(rkChain *chain, zVec conf)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     zFrame3DToArrayAA( rkChainLinkWldFrame(chain,i), &zVecElemNC(conf,i*6) );
   return conf;
 }
@@ -330,7 +330,7 @@ void rkChainSetConf(rkChain *chain, zVec conf)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     zArrayToFrame3DAA( &zVecElemNC(conf,i*6), rkChainLinkWldFrame(chain,i) );
   rkLinkConfToJointDis( rkChainRoot(chain) );
 }
@@ -385,7 +385,7 @@ zVec3D *rkChainCalcCOM(rkChain *c)
   register int i;
 
   rkChainSetWldCOM( c, ZVEC3DZERO );
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     zVec3DCatDRC( rkChainWldCOM(c),
       rkChainLinkMass(c,i), rkChainLinkWldCOM(c,i) );
   return zVec3DDivDRC( rkChainWldCOM(c), rkChainMass(c) );
@@ -398,7 +398,7 @@ zVec3D *rkChainCalcCOMVel(rkChain *c)
   zVec3D v;
 
   rkChainSetCOMVel( c, ZVEC3DZERO );
-  for( i=0; i<rkChainNum(c); i++ ){
+  for( i=0; i<rkChainLinkNum(c); i++ ){
     /* COM velocity of link is with respect to the local frame,
        while COM velocity of a kinematic chain is with respect to
        the world frame. */
@@ -415,7 +415,7 @@ zVec3D *rkChainCalcCOMAcc(rkChain *c)
   zVec3D a;
 
   rkChainSetCOMAcc( c, ZVEC3DZERO );
-  for( i=0; i<rkChainNum(c); i++ ){
+  for( i=0; i<rkChainLinkNum(c); i++ ){
     /* COM acceleration of a link is with respect to the local frame,
        while COM acceleration of a kinematic chain is with respect to
        the world frame. */
@@ -456,7 +456,7 @@ zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am)
   zVec3D tp, tmp;
 
   zVec3DZero( am );
-  for( i=0; i<rkChainNum(c); i++ ){
+  for( i=0; i<rkChainLinkNum(c); i++ ){
     zXform3DInv( rkChainLinkWldFrame(c,i), p, &tp );
     rkLinkAM( rkChainLink(c,i), &tp, &tmp );
     zMulMat3DVec3DDRC( rkChainLinkWldAtt(c,i), &tmp );
@@ -471,7 +471,7 @@ double rkChainKE(rkChain *c)
   register int i;
   double energy = 0;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     energy += rkLinkKE( rkChainLink(c,i) );
   return energy;
 }
@@ -483,7 +483,7 @@ zVec6D *rkChainCalcExtWrench(rkChain *c, zVec6D *w)
   zVec6D ew;
 
   zVec6DZero( w );
-  for( i=0; i<rkChainNum(c); i++ ){
+  for( i=0; i<rkChainLinkNum(c); i++ ){
     rkLinkCalcExtWrench( rkChainLink(c,i), &ew );
     if( zVec6DEqual( &ew, ZVEC6DZERO ) ) continue;
     zMulMat3DVec6DDRC( rkChainLinkWldAtt(c,i), &ew );
@@ -498,7 +498,7 @@ void rkChainExtWrenchDestroy(rkChain *c)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     rkLinkExtWrenchDestroy( rkChainLink(c,i) );
 }
 
@@ -507,7 +507,7 @@ void rkChainSetOffset(rkChain *c)
 {
   register int i, s;
 
-  for( i=0, s=0; i<rkChainNum(c); i++ )
+  for( i=0, s=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkJointSize(c,i) > 0 ){
       rkLinkSetOffset( rkChainLink(c,i), s );
       s += rkChainLinkJointSize(c,i);
@@ -524,7 +524,7 @@ zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl)
   register int i, j;
 
   zListInit( vl );
-  for( i=0; i<rkChainNum(chain); i++ ){
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
     l = rkChainLink(chain,i);
     zListForEach( rkLinkShapeList(l), sc ){
       for( j=0; j<zShape3DVertNum(sc->data); j++ ){
@@ -620,7 +620,7 @@ static void _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
   rkLink *link;
 
   ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_initkey );
-  for( k=0; k<rkChainNum((rkChain*)obj); k++ ){
+  for( k=0; k<rkChainLinkNum((rkChain*)obj); k++ ){
     link = rkChainLink((rkChain*)obj,k);
     if( rkLinkJointSize(link) == 0 || rkJointIsNeutral( rkLinkJoint(link) ) ) continue;
     fprintf( fp, "joint: %s ", zName(link) );
@@ -660,8 +660,8 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
   }
   num_link = ZTKCountTag( ztk, ZTK_TAG_RKLINK );
   zArrayAlloc( &chain->link, rkLink, num_link );
-  if( rkChainNum(chain) != num_link ) return NULL;
-  if( rkChainNum(chain) == 0 ){
+  if( rkChainLinkNum(chain) != num_link ) return NULL;
+  if( rkChainLinkNum(chain) == 0 ){
     ZRUNWARN( RK_WARN_CHAIN_EMPTY );
     return NULL;
   }
@@ -685,7 +685,7 @@ void rkChainFPrintZTK(FILE *fp, rkChain *chain)
     zMShape3DFPrintZTK( fp, rkChainShape(chain) );
   if( rkChainMotor(chain) )
     rkMotorArrayFPrintZTK( fp, rkChainMotor(chain) );
-  for( i=0; i<rkChainNum(chain); i++ ){
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
     fprintf( fp, "[%s]\n", ZTK_TAG_RKLINK );
     rkLinkFPrintZTK( fp, rkChainLink(chain,i) );
   }
@@ -776,7 +776,7 @@ void rkChainPostureFPrint(FILE *fp, rkChain *c)
   register int i;
 
   fprintf( fp, "Chain : %s\n", zName(c) );
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     rkLinkPostureFPrint( fp, rkChainLink(c,i) );
 }
 
@@ -792,8 +792,8 @@ void rkChainExtWrenchFPrint(FILE *fp, rkChain *c)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(c); i++ )
-    if( zListNum(rkChainLinkExtWrench(c,i)) != 0 ){
+  for( i=0; i<rkChainLinkNum(c); i++ )
+    if( zListSize(rkChainLinkExtWrench(c,i)) != 0 ){
       fprintf( fp, "[%s]\n", rkChainLinkName(c,i) );
       rkLinkExtWrenchFPrint( fp, rkChainLink(c,i) );
     }

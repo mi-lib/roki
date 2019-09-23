@@ -61,7 +61,7 @@ void rkChainABIAlloc(rkChain *chain)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkABIAlloc( rkChainLink(chain,i) );
 }
 
@@ -78,7 +78,7 @@ void rkChainABIDestroy(rkChain *chain)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkABIDestroy( rkChainLink(chain,i) );
 }
 
@@ -123,7 +123,7 @@ void rkChainABIUpdateInit(rkChain *chain)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ ){
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
     if( rkChainLinkParent(chain,i) == NULL )
       rkLinkABIUpdateInit( rkChainLink(chain,i), ZVEC6DZERO );
     else
@@ -219,7 +219,7 @@ void _rkChainZeroLinkRate(rkChain *chain)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkZeroRate( rkChainLink(chain,i) );
 }
 
@@ -317,7 +317,7 @@ void _rkChainABIUpdateBackwardAddExForce(rkChain *chain)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkABIPrp(rkChainLink(chain,i))->abi_backward_path = false;
   _rkLinkABIFindBackwardPathAddExForce( rkChainRoot(chain) );
   _rkLinkABIUpdateBackwardAddExForce( rkChainRoot(chain) );
@@ -354,7 +354,7 @@ void rkChainABIPushPrpAccBias(rkChain *chain)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ ){
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
     zVec6DCopy( &rkLinkABIPrp(rkChainLink(chain,i))->b, &rkLinkABIPrp(rkChainLink(chain,i))->b0 );
     zVec6DCopy( rkChainLinkAcc(chain,i), &rkLinkABIPrp(rkChainLink(chain,i))->a0 );
   }
@@ -364,7 +364,7 @@ void rkChainABIPopPrpAccBias(rkChain *chain)
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ ){
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
     zVec6DCopy( &rkLinkABIPrp(rkChainLink(chain,i))->b0, &rkLinkABIPrp(rkChainLink(chain,i))->b );
     zVec6DCopy( &rkLinkABIPrp(rkChainLink(chain,i))->a0, rkLinkAcc(rkChainLink(chain,i)) );
   }
@@ -376,7 +376,7 @@ void rkChainABIPopPrpAccBiasAddExForceTwo(rkChain *chain, rkLink *link, rkLink *
 
   if( link )  zVec6DCopy( &rkLinkABIPrp(link)->b0, &rkLinkABIPrp(link)->b );
   if( link2 ) zVec6DCopy( &rkLinkABIPrp(link2)->b0, &rkLinkABIPrp(link2)->b );
-  for( i=0; i<rkChainNum(chain); i++ ){
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
     zVec6DCopy( &rkLinkABIPrp(rkChainLink(chain,i))->a0, rkLinkAcc(rkChainLink(chain,i)) );
     if( rkLinkABIPrp(rkChainLink(chain,i))->abi_backward_path )
       zVec6DCopy( &rkLinkABIPrp(rkChainLink(chain,i))->b0, &rkLinkABIPrp(rkChainLink(chain,i))->b );
@@ -395,7 +395,7 @@ void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWren
 {
   register int i;
 
-  for( i=0; i<rkChainNum(chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkABIPrp(rkChainLink(chain,i))->abi_backward_path = false;
   if( link && w ){
     _rkLinkABIFindBackwardPathAddExForceOne( chain, link );

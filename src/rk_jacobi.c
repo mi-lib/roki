@@ -141,7 +141,7 @@ zMat rkChainCOMJacobi(rkChain *c, zMat jacobi)
   double m;
 
   zMatZero( jacobi );
-  for( i=0; i<rkChainNum(c); i++ ){
+  for( i=0; i<rkChainLinkNum(c); i++ ){
     if( rkChainLinkMass(c,i) == 0 ) continue;
     m = rkChainLinkMass(c,i) / rkChainMass(c);
     for( l=rkChainLink(c,i); ; l=rkLinkParent(l) ){
@@ -192,7 +192,7 @@ zMat rkChainAMJacobi(rkChain *c, zVec3D *p, zMat jacobi)
   register int i;
 
   zMatZero( jacobi );
-  for( i=0; i<rkChainNum(c); i++ )
+  for( i=0; i<rkChainLinkNum(c); i++ )
     _rkChainLinkAMJacobi( c, i, p, jacobi );
   return jacobi;
 }
