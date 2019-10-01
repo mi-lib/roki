@@ -1,11 +1,3 @@
-# default suffices
-# .z3d : 3D shape model
-# .zkc : kinematic chain model
-# .zkci: initial state of a kinematic chain
-# .zvs : vector sequence
-# .zkcs: kinematic chain configuration sequence
-# .zef : external force info.
-
 include ../config
 
 INCLUDE=-I. -I../include -I$(PREFIX)/include
@@ -20,6 +12,7 @@ LINK=-lroki `zeo-config -l`
 COMPILE=$(CC) $(CFLAGS) -o $@ $< $(LINK)
 
 INSTALL=install -m 755
+UNINSTALL=rm -f
 
 CONFIGGEN=zeda-config-gen
 CONFIG=roki-config
@@ -43,3 +36,6 @@ install: $(TARGET)
 clean :
 	@echo " CLEAN"
 	-@rm -f *.o *~ core $(TARGET)
+uninstall:
+	@echo " UNINSTALL	" $(TARGET)
+	@cd $(BINDIR); $(UNINSTALL) $(TARGET); cd -
