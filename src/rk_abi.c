@@ -152,12 +152,12 @@ void _rkLinkABIUpdateBackward(rkLink *link)
   zVec6DSubDRC( &ap->b, &ap->w );
   /* IsIs */
   rkJointABIAxisInertia( rkLinkJoint(link), &ap->i, ap->axi, ap->iaxi );
+  rkJointABIDrivingTorque( rkLinkJoint(link) );
 
   if( !rkLinkParent(link) ) return;
 
   /* add ABI and bias acceleration to parent prp */
   rkJointABIAddABI( rkLinkJoint(link), &ap->i, rkLinkAdjFrame( link ), ap->iaxi, &rkLinkABIPrp(rkLinkParent(link))->i );
-  rkJointABIDrivingTorque( rkLinkJoint(link) );
   _rkLinkABIAddBias( link );
 }
 
