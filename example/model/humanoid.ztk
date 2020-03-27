@@ -13,16 +13,12 @@ alpha: 1
 type : polyhedron
 name : foot
 optic: silver-metalic
-vert 0: { 0.133, 0.062, 0 }
-vert 1: { 0.133, -0.062, 0 }
-vert 2: { -0.078, -0.062, 0 }
-vert 3: { -0.078, 0.062, 0 }
-edge 0 1
-edge 1 2
-edge 2 3
-edge 3 0
-facet 0 1 2
-facet 0 2 3
+vert: 0 { 0.133, 0.062, 0 }
+vert: 1 { 0.133, -0.062, 0 }
+vert: 2 { -0.078, -0.062, 0 }
+vert: 3 { -0.078, 0.062, 0 }
+face: 0 1 2
+face: 0 2 3
 
 [link]
 name: torso

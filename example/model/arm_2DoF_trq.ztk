@@ -3,36 +3,36 @@ name : 2DOF_arm
 
 [optic]
 name: white
-ambient: 0.8:0.8:0.8
-diffuse: 1:1:1
-specular: 0.4:0.4:0.4
+ambient: 0.8 0.8 0.8
+diffuse: 1 1 1
+specular: 0.4 0.4 0.4
 esr: 1
 shininess: 0
 alpha: 1
 
 [optic]
 name: white2
-ambient: 0.5:0.5:0.5
-diffuse: 0.7:0.7:0.7
-specular: 0.3:0.3:0.3
+ambient: 0.5 0.5 0.5
+diffuse: 0.7 0.7 0.7
+specular: 0.3 0.3 0.3
 esr: 1
 shininess: 0
 alpha: 1
 
 [optic]
 name: gray
-ambient: 0.2:0.1:0.1
-diffuse: 0.4:0.2:0.1
-specular: 0.1:0.1:0.1
+ambient: 0.2 0.1 0.1
+diffuse: 0.4 0.2 0.1
+specular: 0.1 0.1 0.1
 esr: 1
 shininess: 0
 alpha: 1
 
 [optic]
 name: gray2
-ambient: 0.3:0.2:0.1
-diffuse: 0.5:0.3:0.2
-specular: 0.1:0.1:0.1
+ambient: 0.3 0.2 0.1
+diffuse: 0.5 0.3 0.2
+specular: 0.1 0.1 0.1
 esr: 1
 shininess: 0
 alpha: 1
@@ -41,76 +41,76 @@ alpha: 1
 type : polyhedron
 name : shape_base
 optic: gray
-vert 0: { 0.1, 0.1, 0.1 }
-vert 1: { 0, 0.1, 0.1 }
-vert 2: { 0, -0.1, 0.1 }
-vert 3: { 0.1, -0.1, 0.1 }
-vert 4: { 0.1, 0.1, -0.1 }
-vert 5: { 0, 0.1, -0.1 }
-vert 6: { 0, -0.1, -0.1 }
-vert 7: { 0.1, -0.1, -0.1 }
-face 0 1 2
-face 0 2 3
-face 0 4 5
-face 0 5 1
-face 1 5 6
-face 1 6 2
-face 2 6 7
-face 2 7 3
-face 3 7 4
-face 3 4 0
-face 7 6 5
-face 7 5 4
+vert: 0 { 0.1, 0.1, 0.1 }
+vert: 1 { 0, 0.1, 0.1 }
+vert: 2 { 0, -0.1, 0.1 }
+vert: 3 { 0.1, -0.1, 0.1 }
+vert: 4 { 0.1, 0.1, -0.1 }
+vert: 5 { 0, 0.1, -0.1 }
+vert: 6 { 0, -0.1, -0.1 }
+vert: 7 { 0.1, -0.1, -0.1 }
+face: 0 1 2
+face: 0 2 3
+face: 0 4 5
+face: 0 5 1
+face: 1 5 6
+face: 1 6 2
+face: 2 6 7
+face: 2 7 3
+face: 3 7 4
+face: 3 4 0
+face: 7 6 5
+face: 7 5 4
 
 [shape]
 type : polyhedron
 name : shape#01
 optic: white
-vert 0: { 0.35, 0.05, 0.05 }
-vert 1: { 0.05, 0.05, 0.05 }
-vert 2: { 0.05, -0.05, 0.05 }
-vert 3: { 0.35, -0.05, 0.05 }
-vert 4: { 0.35, 0.05, -0.05 }
-vert 5: { 0.05, 0.05, -0.05 }
-vert 6: { 0.05, -0.05, -0.05 }
-vert 7: { 0.35, -0.05, -0.05 }
-face 0 1 2
-face 0 2 3
-face 0 4 5
-face 0 5 1
-face 1 5 6
-face 1 6 2
-face 2 6 7
-face 2 7 3
-face 3 7 4
-face 3 4 0
-face 7 6 5
-face 7 5 4
+vert: 0 { 0.35, 0.05, 0.05 }
+vert: 1 { 0.05, 0.05, 0.05 }
+vert: 2 { 0.05, -0.05, 0.05 }
+vert: 3 { 0.35, -0.05, 0.05 }
+vert: 4 { 0.35, 0.05, -0.05 }
+vert: 5 { 0.05, 0.05, -0.05 }
+vert: 6 { 0.05, -0.05, -0.05 }
+vert: 7 { 0.35, -0.05, -0.05 }
+face: 0 1 2
+face: 0 2 3
+face: 0 4 5
+face: 0 5 1
+face: 1 5 6
+face: 1 6 2
+face: 2 6 7
+face: 2 7 3
+face: 3 7 4
+face: 3 4 0
+face: 7 6 5
+face: 7 5 4
 
 [shape]
 type : polyhedron
 name : shape#02
 optic: white2
-vert 0: { 0.35, 0.05, 0.05 }
-vert 1: { 0.05, 0.05, 0.05 }
-vert 2: { 0.05, -0.05, 0.05 }
-vert 3: { 0.35, -0.05, 0.05 }
-vert 4: { 0.35, 0.05, -0.05 }
-vert 5: { 0.05, 0.05, -0.05 }
-vert 6: { 0.05, -0.05, -0.05 }
-vert 7: { 0.35, -0.05, -0.05 }
-face 0 1 2
-face 0 2 3
-face 0 4 5
-face 0 5 1
-face 1 5 6
-face 1 6 2
-face 2 6 7
-face 2 7 3
-face 3 7 4
-face 3 4 0
-face 7 6 5
-face 7 5 4
+vert: 0 { 0.35, 0.05, 0.05 }
+vert: 1 { 0.05, 0.05, 0.05 }
+vert: 2 { 0.05, -0.05, 0.05 }
+vert: 3 { 0.35, -0.05, 0.05 }
+vert: 4 { 0.35, 0.05, -0.05 }
+vert: 5 { 0.05, 0.05, -0.05 }
+vert: 6 { 0.05, -0.05, -0.05 }
+vert: 7 { 0.35, -0.05, -0.05 }
+face: 0 1 2
+face: 0 2 3
+face: 0 4 5
+face: 0 5 1
+face: 1 5 6
+face: 1 6 2
+face: 2 6 7
+face: 2 7 3
+face: 3 7 4
+face: 3 4 0
+face: 7 6 5
+face: 7 5 4
 
 [shape]
 type : cylinder
@@ -156,9 +156,9 @@ shape: shape_motor_base
 [link]
 name: link#01
 jointtype: revolute
-min: -180.0000000000
-max: 180.0000000000
-stiffness: 0.0000000000
+min: -180
+max: 180
+stiffness: 0
 viscosity: 2.2
 coulomb: 4.32
 staticfriction: 4.92
@@ -183,9 +183,9 @@ parent: link#00
 [link]
 name: link#02
 jointtype: revolute
-min: -180.0000000000
-max: 180.0000000000
-stiffness: 0.0000000000
+min: -180
+max: 180
+stiffness: 0
 viscosity: 2.2
 coulomb: 4.32
 staticfriction: 4.92

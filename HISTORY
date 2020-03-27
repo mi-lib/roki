@@ -1,3 +1,4 @@
+2020. 3.27. Modified .ztk files to be ready for respecification of ZTK format. [example]
 2019.11.22. Rewrote README as a markdown file. [README]
 2019.10. 1. Enabled make uninstall. [makefile]
 2019. 9.23. Renamed rkChainNum to rkChainLinkNum. [rk_chain, rk_jacobi, rk_ik, rk_cd, app]
