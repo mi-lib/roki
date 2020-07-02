@@ -1,5 +1,5 @@
 PREFIX=$(HOME)/usr
 PROJNAME=roki
-VERSION=1.3.20
+VERSION=1.3.21
 
 DEPENDENCY="zeda=1.2.19;zm=1.2.9;zeo=1.4.9"

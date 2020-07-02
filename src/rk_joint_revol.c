@@ -134,19 +134,19 @@ static void _rkJointRevolGetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   *fp = _rkc(prp)->_fp;
 }
 
-static void _rkJointRevolSetFric(void *prp, double *val){
+static void _rkJointRevolSetFriction(void *prp, double *val){
   _rkc(prp)->tf = *val;
 }
 
-static void _rkJointRevolGetFric(void *prp, double *val){
+static void _rkJointRevolGetFriction(void *prp, double *val){
   *val = _rkc(prp)->tf;
 }
 
-static void _rkJointRevolGetSFric(void *prp, double *val){
+static void _rkJointRevolGetSFriction(void *prp, double *val){
   *val = _rkc(prp)->sf;
 }
 
-static void _rkJointRevolGetKFric(void *prp, double *val){
+static void _rkJointRevolGetKFriction(void *prp, double *val){
   *val = _rkJointRestTrq( _rkc(prp)->stiffness, _rkc(prp)->viscosity, _rkc(prp)->coulomb, _rkc(prp)->dis, _rkc(prp)->vel );
 }
 
@@ -264,7 +264,7 @@ static void *_rkJointRevolCoulombFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->coulomb = ZTKDouble(ztk);
   return prp;
 }
-static void *_rkJointRevolStaticFricFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointRevolStaticFrictionFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->sf = ZTKDouble(ztk);
   return prp;
 }
@@ -292,7 +292,7 @@ static void _rkJointRevolViscosityFPrintZTK(FILE *fp, int i, void *prp){
 static void _rkJointRevolCoulombFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->coulomb );
 }
-static void _rkJointRevolStaticFricFPrintZTK(FILE *fp, int i, void *prp){
+static void _rkJointRevolStaticFrictionFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->sf );
 }
 static void _rkJointRevolMotorFPrintZTK(FILE *fp, int i, void *prp){
@@ -306,7 +306,7 @@ static ZTKPrp __ztk_prp_rkjoint_revol[] = {
   { "stiffness", 1, _rkJointRevolStiffnessFromZTK, _rkJointRevolStiffnessFPrintZTK },
   { "viscosity", 1, _rkJointRevolViscosityFromZTK, _rkJointRevolViscosityFPrintZTK },
   { "coulomb", 1, _rkJointRevolCoulombFromZTK, _rkJointRevolCoulombFPrintZTK },
-  { "staticfriction", 1, _rkJointRevolStaticFricFromZTK, _rkJointRevolStaticFricFPrintZTK },
+  { "staticfriction", 1, _rkJointRevolStaticFrictionFromZTK, _rkJointRevolStaticFrictionFPrintZTK },
   { "motor", 1, _rkJointRevolMotorFromZTK, _rkJointRevolMotorFPrintZTK },
 };
 
@@ -353,10 +353,10 @@ rkJointCom rk_joint_revol = {
 
   _rkJointRevolSetFrictionPivot,
   _rkJointRevolGetFrictionPivot,
-  _rkJointRevolSetFric,
-  _rkJointRevolGetFric,
-  _rkJointRevolGetSFric,
-  _rkJointRevolGetKFric,
+  _rkJointRevolSetFriction,
+  _rkJointRevolGetFriction,
+  _rkJointRevolGetSFriction,
+  _rkJointRevolGetKFriction,
 
   _rkJointRevolGetMotor,
   _rkJointRevolMotorSetInput,

@@ -127,19 +127,19 @@ static void _rkJointPrismGetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   _rkc(prp)->_fp = *fp;
 }
 
-static void _rkJointPrismSetFric(void *prp, double *val){
+static void _rkJointPrismSetFriction(void *prp, double *val){
   _rkc(prp)->tf = *val;
 }
 
-static void _rkJointPrismGetFric(void *prp, double *val){
+static void _rkJointPrismGetFriction(void *prp, double *val){
   *val = _rkc(prp)->tf;
 }
 
-static void _rkJointPrismGetSFric(void *prp, double *val){
+static void _rkJointPrismGetSFriction(void *prp, double *val){
   *val = _rkc(prp)->sf;
 }
 
-static void _rkJointPrismGetKFric(void *prp, double *val){
+static void _rkJointPrismGetKFriction(void *prp, double *val){
   *val = _rkJointRestTrq( _rkc(prp)->stiffness, _rkc(prp)->viscosity, _rkc(prp)->coulomb, _rkc(prp)->dis, _rkc(prp)->vel );
 }
 
@@ -256,7 +256,7 @@ static void *_rkJointPrismCoulombFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->coulomb = zDeg2Rad(ZTKDouble(ztk));
   return prp;
 }
-static void *_rkJointPrismStaticFricFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+static void *_rkJointPrismStaticFrictionFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   _rkc(prp)->sf = zDeg2Rad(ZTKDouble(ztk));
   return prp;
 }
@@ -284,7 +284,7 @@ static void _rkJointPrismViscosityFPrintZTK(FILE *fp, int i, void *prp){
 static void _rkJointPrismCoulombFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->coulomb );
 }
-static void _rkJointPrismStaticFricFPrintZTK(FILE *fp, int i, void *prp){
+static void _rkJointPrismStaticFrictionFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->sf );
 }
 static void _rkJointPrismMotorFPrintZTK(FILE *fp, int i, void *prp){
@@ -298,7 +298,7 @@ static ZTKPrp __ztk_prp_rkjoint_prism[] = {
   { "stiffness", 1, _rkJointPrismStiffnessFromZTK, _rkJointPrismStiffnessFPrintZTK },
   { "viscosity", 1, _rkJointPrismViscosityFromZTK, _rkJointPrismViscosityFPrintZTK },
   { "coulomb", 1, _rkJointPrismCoulombFromZTK, _rkJointPrismCoulombFPrintZTK },
-  { "staticfriction", 1, _rkJointPrismStaticFricFromZTK, _rkJointPrismStaticFricFPrintZTK },
+  { "staticfriction", 1, _rkJointPrismStaticFrictionFromZTK, _rkJointPrismStaticFrictionFPrintZTK },
   { "motor", 1, _rkJointPrismMotorFromZTK, _rkJointPrismMotorFPrintZTK },
 };
 
@@ -345,10 +345,10 @@ rkJointCom rk_joint_prism = {
 
   _rkJointPrismSetFrictionPivot,
   _rkJointPrismGetFrictionPivot,
-  _rkJointPrismSetFric,
-  _rkJointPrismGetFric,
-  _rkJointPrismGetSFric,
-  _rkJointPrismGetKFric,
+  _rkJointPrismSetFriction,
+  _rkJointPrismGetFriction,
+  _rkJointPrismGetSFriction,
+  _rkJointPrismGetKFriction,
 
   _rkJointPrismGetMotor,
   _rkJointPrismMotorSetInput,

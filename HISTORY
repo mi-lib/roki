@@ -1,3 +1,6 @@
+2020. 7. 3. Renamed rkJoint*Fric* to rkJoint*Friction*. [rk_joint, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke]
+2020. 7. 3. Renamed _setfric, _getfric, _getsfric and _getkfric of rkJoint to _setfriction, _getfriction, _getsfriction and _getkfriction, respectively. [rk_joint]
+2020. 7. 3. Renamed ref_trq of rkJointFrictionPivot to prev_trq. [rk_joint]
 2020. 3.27. Modified .ztk files to be ready for respecification of ZTK format. [example]
 2019.11.22. Rewrote README as a markdown file. [README]
 2019.10. 1. Enabled make uninstall. [makefile]

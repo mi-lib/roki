@@ -178,22 +178,22 @@ static void _rkJointHookeGetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   _rkc(prp)->_fp[1] = fp[1];
 }
 
-static void _rkJointHookeSetFric(void *prp, double *val){
+static void _rkJointHookeSetFriction(void *prp, double *val){
   _rkc(prp)->tf[0] = val[0];
   _rkc(prp)->tf[1] = val[1];
 }
 
-static void _rkJointHookeGetFric(void *prp, double *val){
+static void _rkJointHookeGetFriction(void *prp, double *val){
   val[0] = _rkc(prp)->tf[0];
   val[1] = _rkc(prp)->tf[1];
 }
 
-static void _rkJointHookeGetSFric(void *prp, double *val){
+static void _rkJointHookeGetSFriction(void *prp, double *val){
   val[0] = _rkc(prp)->sf[0];
   val[1] = _rkc(prp)->sf[1];
 }
 
-static void _rkJointHookeGetKFric(void *prp, double *val){
+static void _rkJointHookeGetKFriction(void *prp, double *val){
   val[0] = _rkJointRestTrq( _rkc(prp)->stiffness[0], _rkc(prp)->viscosity[0], _rkc(prp)->coulomb[0], _rkc(prp)->dis[0], _rkc(prp)->vel[0] );
   val[1] = _rkJointRestTrq( _rkc(prp)->stiffness[1], _rkc(prp)->viscosity[1], _rkc(prp)->coulomb[1], _rkc(prp)->dis[1], _rkc(prp)->vel[1] );
 }
@@ -372,10 +372,10 @@ rkJointCom rk_joint_hooke = {
 
   _rkJointHookeSetFrictionPivot,
   _rkJointHookeGetFrictionPivot,
-  _rkJointHookeSetFric,
-  _rkJointHookeGetFric,
-  _rkJointHookeGetSFric,
-  _rkJointHookeGetKFric,
+  _rkJointHookeSetFriction,
+  _rkJointHookeGetFriction,
+  _rkJointHookeGetSFriction,
+  _rkJointHookeGetKFriction,
 
   _rkJointHookeGetMotor,
   _rkJointHookeMotorSetInput,

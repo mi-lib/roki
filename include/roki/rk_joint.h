@@ -25,7 +25,7 @@ struct _rkJoint;
 /* for forward dynamics */
 typedef struct{
   byte type;
-  double ref_dis, ref_trq;
+  double ref_dis, prev_trq;
 } rkJointFrictionPivot;
 
 typedef struct{
@@ -62,10 +62,10 @@ typedef struct{
   /* for forward dynamics */
   void (*_setfrictionpivot)(void*,rkJointFrictionPivot*); /* set referential displacement of friction */
   void (*_getfrictionpivot)(void*,rkJointFrictionPivot*); /* get referential displacement of friction */
-  void (*_setfric)(void*,double*);  /* set joint friction force/torque */
-  void (*_getfric)(void*,double*);  /* get joint friction force/torque */
-  void (*_getsfric)(void*,double*); /* set static friction force/torque */
-  void (*_getkfric)(void*,double*); /* get kinetic friction force/torque */
+  void (*_setfriction)(void*,double*);  /* set joint friction force/torque */
+  void (*_getfriction)(void*,double*);  /* get joint friction force/torque */
+  void (*_getsfriction)(void*,double*); /* set static friction force/torque */
+  void (*_getkfriction)(void*,double*); /* get kinetic friction force/torque */
 
   rkMotor *(*_getmotor)(void*);
   void (*_setmotorinput)(void*,double*);
@@ -157,12 +157,12 @@ __EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 #define rkJointSubDis(j,d,sd)       (j)->com->_subdis( (j)->prp, d, sd )
 #define rkJointSetDisCNT(j,v,t)     (j)->com->_cntdis( (j)->prp, v, t )
 
-#define rkJointSetFricPivot(j,r)    (j)->com->_setfrictionpivot( (j)->prp, r )
-#define rkJointGetFricPivot(j,r)    (j)->com->_getfrictionpivot( (j)->prp, r )
-#define rkJointSetFric(j,f)         (j)->com->_setfric( (j)->prp, f )
-#define rkJointGetFric(j,f)         (j)->com->_getfric( (j)->prp, f )
-#define rkJointGetSFric(j,f)        (j)->com->_getsfric( (j)->prp, f )
-#define rkJointGetKFric(j,f)        (j)->com->_getkfric( (j)->prp, f )
+#define rkJointSetFrictionPivot(j,r) (j)->com->_setfrictionpivot( (j)->prp, r )
+#define rkJointGetFrictionPivot(j,r) (j)->com->_getfrictionpivot( (j)->prp, r )
+#define rkJointSetFriction(j,f)      (j)->com->_setfriction( (j)->prp, f )
+#define rkJointGetFriction(j,f)      (j)->com->_getfriction( (j)->prp, f )
+#define rkJointGetSFriction(j,f)     (j)->com->_getsfriction( (j)->prp, f )
+#define rkJointGetKFriction(j,f)     (j)->com->_getkfriction( (j)->prp, f )
 
 /* motor */
 #define rkJointGetMotor(j)          (j)->com->_getmotor( (j)->prp )
