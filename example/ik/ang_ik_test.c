@@ -14,10 +14,10 @@ void chain_init(rkChain *chain)
     if( i > 0 )
       rkLinkAddChild( rkChainLink(chain,i-1), rkChainLink(chain,i) );
   }
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,3), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_fixed );
   zMat3DCreate( rkChainLinkOrgAtt(chain,1), 1, 0, 0, 0, 0, 1, 0,-1, 0 );
   zMat3DCreate( rkChainLinkOrgAtt(chain,2), 0, 0, 1,-1, 0, 0, 0,-1, 0 );
   zMat3DCreate( rkChainLinkOrgAtt(chain,3), 0, 0, 1, 0,-1, 0, 1, 0, 0 );
@@ -41,9 +41,6 @@ int main(int argc, char *argv[])
   zRandInit();
   chain_init( &chain );
   dis = zVecAlloc( 3 );
-  /*
-  zVecSetElemList( dis, 0.0, 0.0, zDeg2Rad(d) );
-  */
 
   rkIKCreate( &ik, &chain );
   rkIKJointReg( &ik, 0, 0.0 );
@@ -58,18 +55,11 @@ int main(int argc, char *argv[])
   rkIKCellSetRef( cell,
     zDeg2Rad(zRandF(-180,180)), zDeg2Rad(zRandF( 0,180)), zDeg2Rad(zRandF(-180,180)) );
 
-  printf( "++ initial attitude\n" );
-  zMat3DPrint( rkChainLinkWldAtt(ik.chain,3) );
   rkIKSolve( &ik, dis, zTOL, 0 );
-  zVecPrint( dis );
   rkChainFK( ik.chain, dis );
-  printf( "++ goal attitude\n" );
-  zMat3DPrint( &cell->data.ref.att );
-  printf( "++ final attitude\n" );
-  zMat3DPrint( rkChainLinkWldAtt(ik.chain,3) );
-  printf( "++ error\n" );
   zMat3DError( &cell->data.ref.att, rkChainLinkWldAtt(ik.chain,3), &err );
   zVec3DPrint( &err );
+  eprintf( "%s.\n", zVec3DIsTiny( &err ) ? "success" : "failure" );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

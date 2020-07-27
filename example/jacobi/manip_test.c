@@ -21,11 +21,11 @@ void chain_init(rkChain *chain)
   rkLinkAddChild( rkChainLink(chain,1), rkChainLink(chain,2) );
   rkLinkAddChild( rkChainLink(chain,2), rkChainLink(chain,3) );
   rkLinkAddChild( rkChainLink(chain,3), rkChainLink(chain,4) );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_FIXED );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_SPHER );
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,3), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,4), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_fixed );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_spher );
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_fixed );
   zVec3DCreate( rkChainLinkOrgPos(chain,2), 1, 0, 0 );
   zVec3DCreate( rkChainLinkOrgPos(chain,3), 1, 0, 0 );
   zVec3DCreate( rkChainLinkOrgPos(chain,4), 1, 0, 0 );
@@ -44,11 +44,11 @@ void set_dis(rkChain *chain, zVec dis, int st)
   zMat3D r;
 
   val = 0.5*zPI*st/STEP;
-  for( i=0; i<rkChainNum(chain); i++ ){
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
     if( rkChainLinkOffset(chain,i) < 0 ) continue;
-    if( rkChainLinkJointType(chain,i) == RK_JOINT_SPHER ){
-      zMat3DZYX( &r, val, val, val );
-      zMat3DToEP( &r, (zEP*)&zVecElem(dis,rkChainLinkOffset(chain,i)) );
+    if( rkChainLinkJoint(chain,i)->com == &rk_joint_spher ){
+      zMat3DFromZYX( &r, val, val, val );
+      zMat3DToEP( &r, (zEP*)&zVecElemNC(dis,rkChainLinkOffset(chain,i)) );
     } else
       for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
         zVecSetElem( dis, rkChainLinkOffset(chain,i)+j, val );
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
   for( i=0; i<=STEP; i++ ){
     set_dis( &chain, dis, i );
     rkChainFK( &chain, dis );
-    rkChainLinkTtlLinJacobi( &chain, TIP, Z_ZEROVEC3D, jacobi );
+    rkChainLinkWldLinJacobi( &chain, TIP, ZVEC3DZERO, jacobi );
     printf( "%f\n", rkJacobiManip( jacobi ) );
   }
 

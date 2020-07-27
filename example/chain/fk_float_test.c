@@ -39,7 +39,7 @@ void create_float(rkChain *chain)
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_FLOAT );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
   zMat3DCreate( rkChainLinkOrgAtt(chain,0),
     0, 0, 1,
     0, 1, 0,
@@ -47,7 +47,7 @@ void create_float(rkChain *chain)
   /* link 2 */
   rkLinkInit( rkChainLink(chain,1) );
   zNameSet( rkChainLink(chain,1), "link2" );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_fixed );
   zVec3DCopy( &p, rkChainLinkOrgPos(chain,1) );
   /* connect */
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
@@ -94,7 +94,7 @@ int main(void)
 
   /* output */
   printf( ">> frame test\n" );
-  printf( " spherical joint ..." );
+  printf( " float joint ..." );
   zFrame3DPrint( rkLinkWldFrame(le) );
   printf( " answer ..." );
   zFrame3DPrint( &fout );
@@ -104,7 +104,7 @@ int main(void)
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
 
   printf( ">> velocity test\n" );
-  printf( " spherical joint ...\n" );
+  printf( " float joint ...\n" );
   zVec6DPrint( rkLinkVel(le) );
   printf( " answer ...\n" );
   zVec6DPrint( &vout );
@@ -114,7 +114,7 @@ int main(void)
   printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
 
   printf( ">> acceleration test\n" );
-  printf( " spherical joint ...\n" );
+  printf( " float joint ...\n" );
   zVec6DPrint( rkLinkAcc(le) );
   printf( " answer ...\n" );
   zVec6DPrint( &aout );

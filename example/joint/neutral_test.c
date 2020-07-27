@@ -7,9 +7,9 @@ int main(void)
   register int i, j;
 
   zRandInit();
-  for( i=RK_JOINT_FIXED; i<=RK_JOINT_FLOAT; i++ ){
-    rkJointCreate( &joint, i );
-    printf( "[%s]\n", rkJointTypeExpr( i ) );
+  for( i=0; rk_joint_com[i]; i++ ){
+    rkJointAssign( &joint, rk_joint_com[i] );
+    printf( "[%s]\n", rkJointTypeStr( &joint ) );
     printf( "(  input displacement) =" );
     for( j=0; j<rkJointSize(&joint); j++ )
       printf( " %g", ( dis[j] = zRandF(-1,1) ) );

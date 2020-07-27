@@ -13,7 +13,7 @@ int main(void)
   double t, dis, vel, acc;
   register int i;
 
-  rkJointCreate( &joint, RK_JOINT_REVOL );
+  rkJointAssign( &joint, &rk_joint_revol );
   for( i=0; i<=STEP; i++ ){
     t = DT * i;
     dis = dis_test(t);

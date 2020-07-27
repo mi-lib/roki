@@ -5,7 +5,7 @@
 /* inertia */
 #define I  0.1
 
-void intg(rkJointPrpRevol *prp, double acc, double dt)
+void intg(rkJointRevolPrp *prp, double acc, double dt)
 {
   prp->acc = acc;
   prp->vel += prp->acc * dt;
@@ -15,20 +15,18 @@ void intg(rkJointPrpRevol *prp, double acc, double dt)
 int main(void)
 {
   rkJoint j;
-  double t;
   register int i;
-  rkJointPrpRevol *prp;
+  rkJointRevolPrp *prp;
 
-  rkJointCreate( &j, RK_JOINT_REVOL );
+  rkJointAssign( &j, &rk_joint_revol );
   prp = j.prp;
   prp->dis = 0.2;
-  prp->stiff = 1.0;
-  prp->viscos = 0.5;
+  prp->stiffness = 1.0;
+  prp->viscosity = 0.5;
 
   for( i=0; i<=STEP; i++ ){
-    t = DT * i;
-    rkJointCalcTrq( &j, Z_ZEROVEC6D );
-    printf( "%f %f %f %f\n", prp->dis, prp->vel, prp->acc, prp->trq );
+    rkJointCalcTrq( &j, ZVEC6DZERO );
+    printf( "%g %.10g %.10g %.10g %.10g\n", DT*i, prp->dis, prp->vel, prp->acc, prp->trq );
     intg( prp, prp->trq / I, DT );
   }
   rkJointDestroy( &j );

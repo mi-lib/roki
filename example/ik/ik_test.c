@@ -14,10 +14,10 @@ void chain_init(rkChain *chain)
     if( i > 0 )
       rkLinkAddChild( rkChainLink(chain,i-1), rkChainLink(chain,i) );
   }
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,3), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_fixed );
   zVec3DCreate( rkChainLinkOrgPos(chain,1), 1, 0, 0 );
   zVec3DCreate( rkChainLinkOrgPos(chain,2), 1, 0, 0 );
   zVec3DCreate( rkChainLinkOrgPos(chain,3), 1, 0, 0 );
@@ -54,23 +54,21 @@ int main(int argc, char *argv[])
 
   rkIKDeactivate( &ik );
   rkIKBind( &ik ); /* bind current status to the reference. */
+#if 0
   cell[0]->data.ref.pos.e[zX] -= 1.0;
   zMat3DRotYaw( ZMAT3DIDENT, zDeg2Rad(45), &cell[1]->data.ref.att );
+#else
+  zVec2DCreatePolar( (zVec2D*)&cell[0]->data.ref.pos, zRandF(0,2), zRandF(-zPI_2,zPI_2) );
+  cell[0]->data.ref.pos.c.z = 0;
+  zMat3DRotYaw( ZMAT3DIDENT, zRandF(-zPI_2,zPI_2), &cell[1]->data.ref.att );
+#endif
 
-  printf( "++ initial frame\n" );
-  zFrame3DPrint( rkChainLinkWldFrame(ik.chain,3) );
-  printf( "++ goal frame\n" );
-  zVec3DPrint( &cell[0]->data.ref.pos );
-  zMat3DPrint( &cell[1]->data.ref.att );
   rkIKSolve( &ik, dis, zTOL, 0 );
-  zVecPrint( dis );
   rkChainFK( ik.chain, dis );
-  printf( "++ final frame\n" );
-  zFrame3DPrint( rkChainLinkWldFrame(ik.chain,3) );
-  printf( "++ error\n" );
   zVec3DSub( &cell[0]->data.ref.pos, zFrame3DPos(rkChainLinkWldFrame(ik.chain,3)), zVec6DLin(&err) );
   zMat3DError( &cell[1]->data.ref.att, rkChainLinkWldAtt(ik.chain,3), zVec6DAng(&err) );
   zVec6DPrint( &err );
+  eprintf( "%s.\n", zVec6DIsTiny( &err ) ? "success" : "failure" );
 
   rkIKDestroy( &ik );
   rkChainDestroy( &chain );

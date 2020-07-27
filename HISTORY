@@ -1,3 +1,5 @@
+2020. 7.27. Reflected new specifications of rkJoint to examples. [example]
+2020. 7.27. Renamed _rk_joint_com to rk_joint_com and made it externalize. [rk_joint]
 2020. 7. 3. Renamed rkJoint*Fric* to rkJoint*Friction*. [rk_joint, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke]
 2020. 7. 3. Renamed _setfric, _getfric, _getsfric and _getkfric of rkJoint to _setfriction, _getfriction, _getsfriction and _getkfriction, respectively. [rk_joint]
 2020. 7. 3. Renamed ref_trq of rkJointFrictionPivot to prev_trq. [rk_joint]

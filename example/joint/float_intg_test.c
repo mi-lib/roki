@@ -10,7 +10,7 @@ int main(void)
   register int i;
 
   zRandInit();
-  rkJointCreate( &j, RK_JOINT_FLOAT );
+  rkJointAssign( &j, &rk_joint_float );
   /* original displacement, velocity, acceleration */
   zVec6DCreate( &d, zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
   zVec6DCreate( &v, zRandF(-10,10), zRandF(-10,10), zRandF(-10,10), zRandF(-10,10), zRandF(-10,10), zRandF(-10,10) );

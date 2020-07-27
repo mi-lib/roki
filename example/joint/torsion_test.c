@@ -6,7 +6,7 @@ void check(rkJoint *joint, zVec6D *t, double dis[], zFrame3D *f)
   zVec6D tc, err;
   register int i;
 
-  printf( "[%s]\n", rkJointTypeExpr(rkJointType(joint)) );
+  printf( "[%s]\n", rkJointTypeStr(joint) );
   printf( " torsion:\n" ); zVec6DPrint( t );
   printf( " displacement:" );
   for( i=0; i<6; i++ ) printf( " %g", dis[i] );
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
   printf( "+++ deviation +++\n" );
   zVec6DPrint( &d );
 
-  for( type=RK_JOINT_FIXED; type<=RK_JOINT_FLOAT; type++ ){
-    rkJointCreate( &joint, type );
+  for( type=0; rk_joint_com[type]; type++ ){
+    rkJointAssign( &joint, rk_joint_com[type] );
     rkJointTorsion( &joint, &f, &t, dis );
     check( &joint, &t, dis, &f );
     rkJointDestroy( &joint );

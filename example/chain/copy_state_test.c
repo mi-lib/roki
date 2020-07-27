@@ -23,14 +23,14 @@ void chain_init(rkChain *chain)
   }
   for( i=1; i<N; i++ )
     rkLinkAddChild( rkChainLink(chain,i-1), rkChainLink(chain,i) );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_FLOAT );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_SPHER );
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,3), RK_JOINT_CYLIN );
-  rkJointCreate( rkChainLinkJoint(chain,4), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,5), RK_JOINT_PRISM );
-  rkJointCreate( rkChainLinkJoint(chain,6), RK_JOINT_HOOKE );
-  rkJointCreate( rkChainLinkJoint(chain,7), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_spher );
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_cylin );
+  rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,5), &rk_joint_prism );
+  rkJointAssign( rkChainLinkJoint(chain,6), &rk_joint_hooke );
+  rkJointAssign( rkChainLinkJoint(chain,7), &rk_joint_fixed );
   zVec3DCreate( rkChainLinkOrgPos(chain,2), 1, 0, 0 );
   zVec3DCreate( rkChainLinkOrgPos(chain,3), 0, 0, 1 );
   zVec3DCreate( rkChainLinkOrgPos(chain,5), 0, 1, 0 );

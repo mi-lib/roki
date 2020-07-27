@@ -43,11 +43,11 @@ void create_hooke1(rkChain *chain)
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_HOOKE );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_hooke );
   /* link E */
   rkLinkInit( rkChainLink(chain,1) );
   zNameSet( rkChainLink(chain,1), "endpoint" );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_fixed );
   zVec3DCopy( &p, rkChainLinkOrgPos(chain,1) );
   /* connect links */
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
@@ -67,21 +67,21 @@ void create_hooke2(rkChain *chain)
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_REVOL );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_revol );
   /* link 2 */
   rkLinkInit( rkChainLink(chain,1) );
   zNameSet( rkChainLink(chain,1), "link2" );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_REVOL );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_revol );
   zMat3DCreate( rkChainLinkOrgAtt(chain,1), 0, 1, 0, 0, 0, 1, 1, 0, 0 );
   /* link 3 */
   rkLinkInit( rkChainLink(chain,2) );
   zNameSet( rkChainLink(chain,2), "link3(aligner)" );
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_fixed );
   zMat3DCreate( rkChainLinkOrgAtt(chain,2), 0, 0, 1, 1, 0, 0, 0, 1, 0 );
   /* link E */
   rkLinkInit( rkChainLink(chain,3) );
   zNameSet( rkChainLink(chain,3), "endpoint" );
-  rkJointCreate( rkChainLinkJoint(chain,3), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_fixed );
   zVec3DCopy( &p, rkChainLinkOrgPos(chain,3) );
   /* connect links */
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );

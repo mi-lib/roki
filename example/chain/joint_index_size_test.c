@@ -17,13 +17,13 @@ void chain_init(rkChain *chain)
     if( i > 0 )
       rkLinkAddChild( rkChainLink(chain,i-1), rkChainLink(chain,i) );
   }
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_FIXED );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_SPHER ); /* 0-2 */
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_REVOL ); /* 3 */
-  rkJointCreate( rkChainLinkJoint(chain,3), RK_JOINT_CYLIN ); /* 4-5 */
-  rkJointCreate( rkChainLinkJoint(chain,4), RK_JOINT_REVOL ); /* 6 */
-  rkJointCreate( rkChainLinkJoint(chain,5), RK_JOINT_SPHER ); /* 7-9 */
-  rkJointCreate( rkChainLinkJoint(chain,6), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_fixed );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_spher ); /* 0-2 */
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol ); /* 3 */
+  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_cylin ); /* 4-5 */
+  rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_revol ); /* 6 */
+  rkJointAssign( rkChainLinkJoint(chain,5), &rk_joint_spher ); /* 7-9 */
+  rkJointAssign( rkChainLinkJoint(chain,6), &rk_joint_fixed );
   rkChainSetOffset( chain );
 }
 

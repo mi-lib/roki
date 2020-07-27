@@ -8,7 +8,7 @@ int main(void)
   zVec3D aa, v, a, aao, vo, ao, err;
 
   zRandInit();
-  rkJointCreate( &j, RK_JOINT_SPHER );
+  rkJointAssign( &j, &rk_joint_spher );
   /* original displacement, velocity, acceleration */
   zVec3DCreate( &aa,zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
   zVec3DCreate( &v, zRandF(-10,10), zRandF(-10,10), zRandF(-10,10) );

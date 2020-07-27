@@ -19,11 +19,11 @@ void chain_init(rkChain *chain)
     rkLinkInit( rkChainLink(chain,i) );
     zNameSet( rkChainLink(chain,i), name );
   }
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_FLOAT );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
   for( i=0; i<3; i++ ){
-    rkJointCreate( rkChainLinkJoint(chain,i*3+1), RK_JOINT_REVOL );
-    rkJointCreate( rkChainLinkJoint(chain,i*3+2), RK_JOINT_REVOL );
-    rkJointCreate( rkChainLinkJoint(chain,i*3+3), RK_JOINT_REVOL );
+    rkJointAssign( rkChainLinkJoint(chain,i*3+1), &rk_joint_revol );
+    rkJointAssign( rkChainLinkJoint(chain,i*3+2), &rk_joint_revol );
+    rkJointAssign( rkChainLinkJoint(chain,i*3+3), &rk_joint_revol );
     zVec3DCreate( rkChainLinkOrgPos(chain,i*3+2), 0, 1, 0 );
     zVec3DCreate( rkChainLinkOrgPos(chain,i*3+3), 0, 1, 0 );
     rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,i*3+1) );
@@ -36,7 +36,7 @@ void chain_init(rkChain *chain)
   rkChainSetOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
-  rkChainPrintFile( chain, "trident.zkc" );
+  rkChainWriteZTK( chain, "trident.ztk" );
 }
 
 #define DIV 200

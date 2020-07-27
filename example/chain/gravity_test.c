@@ -7,7 +7,7 @@ void create_chain(rkChain *chain)
   zArrayAlloc( &chain->link, rkLink, 1 );
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "body" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_FLOAT );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
 
   rkChainSetMass( chain, 1.0 );
   rkChainSetOffset( chain );

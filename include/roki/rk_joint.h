@@ -323,9 +323,11 @@ __END_DECLS
 
 __BEGIN_DECLS
 
+extern rkJointCom *rk_joint_com[];
+
 /* add the handle to the following list when you create a new joint class. */
 #define RK_JOINT_COM_ARRAY \
-rkJointCom *_rk_joint_com[] = {\
+rkJointCom *rk_joint_com[] = {\
   &rk_joint_fixed,\
   &rk_joint_revol,\
   &rk_joint_prism,\

@@ -10,7 +10,7 @@ void create_hooke1(rkChain *chain)
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_HOOKE );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_hooke );
 
   rkChainSetMass( chain, 1.0 );
   rkChainSetOffset( chain );
@@ -27,16 +27,16 @@ void create_hooke2(rkChain *chain)
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_REVOL );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_revol );
   /* link 2 */
   rkLinkInit( rkChainLink(chain,1) );
   zNameSet( rkChainLink(chain,1), "link2" );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_REVOL );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_revol );
   zMat3DCreate( rkChainLinkOrgAtt(chain,1), 0, 1, 0, 0, 0, 1, 1, 0, 0 );
   /* link 3 */
   rkLinkInit( rkChainLink(chain,2) );
   zNameSet( rkChainLink(chain,2), "link3(aligner)" );
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_fixed );
   zMat3DCreate( rkChainLinkOrgAtt(chain,2), 0, 0, 1, 1, 0, 0, 0, 1, 0 );
   /* connect links */
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
@@ -54,7 +54,7 @@ int main(void)
   rkChain c1, c2;
   zVec dis;
   zVec6D w, wj, err;
-  double u[2];
+  double u1[2], u2[2];
 
   /* create chain */
   create_hooke1( &c1 );
@@ -84,15 +84,16 @@ int main(void)
   /* torque */
   zMulMat3DTVec6D( rkChainLinkWldAtt(&c1,0), &w, &wj );
   rkJointCalcTrq( rkChainLinkJoint(&c1,0), &wj );
-  rkJointGetTrq( rkChainLinkJoint(&c1,0), u );
-  printf( "trq(r1) = %.16g %.16g\n", u[0], u[1] );
+  rkJointGetTrq( rkChainLinkJoint(&c1,0), u1 );
+  printf( "trq(r1) = %.16g %.16g\n", u1[0], u1[1] );
   zMulMat3DTVec6D( rkChainLinkWldAtt(&c2,0), &w, &wj );
   rkJointCalcTrq( rkChainLinkJoint(&c2,0), &wj );
-  rkJointGetTrq( rkChainLinkJoint(&c2,0), &u[0] );
+  rkJointGetTrq( rkChainLinkJoint(&c2,0), &u2[0] );
   zMulMat3DTVec6D( rkChainLinkWldAtt(&c2,1), &w, &wj );
   rkJointCalcTrq( rkChainLinkJoint(&c2,1), &wj );
-  rkJointGetTrq( rkChainLinkJoint(&c2,1), &u[1] );
-  printf( "trq(r2) = %.16g %.16g\n", u[0], u[1] );
+  rkJointGetTrq( rkChainLinkJoint(&c2,1), &u2[1] );
+  printf( "trq(r2) = %.16g %.16g\n", u2[0], u2[1] );
+  eprintf( "%s.\n", zIsTiny( u1[0] - u2[0] ) && zIsTiny( u1[1] - u2[1] ) ? "success" : "failure" );
 
   /* terminate */
   zVecFree( dis );

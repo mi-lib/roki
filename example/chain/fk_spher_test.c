@@ -43,11 +43,11 @@ void create_sphere(rkChain *chain)
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_SPHER );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_spher );
   /* link 2 */
   rkLinkInit( rkChainLink(chain,1) );
   zNameSet( rkChainLink(chain,1), "link2" );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_SPHER );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_spher );
   zVec3DCopy( &p, rkChainLinkOrgPos(chain,1) );
   /* connect */
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );

@@ -5,14 +5,10 @@ int main(void)
   rkJoint joint;
   double din, dout;
   register int i;
-  FILE *fp;
 
-  fp = fopen( "revol.conf", "r" );
-  rkJointCreate( &joint, RK_JOINT_REVOL );
-  rkJointQueryFRead( fp, "min", &joint );
-  rkJointQueryFRead( fp, "max", &joint );
-  fclose( fp );
-
+  rkJointAssign( &joint, &rk_joint_revol );
+  ((rkJointRevolPrp *)joint.prp)->min = zDeg2Rad(-45);
+  ((rkJointRevolPrp *)joint.prp)->max = zDeg2Rad( 45);
   for( i=-90; i<=90; i++ ){
     din = zDeg2Rad(i);
     rkJointSetDis( &joint, &din );

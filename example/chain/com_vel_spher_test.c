@@ -62,8 +62,8 @@ void chain_init(rkChain *chain)
   zNameSet( rkChainLink(chain,1), name );
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
 
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_SPHER );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_spher );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_fixed );
   zVec3DCreate( rkChainLinkOrgPos(chain,1), 1, 0, 0 );
   zFrame3DCopy( rkChainLinkOrgFrame(chain,1), rkChainLinkAdjFrame(chain,1) );
   rkChainSetOffset( chain );

@@ -11,6 +11,8 @@
  * joint class
  * ********************************************************** */
 
+RK_JOINT_COM_ARRAY;
+
 rkJoint *rkJointAssign(rkJoint *j, rkJointCom *com)
 {
   rkJointInit( j );
@@ -22,12 +24,11 @@ rkJoint *rkJointAssign(rkJoint *j, rkJointCom *com)
 
 rkJoint *rkJointQueryAssign(rkJoint *j, char *str)
 {
-  RK_JOINT_COM_ARRAY;
   register int i;
 
-  for( i=0; _rk_joint_com[i]; i++ )
-    if( strcmp( _rk_joint_com[i]->typestr, str ) == 0 )
-      return rkJointAssign( j, _rk_joint_com[i] );
+  for( i=0; rk_joint_com[i]; i++ )
+    if( strcmp( rk_joint_com[i]->typestr, str ) == 0 )
+      return rkJointAssign( j, rk_joint_com[i] );
   return NULL;
 }
 
@@ -162,11 +163,10 @@ void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc)
 
 bool rkJointRegZTK(ZTK *ztk, char *tag)
 {
-  RK_JOINT_COM_ARRAY;
   register int i;
 
-  for( i=0; _rk_joint_com[i]; i++ )
-    if( !_rk_joint_com[i]->_regZTK( ztk, tag ) ) return false;
+  for( i=0; rk_joint_com[i]; i++ )
+    if( !rk_joint_com[i]->_regZTK( ztk, tag ) ) return false;
   return true;
 }
 

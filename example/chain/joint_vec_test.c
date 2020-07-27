@@ -17,11 +17,11 @@ void chain_init(rkChain *chain)
     if( i > 0 )
       rkLinkAddChild( rkChainLink(chain,i-1), rkChainLink(chain,i) );
   }
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_FIXED );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_SPHER );
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_REVOL );
-  rkJointCreate( rkChainLinkJoint(chain,3), RK_JOINT_CYLIN );
-  rkJointCreate( rkChainLinkJoint(chain,4), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_fixed );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_spher );
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_cylin );
+  rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_fixed );
   zVec3DCreate( rkChainLinkOrgPos(chain,2), 1, 0, 0 );
   zVec3DCreate( rkChainLinkOrgPos(chain,3), 0, 0, 1 );
   zFrame3DCopy( rkChainLinkOrgFrame(chain,2), rkChainLinkAdjFrame(chain,2) );

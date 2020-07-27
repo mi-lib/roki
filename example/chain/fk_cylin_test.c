@@ -8,12 +8,12 @@ void create_cylin1(rkChain *chain)
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_CYLIN );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_cylin );
   zMat3DCreate( rkChainLinkOrgAtt(chain,0), 0, 0, 1, 1, 0, 0, 0, 1, 0 );
   /* link E */
   rkLinkInit( rkChainLink(chain,1) );
   zNameSet( rkChainLink(chain,1), "endpoint" );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_fixed );
   zVec3DCreate( rkChainLinkOrgPos(chain,1), 1, 2, 3 );
   /* connect links */
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
@@ -32,16 +32,16 @@ void create_cylin2(rkChain *chain)
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );
-  rkJointCreate( rkChainLinkJoint(chain,0), RK_JOINT_PRISM );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_prism );
   zMat3DCreate( rkChainLinkOrgAtt(chain,0), 0, 0, 1, 1, 0, 0, 0, 1, 0 );
   /* link 2 */
   rkLinkInit( rkChainLink(chain,1) );
   zNameSet( rkChainLink(chain,1), "link2" );
-  rkJointCreate( rkChainLinkJoint(chain,1), RK_JOINT_REVOL );
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_revol );
   /* link E */
   rkLinkInit( rkChainLink(chain,2) );
   zNameSet( rkChainLink(chain,2), "endpoint" );
-  rkJointCreate( rkChainLinkJoint(chain,2), RK_JOINT_FIXED );
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_fixed );
   zVec3DCreate( rkChainLinkOrgPos(chain,2), 1, 2, 3 );
   /* connect links */
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
