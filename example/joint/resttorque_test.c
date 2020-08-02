@@ -25,7 +25,7 @@ int main(void)
   prp->viscosity = 0.5;
 
   for( i=0; i<=STEP; i++ ){
-    rkJointCalcTrq( &j, ZVEC6DZERO );
+    rkJointGetKFriction( &j, &prp->trq );
     printf( "%g %.10g %.10g %.10g %.10g\n", DT*i, prp->dis, prp->vel, prp->acc, prp->trq );
     intg( prp, prp->trq / I, DT );
   }

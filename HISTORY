@@ -1,3 +1,6 @@
+2020. 8. 2. Added ik_test. [test]
+2020. 8. 2. Added rkChainCalcMass and debugged rkChainFromZTK. [rk_chain]
+2020. 7.30. Added joint_test. [test]
 2020. 7.27. Reflected new specifications of rkJoint to examples. [example]
 2020. 7.27. Renamed _rk_joint_com to rk_joint_com and made it externalize. [rk_joint]
 2020. 7. 3. Renamed rkJoint*Fric* to rkJoint*Friction*. [rk_joint, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke]

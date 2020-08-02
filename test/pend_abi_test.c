@@ -61,7 +61,7 @@ void check_test(rkChain *pend, zVec dis, zVec vel, zVec acc)
 
     /* get answer */
     rkChainGetJointAccAll( pend, acc );
-    zAssert( acceleration test, zIsTiny( ans - zVecElemNC(acc,0) ) );
+    zAssert( acceleration test (pendulum), zIsTiny( ans - zVecElemNC(acc,0) ) );
   }
 }
 

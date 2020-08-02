@@ -100,7 +100,7 @@ void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq)
   /* - recursive computation */
   zMulMat3DVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkCOMVel(invpend,2), zVec6DLin(&v2) );
   zMulMat3DVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkAngVel(invpend,2), zVec6DAng(&v2) );
-  zAssert( velocity test, zVec6DIsTiny( zVec6DSub( &v1, &v2, &ve6 ) ) );
+  zAssert( velocity test (inverted pendulum), zVec6DIsTiny( zVec6DSub( &v1, &v2, &ve6 ) ) );
 
   /* *** acceleration test *** */
   /* analytical computation */
@@ -108,21 +108,21 @@ void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq)
   /* recursive computation */
   zMulMat3DVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkCOMAcc(invpend,2), zVec6DLin(&a2) );
   zMulMat3DVec3D( rkChainLinkWldAtt(invpend,2), rkChainLinkAngAcc(invpend,2), zVec6DAng(&a2) );
-  zAssert( acceleration test, zVec6DIsTol( zVec6DSub( &a1, &a2, &ae6 ), zTOL*15 ) );
+  zAssert( acceleration test (inverted pendulum), zVec6DIsTol( zVec6DSub( &a1, &a2, &ae6 ), zTOL*15 ) );
 
   /* *** angular momentum test *** */
   /* analytical computation */
   invpend_am( invpend, zVecElem(q,0), zVecElem(q,1), zVecElem(dq,0), zVecElem(dq,1), &am1 );
   /* recursive computation */
   rkChainAM( invpend, ZVEC3DZERO, &am2 );
-  zAssert( angular momentum, zVec3DIsTiny( zVec3DSub( &am1, &am2, &e3 ) ) );
+  zAssert( angular momentum (inverted pendulum), zVec3DIsTiny( zVec3DSub( &am1, &am2, &e3 ) ) );
 
   /* *** kinematic energy test *** */
   /* analytical computation */
   k1 = invpend_ke( invpend, zVecElem(q,0), zVecElem(q,1), zVecElem(dq,0), zVecElem(dq,1) );
   /* recursive computation */
   k2 = rkChainKE( invpend );
-  zAssert( kinematic energy, zIsTiny( k1 - k2 ) );
+  zAssert( kinematic energy (inverted pendulum), zIsTiny( k1 - k2 ) );
 
   /* *** torque test *** */
   /* analytical computation */
@@ -130,7 +130,7 @@ void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq)
   /* recursive computation */
   rkChainLinkGetJointTrq( invpend, 1, &u21 );
   rkChainLinkGetJointTrq( invpend, 2, &u22 );
-  zAssert( joint torque, zIsTiny( u11 - u21 ) && zIsTiny( u12 - u22 ) );
+  zAssert( joint torque (inverted pendulum), zIsTiny( u11 - u21 ) && zIsTiny( u12 - u22 ) );
 }
 
 int main(void)

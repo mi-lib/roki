@@ -320,6 +320,17 @@ __EXPORT void rkChainUpdateID(rkChain *c);
 __EXPORT void rkChainID(rkChain *c, zVec vel, zVec acc);
 __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
 
+/*! \brief total mass of a kinematic chain.
+ *
+ * rkChainCalcMass() computes the total mass of a kinematic chain
+ * \a chain by summing up mass of all links.
+ * \return
+ * rkChainCalcMass() returns the computed total mass of \a chain.
+ * \sa
+ * rkChainCalcCOM()
+ */
+__EXPORT double rkChainCalcMass(rkChain *chain);
+
 /*! \brief calculate the center of mass of kinematic chain.
  *
  * rkChainCalcCOM() computes the center of mass of kinematic

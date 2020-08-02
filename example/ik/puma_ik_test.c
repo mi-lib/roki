@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
   rkIKCellAttr attr;
 
   zRandInit();
-  if( !rkChainScanFile( &chain, "../model/puma.ztk" ) )
+  if( !rkChainReadZTK( &chain, "../model/puma.ztk" ) )
     exit( 1 );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
   rkChainFK( &chain, dis );

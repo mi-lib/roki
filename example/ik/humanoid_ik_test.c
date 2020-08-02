@@ -45,8 +45,8 @@ void step1(FILE *fout_vs, FILE *fout_cs, double t, rkIK *ik, rkIKCell *entry[], 
 {
   zVec3D pg, pl, pr;
 
-  zVec3DCreate( &pg, 0.5*S*(cosh(t/T)-1)/(cosh(1)-1), -WG*sin(zPI*t/T), zCycloidX(HG,HG-D,t/T) );
-  zVec3DCreate( &pl, zCycloidX(0,S,t/T), W, zCycloidY(0,H,t/T) );
+  zVec3DCreate( &pg, 0.5*S*(cosh(t/T)-1)/(cosh(1)-1), -WG*sin(zPI*t/T), HG-D*zCycloidX(t/T) );
+  zVec3DCreate( &pl, S*zCycloidX(t/T), W, H*zCycloidY(t/T) );
   zVec3DCreate( &pr, 0.0, -W, 0.0 );
   ik_solve( fout_vs, fout_cs, ik, entry, q, &pg, &pl, &pr );
 }
@@ -55,9 +55,9 @@ void step2(FILE *fout_vs, FILE *fout_cs, double t, rkIK *ik, rkIKCell *entry[], 
 {
   zVec3D pg, pl, pr;
 
-  zVec3DCreate( &pg, 1.5*S-S*(cosh(1-t/T)-1)/(cosh(1)-1), WG*sin(zPI*t/T), zCycloidY(HG-D,D,t/T) );
+  zVec3DCreate( &pg, 1.5*S-S*(cosh(1-t/T)-1)/(cosh(1)-1), WG*sin(zPI*t/T), D*zCycloidY(t/T)-D+HG );
   zVec3DCreate( &pl, S, W, 0.0 );
-  zVec3DCreate( &pr, zCycloidX(0,2*S,t/T), -W, zCycloidY(0,H,t/T) );
+  zVec3DCreate( &pr, 2*S*zCycloidX(t/T), -W, H*zCycloidY(t/T) );
   ik_solve( fout_vs, fout_cs, ik, entry, q, &pg, &pl, &pr );
 }
 
@@ -65,8 +65,8 @@ void step3(FILE *fout_vs, FILE *fout_cs, double t, rkIK *ik, rkIKCell *entry[], 
 {
   zVec3D pg, pl, pr;
 
-  zVec3DCreate( &pg, 1.5*S+S*(cosh(t/T)-1)/(cosh(1)-1), -WG*sin(zPI*t/T), zCycloidY(HG-D,D,t/T) );
-  zVec3DCreate( &pl, zCycloidX(S,3*S,t/T), W, zCycloidY(0,H,t/T) );
+  zVec3DCreate( &pg, 1.5*S+S*(cosh(t/T)-1)/(cosh(1)-1), -WG*sin(zPI*t/T), D*zCycloidY(t/T)-D+HG );
+  zVec3DCreate( &pl, 2*S*zCycloidX(t/T)+S, W, H*zCycloidY(t/T) );
   zVec3DCreate( &pr, 2*S, -W, 0.0 );
   ik_solve( fout_vs, fout_cs, ik, entry, q, &pg, &pl, &pr );
 }
@@ -75,9 +75,9 @@ void step4(FILE *fout_vs, FILE *fout_cs, double t, rkIK *ik, rkIKCell *entry[], 
 {
   zVec3D pg, pl, pr;
 
-  zVec3DCreate( &pg, 3*S-0.5*S*(cosh(1-t/T)-1)/(cosh(1)-1), WG*sin(zPI*t/T), zCycloidX(HG-D,HG,t/T) );
+  zVec3DCreate( &pg, 3*S-0.5*S*(cosh(1-t/T)-1)/(cosh(1)-1), WG*sin(zPI*t/T), D*zCycloidX(t/T)-D+HG );
   zVec3DCreate( &pl, 3*S, W, 0.0 );
-  zVec3DCreate( &pr, zCycloidX(2*S,3*S,t/T), -W, zCycloidY(0,H,t/T) );
+  zVec3DCreate( &pr, S*zCycloidX(t/T)+S*2, -W, H*zCycloidY(t/T) );
   ik_solve( fout_vs, fout_cs, ik, entry, q, &pg, &pl, &pr );
 }
 
@@ -90,8 +90,8 @@ int main(int argc, char *argv[])
   zVec q;
   FILE *fout_vs, *fout_cs;
 
-  rkChainScanFile( &robot, "../model/humanoid.zkc" );
-  rkIKConfScanFile( &ik, &robot, "../model/humanoid.zkc" );
+  rkChainReadZTK( &robot, "../model/humanoid.ztk" );
+  rkIKConfReadZTK( &ik, &robot, "../model/humanoid.ztk" );
   q = zVecAlloc( rkChainJointSize(&robot) );
   for( i=0; i<6; i++ )
     entry[i] = rkIKFindCell( &ik, i );

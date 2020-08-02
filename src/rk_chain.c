@@ -379,6 +379,17 @@ void rkChainFKCNT(rkChain *c, zVec dis, double dt)
   rkChainUpdateID( c );
 }
 
+/* total mass of a kinematic chain. */
+double rkChainCalcMass(rkChain *chain)
+{
+  register int i;
+
+  rkChainSetMass( chain, 0.0 );
+  for( i=0; i<rkChainLinkNum(chain); i++ )
+    rkChainMass(chain) += rkChainLinkMass(chain,i);
+  return rkChainMass(chain);
+}
+
 /* the center of mass of a kinematic chain with respect to the total/world frame. */
 zVec3D *rkChainCalcCOM(rkChain *c)
 {
@@ -666,7 +677,7 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     return NULL;
   }
   ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain );
-  if( rkChainMass(chain) == 0 )
+  if( rkChainCalcMass(chain) == 0 )
     rkChainSetMass( chain, 1.0 ); /* dummy weight */
   rkChainSetOffset( chain ); /* offset value arrangement */
   rkChainUpdateFK( chain );
