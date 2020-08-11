@@ -5,9 +5,9 @@
 #include <roki/rk_g.h>
 #include <roki/rk_contact.h>
 
-void zelmat_usage(void)
+void rk_ground_usage(char *arg)
 {
-  eprintf( "Usage: zelmat [mass] [depth] [damping coeff.] [stat. fric. coeff.] [kine. fric. coeff.]\n" );
+  eprintf( "Usage: %s [mass] [depth] [damping coeff.] [stat. fric. coeff.] [kine. fric. coeff.]\n", arg );
   exit( 0 );
 }
 
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
   double k, c;
   rkContactInfo ci;
 
-  if( argc < 5 ) zelmat_usage();
+  if( argc < 5 ) rk_ground_usage( argv[0] );
   mass  = atof( argv[1] );
   depth = atof( argv[2] );
   zeta  = atof( argv[3] );

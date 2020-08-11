@@ -5,9 +5,9 @@
 #include <roki/rk_chain.h>
 #include <zm/zm_seq.h>
 
-void usage(void)
+void usage(char *argv)
 {
-  eprintf( "Usage: zvs2zkcs <.zkc file> <.zvs file> [.zkcs file]\n" );
+  eprintf( "Usage: %s <.ztk file> <.zvs file> [.zkcs file]\n", argv );
   exit( 0 );
 }
 
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
   zVec conf;
   FILE *fp;
 
-  if( argc < 3 ) usage();
+  if( argc < 3 ) usage( argv[0] );
 
   rkChainReadZTK( &chain, argv[1] );
   if( !( conf = zVecAlloc( rkChainLinkNum(&chain) * 6 ) ) ){

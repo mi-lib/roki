@@ -2,7 +2,7 @@
 
 void mshape2chainUsage(char *cmd)
 {
-  eprintf( "Usage: %s <.z3d file>\n", cmd );
+  eprintf( "Usage: %s <.ztk file>\n", cmd );
   exit( EXIT_SUCCESS );
 }
 
@@ -20,7 +20,6 @@ bool mshape2chainConvert(zMShape3D *ms, char basename[])
   zMShape3DFPrintZTK( fp, ms );
   fprintf( fp, "[link]\n" );
   fprintf( fp, "name: base\n" );
-  fprintf( fp, "jointtype: fixed\n" );
   for( i=0; i<zMShape3DShapeNum(ms); i++ )
     fprintf( fp, "shape: %s\n", zName(zMShape3DShape(ms,i)) );
   fclose( fp );

@@ -1,3 +1,8 @@
+2020. 8.11. Modified mshape2chain not to assign joint types. [app]
+2020. 8.11. Corrected notations of suffices of command line options in applications. [app]
+2020. 8.11. Abolished cad2zkc and zkcconv. [app]
+2020. 8. 9. Added verbose mode in rk_ik. [app]
+2020. 8. 9. Debugged rkLinkFromZTK as to initialize joint as fixed if not specified. [rk_link]
 2020. 8. 2. Added ik_test. [test]
 2020. 8. 2. Added rkChainCalcMass and debugged rkChainFromZTK. [rk_chain]
 2020. 7.30. Added joint_test. [test]

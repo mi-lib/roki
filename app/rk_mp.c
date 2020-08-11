@@ -9,7 +9,7 @@ enum{
   RK_MP_INVALID
 };
 zOption option[] = {
-  { "m", "model", "<.zkc file>", "chain model file", NULL, false },
+  { "m", "model", "<.ztk file>", "chain model file", NULL, false },
   { "v", "v", "<.zv file>", "chain pose file", NULL, false },
   { "h", "help", NULL, "show this message", NULL, false },
   { NULL, NULL, NULL, NULL, NULL, false },

@@ -2,7 +2,7 @@
 
 void chain2mshapeUsage(char *cmd)
 {
-  eprintf( "Usage: %s <.zkc file>\n", cmd );
+  eprintf( "Usage: %s <.ztk file>\n", cmd );
   exit( EXIT_SUCCESS );
 }
 

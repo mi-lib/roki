@@ -5,9 +5,9 @@
 #include <roki/rk_chain.h>
 #include <zm/zm_seq.h>
 
-void usage(void)
+void usage(char *argv)
 {
-  eprintf( "Usage: zvs2zkci <.zkc file> <.zvs file> [0-/last] [.zkci file]\n" );
+  eprintf( "Usage: %s <.ztk file> <.zvs file> [0-/last] [.zkci file]\n", argv );
   exit( 0 );
 }
 
@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
   zSeq seq;
   zSeqListCell *cp;
 
-  if( argc < 3 ) usage();
+  if( argc < 3 ) usage( argv[0] );
   rkChainReadZTK( &chain, argv[1] );
   zSeqScanFile( &seq, argv[2] );
   if( argc > 3 ){

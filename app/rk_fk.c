@@ -16,7 +16,7 @@ enum{
   RK_FK_INVALID
 };
 zOption option[] = {
-  { "chain", NULL, "<.zkc file>", "kinematic chain model file", NULL, false },
+  { "chain", NULL, "<.ztk file>", "kinematic chain model file", NULL, false },
   { "seq",   NULL, "<.zvs file>", "sequence file", NULL, false },
   { "init",  NULL, "<.zkci file>","initial state file", NULL, false },
   { "link",  NULL, "<link name>", "link name", NULL, false },

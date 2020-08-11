@@ -362,6 +362,7 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
   prp.larray = larray;
   prp.sarray = sarray;
   if( !ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink ) ) return NULL;
+  if( !rkLinkJoint(link)->com ) rkJointAssign( rkLinkJoint(link), &rk_joint_fixed );
   rkJointFromZTK( rkLinkJoint(link), motorarray, ztk );
   return link;
 }
