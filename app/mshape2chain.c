@@ -16,7 +16,7 @@ bool mshape2chainConvert(zMShape3D *ms, char basename[])
     return false;
   }
   fprintf( fp, "[chain]\n" );
-  fprintf( fp, "name: %s\n", basename );
+  fprintf( fp, "name: %s\n\n", basename );
   zMShape3DFPrintZTK( fp, ms );
   fprintf( fp, "[link]\n" );
   fprintf( fp, "name: base\n" );

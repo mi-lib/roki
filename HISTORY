@@ -1,3 +1,6 @@
+2020. 8.11. Modified mshape2chain. [app]
+2020. 8.11. Modified rkLinkClone to reject null link. [rk_errmsg, rk_link]
+2020. 8.11. Modified rkChainClone to automatically reject null arrays (thanks to Takanobu Yamamoto) [rk_errmsg, rk_chain]
 2020. 8.11. Modified mshape2chain not to assign joint types. [app]
 2020. 8.11. Corrected notations of suffices of command line options in applications. [app]
 2020. 8.11. Abolished cad2zkc and zkcconv. [app]

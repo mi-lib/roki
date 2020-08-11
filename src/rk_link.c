@@ -43,6 +43,10 @@ void rkLinkDestroy(rkLink *l)
 /* clone a link. */
 rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc)
 {
+  if( !org || !cln ){
+    ZRUNERROR( RK_WARN_LINK_NULL );
+    return NULL;
+  }
   if( !zNameSet( cln, zName(org) ) ||
       !rkJointClone( rkLinkJoint(org), rkLinkJoint(cln) ) ||
       !rkBodyClone( rkLinkBody(org), rkLinkBody(cln), so, sc ) ){

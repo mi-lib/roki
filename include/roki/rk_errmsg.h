@@ -17,8 +17,10 @@
 #define RK_WARN_CONTACT_DUPKEY   "duplicate contact information with keys %s and %s"
 #define RK_WARN_CONTACT_EMPTY    "empty set of contact information specified."
 
+#define RK_WARN_LINK_NULL        "null link specified."
 #define RK_WARN_LINK_DUP         "%s: name of a link duplicated."
 
+#define RK_WARN_CHAIN_NULL       "null chain specified."
 #define RK_WARN_CHAIN_EMPTY      "empty chain specified."
 
 #define RK_WARN_IK_CELL_NOTFOUND "IK cell not found"

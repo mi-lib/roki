@@ -49,11 +49,19 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
   char name[BUFSIZ];
   int i;
 
+  if( !cln || !org ){
+    ZRUNERROR( RK_WARN_CHAIN_NULL );
+    return NULL;
+  }
+  if( rkChainLinkNum(org) == 0 ){
+    ZRUNERROR( RK_WARN_CHAIN_EMPTY );
+    return NULL;
+  }
   rkChainInit( cln );
   sprintf( name, "%s_clone", zName(org) );
   if( !zNameSet( cln, name ) ||
-      !( rkChainShape(cln) = zMShape3DClone( rkChainShape(org) ) ) ||
-      !( rkChainMotor(cln) = rkMotorArrayClone( rkChainMotor(org) ) ) ){
+      ( rkChainShape(org) && !( rkChainShape(cln) = zMShape3DClone( rkChainShape(org) ) ) ) ||
+      ( rkChainMotor(org) && !( rkChainMotor(cln) = rkMotorArrayClone( rkChainMotor(org) ) ) ) ){
     ZALLOCERROR();
     return NULL;
   }
