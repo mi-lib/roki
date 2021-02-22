@@ -38,18 +38,25 @@ typedef struct _rkMP{
 
 #define rkMPCopy(src,dst)      ( *(dst) = *(src) )
 
+/*! \brief convert mass properties in [g,mm] to that in [kg,m]. */
+__EXPORT rkMP *rkMPgmm2kgm(rkMP *mp);
+
 /*! \brief transform mass properties to that with respect to a frame.
  *
- * rkMPXform() transforms a set of mass properties \a src
- * to that with respect to a frame \a f.
+ * rkMPXform() transforms a set of mass properties \a src to that
+ * with respect to a frame \a f.
  * The mass of \a dest will be the same with that of \a src.
- * The COM of \a src will be transformed to that of \a dest
- * by \a f.
- * The inertia tensor of \a src will be rotated to that of
- * \a dest with respect to the attitude of \a f.
+ * The COM of \a src will be transformed to that of \a dest by \a f.
+ * The inertia tensor of \a src will be rotated to that of \a dest
+ * with respect to the attitude of \a f.
+ *
+ * rkMPXformInv() transforms \a src to that with respect to the
+ * inverse of a frame \a f.
+ *
  * \return \a dest
  */
 __EXPORT rkMP *rkMPXform(rkMP *src, zFrame3D *f, rkMP *dest);
+__EXPORT rkMP *rkMPXformInv(rkMP *src, zFrame3D *f, rkMP *dest);
 
 /*! \brief combine two mass property sets in the same frame.
  */

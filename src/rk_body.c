@@ -11,7 +11,14 @@
  * mass property class
  * ********************************************************** */
 
-static zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest);
+/* convert mass properties in [g,mm] to that in [kg,m]. */
+rkMP *rkMPgmm2kgm(rkMP *mp)
+{
+  rkMPMass(mp) *= 1.0e-3;
+  zVec3DMulDRC( rkMPCOM(mp), 1.0e-3 );
+  zMat3DMulDRC( rkMPInertia(mp), 1.0e-9 );
+  return mp;
+}
 
 /* transform mass properties to that with respect to a frame. */
 rkMP *rkMPXform(rkMP *src, zFrame3D *f, rkMP *dest)
@@ -22,7 +29,17 @@ rkMP *rkMPXform(rkMP *src, zFrame3D *f, rkMP *dest)
   return dest;
 }
 
+/* transform mass properties to that with respect to the inverse of a frame. */
+rkMP *rkMPXformInv(rkMP *src, zFrame3D *f, rkMP *dest)
+{
+  rkMPSetMass( dest, rkMPMass(src) );
+  zXform3DInv( f, rkMPCOM(src), rkMPCOM(dest) );
+  zRotMat3DInv( zFrame3DAtt(f), rkMPInertia(src), rkMPInertia(dest) );
+  return dest;
+}
+
 /* shift mass property translationally. */
+static zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest);
 zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest)
 {
   zMat3D tmp;
