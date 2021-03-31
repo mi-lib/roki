@@ -65,17 +65,6 @@ static ZTKPrp __ztk_prp_rkmotor[] = {
   { "type", 1, _rkMotorTypeFromZTK, _rkMotorTypeFPrintZTK },
 };
 
-bool rkMotorRegZTK(ZTK *ztk)
-{
-  RK_MOTOR_COM_ARRAY;
-  register int i;
-
-  if( !ZTKDefRegPrp( ztk, ZTK_TAG_RKMOTOR, __ztk_prp_rkmotor ) ) return false;
-  for( i=0; _rk_motor_com[i]; i++ )
-    if( !_rk_motor_com[i]->_regZTK( ztk, ZTK_TAG_RKMOTOR ) ) return false;
-  return true;
-}
-
 rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk)
 {
   rkMotorInit( motor );

@@ -244,11 +244,6 @@ static ZTKPrp __ztk_prp_rkjoint_spher[] = {
   { "motor", 1, _rkJointSpherMotorFromZTK, _rkJointSpherMotorFPrintZTK },
 };
 
-static bool _rkJointSpherRegZTK(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_spher ) ? true : false;
-}
-
 static void *_rkJointSpherFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 {
   return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_spher );
@@ -306,7 +301,6 @@ rkJointCom rk_joint_spher = {
   _rkJointSpherABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointSpherRegZTK,
   _rkJointSpherDisFromZTK,
   _rkJointSpherFromZTK,
   _rkJointSpherDisFPrintZTK,

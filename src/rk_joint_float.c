@@ -234,11 +234,6 @@ static ZTKPrp __ztk_prp_rkjoint_float[] = {
   { "dis", 1, _rkJointFloatDisFromZTK, _rkJointFloatDisFPrintZTK },
 };
 
-static bool _rkJointFloatRegZTK(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_float ) ? true : false;
-}
-
 static void *_rkJointFloatFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 {
   return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_float );
@@ -296,7 +291,6 @@ rkJointCom rk_joint_float = {
   _rkJointFloatABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointFloatRegZTK,
   _rkJointFloatDisFromZTK,
   _rkJointFloatFromZTK,
   _rkJointFloatDisFPrintZTK,

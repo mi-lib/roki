@@ -31,7 +31,6 @@ typedef struct{
   void (* _regist)(void*,double*,double*,double*); /*!< \brief registance torque (e.g. counter electromotive) */
   void (* _dtrq)(void*,double*,double*,double*,double*); /*!< \brief driving torque */
 
-  bool (* _regZTK)(ZTK*,char*);
   void *(* _fromZTK)(void*,ZTK*);
   void (* _fprintZTK)(FILE*,void*);
 } rkMotorCom;
@@ -64,7 +63,6 @@ __EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
 #define rkMotorRegistance(m,d,v,r)     (m)->com->_regist( (m)->prp, (d), (v), (r) )
 #define rkMotorDrivingTrq(m,d,v,a,t)   (m)->com->_dtrq( (m)->prp, (d), (v), (a), (t) )
 
-__EXPORT bool rkMotorRegZTK(ZTK *ztk);
 __EXPORT rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk);
 
 __EXPORT void rkMotorFPrintZTK(FILE *fp, rkMotor *m);

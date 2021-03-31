@@ -203,9 +203,6 @@ rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, char f
   ZTK ztk;
 
   ZTKInit( &ztk );
-  if( !ZTKDefRegPrp( &ztk, ZTK_TAG_RKCONTACTINFO, __ztk_prp_tag_rkcontactinfo ) ||
-      !ZTKDefRegPrp( &ztk, ZTK_TAG_RKCONTACTINFO, __ztk_prp_rkcontactinfo ) )
-    return NULL;
   ZTKParse( &ztk, filename );
   carray = rkContactInfoArrayFromZTK( carray, &ztk );
   ZTKDestroy( &ztk );

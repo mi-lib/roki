@@ -84,8 +84,6 @@ static void _rkJointFixedABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, z
   zVec6DCopy( jac, acc );
 }
 
-static bool _rkJointFixedRegZTK(ZTK *ztk, char *tag){ return true; }
-
 static void *_rkJointFixedFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk){
   return prp;
 }
@@ -139,7 +137,6 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointFixedRegZTK,
   NULL,
   _rkJointFixedFromZTK,
   NULL,

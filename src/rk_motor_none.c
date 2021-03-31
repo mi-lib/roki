@@ -18,8 +18,6 @@ static void _rkMotorNoneInputTrq(void *prp, double *val){}
 static void _rkMotorNoneRegistance(void *prp, double *dis, double *vel, double *val){}
 static void _rkMotorNoneDrivingTrq(void *prp, double *dis, double *vel, double *acc, double *val){}
 
-static bool _rkMotorNoneRegZTK(ZTK *ztk, char *tag){ return true; }
-
 static void *_rkMotorNoneFromZTK(void *prp, ZTK *ztk){ return prp; }
 
 static void _rkMotorNoneFPrintZTK(FILE *fp, void *prp){}
@@ -35,7 +33,6 @@ rkMotorCom rk_motor_none = {
   _rkMotorNoneInertia,
   _rkMotorNoneRegistance,
   _rkMotorNoneDrivingTrq,
-  _rkMotorNoneRegZTK,
   _rkMotorNoneFromZTK,
   _rkMotorNoneFPrintZTK,
 };

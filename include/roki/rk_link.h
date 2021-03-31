@@ -441,7 +441,6 @@ zArrayClass( rkLinkArray, rkLink );
  * rkLinkConnectionPrint(), rkLinkExtForceFPrint() and
  * rkLinkExtForcePrint() return no values.
  */
-__EXPORT bool rkLinkRegZTK(ZTK *ztk);
 __EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk);
 __EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *l);
 

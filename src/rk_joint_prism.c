@@ -302,11 +302,6 @@ static ZTKPrp __ztk_prp_rkjoint_prism[] = {
   { "motor", 1, _rkJointPrismMotorFromZTK, _rkJointPrismMotorFPrintZTK },
 };
 
-static bool _rkJointPrismRegZTK(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_prism ) ? true : false;
-}
-
 static void *_rkJointPrismFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 {
   return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_prism );
@@ -364,7 +359,6 @@ rkJointCom rk_joint_prism = {
   _rkJointPrismABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointPrismRegZTK,
   _rkJointPrismDisFromZTK,
   _rkJointPrismFromZTK,
   _rkJointPrismDisFPrintZTK,

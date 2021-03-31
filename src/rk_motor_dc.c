@@ -144,11 +144,6 @@ static ZTKPrp __ztk_prp_rkmotor_dc[] = {
   { "compl", 1, _rkMotorDCCompLFromZTK, _rkMotorDCCompLFPrintZTK },
 };
 
-static bool _rkMotorDCRegZTK(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkmotor_dc );
-}
-
 static void *_rkMotorDCFromZTK(void *prp, ZTK *ztk)
 {
   return ZTKEvalKey( prp, NULL, ztk, __ztk_prp_rkmotor_dc );
@@ -170,7 +165,6 @@ rkMotorCom rk_motor_dc = {
   _rkMotorDCInputTrq,
   _rkMotorDCRegistance,
   _rkMotorDCDrivingTrq,
-  _rkMotorDCRegZTK,
   _rkMotorDCFromZTK,
   _rkMotorDCFPrintZTK,
 };

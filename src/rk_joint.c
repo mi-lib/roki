@@ -161,15 +161,6 @@ void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc)
   zVec6DAddDRC( rkJointWrench(j), b );
 }
 
-bool rkJointRegZTK(ZTK *ztk, char *tag)
-{
-  register int i;
-
-  for( i=0; rk_joint_com[i]; i++ )
-    if( !rk_joint_com[i]->_regZTK( ztk, tag ) ) return false;
-  return true;
-}
-
 rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
 {
   return joint->com->_fromZTK( joint->prp, motorarray, ztk ) ? joint : NULL;

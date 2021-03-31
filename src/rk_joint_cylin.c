@@ -361,11 +361,6 @@ static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
   { "motor", 1, _rkJointCylinMotorFromZTK, _rkJointCylinMotorFPrintZTK },
 };
 
-static bool _rkJointCylinRegZTK(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_cylin ) ? true : false;
-}
-
 static void *_rkJointCylinFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 {
   return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_cylin );
@@ -423,7 +418,6 @@ rkJointCom rk_joint_cylin = {
   _rkJointCylinABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointCylinRegZTK,
   _rkJointCylinDisFromZTK,
   _rkJointCylinFromZTK,
   _rkJointCylinDisFPrintZTK,

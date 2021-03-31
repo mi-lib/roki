@@ -65,11 +65,6 @@ static ZTKPrp __ztk_prp_rkmotor_trq[] = {
   { "min", 1, _rkMotorTrqMinFromZTK, _rkMotorTrqMinFPrintZTK },
 };
 
-static bool _rkMotorTrqRegZTK(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkmotor_trq );
-}
-
 static void *_rkMotorTrqFromZTK(void *prp, ZTK *ztk)
 {
   return ZTKEvalKey( prp, NULL, ztk, __ztk_prp_rkmotor_trq );
@@ -91,7 +86,6 @@ rkMotorCom rk_motor_trq = {
   _rkMotorTrqInputTrq,
   _rkMotorTrqRegistance,
   _rkMotorTrqDrivingTrq,
-  _rkMotorTrqRegZTK,
   _rkMotorTrqFromZTK,
   _rkMotorTrqFPrintZTK,
 };

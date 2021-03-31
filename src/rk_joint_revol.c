@@ -310,11 +310,6 @@ static ZTKPrp __ztk_prp_rkjoint_revol[] = {
   { "motor", 1, _rkJointRevolMotorFromZTK, _rkJointRevolMotorFPrintZTK },
 };
 
-static bool _rkJointRevolRegZTK(ZTK *ztk, char *tag)
-{
-  return ZTKDefRegPrp( ztk, tag, __ztk_prp_rkjoint_revol ) ? true : false;
-}
-
 static void *_rkJointRevolFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 {
   return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_revol );
@@ -372,7 +367,6 @@ rkJointCom rk_joint_revol = {
   _rkJointRevolABIQAcc,
   _rkJointUpdateWrench,
 
-  _rkJointRevolRegZTK,
   _rkJointRevolDisFromZTK,
   _rkJointRevolFromZTK,
   _rkJointRevolDisFPrintZTK,

@@ -443,7 +443,6 @@ __EXPORT zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl);
 #define ZTK_TAG_RKCHAIN "chain"
 #define ZTK_TAG_INIT "init"
 
-__EXPORT bool rkChainRegZTK(ZTK *ztk);
 __EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
 __EXPORT void rkChainFPrintZTK(FILE *fp, rkChain *chain);
 

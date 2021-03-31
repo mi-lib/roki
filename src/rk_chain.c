@@ -656,15 +656,6 @@ static ZTKPrp __ztk_prp_tag_rkchain[] = {
   { ZTK_TAG_INIT, 1, _rkChainInitFromZTK, NULL },
 };
 
-bool rkChainRegZTK(ZTK *ztk)
-{
-  return ZTKDefRegPrp( ztk, ZTK_TAG_RKCHAIN, __ztk_prp_rkchain_chain ) &&
-         zMShape3DRegZTK( ztk ) &&
-         rkMotorRegZTK( ztk ) &&
-         rkLinkRegZTK( ztk ) &&
-         ZTKDefRegPrp( ztk, ZTK_TAG_INIT, __ztk_prp_rkchain_initkey ) ? true : false;
-}
-
 rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
 {
   int num_motor, num_link;
@@ -718,7 +709,6 @@ rkChain *rkChainReadZTK(rkChain *chain, char filename[])
   ZTK ztk;
 
   ZTKInit( &ztk );
-  if( !rkChainRegZTK( &ztk ) ) return NULL;
   if( ZTKParse( &ztk, filename ) ){
     /* read optical infos and shapes */
     rkChainInit( chain );
@@ -771,8 +761,6 @@ rkChain *rkChainInitReadZTK(rkChain *chain, char filename[])
   ZTK ztk;
 
   ZTKInit( &ztk );
-  if( !ZTKDefRegPrp( &ztk, ZTK_TAG_INIT, __ztk_prp_rkchain_initkey ) )
-    return NULL;
   ZTKParse( &ztk, filename );
   chain = rkChainInitFromZTK( chain, &ztk );
   ZTKDestroy( &ztk );

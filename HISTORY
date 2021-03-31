@@ -1,3 +1,5 @@
+2021. 3.31. Reflect modification of ZEDA and abolished *RegZTK. [rk_contact, rk_motor*, rk_joint*, rk_link, rk_chain, rk_ik]
+2021. 3.31. Modified makefile to separately make and install library and applications. [makefile]
 2021. 2.23. Added rkMPgmm2kgm and rkMPXformInv. [rk_body]
 2020. 8.11. Modified mshape2chain. [app]
 2020. 8.11. Modified rkLinkClone to reject null link. [rk_errmsg, rk_link]

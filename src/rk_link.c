@@ -352,12 +352,6 @@ static ZTKPrp __ztk_prp_rklink[] = {
   { "shape", -1, _rkLinkShapeFromZTK, NULL },
 };
 
-bool rkLinkRegZTK(ZTK *ztk)
-{
-  return rkJointRegZTK( ztk, ZTK_TAG_RKLINK ) &&
-         ZTKDefRegPrp( ztk, ZTK_TAG_RKLINK, __ztk_prp_rklink ) ? true : false;
-}
-
 rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk)
 {
   _rkLinkRefPrp prp;

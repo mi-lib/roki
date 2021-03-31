@@ -82,7 +82,6 @@ typedef struct{
   void (*_wrench)(struct _rkJoint*,zMat6D*,zVec6D*,zVec6D*);
 
   /* I/O */
-  bool (*_regZTK)(ZTK*,char*);
   void *(*_dis_fromZTK)(void*,int,void*,ZTK*);
   void *(*_fromZTK)(void*,rkMotorArray*,ZTK*);
   void (*_dis_fprintZTK)(FILE*,int,void*);
@@ -303,8 +302,6 @@ __EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc
 
 #define rkJointPrpFromZTK(prp,motorarray,ztk,ztkprp) \
   ( ZTKEvalKey( prp, motorarray, ztk, ztkprp ) ? prp : NULL )
-
-__EXPORT bool rkJointRegZTK(ZTK *ztk, char *tag);
 
 __EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk);
 
