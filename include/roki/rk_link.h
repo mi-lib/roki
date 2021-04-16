@@ -370,7 +370,7 @@ zArrayClass( rkLinkArray, rkLink );
 
 #define ZTK_TAG_RKLINK "link"
 
-/*! \brief scan and print link properties.
+/*! \brief read link properties from a ZTK file and print link properties.
  *
  * An acceptable keywords and their meanings are as follows.
  *
@@ -433,7 +433,7 @@ zArrayClass( rkLinkArray, rkLink );
  * applied to a link \a l. See zForceListCellFPrint().
  * rkLinkExtForcePrint() prints them out to the standard output.
  * \return
- * rkLinkFScan() returns a pointer \a l if succeeding, or the
+ * rkLinkFromZTK() returns a pointer \a l if succeeding, or the
  * null pointer otherwise.
  *
  * rkLinkFPrintZTK(), rkLinkPostureFPrint(),
@@ -442,6 +442,8 @@ zArrayClass( rkLinkArray, rkLink );
  * rkLinkExtForcePrint() return no values.
  */
 __EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk);
+__EXPORT rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk);
+
 __EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *l);
 
 __EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *l);

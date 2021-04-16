@@ -584,6 +584,10 @@ static void *_rkChainLinkFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     rkChainShape((rkChain*)obj) ? &rkChainShape((rkChain*)obj)->shape : NULL,
     rkChainMotor((rkChain*)obj), ztk ) ? obj : NULL;
 }
+static void *_rkChainLinkConnectFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return rkLinkConnectFromZTK( rkChainLink((rkChain*)obj,i),
+    &((rkChain*)obj)->link, ztk ) ? obj : NULL;
+}
 
 static void _rkChainChainFPrintZTK(FILE *fp, int i, void *obj){
   ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_chain );
@@ -647,12 +651,28 @@ static void _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
   }
 }
 
+static ZTKPrp __ztk_prp_tag_rkchain_optic[] = {
+  { ZTK_TAG_OPTIC, -1, NULL, NULL },
+};
+
+static ZTKPrp __ztk_prp_tag_rkchain_shape[] = {
+  { ZTK_TAG_SHAPE, -1, NULL, NULL },
+};
+
+static ZTKPrp __ztk_prp_tag_rkchain_motor[] = {
+  { ZTK_TAG_RKMOTOR, -1, _rkChainMotorFromZTK, NULL },
+};
+
+static ZTKPrp __ztk_prp_tag_rkchain_link[] = {
+  { ZTK_TAG_RKLINK, -1, _rkChainLinkFromZTK, NULL },
+};
+
+static ZTKPrp __ztk_prp_tag_rkchain_connection[] = {
+  { ZTK_TAG_RKLINK, -1, _rkChainLinkConnectFromZTK, NULL },
+};
+
 static ZTKPrp __ztk_prp_tag_rkchain[] = {
   { ZTK_TAG_RKCHAIN, 1, _rkChainChainFromZTK, _rkChainChainFPrintZTK },
-  { ZTK_TAG_OPTIC, -1, NULL, NULL },
-  { ZTK_TAG_SHAPE, -1, NULL, NULL },
-  { ZTK_TAG_RKMOTOR, -1, _rkChainMotorFromZTK, NULL },
-  { ZTK_TAG_RKLINK, -1, _rkChainLinkFromZTK, NULL },
   { ZTK_TAG_INIT, 1, _rkChainInitFromZTK, NULL },
 };
 
@@ -675,6 +695,11 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     ZRUNWARN( RK_WARN_CHAIN_EMPTY );
     return NULL;
   }
+  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_optic );
+  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_shape );
+  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_motor );
+  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_link );
+  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_connection );
   ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain );
   if( rkChainCalcMass(chain) == 0 )
     rkChainSetMass( chain, 1.0 ); /* dummy weight */

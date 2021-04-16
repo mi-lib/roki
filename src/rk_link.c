@@ -348,8 +348,11 @@ static ZTKPrp __ztk_prp_rklink[] = {
   { "rot", -1, _rkLinkRotFromZTK, NULL },
   { "frame", 1, _rkLinkFrameFromZTK, NULL },
   { "DH", 1, _rkLinkDHFromZTK, NULL },
-  { "parent", 1, _rkLinkParentFromZTK, NULL },
   { "shape", -1, _rkLinkShapeFromZTK, NULL },
+};
+
+static ZTKPrp __ztk_prp_rklink_parent[] = {
+  { "parent", 1, _rkLinkParentFromZTK, NULL },
 };
 
 rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk)
@@ -362,6 +365,15 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
   if( !ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink ) ) return NULL;
   if( !rkLinkJoint(link)->com ) rkJointAssign( rkLinkJoint(link), &rk_joint_fixed );
   rkJointFromZTK( rkLinkJoint(link), motorarray, ztk );
+  return link;
+}
+
+rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk)
+{
+  _rkLinkRefPrp prp;
+
+  prp.larray = larray;
+  if( !ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink_parent ) ) return NULL;
   return link;
 }
 
