@@ -38,7 +38,7 @@ COM: { -0.04509, 0.000494762, -0.0593372 }
 
 [link]
 name: waist
-jointtype: fix
+jointtype: fixed
 frame: {
  1, 0, 0, 0
  0, 1, 0, 0
@@ -174,7 +174,7 @@ parent: left_elbow_yaw
 
 [link]
 name: left_gripper
-jointtype: fix
+jointtype: fixed
 frame: {
  0, 0, -1, 0.0565
  1, 0, 0, 0
@@ -310,7 +310,7 @@ parent: left_ankle_pitch
 
 [link]
 name: left_foot
-jointtype: fix
+jointtype: fixed
 frame: {
  0, 0, -1, 0.0795
  0, 1, 0, 0
@@ -447,7 +447,7 @@ parent: right_elbow_yaw
 
 [link]
 name: right_gripper
-jointtype: fix
+jointtype: fixed
 frame: {
  0, 0, -1, 0.0565
  1, 0, 0, 0
@@ -583,7 +583,7 @@ parent: right_ankle_pitch
 
 [link]
 name: right_foot
-jointtype: fix
+jointtype: fixed
 frame: {
  0, 0, -1, 0.0795
  0, -1, 0, 0

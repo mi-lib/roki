@@ -163,7 +163,7 @@ radius: 0.018
 % 0:base
 [link]
 name : base
-jointtype : fix
+jointtype : fixed
 shape: base
 shape: post
 

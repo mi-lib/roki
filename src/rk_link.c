@@ -273,14 +273,9 @@ static void *_rkLinkAttFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return obj;
 }
 static void *_rkLinkRotFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  zVec3D axis;
-  double angle;
-  zVec3DFromZTK( &axis, ztk );
-  angle = zDeg2Rad( ZTKDouble( ztk ) );
-  if( zVec3DNormalizeDRC( &axis ) > 0 ){
-    zVec3DMulDRC( &axis, angle );
-    zMat3DRot( rkLinkOrgAtt((rkLink*)obj), &axis, rkLinkOrgAtt((rkLink*)obj) );
-  }
+  zVec3D aa;
+  zAAFromZTK( &aa, ztk );
+  zMat3DRotDRC( rkLinkOrgAtt((rkLink*)obj), &aa );
   return obj;
 }
 static void *_rkLinkFrameFromZTK(void *obj, int i, void *arg, ZTK *ztk){

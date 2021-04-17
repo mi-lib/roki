@@ -65,7 +65,7 @@ radius: 0.02
 [link]
 name : base
 mass : 1.0
-jointtype : fix
+jointtype : fixed
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,

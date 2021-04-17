@@ -30,7 +30,7 @@ height: 0.099
 
 [link]
 name: link#10-F
-jointtype: fix
+jointtype: fixed
 mass: 0.25
 COM: ( 0.05 0 0)
 inertia: {

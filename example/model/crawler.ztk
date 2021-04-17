@@ -170,7 +170,7 @@ shape: shape##body
 
 [link]
 name: link##crawler_left
-jointtype: fix
+jointtype: fixed
 mass: 1.4
 stuff: crawler
 COM: { 0, 0, 0 }
@@ -189,7 +189,7 @@ parent: link##body
 
 [link]
 name: link##crawler_right
-jointtype: fix
+jointtype: fixed
 mass: 1.4
 stuff: crawler
 COM: { 0, 0, 0 }

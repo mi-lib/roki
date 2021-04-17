@@ -1933,7 +1933,7 @@ parent: left_elbow_rotation
 
 [link]
 name: left_hand
-jointtype: fix
+jointtype: fixed
 stuff: body
 frame: {
  0, 1, 0, 0
@@ -2098,7 +2098,7 @@ parent: left_ankle_flexion
 
 [link]
 name: left_foot
-jointtype: fix
+jointtype: fixed
 stuff: body
 frame: {
  0, 1, 0, 0
@@ -2213,7 +2213,7 @@ parent: right_elbow_rotation
 
 [link]
 name: right_hand
-jointtype: fix
+jointtype: fixed
 stuff: body
 frame: {
  0, -1, 0, 0
@@ -2378,7 +2378,7 @@ parent: right_ankle_flexion
 
 [link]
 name: right_foot
-jointtype: fix
+jointtype: fixed
 stuff: body
 frame: {
  0, -1, 0, 0

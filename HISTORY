@@ -1,3 +1,5 @@
+2021. 4.17. Modified _rkLinkRotFromZTK. [rk_link]
+2021. 4.17. Changed label of the fixed joint from "fix" to "fixed." [rk_joint_fixed]
 2021. 4.16. Modified rkChainFromZTK to separately read arrays of optical info, shapes, motors, links, and connection info. [rk_chain]
 2021. 4.16. Added _rkChainLinkConnectFromZTK. [rk_chain]
 2021. 4.16. Added rkLinkConnectFromZTK separately fro rkLinkFromZTK. [rk_link]

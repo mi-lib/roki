@@ -91,7 +91,7 @@ static void *_rkJointFixedFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 static void _rkJointFixedFPrintZTK(FILE *fp, void *prp, char *name){}
 
 rkJointCom rk_joint_fixed = {
-  "fix",
+  "fixed",
   0,
   _rkJointFixedInit,
   _rkJointFixedAlloc,

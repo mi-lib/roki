@@ -30,7 +30,7 @@ height : 0.4
 
 [link]
 name: link#00
-jointtype: fix
+jointtype: fixed
 mass: 99.9
 stuff: ground
 COM: { 0, 0, 0 }

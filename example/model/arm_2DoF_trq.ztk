@@ -136,7 +136,7 @@ min : -50.0
 
 [link]
 name: link#00
-jointtype: fix
+jointtype: fixed
 mass: 1.5
 stuff: body
 COM: { 0.067, 0, 0 }
