@@ -248,32 +248,32 @@ static void _rkJointPrismABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, z
 
 static void *_rkJointPrismDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   double val;
-  val = zDeg2Rad( ZTKDouble(ztk) );
+  val = ZTKDouble(ztk);
   _rkJointPrismSetDis( _rkc(prp), &val );
   return prp;
 }
 static void *_rkJointPrismMinFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->min = zDeg2Rad(ZTKDouble(ztk));
+  _rkc(prp)->min = ZTKDouble(ztk);
   return prp;
 }
 static void *_rkJointPrismMaxFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->max = zDeg2Rad(ZTKDouble(ztk));
+  _rkc(prp)->max = ZTKDouble(ztk);
   return prp;
 }
 static void *_rkJointPrismStiffnessFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->stiffness = zDeg2Rad(ZTKDouble(ztk));
+  _rkc(prp)->stiffness = ZTKDouble(ztk);
   return prp;
 }
 static void *_rkJointPrismViscosityFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->viscosity = zDeg2Rad(ZTKDouble(ztk));
+  _rkc(prp)->viscosity = ZTKDouble(ztk);
   return prp;
 }
 static void *_rkJointPrismCoulombFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->coulomb = zDeg2Rad(ZTKDouble(ztk));
+  _rkc(prp)->coulomb = ZTKDouble(ztk);
   return prp;
 }
 static void *_rkJointPrismStaticFrictionFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->sf = zDeg2Rad(ZTKDouble(ztk));
+  _rkc(prp)->sf = ZTKDouble(ztk);
   return prp;
 }
 static void *_rkJointPrismMotorFromZTK(void *prp, int i, void *arg, ZTK *ztk){
