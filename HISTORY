@@ -1,3 +1,5 @@
+2021. 4.17. Added rkLinkSet/GetJointMin/Max. [rk_link]
+2021. 4.17. Added rkJoint*Set/GetMin/Max. [rk_joint*]
 2021. 4.17. Modified _rkLinkRotFromZTK. [rk_link]
 2021. 4.17. Changed label of the fixed joint from "fix" to "fixed." [rk_joint_fixed]
 2021. 4.16. Modified rkChainFromZTK to separately read arrays of optical info, shapes, motors, links, and connection info. [rk_chain]

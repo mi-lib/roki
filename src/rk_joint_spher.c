@@ -25,6 +25,8 @@ static void _rkJointSpherSetDis(void *prp, double *val){
   zMat3DFromAA( &_rkc(prp)->_att, &_rkc(prp)->aa );
 }
 
+static void _rkJointSpherSetMinMax(void *prp, double *val){}
+
 static void _rkJointSpherSetVel(void *prp, double *val){
   zVec3DCopy( (zVec3D*)val, &_rkc(prp)->vel );
 }
@@ -40,6 +42,14 @@ static void _rkJointSpherSetTrq(void *prp, double *val){
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointSpherGetDis(void *prp, double *val){
   zVec3DCopy( &_rkc(prp)->aa, (zVec3D*)val );
+}
+
+static void _rkJointSpherGetMin(void *prp, double *val){
+  val[0] = val[1] = val[2] = -HUGE_VAL;
+}
+
+static void _rkJointSpherGetMax(void *prp, double *val){
+  val[0] = val[1] = val[2] = HUGE_VAL;
 }
 
 static void _rkJointSpherGetVel(void *prp, double *val){
@@ -261,10 +271,14 @@ rkJointCom rk_joint_spher = {
   _rkJointSpherAlloc,
   _rkJointSpherLimDis,
   _rkJointSpherSetDis,
+  _rkJointSpherSetMinMax,
+  _rkJointSpherSetMinMax,
   _rkJointSpherSetVel,
   _rkJointSpherSetAcc,
   _rkJointSpherSetTrq,
   _rkJointSpherGetDis,
+  _rkJointSpherGetMin,
+  _rkJointSpherGetMax,
   _rkJointSpherGetVel,
   _rkJointSpherGetAcc,
   _rkJointSpherGetTrq,

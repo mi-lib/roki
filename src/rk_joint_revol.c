@@ -29,6 +29,14 @@ static void _rkJointRevolSetDis(void *prp, double *val){
   zSinCos( _rkc(prp)->dis, &_rkc(prp)->_s, &_rkc(prp)->_c );
 }
 
+static void _rkJointRevolSetMin(void *prp, double *val){
+  _rkc(prp)->min = *val;
+}
+
+static void _rkJointRevolSetMax(void *prp, double *val){
+  _rkc(prp)->max = *val;
+}
+
 static void _rkJointRevolSetVel(void *prp, double *val){
   _rkc(prp)->vel = *val;
 }
@@ -44,6 +52,14 @@ static void _rkJointRevolSetTrq(void *prp, double *val){
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointRevolGetDis(void *prp, double *val){
   *val = _rkc(prp)->dis;
+}
+
+static void _rkJointRevolGetMin(void *prp, double *val){
+  *val = _rkc(prp)->min;
+}
+
+static void _rkJointRevolGetMax(void *prp, double *val){
+  *val = _rkc(prp)->max;
 }
 
 static void _rkJointRevolGetVel(void *prp, double *val){
@@ -327,10 +343,14 @@ rkJointCom rk_joint_revol = {
   _rkJointRevolAlloc,
   _rkJointRevolLimDis,
   _rkJointRevolSetDis,
+  _rkJointRevolSetMin,
+  _rkJointRevolSetMax,
   _rkJointRevolSetVel,
   _rkJointRevolSetAcc,
   _rkJointRevolSetTrq,
   _rkJointRevolGetDis,
+  _rkJointRevolGetMin,
+  _rkJointRevolGetMax,
   _rkJointRevolGetVel,
   _rkJointRevolGetAcc,
   _rkJointRevolGetTrq,

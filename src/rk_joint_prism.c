@@ -26,6 +26,14 @@ static void _rkJointPrismSetDis(void *prp, double *val){
   _rkJointPrismLimDis( prp, val, &_rkc(prp)->dis );
 }
 
+static void _rkJointPrismSetMin(void *prp, double *val){
+  _rkc(prp)->min = *val;
+}
+
+static void _rkJointPrismSetMax(void *prp, double *val){
+  _rkc(prp)->max = *val;
+}
+
 static void _rkJointPrismSetVel(void *prp, double *val){
   _rkc(prp)->vel = *val;
 }
@@ -41,6 +49,14 @@ static void _rkJointPrismSetTrq(void *prp, double *val){
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointPrismGetDis(void *prp, double *val){
   *val = _rkc(prp)->dis;
+}
+
+static void _rkJointPrismGetMin(void *prp, double *val){
+  *val = _rkc(prp)->min;
+}
+
+static void _rkJointPrismGetMax(void *prp, double *val){
+  *val = _rkc(prp)->max;
 }
 
 static void _rkJointPrismGetVel(void *prp, double *val){
@@ -319,10 +335,14 @@ rkJointCom rk_joint_prism = {
   _rkJointPrismAlloc,
   _rkJointPrismLimDis,
   _rkJointPrismSetDis,
+  _rkJointPrismSetMin,
+  _rkJointPrismSetMax,
   _rkJointPrismSetVel,
   _rkJointPrismSetAcc,
   _rkJointPrismSetTrq,
   _rkJointPrismGetDis,
+  _rkJointPrismGetMin,
+  _rkJointPrismGetMax,
   _rkJointPrismGetVel,
   _rkJointPrismGetAcc,
   _rkJointPrismGetTrq,

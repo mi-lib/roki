@@ -294,12 +294,14 @@ __EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
  */
 #define rkLinkLimJointDis(l,td,ld)  rkJointLimDis( rkLinkJoint(l), td, ld )
 #define rkLinkSetJointDis(l,d)      rkJointSetDis( rkLinkJoint(l), d )
+#define rkLinkSetJointMin(l,m)      rkJointSetMin( rkLinkJoint(l), m )
+#define rkLinkSetJointMax(l,m)      rkJointSetMax( rkLinkJoint(l), m )
 #define rkLinkSetJointDisCNT(l,d,t) rkJointSetDisCNT( rkLinkJoint(l), d, t )
 #define rkLinkGetJointDis(l,d)      rkJointGetDis( rkLinkJoint(l), d )
 #define rkLinkGetJointVel(l,v)      rkJointGetVel( rkLinkJoint(l), v )
 #define rkLinkGetJointAcc(l,a)      rkJointGetAcc( rkLinkJoint(l), a )
-#define rkLinkGetJointMin(l,i)      rkJointGetMin( rkLinkJoint(l), i )
-#define rkLinkGetJointMax(l,i)      rkJointGetMax( rkLinkJoint(l), i )
+#define rkLinkGetJointMin(l,m)      rkJointGetMin( rkLinkJoint(l), m )
+#define rkLinkGetJointMax(l,m)      rkJointGetMax( rkLinkJoint(l), m )
 #define rkLinkGetJointTrq1(l,i)     rkJointGetTrq1( rkLinkJoint(l), i )
 #define rkLinkGetJointTrq(l,d)      rkJointGetTrq( rkLinkJoint(l), d )
 

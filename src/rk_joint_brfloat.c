@@ -32,6 +32,8 @@ static void _rkJointBrFloatSetDis(void *prp, double *val){
   zMat3DFromAA( &_rkc(prp)->_att, zVec6DAng(&_rkc(prp)->dis) );
 }
 
+static void _rkJointBrFloatSetMinMax(void *prp, double *val){}
+
 static void _rkJointBrFloatSetVel(void *prp, double *val){
   zVec6DCopy( (zVec6D*)val, &_rkc(prp)->vel );
 }
@@ -47,6 +49,14 @@ static void _rkJointBrFloatSetTrq(void *prp, double *val){
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointBrFloatGetDis(void *prp, double *val){
   zVec6DCopy( &_rkc(prp)->dis, (zVec6D*)val );
+}
+
+static void _rkJointBrFloatGetMin(void *prp, double *val){
+  val[0] = val[1] = val[2] = val[3] = val[4] = val[5] = -HUGE_VAL;
+}
+
+static void _rkJointBrFloatGetMax(void *prp, double *val){
+  val[0] = val[1] = val[2] = val[3] = val[4] = val[5] = HUGE_VAL;
 }
 
 static void _rkJointBrFloatGetVel(void *prp, double *val){
@@ -301,10 +311,14 @@ rkJointCom rk_joint_brfloat = {
   _rkJointBrFloatAlloc,
   _rkJointBrFloatLimDis,
   _rkJointBrFloatSetDis,
+  _rkJointBrFloatSetMinMax,
+  _rkJointBrFloatSetMinMax,
   _rkJointBrFloatSetVel,
   _rkJointBrFloatSetAcc,
   _rkJointBrFloatSetTrq,
   _rkJointBrFloatGetDis,
+  _rkJointBrFloatGetMin,
+  _rkJointBrFloatGetMax,
   _rkJointBrFloatGetVel,
   _rkJointBrFloatGetAcc,
   _rkJointBrFloatGetTrq,

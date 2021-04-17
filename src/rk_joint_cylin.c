@@ -34,6 +34,14 @@ static void _rkJointCylinSetDis(void *prp, double *val){
   zSinCos( _rkc(prp)->dis[1], &_rkc(prp)->_s, &_rkc(prp)->_c );
 }
 
+static void _rkJointCylinSetMin(void *prp, double *val){
+  memcpy( _rkc(prp)->min, val, sizeof(double)*2 );
+}
+
+static void _rkJointCylinSetMax(void *prp, double *val){
+  memcpy( _rkc(prp)->max, val, sizeof(double)*2 );
+}
+
 static void _rkJointCylinSetVel(void *prp, double *val){
   memcpy( _rkc(prp)->vel, val, sizeof(double)*2 );
 }
@@ -49,6 +57,14 @@ static void _rkJointCylinSetTrq(void *prp, double *val){
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointCylinGetDis(void *prp, double *val){
   memcpy( val, _rkc(prp)->dis, sizeof(double)*2 );
+}
+
+static void _rkJointCylinGetMin(void *prp, double *val){
+  memcpy( val, _rkc(prp)->min, sizeof(double)*2 );
+}
+
+static void _rkJointCylinGetMax(void *prp, double *val){
+  memcpy( val, _rkc(prp)->max, sizeof(double)*2 );
 }
 
 static void _rkJointCylinGetVel(void *prp, double *val){
@@ -378,10 +394,14 @@ rkJointCom rk_joint_cylin = {
   _rkJointCylinAlloc,
   _rkJointCylinLimDis,
   _rkJointCylinSetDis,
+  _rkJointCylinSetMin,
+  _rkJointCylinSetMax,
   _rkJointCylinSetVel,
   _rkJointCylinSetAcc,
   _rkJointCylinSetTrq,
   _rkJointCylinGetDis,
+  _rkJointCylinGetMin,
+  _rkJointCylinGetMax,
   _rkJointCylinGetVel,
   _rkJointCylinGetAcc,
   _rkJointCylinGetTrq,

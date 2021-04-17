@@ -37,10 +37,14 @@ typedef struct{
   /* joint value manipulation function */
   void (*_limdis)(void*,double*,double*); /* limit displacements */
   void (*_setdis)(void*,double*);     /* set displacements */
+  void (*_setmin)(void*,double*);     /* set minimum displacements */
+  void (*_setmax)(void*,double*);     /* set maximum displacements */
   void (*_setvel)(void*,double*);     /* set velocity */
   void (*_setacc)(void*,double*);     /* set acceleration */
   void (*_settrq)(void*,double*);     /* set torque */
   void (*_getdis)(void*,double*);     /* get displacements */
+  void (*_getmin)(void*,double*);     /* get minimum displacements */
+  void (*_getmax)(void*,double*);     /* get maximum displacements */
   void (*_getvel)(void*,double*);     /* get velocity */
   void (*_getacc)(void*,double*);     /* get acceleration */
   void (*_gettrq)(void*,double*);     /* get torques */
@@ -121,12 +125,14 @@ __EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 
 /*! \brief set and get joint status.
  *
- * rkJointSetDis(), rkJointSetVel(), rkJointSetAcc() and
- * rkJointSetTrq() set joint displacements, velocities,
+ * rkJointSetDis(), rkJointSetMin(), rJointSetMax(), rkJointSetVel(),
+ * rkJointSetAcc() and rkJointSetTrq() set joint displacements, minimum
+ * joint displacements, maximum joint displacements, velocities,
  * accelerations and torques \a val to a joint \a j.
  *
- * rkJointGetDis(), rkJointGetVel(), rkJointGetAcc() and
- * rkJointGetTrq() get joint displacements, velocities,
+ * rkJointGetDis(), rkJointGetMin(), rkJointGetMax(), rkJointGetVel(),
+ * rkJointGetAcc() and rkJointGetTrq() get joint displacements, minimum
+ * joint displacements, maximum joint displacements, velocities,
  * accelerations and torques of \a j to \a val.
  *
  * rkJointSetDisCNT() continuously updates the joint
@@ -134,20 +140,24 @@ __EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
  * \a dt, calculating joint velocity and acceleration in
  * accordance with a simple differentiation.
  *
- * The size of the array \a val depends on the type of \a j,
- * basically coinciding with its degree of freedom.
+ * The size of the array \a val depends on the type of \a j, basically
+ * coinciding with its degree of freedom.
  * \notes
- * They do not check the size consistency. Unmatching array
- * size might cause anything.
+ * They do not check the size consistency. Mismatched array size might
+ * cause anything.
  * \return
  * None of those functions return any value.
  */
 #define rkJointLimDis(j,t,v)        (j)->com->_limdis( (j)->prp, t, v )
 #define rkJointSetDis(j,v)          (j)->com->_setdis( (j)->prp, v )
+#define rkJointSetMin(j,v)          (j)->com->_setmin( (j)->prp, v )
+#define rkJointSetMax(j,v)          (j)->com->_setmax( (j)->prp, v )
 #define rkJointSetVel(j,v)          (j)->com->_setvel( (j)->prp, v )
 #define rkJointSetAcc(j,v)          (j)->com->_setacc( (j)->prp, v )
 #define rkJointSetTrq(j,v)          (j)->com->_settrq( (j)->prp, v )
 #define rkJointGetDis(j,v)          (j)->com->_getdis( (j)->prp, v )
+#define rkJointGetMin(j,v)          (j)->com->_getmin( (j)->prp, v )
+#define rkJointGetMax(j,v)          (j)->com->_getmax( (j)->prp, v )
 #define rkJointGetVel(j,v)          (j)->com->_getvel( (j)->prp, v )
 #define rkJointGetAcc(j,v)          (j)->com->_getacc( (j)->prp, v )
 #define rkJointGetTrq(j,v)          (j)->com->_gettrq( (j)->prp, v )

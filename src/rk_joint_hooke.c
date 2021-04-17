@@ -40,6 +40,14 @@ static void _rkJointHookeSetDis(void *prp, double *val){
   _rkJointHookeSetDis1( prp, 1, val[1] );
 }
 
+static void _rkJointHookeSetMin(void *prp, double *val){
+  memcpy( _rkc(prp)->min, val, sizeof(double)*2 );
+}
+
+static void _rkJointHookeSetMax(void *prp, double *val){
+  memcpy( _rkc(prp)->max, val, sizeof(double)*2 );
+}
+
 static void _rkJointHookeSetVel(void *prp, double *val){
   memcpy( _rkc(prp)->vel, val, sizeof(double)*2 );
 }
@@ -55,6 +63,14 @@ static void _rkJointHookeSetTrq(void *prp, double *val){
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointHookeGetDis(void *prp, double *val){
   memcpy( val, _rkc(prp)->dis, sizeof(double)*2 );
+}
+
+static void _rkJointHookeGetMin(void *prp, double *val){
+  memcpy( val, _rkc(prp)->min, sizeof(double)*2 );
+}
+
+static void _rkJointHookeGetMax(void *prp, double *val){
+  memcpy( val, _rkc(prp)->max, sizeof(double)*2 );
 }
 
 static void _rkJointHookeGetVel(void *prp, double *val){
@@ -346,10 +362,14 @@ rkJointCom rk_joint_hooke = {
   _rkJointHookeAlloc,
   _rkJointHookeLimDis,
   _rkJointHookeSetDis,
+  _rkJointHookeSetMin,
+  _rkJointHookeSetMax,
   _rkJointHookeSetVel,
   _rkJointHookeSetAcc,
   _rkJointHookeSetTrq,
   _rkJointHookeGetDis,
+  _rkJointHookeGetMin,
+  _rkJointHookeGetMax,
   _rkJointHookeGetVel,
   _rkJointHookeGetAcc,
   _rkJointHookeGetTrq,
