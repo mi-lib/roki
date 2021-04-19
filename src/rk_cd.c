@@ -635,9 +635,9 @@ static zPH3D *_rkCDBREPMergeCH(zBREP *b1, zBREP *b2, zPH3D *ph)
 
   zListInit( &vlist );
   zListForEach( &b1->vlist, vc )
-    zVec3DAddrListInsert( &vlist, &vc->data.p );
+    zVec3DAddrListAdd( &vlist, &vc->data.p );
   zListForEach( &b2->vlist, vc )
-    zVec3DAddrListInsert( &vlist, &vc->data.p );
+    zVec3DAddrListAdd( &vlist, &vc->data.p );
   zCH3DPL( ph, &vlist );
   zVec3DAddrListDestroy( &vlist );
   return ph;

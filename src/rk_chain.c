@@ -548,7 +548,7 @@ zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl)
     zListForEach( rkLinkShapeList(l), sc ){
       for( j=0; j<zShape3DVertNum(sc->data); j++ ){
         zXform3D( rkLinkWldFrame(l), zShape3DVert(sc->data,j), &v );
-        if( !zVec3DListInsert( vl, &v ) ){
+        if( !zVec3DListAdd( vl, &v ) ){
           zVec3DListDestroy( vl );
           return NULL;
         }
