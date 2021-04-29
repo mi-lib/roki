@@ -1,3 +1,4 @@
+2021. 4.29. Reflected new specification of zeda-config-gen. [app]
 2021. 4.19. Reflected renaming of zVec3DAddrListAdd. [rk_cd]
 2021. 4.19. Reflected renaming of zVec3DListAdd. [rk_chain]
 2021. 4.17. Debugged _rkJointPrismDisFromZTK, _rkJointPrismMinFromZTK, _rkJointPrismMaxFromZTK, _rkJointPrismStiffnessFromZTK, _rkJointPrismViscosityFromZTK, _rkJointPrismCoulombFromZTK and _rkJointPrismStaticFrictionFromZTK. [rk_joint_prism]

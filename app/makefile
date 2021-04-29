@@ -1,7 +1,7 @@
 include ../config
 
-INCLUDE=-I. -I../include -I$(PREFIX)/include
-LIB=-L../lib -L$(PREFIX)/lib
+INCLUDE=-I$(PREFIX)/include
+LIB=-L$(PREFIX)/lib
 BINDIR=$(PREFIX)/bin
 
 CC=gcc
@@ -25,8 +25,7 @@ all : $(TARGET)
 $(CONFIG):
 	@echo " GENERATE" $@
 	-@rm -f $@
-	@$(CONFIGGEN) -I $(PREFIX)/include -L $(PREFIX)/lib -l "$(LINK)" -v $(VERSION) > $@
-
+	@$(CONFIGGEN) -I "$(INCLUDE)" -L "$(LIB)" -l "$(LINK)" -v $(VERSION) > $@
 %: %.c
 	@echo " CC	" $<
 	@$(COMPILE)
