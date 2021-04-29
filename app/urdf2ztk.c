@@ -497,6 +497,8 @@ bool urdf2ztk_xform_inv(joint_t *joint)
   }
   if( joint->parent->joint )
     zFrame3DXform( &joint->parent->joint->fw, &joint->fw, &joint->fl );
+  else
+    zFrame3DCopy( &joint->fw, &joint->fl );
   zRotMat3DInv( zFrame3DAtt(&joint->fl), &joint->child->_iw, &joint->child->mp.inertia );
   zListForEach( &joint->child->shape_p_list, spc ){
     zFrame3DXform( &joint->fw, &spc->data->fw, &spc->data->fl );
