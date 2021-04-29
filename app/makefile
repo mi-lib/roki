@@ -18,7 +18,8 @@ UNINSTALL=rm -f
 CONFIGGEN=zeda-config-gen
 CONFIG=roki-config
 TARGET=$(CONFIG) mshape2chain chain2mshape zvs2zkci zvs2zkcs\
-	rk_ground rk_mp rk_fk rk_ik rk_id rk_ikcell_merge
+	rk_ground rk_mp rk_fk rk_ik rk_id rk_ikcell_merge\
+	urdf2ztk
 
 #####################################################################
 all : $(TARGET)
