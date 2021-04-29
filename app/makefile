@@ -1,11 +1,12 @@
 include ../config
 
-INCLUDE=-I$(PREFIX)/include
-LIB=-L$(PREFIX)/lib
+INCLUDE=`zeo-config -I`
+LIB=`zeo-config -L`
+DEF=`zeo-config -D`
 BINDIR=$(PREFIX)/bin
 
 CC=gcc
-CFLAGS=-ansi -Wall -O3 $(INCLUDE) $(LIB)
+CFLAGS=-ansi -Wall -O3 $(INCLUDE) $(LIB) $(DEF)
 
 LINK=-lroki `zeo-config -l`
 
@@ -25,7 +26,7 @@ all : $(TARGET)
 $(CONFIG):
 	@echo " GENERATE" $@
 	-@rm -f $@
-	@$(CONFIGGEN) -I "$(INCLUDE)" -L "$(LIB)" -l "$(LINK)" -v $(VERSION) > $@
+	@$(CONFIGGEN) -I "$(INCLUDE)" -L "$(LIB)" -D "$(DEF)" -l "$(LINK)" -v $(VERSION) > $@
 %: %.c
 	@echo " CC	" $<
 	@$(COMPILE)
