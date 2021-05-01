@@ -1,3 +1,4 @@
+2021. 4.30. Modified urdf2ztk_eval_shape_material in urdf2ztk. [app]
 2021. 4.30. Debugged urdf2ztk_xform_inv in urdf2ztk. [app]
 2021. 4.30. Added urdf2ztk. [app]
 2021. 4.29. Modified app/makefile. [app]

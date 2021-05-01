@@ -262,7 +262,18 @@ bool urdf2ztk_eval_shape_geometry(xmlNode *node, shape_cell_t *sc)
 bool urdf2ztk_eval_shape_material(xmlNode *node, robot_info_t *robot_info, shape_cell_t *sc)
 {
   sc->data.material = zXMLFindNodeAttr( node, "name" );
-  return node->children ? urdf2ztk_eval_material( node, robot_info ) : true;
+  if( node->children ){
+    if( !sc->data.material ){
+      zXMLAddNodeAttr( node, "name", sc->data.name );
+      sc->data.material = sc->data.name;
+    } else
+    if( sc->data.material[0] == '\0' ){
+      zXMLReplaceNodeAttr( node, "name", sc->data.name );
+      sc->data.material = sc->data.name;
+    }
+    return urdf2ztk_eval_material( node, robot_info );
+  }
+  return true;
 }
 
 /* evaluate visual property of a link */
