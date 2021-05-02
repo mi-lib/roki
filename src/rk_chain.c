@@ -535,27 +535,47 @@ void rkChainSetOffset(rkChain *c)
 }
 
 /* make a list of vertices of a kinematic chain. */
-zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl)
+zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl)
 {
-  zVec3D v;
-  zShapeListCell *sc;
   rkLink *l;
+  zShapeListCell *sc;
+  zShape3D s;
+  zVec3D v;
   register int i, j;
 
   zListInit( vl );
   for( i=0; i<rkChainLinkNum(chain); i++ ){
     l = rkChainLink(chain,i);
     zListForEach( rkLinkShapeList(l), sc ){
-      for( j=0; j<zShape3DVertNum(sc->data); j++ ){
-        zXform3D( rkLinkWldFrame(l), zShape3DVert(sc->data,j), &v );
-        if( !zVec3DListAdd( vl, &v ) ){
-          zVec3DListDestroy( vl );
-          return NULL;
+      if( sc->data->com == &zeo_shape3d_ph_com ){
+        for( j=0; j<zShape3DVertNum(sc->data); j++ ){
+          zXform3D( rkLinkWldFrame(l), zShape3DVert(sc->data,j), &v );
+          if( !zVec3DListAdd( vl, &v ) ) return NULL;
         }
+      } else{
+        zShape3DClone( sc->data, &s, NULL );
+        zShape3DXform( sc->data, rkLinkWldFrame(l), &s );
+        if( !zShape3DToPH( &s ) ) return NULL;
+        if( !zVec3DListAppendArray( vl, &zShape3DPH(&s)->vert ) ) vl = NULL;
+        zShape3DDestroy( &s );
+        if( !vl ) return NULL;
       }
     }
   }
   return vl;
+}
+
+/* generate the bounding ball of a kinematic chain. */
+zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb)
+{
+  zVec3DList pl;
+
+  if( rkChainVertList( chain, &pl ) )
+    zBBallPL( bb, &pl, NULL );
+  else
+    bb = NULL;
+  zVec3DListDestroy( &pl );
+  return bb;
 }
 
 /* ZTK */

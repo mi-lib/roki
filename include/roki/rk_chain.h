@@ -428,15 +428,27 @@ __EXPORT void rkChainSetOffset(rkChain *c);
 
 /*! \brief make a list of vertices of a chain.
  *
- * rkChain2VertList() makes a list of vertices of a chain \a chain
+ * rkChainVertList() makes a list of vertices of a chain \a chain
  * with respect to the world coordinate frame. The result is put
  * into \a vl.
+ * Non-polyhedral shapes of \a chain are internally converted to
+ * polyhedra, whose vertices are added to \a vl.
  * \return
- * rkChain2VertList() returns a pointer \a vl if succeeds. If it
+ * rkChainVertList() returns a pointer \a vl if succeeds. If it
  * fails to allocate memory to store vertices, the null pointer is
  * returned.
  */
-__EXPORT zVec3DList *rkChain2VertList(rkChain *chain, zVec3DList *vl);
+__EXPORT zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl);
+
+/*! \brief generate the bounding ball of a kinematic chain.
+ *
+ * rkChainBBall() generates the bounding ball of a kinematic chain
+ * \a chain. The result is stored in \a bb.
+ * \return
+ * rkChainBBall() returns a pointer \a bb if succeeds. Otherwise,
+ * the null pointer is returned.
+ */
+__EXPORT zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb);
 
 /* ZTK */
 

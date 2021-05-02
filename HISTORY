@@ -1,4 +1,7 @@
-2021. 4.30. Modified urdf2ztk_eval_shape_material in urdf2ztk. [app]
+2021. 5. 2. Added rkChainBBall. [rk_chain]
+2021. 5. 2. Renamed rkChain2VertList to rkChainVertList and reimplemented it. [rk_chain]
+2021. 5. 2. Modified chain2mshape. [app]
+2021. 5. 1. Modified urdf2ztk_eval_shape_material in urdf2ztk. [app]
 2021. 4.30. Debugged urdf2ztk_xform_inv in urdf2ztk. [app]
 2021. 4.30. Added urdf2ztk. [app]
 2021. 4.29. Modified app/makefile. [app]
