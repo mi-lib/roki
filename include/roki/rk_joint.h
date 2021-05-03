@@ -8,7 +8,7 @@
 #define __RK_JOINT_H__
 
 #include <zm/zm.h>
-#include <zeo/zeo_frame.h>
+#include <zeo/zeo_frame3d.h>
 #include <zeo/zeo_ep.h>
 #include <zeo/zeo_mat6d.h>
 
