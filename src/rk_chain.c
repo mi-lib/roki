@@ -571,7 +571,7 @@ zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb)
   zVec3DList pl;
 
   if( rkChainVertList( chain, &pl ) )
-    zBBallPL( bb, &pl, NULL );
+    zBBall3DPL( bb, &pl, NULL );
   else
     bb = NULL;
   zVec3DListDestroy( &pl );
