@@ -1,42 +1,40 @@
 include ../config
 
-INCLUDE=`zeo-config -I`
-LIB=`zeo-config -L`
-DEF=`zeo-config -D`
+CONFIG=roki-config
 BINDIR=$(PREFIX)/bin
+
+INCLUDE=`$(CONFIG) -I`
+LIB=`$(CONFIG) -L`
+DEF=`$(CONFIG) -D`
+LINK=`$(CONFIG) -l`
 
 CC=gcc
 CFLAGS=-ansi -Wall -O3 $(INCLUDE) $(LIB) $(DEF)
 
-LINK=-lroki `zeo-config -l`
-
 COMPILE=$(CC) $(CFLAGS) -o $@ $< $(LINK)
-
 INSTALL=install -m 755
 UNINSTALL=rm -f
 
-CONFIGGEN=zeda-config-gen
-CONFIG=roki-config
-TARGET=$(CONFIG) mshape2chain chain2mshape zvs2zkci zvs2zkcs\
+TARGET=mshape2chain chain2mshape zvs2zkci zvs2zkcs\
 	rk_ground rk_mp rk_fk rk_ik rk_id rk_ikcell_merge\
 	urdf2ztk
 
 #####################################################################
 all : $(TARGET)
 
-$(CONFIG):
-	@echo " GENERATE" $@
-	-@rm -f $@
-	@$(CONFIGGEN) -I "$(INCLUDE)" -L "$(LIB)" -D "$(DEF)" -l "$(LINK)" -v $(VERSION) > $@
 %: %.c
 	@echo " CC	" $<
 	@$(COMPILE)
-install: $(TARGET)
-	@echo " INSTALL	" $^
-	@$(INSTALL) $^ $(BINDIR)
-clean :
+clean:
 	@echo " CLEAN"
 	-@rm -f *.o *~ core $(TARGET)
+install: $(TARGET)
+ifneq ($(TARGET),)
+	@echo " INSTALL	" $^
+	@$(INSTALL) $^ $(BINDIR)
+endif
 uninstall:
+ifneq ($(TARGET),)
 	@echo " UNINSTALL	" $(TARGET)
-	@cd $(BINDIR); $(UNINSTALL) $(TARGET); cd -
+	@$(UNINSTALL) $(BINDIR)/$(TARGET)
+endif
