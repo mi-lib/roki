@@ -1,3 +1,5 @@
+2021. 5. 8. Debugged chain2gp. [app]
+2021. 5. 8. Reflected -ansi option of zeda-makefile-gen. [app]
 2021. 5. 7. Made tools/, and modified makefiles. [zm, app, tools]
 2021. 5. 7. Reflected renaming of zBBallPL to zBBall3DPL. [rk_chain]
 2021. 5. 3. Reflected new specification of Zeo. [rk_joint]

@@ -28,9 +28,9 @@ void conv_chain(char *filename)
   zShapeListCell *sp;
   zShape3D s;
 
-  if( !rkChainScanFile( &chain, filename ) )
+  if( !rkChainReadZTK( &chain, filename ) )
     exit( EXIT_FAILURE );
-  for( i=0; i<rkChainNum(&chain); i++ ){
+  for( i=0; i<rkChainLinkNum(&chain); i++ ){
     l = rkChainLink(&chain,i);
     if( rkLinkShapeIsEmpty( l ) ) continue;
     zListForEach( rkLinkShapeList(l), sp ){

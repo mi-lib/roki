@@ -1,0 +1,4 @@
+INCLUDE+=`zeo-config -I`
+LIB+=`zeo-config -L`
+DEF+=`zeo-config -D`
+LINK+=`zeo-config -l`
