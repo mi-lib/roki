@@ -36,7 +36,7 @@ static rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, z
   /* convert the original shape to a polyhedron */
   if( !zShape3DToPH( cell->data.shape ) ) return NULL;
   /* create the bounding box of the shape */
-  zOBB( &cell->data.bb, zShape3DVertBuf(cell->data.shape), zShape3DVertNum(cell->data.shape) );
+  zOBB3D( &cell->data.bb, zShape3DVertBuf(cell->data.shape), zShape3DVertNum(cell->data.shape) );
 
   if( !zPH3DClone( zShape3DPH(cell->data.shape), &cell->data.ph ) )
     return NULL;
