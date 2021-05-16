@@ -48,16 +48,17 @@ void ikcell_merge_exec(int fpnum, ikcell_file_t *file)
   while( 1 ){
     for( num=0, i=0; i<fpnum; i++ ){
       if( !zFSkipComment( file[i].fp ) ) return;
-      num += ( file[i].num = zFInt( file[i].fp ) );
+      zFInt( file[i].fp, &file[i].num );
+      num += file[i].num;
     }
     printf( "%d", num );
     for( i=0; i<fpnum; i++ )
       for( j=0; j<file[i].num; j++ ){
-        entry = zFInt( file[i].fp );
-        w    = zFDouble( file[i].fp );
-        v[0] = zFDouble( file[i].fp );
-        v[1] = zFDouble( file[i].fp );
-        v[2] = zFDouble( file[i].fp );
+        zFInt( file[i].fp, &entry );
+        zFDouble( file[i].fp, &w );
+        zFDouble( file[i].fp, &v[0] );
+        zFDouble( file[i].fp, &v[1] );
+        zFDouble( file[i].fp, &v[2] );
         printf( " %d %.10g %.10g %.10g %.10g", entry, w, v[0], v[1], v[2] );
       }
     printf( "\n" );

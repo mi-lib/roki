@@ -70,21 +70,21 @@ rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq)
       ZALLOCERROR();
       break;
     }
-    cp->data.dt = zFDouble(fp);
-    cp->data.nc = zFInt(fp);
+    zFDouble( fp, &cp->data.dt );
+    zFInt( fp, &cp->data.nc );
     if( !( cp->data.entry = zAlloc( rkIKEntry, cp->data.nc ) ) ){
       ZALLOCERROR();
       free( cp );
       break;
     }
     for( i=0; i<cp->data.nc; i++ ){
-      cp->data.entry[i].id = zFInt(fp);
-      cp->data.entry[i].w[0] = zFDouble(fp);
-      cp->data.entry[i].w[1] = zFDouble(fp);
-      cp->data.entry[i].w[2] = zFDouble(fp);
-      cp->data.entry[i].val[0] = zFDouble(fp);
-      cp->data.entry[i].val[1] = zFDouble(fp);
-      cp->data.entry[i].val[2] = zFDouble(fp);
+      zFInt( fp, &cp->data.entry[i].id );
+      zFDouble( fp, &cp->data.entry[i].w[0] );
+      zFDouble( fp, &cp->data.entry[i].w[1] );
+      zFDouble( fp, &cp->data.entry[i].w[2] );
+      zFDouble( fp, &cp->data.entry[i].val[0] );
+      zFDouble( fp, &cp->data.entry[i].val[1] );
+      zFDouble( fp, &cp->data.entry[i].val[2] );
     }
     zQueueEnqueue( seq, cp );
   }
