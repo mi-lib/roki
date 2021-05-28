@@ -145,6 +145,7 @@ bool assert_cell_reg_one(void)
       rkIKCellUnreg( &ik, cell[i] );
       cellcount--;
     }
+    if( cellcount == 1 ) break; /* a rare case */
   }
   cellcount *= 3;
   if( zMatRowSizeNC(ik._c_mat) != cellcount ){

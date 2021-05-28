@@ -24,7 +24,7 @@ bool assert_joint_queryassign_one(char *str, int size)
 void assert_joint_queryassign(void)
 {
   zAssert( rkJointQueryAssign,
-    assert_joint_queryassign_one( "fix", 0 ) &&
+    assert_joint_queryassign_one( "fixed", 0 ) &&
     assert_joint_queryassign_one( "revolute", 1 ) &&
     assert_joint_queryassign_one( "prismatic", 1 ) &&
     assert_joint_queryassign_one( "cylindrical", 2 ) &&

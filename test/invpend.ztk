@@ -44,7 +44,7 @@ radius: 0.01
 
 [link]
 name: base
-jointtype: fix
+jointtype: fixed
 frame: {
  1, 0, 0, 0
  0, 1, 0, 0
@@ -94,7 +94,7 @@ parent: arm
 
 [link]
 name: tip
-jointtype: fix
+jointtype: fixed
 frame: {
  0, 0, 1, 0.39
  0,-1, 0, 0
