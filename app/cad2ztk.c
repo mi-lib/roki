@@ -341,7 +341,6 @@ void cad2ztk_output_urdf_joint(FILE *fp, link_array_t *la)
     fprintf( fp, "  <joint name=\"%s\" type=\"%s\">\n", link->name, cad2ztk_output_urdf_jointtype( link->jointtype ) );
     fprintf( fp, "    <parent link=\"%s\"/>\n", link->parentname );
     fprintf( fp, "    <child link=\"%s\"/>\n", link->name );
-    fprintf( fp, "    <axis xyz=\"0 0 1\"/>\n" );
     if( link->parent )
       zFrame3DXform( &link->parent->frame, &link->frame, &f );
     else
