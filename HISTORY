@@ -1,3 +1,5 @@
+2021. 6. 1. Applied new zeda-makefile-gen to compilation of shared objects. [src]
+2021. 6. 1. Modified allclean.sh in example to skip directories without makefile. [example]
 2021. 5.30. Applied zeda-deb-gen. [makefile]
 2021. 5.29. Corrected invpend.ztk and joint_test (thanks to Michel Boudinot). [test]
 2021. 5.29. Corrected assert_cell_reg_one in ik_test to cope with a rare case. [test]
