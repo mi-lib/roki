@@ -1,3 +1,4 @@
+2021. 7.24. Resolved ambiguity of buffer size for the basename of sequence in rk_fk and rk_id. [app]
 2021. 6. 1. Applied new zeda-makefile-gen to compilation of shared objects. [src]
 2021. 6. 1. Modified allclean.sh in example to skip directories without makefile. [example]
 2021. 5.30. Applied zeda-deb-gen. [makefile]

@@ -5,8 +5,6 @@ static rkChain chain;
 static zSeq seq;
 static rkLink *link;
 
-static char seqfilebase[BUFSIZ];
-
 enum{
   RK_FK_CHAINFILE = 0,
   RK_FK_SEQFILE,
@@ -31,8 +29,12 @@ void rk_fkUsage(void)
   exit( 0 );
 }
 
-bool rk_fkLoadSequence(void)
+FILE *rk_fkOpenLogfile(char *linkname)
 {
+  char filename[BUFSIZ];
+  char *seqfilebase;
+  FILE *fp;
+
   if( option[RK_FK_SEQFILE].flag ){
     if( !zSeqScanFile( &seq, option[RK_FK_SEQFILE].arg ) )
       return false;
@@ -41,18 +43,13 @@ bool rk_fkLoadSequence(void)
     if( !zSeqScan( &seq ) )
       return false;
   }
-  zGetBasename( option[RK_FK_SEQFILE].arg, seqfilebase, BUFSIZ );
-  return true;
-}
-
-FILE *rk_fkOpenLogfile(char *linkname)
-{
-  char filename[BUFSIZ];
-  FILE *fp;
-
+  if( !( seqfilebase = zStrClone( option[RK_FK_SEQFILE].arg ) ) )
+    return false;
+  zGetBasenameDRC( seqfilebase );
   sprintf( filename, "%s.%s", seqfilebase, linkname );
   if( ( fp = fopen( filename, "w" ) ) == NULL )
     ZOPENERROR( filename );
+  free( seqfilebase );
   return fp;
 }
 
@@ -94,8 +91,7 @@ FILE *rk_fkCommandArgs(int argc, char *argv[])
     ZRUNERROR( "unknown link name %s", option[RK_FK_LINKNAME].arg );
     return NULL;
   }
-  if( !rk_fkLoadSequence() ||
-      !( fp = rk_fkOpenLogfile( option[RK_FK_LINKNAME].arg ) ) ) return NULL;
+  if( !( fp = rk_fkOpenLogfile( option[RK_FK_LINKNAME].arg ) ) ) return NULL;
   if( option[RK_FK_INITFILE].flag &&
       !rkChainInitReadZTK( &chain, option[RK_FK_INITFILE].arg ) ){
     ZOPENERROR( option[RK_FK_INITFILE].arg );

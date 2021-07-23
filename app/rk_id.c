@@ -5,8 +5,6 @@ static rkChain chain;
 static zSeq seq;
 static double zfloor = 0;
 
-static char seqfilebase[BUFSIZ];
-
 /* 0 - COM
  * 1 - COM velocity
  * 2 - COM acceleration
@@ -40,8 +38,14 @@ void rk_idUsage(void)
   exit( 0 );
 }
 
-bool rk_idLoadSequence(void)
+bool rk_idOpenLogfile(void)
 {
+  register int i;
+  char *seqfilebase;
+  char filename[BUFSIZ];
+  char *type[] = { "com", "comv", "coma", "zmp", "att", "am", "trq" };
+  bool ret = true;
+
   if( option[RK_ID_SEQFILE].flag ){
     if( !zSeqScanFile( &seq, option[RK_ID_SEQFILE].arg ) )
       return false;
@@ -50,24 +54,18 @@ bool rk_idLoadSequence(void)
     if( !zSeqScan( &seq ) )
       return false;
   }
-  zGetBasename( option[RK_ID_SEQFILE].arg, seqfilebase, BUFSIZ );
-  return true;
-}
-
-bool rk_idOpenLogfile(void)
-{
-  register int i;
-  char filename[BUFSIZ];
-  char *type[] = { "com", "comv", "coma", "zmp", "att", "am", "trq" };
-
+  if( !( seqfilebase = zStrClone( option[RK_ID_SEQFILE].arg ) ) )
+    return false;
+  zGetBasenameDRC( seqfilebase );
   for( i=0; i<RK_ID_PARAM_NUM; i++ ){
     sprintf( filename, "%s.%s", seqfilebase, type[i] );
     if( ( fp[i] = fopen( filename, "w" ) ) == NULL ){
       ZOPENERROR( filename );
-      return false;
+      ret = false;
     }
   }
-  return true;
+  free( seqfilebase );
+  return ret;
 }
 
 bool rk_idCommandArgs(int argc, char *argv[])
@@ -95,7 +93,7 @@ bool rk_idCommandArgs(int argc, char *argv[])
     ZOPENERROR( option[RK_ID_CHAINFILE].arg );
     return false;
   }
-  if( !rk_idLoadSequence() || !rk_idOpenLogfile() ) return false;
+  if( !rk_idOpenLogfile() ) return false;
   if( option[RK_ID_INITFILE].flag &&
       !rkChainInitReadZTK( &chain, option[RK_ID_INITFILE].arg ) ){
     ZOPENERROR( option[RK_ID_INITFILE].arg );
