@@ -143,13 +143,13 @@ zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m)
   zRotMat3D( zFrame3DAtt(f), &i->e[0][1], &m->e[0][1] );
   zRotMat3D( zFrame3DAtt(f), &i->e[1][1], &m->e[1][1] );
 
-  zMulVec3DOPMat3D( zFrame3DPos(f), &m->e[0][0], &tmpm );
+  zMulVec3DOuterProdMat3D( zFrame3DPos(f), &m->e[0][0], &tmpm );
   zMat3DT( &m->e[0][1], &tmpm2 );
   zMat3DAddDRC( &m->e[0][1], &tmpm );
   zMat3DT( &m->e[0][1], &m->e[1][0] );
-  zMulVec3DOPMat3D( zFrame3DPos(f), &m->e[1][0], &tmpm );
+  zMulVec3DOuterProdMat3D( zFrame3DPos(f), &m->e[1][0], &tmpm );
   zMat3DAddDRC( &m->e[1][1], &tmpm );
-  zMulVec3DOPMat3D( zFrame3DPos(f), &tmpm2, &tmpm );
+  zMulVec3DOuterProdMat3D( zFrame3DPos(f), &tmpm2, &tmpm );
   zMat3DT( &tmpm, &tmpm );
   zMat3DAddDRC( &m->e[1][1], &tmpm );
   return m;

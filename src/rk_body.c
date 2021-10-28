@@ -38,26 +38,6 @@ rkMP *rkMPXformInv(rkMP *src, zFrame3D *f, rkMP *dest)
   return dest;
 }
 
-/* shift mass property translationally. */
-static zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest);
-zMat3D *_rkMPShiftInertia(zMat3D *src, double m, zVec3D *s, zMat3D *dest)
-{
-  zMat3D tmp;
-  double xx, xy, yy, yz, zz, zx;
-
-  xx = zSqr(s->e[zX]);
-  yy = zSqr(s->e[zY]);
-  zz = zSqr(s->e[zZ]);
-  xy = s->e[zX] * s->e[zY];
-  yz = s->e[zY] * s->e[zZ];
-  zx = s->e[zZ] * s->e[zX];
-  zMat3DCreate( &tmp,
-    yy+zz,   -xy,    -zx,
-      -xy, zz+xx,    -yz,
-      -zx,   -yz,  xx+yy );
-  return zMat3DCat( src, m, &tmp, dest );
-}
-
 /* combine two mass property sets in the same frame. */
 rkMP *rkMPCombine(rkMP *mp1, rkMP *mp2, rkMP *mp)
 {
@@ -72,9 +52,9 @@ rkMP *rkMPCombine(rkMP *mp1, rkMP *mp2, rkMP *mp)
   zVec3DAdd( &r1, &r2, rkMPCOM(mp) );
   /* inertia tensor */
   zVec3DSub( rkMPCOM(mp1), rkMPCOM(mp), &r1 );
-  _rkMPShiftInertia( rkMPInertia(mp1), rkMPMass(mp1), &r1, &i1 );
+  zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp1), -rkMPMass(mp1), &r1, &i1 );
   zVec3DSub( rkMPCOM(mp2), rkMPCOM(mp), &r2 );
-  _rkMPShiftInertia( rkMPInertia(mp2), rkMPMass(mp2), &r2, &i2 );
+  zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp2), -rkMPMass(mp2), &r2, &i2 );
   zMat3DAdd( &i1, &i2, rkMPInertia(mp) );
   return mp;
 }
@@ -82,7 +62,7 @@ rkMP *rkMPCombine(rkMP *mp1, rkMP *mp2, rkMP *mp)
 /* convert inertia tensor to that about the origin. */
 zMat3D *rkMPOrgInertia(rkMP *mp, zMat3D *i)
 {
-  return _rkMPShiftInertia( rkMPInertia(mp), rkMPMass(mp), rkMPCOM(mp), i );
+  return zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp), -rkMPMass(mp), rkMPCOM(mp), i );
 }
 
 /* compute the inertial ellipsoid from a mass property set. */
@@ -291,4 +271,35 @@ zVec3D *rkBodyContigVert(rkBody *body, zVec3D *p, double *d)
 
   zXform3DInv( rkBodyFrame(body), p, &pc );
   return zShapeListContigVert( rkBodyShapeList(body), &pc, d );
+}
+
+/* compute volume of a body. */
+double rkBodyShapeVolume(rkBody *body)
+{
+  zShapeListCell *cp;
+  double v = 0;
+
+  zListForEach( rkBodyShapeList(body), cp )
+    v += zShape3DVolume( cp->data );
+  return v;
+}
+
+/* compute mass property of a body. */
+rkMP *rkBodyShapeMP(rkBody *body, double density, rkMP *mp)
+{
+  zShapeListCell *cp;
+  double m;
+  zVec3D c;
+  zMat3D i;
+
+  rkMPZero( mp );
+  zListForEach( rkBodyShapeList(body), cp ){
+    rkMPMass(mp) += ( m = density * zShape3DVolume( cp->data ) );
+    zVec3DCatDRC( rkMPCOM(mp), m, zShape3DBarycenter( cp->data, &c ) );
+    zShape3DInertia( cp->data, density, &i );
+    zMat3DAddDRC( rkMPInertia(mp), &i );
+  }
+  zVec3DDivDRC( rkMPCOM(mp), rkMPMass(mp) );
+  zMat3DCatVec3DDoubleOuterProdDRC( rkMPInertia(mp), rkMPMass(mp), rkMPCOM(mp) );
+  return mp;
 }

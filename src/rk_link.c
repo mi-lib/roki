@@ -231,9 +231,16 @@ void rkLinkConfToJointDis(rkLink *link)
     rkLinkConfToJointDis( rkLinkSibl(link) );
 }
 
+/* ZTK processing */
+
 typedef struct{
   rkLinkArray *larray;
   zShape3DArray *sarray;
+  bool given_density;
+  bool given_mass;
+  bool auto_com;
+  bool auto_inertia;
+  double density;
 } _rkLinkRefPrp;
 
 static void *_rkLinkNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
@@ -250,18 +257,30 @@ static void *_rkLinkJointTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return rkJointQueryAssign( rkLinkJoint((rkLink*)obj), ZTKVal(ztk) );
 }
 static void *_rkLinkMassFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  ((_rkLinkRefPrp*)arg)->given_mass = true;
   rkLinkSetMass( (rkLink*)obj, ZTKDouble(ztk) );
+  return obj;
+}
+static void *_rkLinkDensityFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  ((_rkLinkRefPrp*)arg)->given_density = true;
+  ((_rkLinkRefPrp*)arg)->density = ZTKDouble(ztk);
   return obj;
 }
 static void *_rkLinkStuffFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return rkLinkSetStuff( (rkLink*)obj, ZTKVal(ztk) ) ? obj : NULL;
 }
 static void *_rkLinkCOMFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  zVec3DFromZTK( rkLinkCOM((rkLink*)obj), ztk );
+  if( strcmp( ZTKVal(ztk), "auto" ) == 0 )
+    ((_rkLinkRefPrp*)arg)->auto_com = true;
+  else
+    zVec3DFromZTK( rkLinkCOM((rkLink*)obj), ztk );
   return obj;
 }
 static void *_rkLinkInertiaFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  zMat3DFromZTK( rkLinkInertia((rkLink*)obj), ztk );
+  if( strcmp( ZTKVal(ztk), "auto" ) == 0 )
+    ((_rkLinkRefPrp*)arg)->auto_inertia = true;
+  else
+    zMat3DFromZTK( rkLinkInertia((rkLink*)obj), ztk );
   return obj;
 }
 static void *_rkLinkPosFromZTK(void *obj, int i, void *arg, ZTK *ztk){
@@ -335,6 +354,7 @@ static ZTKPrp __ztk_prp_rklink[] = {
   { "name", 1, _rkLinkNameFromZTK, _rkLinkNameFPrintZTK },
   { "jointtype", 1, _rkLinkJointTypeFromZTK, _rkLinkJointTypeFPrintZTK },
   { "mass", 1, _rkLinkMassFromZTK, _rkLinkMassFPrintZTK },
+  { "density", 1, _rkLinkDensityFromZTK, NULL },
   { "stuff", 1, _rkLinkStuffFromZTK, _rkLinkStuffFPrintZTK },
   { "COM", 1, _rkLinkCOMFromZTK, _rkLinkCOMFPrintZTK },
   { "inertia", 1, _rkLinkInertiaFromZTK, _rkLinkInertiaFPrintZTK },
@@ -353,11 +373,43 @@ static ZTKPrp __ztk_prp_rklink_parent[] = {
 rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk)
 {
   _rkLinkRefPrp prp;
+  rkMP mp;
 
   rkLinkInit( link );
   prp.larray = larray;
   prp.sarray = sarray;
+  prp.given_density = false;
+  prp.given_mass = false;
+  prp.auto_com = false;
+  prp.auto_inertia = false;
+  prp.density = 1.0; /* dummy */
+
   if( !ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink ) ) return NULL;
+  /* automatic mass property computation */
+  if( prp.given_density ){ /* from density */
+    if( prp.given_mass )
+      ZRUNWARN( RK_WARN_DUP_MASS_DENS );
+    if( zIsTiny( prp.density ) )
+      ZRUNWARN( RK_WARN_TOO_SMALL_DENS );
+    else if( rkLinkShapeIsEmpty( link ) )
+      ZRUNWARN( RK_WARN_LINK_EMPTY_SHAPE );
+    else
+      rkLinkShapeMP( link, prp.density, &mp );
+  } else
+  if( prp.auto_com || prp.auto_inertia ){ /* from mass */
+    if( !prp.given_mass )
+      ZRUNWARN( RK_WARN_NO_MASS_DENS );
+    else
+    if( zIsTiny( rkLinkMass(link) ) )
+      ZRUNWARN( RK_WARN_TOO_SMALL_MASS );
+    else if( rkLinkShapeIsEmpty( link ) )
+      ZRUNWARN( RK_WARN_LINK_EMPTY_SHAPE );
+    else
+      rkLinkShapeMP( link, rkLinkMass(link)/rkLinkShapeVolume(link), &mp );
+  }
+  if( prp.auto_com ) zVec3DCopy( rkMPCOM(&mp), rkLinkCOM(link) );
+  if( prp.auto_inertia ) zMat3DCopy( rkMPInertia(&mp), rkLinkInertia(link) );
+
   if( !rkLinkJoint(link)->com ) rkJointAssign( rkLinkJoint(link), &rk_joint_fixed );
   rkJointFromZTK( rkLinkJoint(link), motorarray, ztk );
   return link;

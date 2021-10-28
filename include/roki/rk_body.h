@@ -38,6 +38,13 @@ typedef struct _rkMP{
 
 #define rkMPCopy(src,dst)      ( *(dst) = *(src) )
 
+/*! \brief clear mass property. */
+#define rkMPZero(mp) do{\
+  rkMPSetMass( (mp), 0 );\
+  zVec3DZero( rkMPCOM(mp) );\
+  zMat3DZero( rkMPInertia(mp) );\
+} while(0)
+
 /*! \brief convert mass properties in [g,mm] to that in [kg,m]. */
 __EXPORT rkMP *rkMPgmm2kgm(rkMP *mp);
 
@@ -110,9 +117,9 @@ typedef struct{
 } rkBody;
 
 #define rkBodyMP(b)           ( &(b)->mp )
-#define rkBodyMass(b)         rkMPMass( &(b)->mp )
-#define rkBodyCOM(b)          rkMPCOM( &(b)->mp )
-#define rkBodyInertia(b)      rkMPInertia( &(b)->mp )
+#define rkBodyMass(b)         rkMPMass( rkBodyMP(b) )
+#define rkBodyCOM(b)          rkMPCOM( rkBodyMP(b) )
+#define rkBodyInertia(b)      rkMPInertia( rkBodyMP(b) )
 #define rkBodyFrame(b)        ( &(b)->frame )
 #define rkBodyPos(b)          zFrame3DPos( rkBodyFrame(b) )
 #define rkBodyAtt(b)          zFrame3DAtt( rkBodyFrame(b) )
@@ -131,9 +138,9 @@ typedef struct{
 #define rkBodyShapeNum(b)     zListSize( rkBodyShapeList(b) )
 #define rkBodyShapeIsEmpty(b) zListIsEmpty( rkBodyShapeList(b) )
 
-#define rkBodySetMass(b,m)    rkMPSetMass( &(b)->mp, m )
-#define rkBodySetCOM(b,c)     rkMPSetCOM( &(b)->mp, c )
-#define rkBodySetInertia(b,i) rkMPSetInertia( &(b)->mp, i )
+#define rkBodySetMass(b,m)    rkMPSetMass( rkBodyMP(b), m )
+#define rkBodySetCOM(b,c)     rkMPSetCOM( rkBodyMP(b), c )
+#define rkBodySetInertia(b,i) rkMPSetInertia( rkBodyMP(b), i )
 #define rkBodySetFrame(b,f)   zFrame3DCopy( f, rkBodyFrame(b) )
 #define rkBodySetPos(b,p)     zFrame3DSetPos( rkBodyFrame(b), p )
 #define rkBodySetAtt(b,r)     zFrame3DSetAtt( rkBodyFrame(b), r )
@@ -322,6 +329,11 @@ __EXPORT double rkBodyKE(rkBody *b);
 /*! \brief contiguous vertex of a body to a point.
  */
 __EXPORT zVec3D *rkBodyContigVert(rkBody *body, zVec3D *p, double *d);
+
+/*! \brief compute volume of a body. */
+__EXPORT double rkBodyShapeVolume(rkBody *body);
+/*! \brief compute mass property of a body. */
+__EXPORT rkMP *rkBodyShapeMP(rkBody *body, double density, rkMP *mp);
 
 __END_DECLS
 

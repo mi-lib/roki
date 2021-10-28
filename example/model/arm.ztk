@@ -75,6 +75,9 @@ shape: base
 [link]
 name : link1
 jointtype : spherical
+mass: 1.0
+COM: auto
+inertia: auto
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,
@@ -87,6 +90,9 @@ shape: shaft
 [link]
 name : link2
 jointtype : spherical
+mass: 1.0
+COM: auto
+inertia: auto
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,
@@ -99,6 +105,9 @@ shape: shaft
 [link]
 name : link3
 jointtype : spherical
+mass: 1.0
+COM: auto
+inertia: auto
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,
@@ -111,6 +120,9 @@ shape: shaft
 [link]
 name : link4
 jointtype : spherical
+mass: 0.6
+COM: auto
+inertia: auto
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,
@@ -122,6 +134,9 @@ shape: joint
 [link]
 name : hand
 jointtype : fixed
+mass: 0.5
+COM: auto
+inertia: auto
 frame: {
  1, 0, 0, 0,
  0, 1, 0, 0,

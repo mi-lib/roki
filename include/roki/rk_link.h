@@ -361,6 +361,11 @@ __EXPORT void rkLinkConfToJointDis(rkLink *l);
 #define rkLinkAM(l,p,m) rkBodyAM( rkLinkBody(l), (p), (m) )
 #define rkLinkKE(l)     rkBodyKE( rkLinkBody(l) )
 
+/*! \brief compute volume of a link. */
+#define rkLinkShapeVolume(l) rkBodyShapeVolume( rkLinkBody(l) )
+/*! \brief compute mass property of a link. */
+#define rkLinkShapeMP(l,d,mp) rkBodyShapeMP( rkLinkBody(l), (d), (mp) )
+
 /* ********************************************************** */
 /*! \struct rkLinkArray
  * \brief array of links
