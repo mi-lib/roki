@@ -298,6 +298,7 @@ rkMP *rkBodyShapeMP(rkBody *body, double density, rkMP *mp)
     zVec3DCatDRC( rkMPCOM(mp), m, zShape3DBarycenter( cp->data, &c ) );
     zShape3DInertia( cp->data, density, &i );
     zMat3DAddDRC( rkMPInertia(mp), &i );
+rkMPFPrint( stdout, mp );
   }
   zVec3DDivDRC( rkMPCOM(mp), rkMPMass(mp) );
   zMat3DCatVec3DDoubleOuterProdDRC( rkMPInertia(mp), rkMPMass(mp), rkMPCOM(mp) );

@@ -20,11 +20,12 @@
 #define RK_WARN_LINK_NULL        "null link specified."
 #define RK_WARN_LINK_DUP         "%s: name of a link duplicated."
 
-#define RK_WARN_DUP_MASS_DENS "duplicate specification of mass and density. mass specification ignored"
-#define RK_WARN_NO_MASS_DENS "neither mass nor density are specified"
-#define RK_WARN_TOO_SMALL_DENS "too small density of a link specified"
-#define RK_WARN_TOO_SMALL_MASS "too small mass of a link specified"
-#define RK_WARN_LINK_EMPTY_SHAPE "cannot compute mass properties of an empty shape"
+#define RK_WARN_LINK_DUP_MASS_DENS  "duplicate specification of mass and density. mass specification ignored"
+#define RK_WARN_LINK_NO_MASS_DENS   "neither mass nor density are specified"
+#define RK_WARN_LINK_TOO_SMALL_VOL  "too small volume of a link specified"
+#define RK_WARN_LINK_TOO_SMALL_DENS "too small density of a link specified"
+#define RK_WARN_LINK_TOO_SMALL_MASS "too small mass of a link specified"
+#define RK_WARN_LINK_EMPTY_SHAPE    "cannot compute mass properties of an empty shape"
 
 #define RK_WARN_CHAIN_NULL       "null chain specified."
 #define RK_WARN_CHAIN_EMPTY      "empty chain specified."
