@@ -1,3 +1,4 @@
+2022. 8.14. Modified members of rkIK according to the new specification of zLE. [rk_ik]
 2021.11. 2. Modified rkBodyShapeMP. [rk_body]
 2021.11. 2. Debugged rkLinkFromZTK. [rk_link]
 2021.10.28. Implemented automatic COM/inertia computation in rkLinkFromZTK. [rk_link]

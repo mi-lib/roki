@@ -95,10 +95,9 @@ typedef struct _rkIK{
   zVec _c_srv;          /* strict referential velocity vector */
   zVec _c_we;           /* weight on residual constraint error */
   zVec (*_jv)(struct _rkIK*); /* joint velocity computation method */
-  /* working space for joint velocity computation */
-  zMat __m;
-  zVec __v, __s, __c;
-  zIndex __idx;
+  /* workspace for joint velocity computation */
+  zLE __le;
+  zVec __c;
 } rkIK;
 
 /*! \brief create and destroy inverse kinematics solver.

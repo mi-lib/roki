@@ -33,9 +33,8 @@ static void _rkIKInit(rkIK *ik)
   ik->_c_we = NULL;
   /* default joint velocity computation method */
   ik->_jv = rkIKJointVelAD;
-  ik->__m = NULL;
-  ik->__v = ik->__s = ik->__c = NULL;
-  ik->__idx = NULL;
+  ik->__c = NULL;
+  zLEInit( &ik->__le );
 }
 
 /* create inverse kinematics solver. */
@@ -76,7 +75,7 @@ void rkIKDestroy(rkIK *ik)
   zVecFree( ik->_c_we );
   ik->_jv = NULL;
   zVecFree( ik->__c );
-  zLEFreeWork( ik->__m, ik->__v, ik->__s, ik->__idx );
+  zLEFree( &ik->__le );
 }
 
 /* allocate working memory for constraint coefficient matrix of inverse kinematics solver. */
@@ -120,11 +119,11 @@ static bool _rkIKAllocJointIndex(rkIK *ik)
   /* allocate joint vector */
   zVecFree( ik->_j_vel );
   zVecFree( ik->_j_wn );
-  zLEFreeWork( ik->__m, ik->__v, ik->__s, ik->__idx );
+  zLEFree( &ik->__le );
   count = rkChainJointIndexSize( ik->chain, ik->_j_idx );
   if( !( ik->_j_vel = zVecAlloc(count) ) ||
       !( ik->_j_wn = zVecAlloc(count) ) ||
-      !zLEAllocWork( &ik->__m, &ik->__v, &ik->__s, &ik->__idx, count ) ){
+      !zLEAlloc( &ik->__le, NULL, count ) ){
     ZALLOCERROR();
     return false;
   }
@@ -302,7 +301,7 @@ zVec rkIKJointVelMP(rkIK *ik)
 zVec rkIKJointVelSR(rkIK *ik)
 {
   zVecCopy( ik->_c_srv, ik->__c );
-  zLESolveSRDST( ik->_c_mat, ik->__c, ik->_j_wn, ik->_c_we, ik->_j_vel, ik->__m, ik->__v, ik->__idx, ik->__s );
+  zLESolveSRDST( ik->_c_mat, ik->__c, ik->_j_wn, ik->_c_we, ik->_j_vel, &ik->__le );
   return ik->_j_vel;
 }
 
@@ -313,12 +312,12 @@ zVec rkIKJointVelAD(rkIK *ik)
   double e;
 
   zVecAmpNC( ik->_c_srv, ik->_c_we, ik->__c );
-  zMulMatTVecNC( ik->_c_mat, ik->__c, ik->__v );
-  zMatTQuadNC( ik->_c_mat, ik->_c_we, ik->__m );
+  zMulMatTVecNC( ik->_c_mat, ik->__c, ik->__le.v1 );
+  zMatTQuadNC( ik->_c_mat, ik->_c_we, ik->__le.m );
   e = zVecInnerProd( ik->_c_srv, ik->__c );
-  for( i=0; i<zMatRowSizeNC(ik->__m); i++ )
-    zMatElemNC(ik->__m,i,i) += zVecElemNC(ik->_j_wn,i) + e;
-  zLESolveGaussDST( ik->__m, ik->__v, ik->_j_vel, ik->__idx, ik->__s );
+  for( i=0; i<zMatRowSizeNC(ik->__le.m); i++ )
+    zMatElemNC(ik->__le.m,i,i) += zVecElemNC(ik->_j_wn,i) + e;
+  zLESolveGaussDST( ik->__le.m, ik->__le.v1, ik->_j_vel, ik->__le.idx1, ik->__le.s );
   return ik->_j_vel;
 }
 
