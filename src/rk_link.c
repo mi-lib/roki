@@ -201,7 +201,7 @@ void rkLinkUpdateWrench(rkLink *l)
       zVec6DAddDRC( rkLinkWrench(l), &w );
     }
   }
-  rkLinkCalcExtWrench( l, &w ); /* external wrench */
+  rkLinkNetExtWrench( l, &w ); /* external wrench */
   zVec6DSubDRC( rkLinkWrench(l), &w );
   /* joint torque resolution */
   rkJointCalcTrq( rkLinkJoint(l), rkLinkWrench(l) );

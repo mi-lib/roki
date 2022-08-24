@@ -164,6 +164,18 @@ void rkChainSetJointVel(rkChain *c, zIndex idx, zVec vel)
   }
 }
 
+/* set joint accelerations of a kinematic chain. */
+void rkChainSetJointAcc(rkChain *c, zIndex idx, zVec acc)
+{
+  register int i;
+  double *vp;
+
+  for( vp=zVecBuf(acc), i=0; i<zArraySize(idx); i++ ){
+    rkJointSetAcc( rkChainLinkJoint(c,zIndexElemNC(idx,i)), vp );
+    vp += rkChainLinkJointSize(c,zIndexElemNC(idx,i));
+  }
+}
+
 /* set joint velocities and accelerations of a kinematic chain. */
 void rkChainSetJointRate(rkChain *c, zIndex idx, zVec vel, zVec acc)
 {
@@ -222,9 +234,15 @@ void rkChainSetJointDisAll(rkChain *c, zVec dis)
 {
   register int i;
 
-  for( i=0; i<rkChainLinkNum(c); i++ )
-    if( rkChainLinkOffset(c,i) >= 0 )
-      rkChainLinkSetJointDis( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)) );
+  if( dis ){
+    for( i=0; i<rkChainLinkNum(c); i++ )
+      if( rkChainLinkOffset(c,i) >= 0 )
+        rkChainLinkSetJointDis( c, i, &zVecElemNC(dis,rkChainLinkOffset(c,i)) );
+  } else{
+    for( i=0; i<rkChainLinkNum(c); i++ )
+      if( rkChainLinkOffset(c,i) >= 0 )
+        rkChainLinkSetJointDis( c, i, ZVEC6DZERO->e );
+  }
 }
 
 /* concatenate all joint displacements of a kinematic chain. */
@@ -262,9 +280,31 @@ void rkChainSetJointVelAll(rkChain *c, zVec vel)
 {
   register int i;
 
-  for( i=0; i<rkChainLinkNum(c); i++ )
-    if( rkChainLinkOffset(c,i) >= 0 )
-      rkJointSetVel( rkChainLinkJoint(c,i), &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
+  if( vel ){
+    for( i=0; i<rkChainLinkNum(c); i++ )
+      if( rkChainLinkOffset(c,i) >= 0 )
+        rkJointSetVel( rkChainLinkJoint(c,i), &zVecElemNC(vel,rkChainLinkOffset(c,i)) );
+  } else{
+    for( i=0; i<rkChainLinkNum(c); i++ )
+      if( rkChainLinkOffset(c,i) >= 0 )
+        rkJointSetVel( rkChainLinkJoint(c,i), ZVEC6DZERO->e );
+  }
+}
+
+/* set all joint accelerations of a kinematic chain. */
+void rkChainSetJointAccAll(rkChain *c, zVec acc)
+{
+  register int i;
+
+  if( acc ){
+    for( i=0; i<rkChainLinkNum(c); i++ )
+      if( rkChainLinkOffset(c,i) >= 0 )
+        rkJointSetAcc( rkChainLinkJoint(c,i), &zVecElemNC(acc,rkChainLinkOffset(c,i)) );
+  } else{
+    for( i=0; i<rkChainLinkNum(c); i++ )
+      if( rkChainLinkOffset(c,i) >= 0 )
+        rkJointSetAcc( rkChainLinkJoint(c,i), ZVEC6DZERO->e );
+  }
 }
 
 /* set all joint velocities and accelerations of a kinematic chain. */
@@ -353,7 +393,7 @@ zVec3D *rkChainGravityDir(rkChain *c, zVec3D *v)
 void rkChainUpdateFK(rkChain *c)
 {
   rkChainUpdateFrame( c );
-  rkChainCalcCOM( c );
+  rkChainUpdateCOM( c );
 }
 
 /* solve forward kinematics of a kinematic chain. */
@@ -368,8 +408,8 @@ void rkChainUpdateID(rkChain *c)
 {
   rkChainUpdateRate( c );
   rkChainUpdateWrench( c );
-  rkChainCalcCOMVel( c );
-  rkChainCalcCOMAcc( c );
+  rkChainUpdateCOMVel( c );
+  rkChainUpdateCOMAcc( c );
 }
 
 /* solve inverse dynamics of a kinematic chain. */
@@ -399,7 +439,7 @@ double rkChainCalcMass(rkChain *chain)
 }
 
 /* the center of mass of a kinematic chain with respect to the total/world frame. */
-zVec3D *rkChainCalcCOM(rkChain *c)
+zVec3D *rkChainUpdateCOM(rkChain *c)
 {
   register int i;
 
@@ -411,7 +451,7 @@ zVec3D *rkChainCalcCOM(rkChain *c)
 }
 
 /* velocity of the center of mass of a kinematic chain with respect to the world frame. */
-zVec3D *rkChainCalcCOMVel(rkChain *c)
+zVec3D *rkChainUpdateCOMVel(rkChain *c)
 {
   register int i;
   zVec3D v;
@@ -428,7 +468,7 @@ zVec3D *rkChainCalcCOMVel(rkChain *c)
 }
 
 /* acceleration of the center of mass of a kinematic chain with respect to the world frame. */
-zVec3D *rkChainCalcCOMAcc(rkChain *c)
+zVec3D *rkChainUpdateCOMAcc(rkChain *c)
 {
   register int i;
   zVec3D a;
@@ -495,15 +535,50 @@ double rkChainKE(rkChain *c)
   return energy;
 }
 
+/* inertia matrix and bias force vector of a kinematic chain by the unit vector method. */
+bool rkChainInertiaMatrix(rkChain *chain, zMat inertia, zVec bias)
+{
+  register int i, j, k;
+  zVecStruct h;
+  zVec6D acc = { { 0, 0, 0, 0, 0, 0 } };
+
+  if( !zMatIsSqr( inertia ) || !zMatColVecSizeIsEqual( inertia, bias ) ){
+    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    return false;
+  }
+  /* bias force vector */
+  rkChainSetJointAccAll( chain, NULL );
+  rkChainUpdateID( chain );
+  rkChainGetJointTrqAll( chain, bias );
+  /* inertia matrix */
+  h.size = zVecSizeNC( bias );
+  for( i=j=0; j<rkChainLinkNum(chain); j++ )
+    for( k=0; k<rkChainLinkJointSize(chain,j); k++, i++ ){
+      if( i >= zVecSizeNC(bias) ){
+        ZRUNERROR( RK_ERR_JOINT_SIZMISMATCH );
+        return false;
+      }
+      h.buf = zMatRowBuf( inertia, i );
+      acc.e[k] = 1;
+      rkChainLinkSetJointAcc( chain, j, acc.e );
+      rkChainUpdateID( chain );
+      rkChainGetJointTrqAll( chain, &h );
+      zVecSubDRC( &h, bias );
+      acc.e[k] = 0;
+      rkChainLinkSetJointAcc( chain, j, acc.e );
+    }
+  return true;
+}
+
 /* net external wrench applied to a kinematic chain. */
-zVec6D *rkChainCalcExtWrench(rkChain *c, zVec6D *w)
+zVec6D *rkChainNetExtWrench(rkChain *c, zVec6D *w)
 {
   register int i;
   zVec6D ew;
 
   zVec6DZero( w );
   for( i=0; i<rkChainLinkNum(c); i++ ){
-    rkLinkCalcExtWrench( rkChainLink(c,i), &ew );
+    rkLinkNetExtWrench( rkChainLink(c,i), &ew );
     if( zVec6DEqual( &ew, ZVEC6DZERO ) ) continue;
     zMulMat3DVec6DDRC( rkChainLinkWldAtt(c,i), &ew );
     zVec6DAngShiftDRC( &ew, rkChainLinkWldPos(c,i) );

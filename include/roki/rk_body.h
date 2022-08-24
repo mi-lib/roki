@@ -267,25 +267,25 @@ __EXPORT void rkBodyUpdateCOMRate(rkBody *body);
 #define rkBodyExtWrenchPop(b)     rkWrenchListPop( rkBodyExtWrench(b) )
 #define rkBodyExtWrenchDestroy(b) rkWrenchListDestroy( rkBodyExtWrench(b) )
 
-/*! \brief calculate total 6D external force acting to a body.
+/*! \brief calculate total external wrench acting to a body.
  *
- * rkBodyCalcExtForce6D() calculates the total 6D external force
- * equivalent to the sumation of forces contained in the force list on
- * a body object \a b. The result is put into \a f.
+ * rkBodyNetExtWrench() calculates the net external wrench acting to a
+ * body \a b by summing up individual external forces in the force list.
+ * The result is put into \a w.
  * \return
- * rkBodyCalcExtForce6D() returns a pointer \a f.
+ * rkBodyNetExtWrench() returns a pointer \a w.
  */
-#define rkBodyCalcExtWrench(b,f) rkWrenchListNet( rkBodyExtWrench(b), f )
+#define rkBodyNetExtWrench(b,w) rkWrenchListNet( rkBodyExtWrench(b), w )
 
-/*! \brief net wrench exerted on body.
+/*! \brief net wrench exerted on a body.
  *
- * rkBodyNetForce() computes the net six-axis force applied to a body object
- * \a body based on Newton-Euler's equation of motion.
+ * rkBodyNetWrench() calculates the net wrench (six-axis force) applied to
+ * a body \a body based on the Newton-Euler's equation of motion.
  * \notes
  * It is assumed that the orientation of absolute velocity and acceleration
  * of the body \a body is all with respect to the local frame of \a body
- * itself. Consequently, the result net force-moment is also with respect
- * to the local frame in terms of orientation.
+ * itself. Consequently, the result net wrench is also with respect to the
+ * local frame in terms of orientation.
  */
 __EXPORT zVec6D *rkBodyNetWrench(rkBody *body, zVec6D *w);
 

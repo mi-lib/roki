@@ -214,6 +214,8 @@ __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
 #define rkChainLinkLimJointDis(r,i,td,ld)  rkLinkLimJointDis( rkChainLink(r,i), td, ld )
 #define rkChainLinkSetJointDis(r,i,d)      rkLinkSetJointDis( rkChainLink(r,i), d )
 #define rkChainLinkSetJointDisCNT(r,i,d,t) rkLinkSetJointDisCNT( rkChainLink(r,i), d, t )
+#define rkChainLinkSetJointVel(r,i,v)      rkLinkSetJointVel( rkChainLink(r,i), v )
+#define rkChainLinkSetJointAcc(r,i,a)      rkLinkSetJointAcc( rkChainLink(r,i), a )
 #define rkChainLinkGetJointDis(r,i,d)      rkLinkGetJointDis( rkChainLink(r,i), d )
 #define rkChainLinkGetJointVel(r,i,v)      rkLinkGetJointVel( rkChainLink(r,i), v )
 #define rkChainLinkGetJointAcc(r,i,a)      rkLinkGetJointAcc( rkChainLink(r,i), a )
@@ -223,6 +225,7 @@ __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
 __EXPORT void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis);
 __EXPORT void rkChainSetJointDisCNT(rkChain *c, zIndex idx, zVec dis, double dt);
 __EXPORT void rkChainSetJointVel(rkChain *c, zIndex idx, zVec vel);
+__EXPORT void rkChainSetJointAcc(rkChain *c, zIndex idx, zVec acc);
 __EXPORT void rkChainSetJointRate(rkChain *c, zIndex idx, zVec vel, zVec acc);
 __EXPORT zVec rkChainGetJointDis(rkChain *c, zIndex idx, zVec dis);
 
@@ -231,6 +234,7 @@ __EXPORT void rkChainCatJointDisAll(rkChain *c, zVec dis, double k, zVec v);
 __EXPORT void rkChainSubJointDisAll(rkChain *c, zVec dis, zVec sdis);
 __EXPORT void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt);
 __EXPORT void rkChainSetJointVelAll(rkChain *c, zVec vel);
+__EXPORT void rkChainSetJointAccAll(rkChain *c, zVec acc);
 __EXPORT void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc);
 __EXPORT zVec rkChainGetJointDisAll(rkChain *c, zVec dis);
 __EXPORT zVec rkChainGetJointVelAll(rkChain *c, zVec vel);
@@ -327,17 +331,17 @@ __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
  * \return
  * rkChainCalcMass() returns the computed total mass of \a chain.
  * \sa
- * rkChainCalcCOM()
+ * rkChainUpdateCOM()
  */
 __EXPORT double rkChainCalcMass(rkChain *chain);
 
 /*! \brief calculate the center of mass of kinematic chain.
  *
- * rkChainCalcCOM() computes the center of mass of kinematic
+ * rkChainUpdateCOM() computes the center of mass of kinematic
  * chain \a c with respect to the world frame. The kinematics
  * should be calculated in advance.
  *
- * rkChainCalcCOMVel() and rkChainCalcCOMAcc() compute the
+ * rkChainUpdateCOMVel() and rkChainUpdateCOMAcc() compute the
  * velocity and acceleration of the center of mass of \a c with
  * respect to the inertia frame, respectively. The motion rate
  * of the whole links should be updated in advance.
@@ -345,12 +349,12 @@ __EXPORT double rkChainCalcMass(rkChain *chain);
  * These functions return a pointer to the internal 3D vector
  * which stores the position, velocity or acceleration of COM.
  * \notes
- * rkChainCalcCOMAcc() includes the acceleration of gravity,
+ * rkChainUpdateCOMAcc() includes the acceleration of gravity,
  * except one explicitly sets the zero gravity to the root link.
  */
-__EXPORT zVec3D *rkChainCalcCOM(rkChain *c);
-__EXPORT zVec3D *rkChainCalcCOMVel(rkChain *c);
-__EXPORT zVec3D *rkChainCalcCOMAcc(rkChain *c);
+__EXPORT zVec3D *rkChainUpdateCOM(rkChain *c);
+__EXPORT zVec3D *rkChainUpdateCOMVel(rkChain *c);
+__EXPORT zVec3D *rkChainUpdateCOMAcc(rkChain *c);
 
 /*! \brief zero moment point of kinematic chain.
  *
@@ -387,23 +391,36 @@ __EXPORT double rkChainYawTorque(rkChain *c);
 __EXPORT zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am);
 __EXPORT double rkChainKE(rkChain *c);
 
+/*! \brief inertia matrix and bias force vector of a kinematic chain by the unit vector method.
+ *
+ * rkChainInertiaMatrix() computes the inertia matrix and the bias force vector
+ * of a kinematic chain \a chain based on the unit vector matrix proposed by
+ * Walker and Orin, 1980:
+ *  M. W. Walker and D. E. Orin, Efficient Dynamic Computer Simulation of Robotic
+ *  Mechanisms, Transactions of the ASME, Journal of Dynamic Systems, Measurement,
+ *  and Control, Vol. 104, PP. 205-211, 1982.
+ * \a chain has to take the posture and the velocity at which the dynamics is
+ * computed in advance. The acceleration of \a chain is directly modified.
+ * The result is put into \a inertia and \a bias, respectively.
+ */
+__EXPORT bool rkChainInertiaMatrix(rkChain *chain, zMat inertia, zVec bias);
+
 /*! \brief external force applied to kinematic chain.
  *
- * rkChainCalcExtForce6D() calculates the total external 6D force
- * applied to the kinematic chain \a c, the summation of the
- * external forces applied to each link of \a c.
- * Orientation of the total force is with respect to the total
- * frame of \a c.
- * The result is put into \a f.
+ * rkChainNetExtWrench() calculates the net external wrench acting to
+ * a kinematic chain \a c by summing up individual external forces
+ * applied to each link. Orientation of the total force is with respect
+ * to the body frame of \a c.
+ * The result is put into \a w.
  *
- * rkChainExtForceDestroy() destroys the external force list on
- * the whole links of the kinematic chain \a c, freeing all cells.
+ * rkChainExtWrenchDestroy() destroys the external force list of the
+ * kinematic chain \a c.
  * \return
- * rkChainCalcExtForce6D() returns a pointer \a f.
+ * rkChainNetExtWrench() returns a pointer \a w.
  *
- * rkChainExtForceDestroy() returns no value.
+ * rkChainExtWrenchDestroy() returns no value.
  */
-__EXPORT zVec6D *rkChainCalcExtWrench(rkChain *c, zVec6D *w);
+__EXPORT zVec6D *rkChainNetExtWrench(rkChain *c, zVec6D *w);
 __EXPORT void rkChainExtWrenchDestroy(rkChain *c);
 
 /*! \brief set offset value of each link.

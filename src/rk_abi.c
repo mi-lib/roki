@@ -7,24 +7,8 @@
 
 #include <roki/rk_abi.h>
 
-static void _rkLinkABIInitInertia(rkLink *link);
-
-static void _rkLinkABIAddBias(rkLink *link);
-static void _rkLinkABIUpdateBackward(rkLink *link);
-static void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa);
-
-static void _rkChainZeroLinkRate(rkChain *chain);
-
-static void _rkLinkABIFindBackwardPathAddExForce(rkLink *link);
-static void _rkLinkABISubBiasNetWrenchAddExForce(rkLink *link);
-static void _rkLinkABIUpdateBackwardAddExForce(rkLink *link);
-static void _rkChainABIUpdateBackwardAddExForce(rkChain *chain);
-
-static void _rkLinkABIFindBackwardPathAddExForceOne(rkChain *chain, rkLink *link);
-static void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2);
-
 /* initialize invariant mass properties. */
-void _rkLinkABIInitInertia(rkLink *link)
+static void _rkLinkABIInitInertia(rkLink *link)
 {
   rkABIPrp *ap;
   zVec3D pc;
@@ -101,7 +85,7 @@ void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel)
 
   /* total external forces */
   rkWrenchListNet( &ap->wlist, &ap->w ); /* temporary contact forces */
-  rkLinkCalcExtWrench( link, &ap->w0 ); /* external forces */
+  rkLinkNetExtWrench( link, &ap->w0 ); /* external forces */
   zVec3DCreate( &tmp, 0, 0, -RK_G * rkLinkMass(link) ); /* gravity force */
   zMulMat3DTVec3DDRC( rkLinkWldAtt(link), &tmp );
   zVec3DAddDRC( zVec6DLin(&ap->w0), &tmp );
@@ -132,7 +116,7 @@ void rkChainABIUpdateInit(rkChain *chain)
 }
 
 /* add bias acceleration term in backward computation to update ABI of a link. */
-void _rkLinkABIAddBias(rkLink *link)
+static void _rkLinkABIAddBias(rkLink *link)
 {
   zVec6D icb;
 
@@ -143,7 +127,7 @@ void _rkLinkABIAddBias(rkLink *link)
 }
 
 /* update ABI of a link in backward computation. */
-void _rkLinkABIUpdateBackward(rkLink *link)
+static void _rkLinkABIUpdateBackward(rkLink *link)
 {
   rkABIPrp *ap;
 
@@ -174,7 +158,7 @@ void rkLinkABIUpdateBackward(rkLink *link)
 }
 
 /* update acceleration from ABI of a link in forward computation. */
-void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
+static void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 {
   rkABIPrp *ap;
   zVec6D jac;
@@ -215,7 +199,7 @@ void rkLinkABIUpdateForwardGetWrench(rkLink *link, zVec6D *pa)
 }
 
 /* zero velocity and acceleration of links of a kinematic chain. */
-void _rkChainZeroLinkRate(rkChain *chain)
+static void _rkChainZeroLinkRate(rkChain *chain)
 {
   register int i;
 
@@ -276,7 +260,7 @@ zVec rkChainABI(rkChain *chain, zVec dis, zVec vel, zVec acc)
  * the ABI and ABbias must not be overwritten, and
  * the forces except rigid contact forces in the list 'wlist' must be removed.
  */
-void _rkLinkABIFindBackwardPathAddExForce(rkLink *link)
+static void _rkLinkABIFindBackwardPathAddExForce(rkLink *link)
 {
   if( rkLinkChild(link) )
     _rkLinkABIFindBackwardPathAddExForce( rkLinkChild(link) );
@@ -288,7 +272,7 @@ void _rkLinkABIFindBackwardPathAddExForce(rkLink *link)
     rkLinkABIPrp(rkLinkParent(link))->abi_backward_path = true;
 }
 
-void _rkLinkABISubBiasNetWrenchAddExForce(rkLink *link)
+static void _rkLinkABISubBiasNetWrenchAddExForce(rkLink *link)
 {
   zVec6D w;
 
@@ -298,7 +282,7 @@ void _rkLinkABISubBiasNetWrenchAddExForce(rkLink *link)
   }
 }
 
-void _rkLinkABIUpdateBackwardAddExForce(rkLink *link)
+static void _rkLinkABIUpdateBackwardAddExForce(rkLink *link)
 {
   if( rkLinkABIPrp(link)->abi_backward_path ){
     zVec6DSub( &rkLinkABIPrp(link)->f, &rkLinkABIPrp(link)->w, &rkLinkABIPrp(link)->b );
@@ -313,7 +297,7 @@ void _rkLinkABIUpdateBackwardAddExForce(rkLink *link)
   }
 }
 
-void _rkChainABIUpdateBackwardAddExForce(rkChain *chain)
+static void _rkChainABIUpdateBackwardAddExForce(rkChain *chain)
 {
   register int i;
 
@@ -383,7 +367,7 @@ void rkChainABIPopPrpAccBiasAddExForceTwo(rkChain *chain, rkLink *link, rkLink *
   }
 }
 
-void _rkLinkABIFindBackwardPathAddExForceOne(rkChain *chain, rkLink *link)
+static void _rkLinkABIFindBackwardPathAddExForceOne(rkChain *chain, rkLink *link)
 {
   rkLink *l;
 
@@ -391,7 +375,7 @@ void _rkLinkABIFindBackwardPathAddExForceOne(rkChain *chain, rkLink *link)
     rkLinkABIPrp(l)->abi_backward_path = true;
 }
 
-void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2)
+static void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2)
 {
   register int i;
 

@@ -215,18 +215,17 @@ __EXPORT rkLink *rkLinkAddChild(rkLink *l, rkLink *cl);
 #define rkLinkExtWrenchPop(l)     rkBodyExtWrenchPop( rkLinkBody(l) )
 #define rkLinkExtWrenchDestroy(l) rkBodyExtWrenchDestroy( rkLinkBody(l) )
 
-/*! \brief calculation of total 6D external force acting to link.
+/*! \brief calculation of total external wrench acting to link.
  *
- * rkLinkCalcExtForce6D() calculates the total 6D external
- * force equivalent to the sumation of forces contained in
- * the force list on a link \a l.
- * The result is put into \a f.
+ * rkLinkNetExtWrench() calculates the net external wrench acting to
+ * a link \a l by summing up individual external forces in the force
+ * list. The result is put into \a w.
  * \return
- * rkLinkCalcExtForce6D() returns a pointer \a f.
+ * rkLinkNetExtWrench() returns a pointer \a w.
  * \sa
- * rkBodyCalcExtForce6D
+ * rkBodyNetExtWrench
  */
-#define rkLinkCalcExtWrench(l,w) rkBodyCalcExtWrench( rkLinkBody(l), w )
+#define rkLinkNetExtWrench(l,w) rkBodyNetExtWrench( rkLinkBody(l), w )
 
 /*! \brief push and pop of shape attached to link.
  *
@@ -294,6 +293,8 @@ __EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
  */
 #define rkLinkLimJointDis(l,td,ld)  rkJointLimDis( rkLinkJoint(l), td, ld )
 #define rkLinkSetJointDis(l,d)      rkJointSetDis( rkLinkJoint(l), d )
+#define rkLinkSetJointVel(l,v)      rkJointSetVel( rkLinkJoint(l), v )
+#define rkLinkSetJointAcc(l,a)      rkJointSetAcc( rkLinkJoint(l), a )
 #define rkLinkSetJointMin(l,m)      rkJointSetMin( rkLinkJoint(l), m )
 #define rkLinkSetJointMax(l,m)      rkJointSetMax( rkLinkJoint(l), m )
 #define rkLinkSetJointDisCNT(l,d,t) rkJointSetDisCNT( rkLinkJoint(l), d, t )
