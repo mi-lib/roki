@@ -427,6 +427,19 @@ void rkChainFKCNT(rkChain *c, zVec dis, double dt)
   rkChainUpdateID( c );
 }
 
+/* link acceleration at zero joint acceleration. */
+zVec6D *rkChainLinkZeroAcc(rkChain *chain, int id, zVec3D *p, zVec6D *a0)
+{
+  zVec3D tmp;
+
+  rkChainSetJointAccAll( chain, NULL );
+  rkChainUpdateRate( chain );
+  rkChainLinkPointAcc( chain, id, p, &tmp );
+  _zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), &tmp, zVec6DLin(a0) );
+  _zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), rkChainLinkAngAcc(chain,id), zVec6DAng(a0) );
+  return a0;
+}
+
 /* total mass of a kinematic chain. */
 double rkChainCalcMass(rkChain *chain)
 {
@@ -536,13 +549,14 @@ double rkChainKE(rkChain *c)
 }
 
 /* inertia matrix and bias force vector of a kinematic chain by the unit vector method. */
-bool rkChainInertiaMatrix(rkChain *chain, zMat inertia, zVec bias)
+bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias)
 {
   register int i, j, k;
   zVecStruct h;
-  zVec6D acc = { { 0, 0, 0, 0, 0, 0 } };
+  double acc[] = { 0, 0, 0, 0, 0, 0 };
 
-  if( !zMatIsSqr( inertia ) || !zMatColVecSizeIsEqual( inertia, bias ) ){
+  if( !zMatIsSqr( inertia ) || !zMatColVecSizeIsEqual( inertia, bias ) ||
+      zVecSizeNC( bias ) != rkChainJointSize(chain) ){
     ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
     return false;
   }
@@ -555,17 +569,17 @@ bool rkChainInertiaMatrix(rkChain *chain, zMat inertia, zVec bias)
   for( i=j=0; j<rkChainLinkNum(chain); j++ )
     for( k=0; k<rkChainLinkJointSize(chain,j); k++, i++ ){
       if( i >= zVecSizeNC(bias) ){
-        ZRUNERROR( RK_ERR_JOINT_SIZMISMATCH );
+        ZRUNERROR( RK_ERR_FATAL );
         return false;
       }
       h.buf = zMatRowBuf( inertia, i );
-      acc.e[k] = 1;
-      rkChainLinkSetJointAcc( chain, j, acc.e );
+      acc[k] = 1;
+      rkChainLinkSetJointAcc( chain, j, acc );
       rkChainUpdateID( chain );
       rkChainGetJointTrqAll( chain, &h );
       zVecSubDRC( &h, bias );
-      acc.e[k] = 0;
-      rkChainLinkSetJointAcc( chain, j, acc.e );
+      acc[k] = 0;
+      rkChainLinkSetJointAcc( chain, j, acc );
     }
   return true;
 }

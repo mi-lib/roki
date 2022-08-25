@@ -111,7 +111,7 @@ void link_am_test(rkChain *chain, zMat jacobi, zVec3D *v)
 {
   zVec3D tp;
 
-  rkChainLinkAMJacobi( chain, TIP, ZVEC3DZERO, jacobi );
+  rkChainLinkAMMat( chain, TIP, ZVEC3DZERO, jacobi );
   zXform3DInv( rkChainLinkWldFrame(chain,TIP), ZVEC3DZERO, &tp );
   rkLinkAM( rkChainLink(chain,TIP), &tp, v );
   zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,TIP), v );
@@ -119,7 +119,7 @@ void link_am_test(rkChain *chain, zMat jacobi, zVec3D *v)
 
 void am_test(rkChain *chain, zMat jacobi, zVec3D *v)
 {
-  rkChainAMJacobi( chain, ZVEC3DZERO, jacobi );
+  rkChainAMMat( chain, ZVEC3DZERO, jacobi );
   rkChainAM( chain, ZVEC3DZERO, v );
 }
 
@@ -131,6 +131,40 @@ bool assert_jacobi(rkChain *chain, zMat jacobi, zVec dis, zVec vel, zVec acc, zV
   zMulMatVec( jacobi, vel, ev );
   zVec3DSub( (zVec3D*)zVecBuf(ev), &v, &err );
   return zVec3DIsTiny( &err );
+}
+
+bool assert_zeroacc(rkChain *chain, int id, zVec dis, zVec vel, zVec acc, zMat jacobi, zVec a)
+{
+  zVec6D a0, av;
+  zVec3D p, tmp;
+
+  zVecRandUniform( dis, -zPI, zPI );
+  zVecRandUniform( vel, -1, 1 );
+  zVecRandUniform( acc, -1, 1 );
+  zVec3DCreate( &p, zRandF(-0.1,0.1), zRandF(-0.1,0.1), zRandF(-0.1,0.1) );
+  /* forward kinematics & Jacobian matrix */
+  rkChainSetJointDisAll( chain, dis );
+  rkChainUpdateFK( chain );
+  /* link acceleration */
+  rkChainSetJointVelAll( chain, vel );
+  rkChainLinkZeroAcc( chain, id, &p, &a0 );
+  rkChainSetJointAccAll( chain, acc );
+  rkChainUpdateRate( chain );
+  /* check */
+  rkChainLinkPointAcc( chain, id, &p, &tmp );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), &tmp, zVec6DLin(&av) );
+  zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), rkChainLinkAngAcc(chain,id), zVec6DAng(&av) );
+  zVec6DSubDRC( &av, &a0 );
+  /* linear acceleration */
+  rkChainLinkWldLinJacobi( chain, id, &p, jacobi );
+  zMulMatVec( jacobi, acc, a );
+  zVec3DSubDRC( zVec6DLin(&av), (zVec3D*)zVecBufNC(a) );
+  /* angular acceleration */
+  rkChainLinkWldAngJacobi( chain, id, jacobi );
+  zMulMatVec( jacobi, acc, a );
+  zVec3DSubDRC( zVec6DAng(&av), (zVec3D*)zVecBufNC(a) );
+
+  return zVec6DIsTiny( &av );
 }
 
 int main(int argc, char *argv[])
@@ -159,8 +193,9 @@ int main(int argc, char *argv[])
   zAssert( rkChainLinkToLinkAngJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, l2l_ang_test ) );
   zAssert( rkChainLinkToLinkLinJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, l2l_lin_test ) );
   zAssert( rkChainCOMJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, com_test ) );
-  zAssert( rkChainLinkAMJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, link_am_test ) );
-  zAssert( rkChainAMJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, am_test ) );
+  zAssert( rkChainLinkAMMat, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, link_am_test ) );
+  zAssert( rkChainAMMat, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, am_test ) );
+  zAssert( rkChainLinkZeroAcc, assert_zeroacc( &chain, TIP, dis, vel, acc, jacobi, ev ) );
 
   /* termination */
   zVecFree( dis );

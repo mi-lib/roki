@@ -282,10 +282,11 @@ __EXPORT void rkChainSetConf(rkChain *chain, zVec conf);
  */
 __EXPORT zVec3D *rkChainGravityDir(rkChain *c, zVec3D *v);
 
-/*! \brief calculate velocity of a point on a link with respect
- *  to the inertia frame.
+/*! \brief calculate velocity and acceleration of a point on a link
+ * with respect to the inertia frame.
  */
 #define rkChainLinkPointVel(c,i,p,v) rkLinkPointVel( rkChainLink(c,i), p, v )
+#define rkChainLinkPointAcc(c,i,p,a) rkLinkPointAcc( rkChainLink(c,i), p, a )
 
 /*! \brief kinematic chain forward kinematics.
  *
@@ -323,6 +324,23 @@ __EXPORT void rkChainFK(rkChain *c, zVec dis);
 __EXPORT void rkChainUpdateID(rkChain *c);
 __EXPORT void rkChainID(rkChain *c, zVec vel, zVec acc);
 __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
+
+/*! \brief link acceleration at zero joint acceleration.
+ *
+ * rkChainLinkZeroAcc() computes 6D acceleration of a point \a p
+ * on the \a id'th link of a kinematic chain \a chain with respect
+ * to the inertia frame at zero-joint acceleration. This corresponds
+ * to the multiplication of the rate of Jacobian matrix and the
+ * joint velocity vector.
+ * The result is put into \a a0.
+ * \notes
+ * rkChainLinkZeroAcc() internally zeroes the joint acceleration
+ * of \a chain and calls rkChainUpdateRate().
+ * \return
+ * rkChainLinkZeroAcc() returns a pointer \a a0.
+ */
+/* Note: joint acceleration of the kinematic chain is set for zero. */
+__EXPORT zVec6D *rkChainLinkZeroAcc(rkChain *chain, int id, zVec3D *p, zVec6D *a0);
 
 /*! \brief total mass of a kinematic chain.
  *
@@ -393,17 +411,21 @@ __EXPORT double rkChainKE(rkChain *c);
 
 /*! \brief inertia matrix and bias force vector of a kinematic chain by the unit vector method.
  *
- * rkChainInertiaMatrix() computes the inertia matrix and the bias force vector
- * of a kinematic chain \a chain based on the unit vector matrix proposed by
- * Walker and Orin, 1980:
+ * rkChainInertiaMatBiasVec() computes the inertia matrix and the bias force
+ * vector of a kinematic chain \a chain based on the unit vector matrix proposed
+ * by Walker and Orin, 1980:
  *  M. W. Walker and D. E. Orin, Efficient Dynamic Computer Simulation of Robotic
  *  Mechanisms, Transactions of the ASME, Journal of Dynamic Systems, Measurement,
  *  and Control, Vol. 104, PP. 205-211, 1982.
  * \a chain has to take the posture and the velocity at which the dynamics is
  * computed in advance. The acceleration of \a chain is directly modified.
  * The result is put into \a inertia and \a bias, respectively.
+ * \return
+ * rkChainInertiaMatBiasVec() returns the true value if it succeeds to compute
+ * the matrix and the vector. If the sizes of the given matrix and vector do not
+ * match the total degree of freedom of the chain, the false value is returned.
  */
-__EXPORT bool rkChainInertiaMatrix(rkChain *chain, zMat inertia, zVec bias);
+__EXPORT bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias);
 
 /*! \brief external force applied to kinematic chain.
  *

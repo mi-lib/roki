@@ -112,14 +112,14 @@ int main(int argc, char *argv[])
     rkChainFK( &chain, dis );
     rkChainSetJointVelAll( &chain, vel );
     /* verifications */
-    rkChainInertiaMatrix( &chain, h, b );
+    rkChainInertiaMatBiasVec( &chain, h, b );
     if( check_inertia_matrix( &chain, h, tol_im ) ) count_im++;
     if( check_kinetic_energy( &chain, h, vel, tol_ke ) ) count_ke++;
     if( check_fd( &chain, h, b, vel, tol_fd ) ) count_fd++;
   }
-  printf( "rkChainInertiaMatrix             success case = %d / %d\n", count_im, N );
-  printf( "rkChainInertiaMatrix + rkChainKE success case = %d / %d\n", count_ke, N );
-  printf( "rkChainInertiaMatrix (FD-ID)     success case = %d / %d\n", count_fd, N );
+  printf( "rkChainInertiaMatBiasVec             success rate = %d / %d\n", count_im, N );
+  printf( "rkChainInertiaMatBiasVec + rkChainKE success rate = %d / %d\n", count_ke, N );
+  printf( "rkChainInertiaMatBiasVec (FD-ID)     success rate = %d / %d\n", count_fd, N );
 
   zMatFree( h );
   zVecFreeAO( 3, b, dis, vel );

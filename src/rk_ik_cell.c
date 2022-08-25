@@ -102,12 +102,12 @@ zMat rkIKJacobiCOM(rkChain *chain, rkIKCellAttr *attr, zMat j)
 
 zMat rkIKJacobiAM(rkChain *chain, rkIKCellAttr *attr, zMat j)
 { /* angular momentum about a point of a kinematic chain */
-  return rkChainAMJacobi( chain, &attr->ap, j );
+  return rkChainAMMat( chain, &attr->ap, j );
 }
 
 zMat rkIKJacobiAMCOM(rkChain *chain, rkIKCellAttr *attr, zMat j)
 { /* angular momentum about COM of a kinematic chain */
-  return rkChainAMCOMJacobi( chain, j );
+  return rkChainAMCOMMat( chain, j );
 }
 
 /* displacement error */

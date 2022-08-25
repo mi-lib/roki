@@ -1,3 +1,8 @@
+2022. 8.25. Added rkChainLinkZeroAcc. [rk_chain]
+2022. 8.25. Added rkChainLinkPointAcc. [rk_chain]
+2022. 8.25. Renamed rkChainLinkAMJacobi, rkChainAMJacobi and rkChainAMCOMJacobi to rkChainLinkAMMat, rkChainAMMat and rkChainAMCOMMat, respectively. [rk_chain, rk_ik_cell]
+2022. 8.25. Renamed _rkChainLinkAMJacobi to _rkChainLinkAMMat. [rk_chain]
+2022. 8.25. Renamed rkChainInertiaMatrix to rkChainInertiaMatBiasVec. [rk_chain]
 2022. 8.25. Added rkChainInertiaMatrix. [rk_chain]
 2022. 8.25. Added RK_ERR_MAT_VEC_SIZMISMATCH and modified RK_ERR_JOINT_SIZMISMATCH. [rk_errmsg]
 2022. 8.25. Renamed rkChainCalcCOM* to rkChainUpdateCOM*. [rk_chain]

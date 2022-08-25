@@ -8,9 +8,6 @@
 
 /* Manipulator Jacobian matrix */
 
-static zVec3D *_rkJacobiLinCol(rkLink *l, int i, zFrame3D *f, zVec3D *p, zVec3D *s);
-static zMat _rkChainLinkAMJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi);
-
 #define __rk_jacobi_set_vector(j,c,k,v) do{\
   zMatSetElemNC( j, zX, c, (v)->e[zX] );\
   zMatSetElemNC( j, zY, c, (v)->e[zY] );\
@@ -43,9 +40,8 @@ static zMat _rkChainLinkAMJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi);
       op( m, rkLinkOffset(l)+__i, 0 /* dummy */, s );\
 } while(0)
 
-/* (static)
- * column vector of linear Jacobian matrix. */
-zVec3D *_rkJacobiLinCol(rkLink *l, int i, zFrame3D *f, zVec3D *p, zVec3D *s)
+/* column vector of linear Jacobian matrix. */
+static zVec3D *_rkJacobiLinCol(rkLink *l, int i, zFrame3D *f, zVec3D *p, zVec3D *s)
 {
   zVec3D tmp, dp;
 
@@ -152,9 +148,8 @@ zMat rkChainCOMJacobi(rkChain *c, zMat jacobi)
   return jacobi;
 }
 
-/* (static)
- * link angular momentum Jacobian matrix. */
-zMat _rkChainLinkAMJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi)
+/* link angular momentum matrix. */
+static zMat _rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat mat)
 {
   register int i;
   rkLink *l;
@@ -167,40 +162,40 @@ zMat _rkChainLinkAMJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi)
     for( i=0; i<rkLinkJointSize(l); i++ ){
       if( rkJointAngAxis( rkLinkJoint(l), i, rkLinkWldFrame(l), &s ) ){
         zMulMat3DVec3DDRC( &m, &s );
-        __rk_jacobi_add_vector( jacobi, rkLinkOffset(l)+i, 0, &s );
+        __rk_jacobi_add_vector( mat, rkLinkOffset(l)+i, 0, &s );
       }
       if( _rkJacobiLinCol( l, i, rkLinkWldFrame(l), rkChainLinkWldCOM(c,id), &s ) ){
         zVec3DOuterProd( &dp, &s, &v );
-        __rk_jacobi_cat_vector( jacobi, rkLinkOffset(l)+i, rkChainLinkMass(c,id), &v );
+        __rk_jacobi_cat_vector( mat, rkLinkOffset(l)+i, rkChainLinkMass(c,id), &v );
       }
     }
     if( l == rkChainRoot(c) ) break;
   }
-  return jacobi;
+  return mat;
 }
 
-/* link angular momentum Jacobian matrix. */
-zMat rkChainLinkAMJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi)
+/* link angular momentum matrix. */
+zMat rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat m)
 {
-  zMatZero( jacobi );
-  return _rkChainLinkAMJacobi( c, id, p, jacobi );
+  zMatZero( m );
+  return _rkChainLinkAMMat( c, id, p, m );
 }
 
-/* angular momentum Jacobian matrix of a kinematic chain. */
-zMat rkChainAMJacobi(rkChain *c, zVec3D *p, zMat jacobi)
+/* angular momentum matrix of a kinematic chain. */
+zMat rkChainAMMat(rkChain *c, zVec3D *p, zMat m)
 {
   register int i;
 
-  zMatZero( jacobi );
+  zMatZero( m );
   for( i=0; i<rkChainLinkNum(c); i++ )
-    _rkChainLinkAMJacobi( c, i, p, jacobi );
-  return jacobi;
+    _rkChainLinkAMMat( c, i, p, m );
+  return m;
 }
 
-/* angular momentum Jacobian matrix about COM of a kinematic chain. */
-zMat rkChainAMCOMJacobi(rkChain *c, zMat jacobi)
+/* angular momentum matrix about the center of mass of a kinematic chain. */
+zMat rkChainAMCOMMat(rkChain *c, zMat m)
 {
-  return rkChainAMJacobi( c, rkChainWldCOM(c), jacobi );
+  return rkChainAMMat( c, rkChainWldCOM(c), m );
 }
 
 /* measure of manipulability. */
