@@ -319,6 +319,18 @@ void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc)
     }
 }
 
+/* set all joint motor trq of a kinematic chain. */
+void rkChainSetJointMotorSetInputAll(rkChain *c, zVec trq)
+{
+  register int i;
+
+  for( i=0; i<rkChainLinkNum(c); i++ )
+    if( rkChainLinkOffset(c,i) >= 0 ){
+      rkChainLinkSetJointMotorSetInput(c,i,&zVecElemNC(trq,rkChainLinkOffset(c,i)));
+    }
+}
+
+
 /* get all joint displacements of a kinematic chain. */
 zVec rkChainGetJointDisAll(rkChain *c, zVec dis)
 {

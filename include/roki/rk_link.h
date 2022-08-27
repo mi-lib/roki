@@ -297,6 +297,7 @@ __EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
 #define rkLinkSetJointAcc(l,a)      rkJointSetAcc( rkLinkJoint(l), a )
 #define rkLinkSetJointMin(l,m)      rkJointSetMin( rkLinkJoint(l), m )
 #define rkLinkSetJointMax(l,m)      rkJointSetMax( rkLinkJoint(l), m )
+#define rkLinkSetJointMotorSetInput(l,t)      rkJointMotorSetInput( rkLinkJoint(l), t )
 #define rkLinkSetJointDisCNT(l,d,t) rkJointSetDisCNT( rkLinkJoint(l), d, t )
 #define rkLinkGetJointDis(l,d)      rkJointGetDis( rkLinkJoint(l), d )
 #define rkLinkGetJointVel(l,v)      rkJointGetVel( rkLinkJoint(l), v )
