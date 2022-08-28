@@ -32,8 +32,8 @@ bool check_one(rkLink l[])
   a1 = zRandF(-zPI,zPI);
   a2 = zRandF(-zPI,zPI);
 
-  rkLinkSetJointDis( &l[0], &a1 );
-  rkLinkSetJointDis( &l[1], &a2 );
+  rkLinkJointSetDis( &l[0], &a1 );
+  rkLinkJointSetDis( &l[1], &a2 );
   rkLinkUpdateFrame( &l[0], ZFRAME3DIDENT );
 
   zSinCos( a1, &s1, &c1 );

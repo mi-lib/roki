@@ -1,3 +1,4 @@
+2022. 8.28. Modified specifications of rkLinkABIAlloc and rkChainABIAlloc. [rk_abi]
 2022. 8.28. Added rkChainLinkJointMotorSetInput and rkChainSetMotorInputAll. [rk_chain]
 2022. 8.28. Renamed rkChainLinkLim/Set/GetJoint* to rkChainLinkJointLim/Set/Get*. [rk_chain]
 2022. 8.28. Renamed rkLinkLim/Set/GetJoint* to rkLinkJointLim/Set/Get*. [rk_link]

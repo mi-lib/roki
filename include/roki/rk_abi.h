@@ -17,9 +17,9 @@ __BEGIN_DECLS
  * ********************************************************** */
 
 /* allocate memory for ABI of a link. */
-__EXPORT void rkLinkABIAlloc(rkLink *link);
+__EXPORT rkLink *rkLinkABIAlloc(rkLink *link);
 /* allocate memory for ABI of a kinematic chain. */
-__EXPORT void rkChainABIAlloc(rkChain *chain);
+__EXPORT rkChain *rkChainABIAlloc(rkChain *chain);
 
 /* destroy ABI of a link. */
 __EXPORT void rkLinkABIDestroy(rkLink *link);

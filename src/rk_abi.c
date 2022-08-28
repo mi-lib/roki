@@ -24,29 +24,41 @@ static void _rkLinkABIInitInertia(rkLink *link)
 }
 
 /* allocate memory for ABI of a link. */
-void rkLinkABIAlloc(rkLink *link)
+rkLink *rkLinkABIAlloc(rkLink *link)
 {
   rkABIPrp *ap;
+  bool result = true;
 
   ap = rkLinkABIPrp(link);
   memset( ap, 0, sizeof(rkABIPrp) );
   if( rkLinkJointSize(link) == 0 ){
     ap->axi = ap->iaxi = NULL;
   } else{
-    ap->axi  = zMatAllocSqr( rkLinkJointSize(link) );
-    ap->iaxi = zMatAllocSqr( rkLinkJointSize(link) );
+    if( !( ap->axi  = zMatAllocSqr( rkLinkJointSize(link) ) ) ||
+        !( ap->iaxi = zMatAllocSqr( rkLinkJointSize(link) ) ) ) result = false;
   }
   zListInit( &ap->wlist );
   _rkLinkABIInitInertia( link );
+  if( !result ){
+    rkLinkABIDestroy( link );
+    return NULL;
+  }
+  return link;
 }
 
 /* allocate memory for ABI of a kinematic chain. */
-void rkChainABIAlloc(rkChain *chain)
+rkChain *rkChainABIAlloc(rkChain *chain)
 {
   register int i;
+  bool result = true;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
-    rkLinkABIAlloc( rkChainLink(chain,i) );
+    if( !rkLinkABIAlloc( rkChainLink(chain,i) ) ) result = false;
+  if( !result ){
+    rkChainABIDestroy( chain );
+    return NULL;
+  }
+  return chain;
 }
 
 /* destroy ABI of a link. */
@@ -75,14 +87,12 @@ void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel)
   ap = rkLinkABIPrp(link);
   /* I */
   zMat6DCopy( &ap->m, &ap->i );
-
   /* b */
   zVec3DTripleProd( rkLinkAngVel(link), rkLinkAngVel(link), rkLinkCOM(link), &tmp);
   zVec3DMul( &tmp, rkLinkMass(link), zVec6DLin(&ap->f) );
   zMulMat3DVec3D( &ap->i.e[1][1], rkLinkAngVel(link), &tmp );
   zVec3DOuterProd( rkLinkAngVel(link), &tmp, zVec6DAng(&ap->f) );
   zVec6DCopy( &ap->f, &ap->b );
-
   /* total external forces */
   rkWrenchListNet( &ap->wlist, &ap->w ); /* temporary contact forces */
   rkLinkNetExtWrench( link, &ap->w0 ); /* external forces */
@@ -92,7 +102,6 @@ void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel)
   zVec3DOuterProd( rkLinkCOM(link), &tmp, &tmp );
   zVec3DAddDRC( zVec6DAng(&ap->w0), &tmp );
   zVec6DAddDRC( &ap->w, &ap->w0 );
-
   /* c */
   zVec6DZero( &ap->c );
   zMulMat3DTVec3D( rkLinkAdjAtt(link), zVec6DAng(pvel), &tmp );
@@ -107,12 +116,9 @@ void rkChainABIUpdateInit(rkChain *chain)
 {
   register int i;
 
-  for( i=0; i<rkChainLinkNum(chain); i++ ){
-    if( rkChainLinkParent(chain,i) == NULL )
-      rkLinkABIUpdateInit( rkChainLink(chain,i), ZVEC6DZERO );
-    else
-      rkLinkABIUpdateInit( rkChainLink(chain,i), rkLinkVel(rkChainLinkParent(chain,i)) );
-  }
+  for( i=0; i<rkChainLinkNum(chain); i++ )
+    rkLinkABIUpdateInit( rkChainLink(chain,i), rkChainLinkParent(chain,i) ?
+      rkLinkVel(rkChainLinkParent(chain,i)) : ZVEC6DZERO );
 }
 
 /* add bias acceleration term in backward computation to update ABI of a link. */
@@ -137,7 +143,6 @@ static void _rkLinkABIUpdateBackward(rkLink *link)
   /* IsIs */
   rkJointABIAxisInertia( rkLinkJoint(link), &ap->i, ap->axi, ap->iaxi );
   rkJointABIDrivingTorque( rkLinkJoint(link) );
-
   if( !rkLinkParent(link) ) return;
 
   /* add ABI and bias acceleration to parent prp */

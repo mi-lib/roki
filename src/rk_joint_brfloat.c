@@ -259,7 +259,6 @@ static void _rkJointBrFloatFixedUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, z
     j->com->_addbias = _rkJointBrFloatFixedABIAddBias;
     j->com->_dtrq = _rkJointBrFloatFixedABIDrivingTorque;
     j->com->_qacc = _rkJointBrFloatFixedABIQAcc;
-    j->com->_wrench = _rkJointBrFloatFixedUpdateWrench; /* unnecessary */
   }
 }
 

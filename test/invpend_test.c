@@ -128,8 +128,8 @@ void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq)
   /* analytical computation */
   invpend_trq( invpend, zVecElem(q,0), zVecElem(q,1), zVecElem(dq,0), zVecElem(dq,1), zVecElem(ddq,0), zVecElem(ddq,1), &u11, &u12 );
   /* recursive computation */
-  rkChainLinkGetJointTrq( invpend, 1, &u21 );
-  rkChainLinkGetJointTrq( invpend, 2, &u22 );
+  rkChainLinkJointGetTrq( invpend, 1, &u21 );
+  rkChainLinkJointGetTrq( invpend, 2, &u22 );
   zAssert( joint torque (inverted pendulum), zIsTiny( u11 - u21 ) && zIsTiny( u12 - u22 ) );
 }
 
