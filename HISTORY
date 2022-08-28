@@ -1,3 +1,6 @@
+2022. 8.28. Added rkChainLinkJointMotorSetInput and rkChainSetMotorInputAll. [rk_chain]
+2022. 8.28. Renamed rkChainLinkLim/Set/GetJoint* to rkChainLinkJointLim/Set/Get*. [rk_chain]
+2022. 8.28. Renamed rkLinkLim/Set/GetJoint* to rkLinkJointLim/Set/Get*. [rk_link]
 2022. 8.25. Added rkChainLinkZeroAcc. [rk_chain]
 2022. 8.25. Added rkChainLinkPointAcc. [rk_chain]
 2022. 8.25. Renamed rkChainLinkAMJacobi, rkChainAMJacobi and rkChainAMCOMJacobi to rkChainLinkAMMat, rkChainAMMat and rkChainAMCOMMat, respectively. [rk_chain, rk_ik_cell]

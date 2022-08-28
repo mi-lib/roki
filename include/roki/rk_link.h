@@ -291,23 +291,23 @@ __EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
  * \return
  * These functions return no value.
  */
-#define rkLinkLimJointDis(l,td,ld)  rkJointLimDis( rkLinkJoint(l), td, ld )
-#define rkLinkSetJointDis(l,d)      rkJointSetDis( rkLinkJoint(l), d )
-#define rkLinkSetJointVel(l,v)      rkJointSetVel( rkLinkJoint(l), v )
-#define rkLinkSetJointAcc(l,a)      rkJointSetAcc( rkLinkJoint(l), a )
-#define rkLinkSetJointMin(l,m)      rkJointSetMin( rkLinkJoint(l), m )
-#define rkLinkSetJointMax(l,m)      rkJointSetMax( rkLinkJoint(l), m )
-#define rkLinkSetJointMotorSetInput(l,t)      rkJointMotorSetInput( rkLinkJoint(l), t )
-#define rkLinkSetJointDisCNT(l,d,t) rkJointSetDisCNT( rkLinkJoint(l), d, t )
-#define rkLinkGetJointDis(l,d)      rkJointGetDis( rkLinkJoint(l), d )
-#define rkLinkGetJointVel(l,v)      rkJointGetVel( rkLinkJoint(l), v )
-#define rkLinkGetJointAcc(l,a)      rkJointGetAcc( rkLinkJoint(l), a )
-#define rkLinkGetJointMin(l,m)      rkJointGetMin( rkLinkJoint(l), m )
-#define rkLinkGetJointMax(l,m)      rkJointGetMax( rkLinkJoint(l), m )
-#define rkLinkGetJointTrq1(l,i)     rkJointGetTrq1( rkLinkJoint(l), i )
-#define rkLinkGetJointTrq(l,d)      rkJointGetTrq( rkLinkJoint(l), d )
+#define rkLinkJointLimDis(l,td,ld)  rkJointLimDis( rkLinkJoint(l), td, ld )
+#define rkLinkJointSetDis(l,d)      rkJointSetDis( rkLinkJoint(l), d )
+#define rkLinkJointSetVel(l,v)      rkJointSetVel( rkLinkJoint(l), v )
+#define rkLinkJointSetAcc(l,a)      rkJointSetAcc( rkLinkJoint(l), a )
+#define rkLinkJointSetMin(l,m)      rkJointSetMin( rkLinkJoint(l), m )
+#define rkLinkJointSetMax(l,m)      rkJointSetMax( rkLinkJoint(l), m )
+#define rkLinkJointSetDisCNT(l,d,t) rkJointSetDisCNT( rkLinkJoint(l), d, t )
+#define rkLinkJointGetDis(l,d)      rkJointGetDis( rkLinkJoint(l), d )
+#define rkLinkJointGetVel(l,v)      rkJointGetVel( rkLinkJoint(l), v )
+#define rkLinkJointGetAcc(l,a)      rkJointGetAcc( rkLinkJoint(l), a )
+#define rkLinkJointGetMin(l,m)      rkJointGetMin( rkLinkJoint(l), m )
+#define rkLinkJointGetMax(l,m)      rkJointGetMax( rkLinkJoint(l), m )
+#define rkLinkJointGetTrq1(l,i)     rkJointGetTrq1( rkLinkJoint(l), i )
+#define rkLinkJointGetTrq(l,d)      rkJointGetTrq( rkLinkJoint(l), d )
 
-#define rkLinkGetJointMotor(l,m)    rkJointGetMotor( rkLinkJoint(l), m )
+#define rkLinkJointGetMotor(l,m)      rkJointGetMotor( rkLinkJoint(l), m )
+#define rkLinkJointMotorSetInput(l,t) rkJointMotorSetInput( rkLinkJoint(l), t )
 
 /*! \brief update link motion state.
  *

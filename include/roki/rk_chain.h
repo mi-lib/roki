@@ -209,19 +209,20 @@ __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
  *
  * rkChainGetJointDis() returns a pointer \a dis.
  * \sa
- * rkLinkSetJointDisCNT, rkChainCreateDefaultJointIndex
+ * rkLinkJointSetDisCNT, rkChainCreateDefaultJointIndex
  */
-#define rkChainLinkLimJointDis(r,i,td,ld)  rkLinkLimJointDis( rkChainLink(r,i), td, ld )
-#define rkChainLinkSetJointDis(r,i,d)      rkLinkSetJointDis( rkChainLink(r,i), d )
-#define rkChainLinkSetJointDisCNT(r,i,d,t) rkLinkSetJointDisCNT( rkChainLink(r,i), d, t )
-#define rkChainLinkSetJointVel(r,i,v)      rkLinkSetJointVel( rkChainLink(r,i), v )
-#define rkChainLinkSetJointAcc(r,i,a)      rkLinkSetJointAcc( rkChainLink(r,i), a )
-#define rkChainLinkSetJointMotorSetInput(r,i,t)      rkLinkSetJointMotorSetInput( rkChainLink(r,i), t )
-#define rkChainLinkGetJointDis(r,i,d)      rkLinkGetJointDis( rkChainLink(r,i), d )
-#define rkChainLinkGetJointVel(r,i,v)      rkLinkGetJointVel( rkChainLink(r,i), v )
-#define rkChainLinkGetJointAcc(r,i,a)      rkLinkGetJointAcc( rkChainLink(r,i), a )
-#define rkChainLinkGetJointTrq(r,i,d)      rkLinkGetJointTrq( rkChainLink(r,i), d )
-#define rkChainLinkGetJointMotor(r,i,m)    rkLinkGetJointMotor( rkChainLink(r,i), m )
+#define rkChainLinkJointLimDis(r,i,td,ld)  rkLinkJointLimDis( rkChainLink(r,i), td, ld )
+#define rkChainLinkJointSetDis(r,i,d)      rkLinkJointSetDis( rkChainLink(r,i), d )
+#define rkChainLinkJointSetDisCNT(r,i,d,t) rkLinkJointSetDisCNT( rkChainLink(r,i), d, t )
+#define rkChainLinkJointSetVel(r,i,v)      rkLinkJointSetVel( rkChainLink(r,i), v )
+#define rkChainLinkJointSetAcc(r,i,a)      rkLinkJointSetAcc( rkChainLink(r,i), a )
+#define rkChainLinkJointGetDis(r,i,d)      rkLinkJointGetDis( rkChainLink(r,i), d )
+#define rkChainLinkJointGetVel(r,i,v)      rkLinkJointGetVel( rkChainLink(r,i), v )
+#define rkChainLinkJointGetAcc(r,i,a)      rkLinkJointGetAcc( rkChainLink(r,i), a )
+#define rkChainLinkJointGetTrq(r,i,d)      rkLinkJointGetTrq( rkChainLink(r,i), d )
+#define rkChainLinkJointGetMotor(r,i,m)    rkLinkJointGetMotor( rkChainLink(r,i), m )
+
+#define rkChainLinkJointMotorSetInput(r,i,t)  rkLinkJointMotorSetInput( rkChainLink(r,i), t )
 
 __EXPORT void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis);
 __EXPORT void rkChainSetJointDisCNT(rkChain *c, zIndex idx, zVec dis, double dt);
@@ -237,7 +238,6 @@ __EXPORT void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt);
 __EXPORT void rkChainSetJointVelAll(rkChain *c, zVec vel);
 __EXPORT void rkChainSetJointAccAll(rkChain *c, zVec acc);
 __EXPORT void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc);
-__EXPORT void rkChainSetJointMotorSetInputAll(rkChain *c, zVec trq);
 __EXPORT zVec rkChainGetJointDisAll(rkChain *c, zVec dis);
 __EXPORT zVec rkChainGetJointVelAll(rkChain *c, zVec vel);
 __EXPORT zVec rkChainGetJointAccAll(rkChain *c, zVec acc);
@@ -245,6 +245,8 @@ __EXPORT zVec rkChainGetJointTrqAll(rkChain *c, zVec trq);
 
 __EXPORT zVec rkChainGetConf(rkChain *chain, zVec conf);
 __EXPORT void rkChainSetConf(rkChain *chain, zVec conf);
+
+__EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec trq);
 
 /*! \brief update kinematic chain motion state.
  *
@@ -262,16 +264,11 @@ __EXPORT void rkChainSetConf(rkChain *chain, zVec conf);
  * \sa
  * rkLinkUpdateFrame, rkLinkUpdateRate, rkLinkUpdateForce
  */
-#define rkChainUpdateFrame(c)  \
-  rkLinkUpdateFrame( rkChainRoot(c), ZFRAME3DIDENT )
-#define rkChainUpdateVel(c)   \
-  rkLinkUpdateVel( rkChainRoot(c), ZVEC6DZERO )
-#define rkChainUpdateAcc(c)   \
-  rkLinkUpdateAcc( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
-#define rkChainUpdateRate(c)   \
-  rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
-#define rkChainUpdateWrench(c) \
-  rkLinkUpdateWrench( rkChainRoot(c) )
+#define rkChainUpdateFrame(c)  rkLinkUpdateFrame( rkChainRoot(c), ZFRAME3DIDENT )
+#define rkChainUpdateVel(c)    rkLinkUpdateVel( rkChainRoot(c), ZVEC6DZERO )
+#define rkChainUpdateAcc(c)    rkLinkUpdateAcc( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
+#define rkChainUpdateRate(c)   rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
+#define rkChainUpdateWrench(c) rkLinkUpdateWrench( rkChainRoot(c) )
 
 /*! \brief gravity orientation with respect to the root link.
  *
