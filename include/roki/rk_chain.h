@@ -257,6 +257,10 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec trq);
  * velocities and accelerations of the whole links of \a c
  * with respect to the inertia frame.
  *
+ * rkChainUpdateRateZeroGravity() updates the motion rates, namely,
+ * velocities and accelerations of the whole links of \a c
+ * with respect to the inertia frame under zero gravity.
+ *
  * rkChainUpdateForce() computes forces and moments acting
  * to the whole links of \a c.
  * \return
@@ -268,6 +272,7 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec trq);
 #define rkChainUpdateVel(c)    rkLinkUpdateVel( rkChainRoot(c), ZVEC6DZERO )
 #define rkChainUpdateAcc(c)    rkLinkUpdateAcc( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
 #define rkChainUpdateRate(c)   rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
+#define rkChainUpdateRateZeroGravity(c)   rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, ZVEC6DZERO )
 #define rkChainUpdateWrench(c) rkLinkUpdateWrench( rkChainRoot(c) )
 
 /*! \brief gravity orientation with respect to the root link.
@@ -423,8 +428,19 @@ __EXPORT double rkChainKE(rkChain *c);
  * rkChainInertiaMatBiasVec() returns the true value if it succeeds to compute
  * the matrix and the vector. If the sizes of the given matrix and vector do not
  * match the total degree of freedom of the chain, the false value is returned.
+ * 
+ * rkChainInertiaMat() returns the true value if it succeeds to compute
+ * the matrix and the vector. If the sizes of the given matrix does not
+ * match the total degree of freedom of the chain, the false value is returned.
+ * 
+ * rkChainBiasVec() returns the true value if it succeeds to compute
+ * the matrix and the vector. If the sizes of the given vector does not
+ * match the total degree of freedom of the chain, the false value is returned.
  */
 __EXPORT bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias);
+__EXPORT bool rkChainInertiaMat(rkChain *chain, zMat inertia);
+__EXPORT bool rkChainBiasVec(rkChain *chain, zVec bias);
+
 
 /*! \brief external force applied to kinematic chain.
  *

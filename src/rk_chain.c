@@ -414,6 +414,15 @@ void rkChainFK(rkChain *c, zVec dis)
   rkChainUpdateFK( c );
 }
 
+/* update link states and joint torques of a kinematic chain via inverse dynamics under zero gravity. */
+void rkChainUpdateIDZeroGravity(rkChain *c)
+{
+  rkChainUpdateRateZeroGravity( c );
+  rkChainUpdateWrench( c );
+  rkChainUpdateCOMVel( c );
+  rkChainUpdateCOMAcc( c );
+}
+
 /* update link states and joint torques of a kinematic chain via inverse dynamics. */
 void rkChainUpdateID(rkChain *c)
 {
@@ -592,6 +601,48 @@ bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias)
       acc[k] = 0;
       rkChainLinkJointSetAcc( chain, j, acc );
     }
+  return true;
+}
+
+/* inertia matrix of a kinematic chain by the unit vector method. */
+bool rkChainInertiaMat(rkChain *chain, zMat inertia)
+{
+  register int i, j, k;
+  zVecStruct h;
+  double acc[] = { 0, 0, 0, 0, 0, 0 };
+
+  if( !zMatIsSqr( inertia ) || zMatColSize( inertia ) != rkChainJointSize(chain)){
+    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    return false;
+  }
+  rkChainSetJointAccAll( chain, NULL );
+  rkChainSetJointVelAll( chain, NULL );
+  /* inertia matrix */
+  h.size = rkChainJointSize(chain);
+  for( i=j=0; j<rkChainLinkNum(chain); j++ )
+    for( k=0; k<rkChainLinkJointSize(chain,j); k++, i++ ){
+      h.buf = zMatRowBuf( inertia, i );
+      acc[k] = 1;
+      rkChainLinkJointSetAcc( chain, j, acc );
+      rkChainUpdateIDZeroGravity( chain );
+      rkChainGetJointTrqAll( chain, &h );
+      acc[k] = 0;
+      rkChainLinkJointSetAcc( chain, j, acc );
+    }
+  return true;
+}
+
+/* bias force vector of a kinematic chain by the unit vector method. */
+bool rkChainBiasVec(rkChain *chain, zVec bias)
+{
+  if( zVecSizeNC( bias ) != rkChainJointSize(chain) ){
+    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    return false;
+  }
+  /* bias force vector */
+  rkChainSetJointAccAll( chain, NULL );
+  rkChainUpdateID( chain );
+  rkChainGetJointTrqAll( chain, bias );
   return true;
 }
 
