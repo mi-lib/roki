@@ -1,3 +1,5 @@
+2022. 9. 3. Added _rkChainBiasVec, rkChainBiasVec, _rkChainInertiaMat and rkChainInertiaMat (thanks to Kenta Imanishi), and reimplemented rkChainInertiaMatBiasVec. [rk_chain]
+2022. 9. 2. Added rkChainUpdateRateZeroGravity and rkChainUpdateIDZeroGravity. [rk_chain]
 2022. 8.28. Modified specifications of rkLinkABIAlloc and rkChainABIAlloc. [rk_abi]
 2022. 8.28. Added rkChainLinkJointMotorSetInput and rkChainSetMotorInputAll. [rk_chain]
 2022. 8.28. Renamed rkChainLinkLim/Set/GetJoint* to rkChainLinkJointLim/Set/Get*. [rk_chain]

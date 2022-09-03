@@ -142,22 +142,20 @@ int chain_init(rkChain *chain)
 int main(int argc, char *argv[])
 {
   rkChain chain;
-  zMat h, hs;
-  zVec b, bs, dis, vel;
-  int i, count_im, count_ke, count_fd, count_sep;
+  zMat h;
+  zVec b, dis, vel;
+  int i, count_im, count_ke, count_fd;
   int n;
 
   /* initialization */
   zRandInit();
   n = chain_init( &chain );
   h = zMatAllocSqr( n );
-  hs= zMatAllocSqr( n );
   dis = zVecAlloc( n );
   vel = zVecAlloc( n );
   b = zVecAlloc( n );
-  bs = zVecAlloc( n );
 
-  count_im = count_ke = count_fd = count_sep = 0;
+  count_im = count_ke = count_fd = 0;
   for( i=0; i<N; i++ ){
     /* generate posture and velocity randomly */
     zVecRandUniform( dis, -10, 10 );
@@ -166,25 +164,18 @@ int main(int argc, char *argv[])
     rkChainSetJointVelAll( &chain, vel );
     /* verifications */
     rkChainInertiaMatBiasVec( &chain, h, b );
-    rkChainBiasVec( &chain, bs );
-    rkChainInertiaMat( &chain, hs );/* joint vel to be zero */
-    /* restore joint velocity */
-    rkChainSetJointVelAll( &chain, vel );
-    rkChainUpdateRate(&chain);
     /* count success */
     if( check_inertia_matrix( &chain, h, TOL ) ) count_im++;
     if( check_kinetic_energy( &chain, h, vel, TOL ) ) count_ke++;
     if( check_fd( &chain, h, b, vel, TOL ) ) count_fd++;
-    if( zMatIsEqual(h, hs, TOL) && zVecIsEqual(b, bs, TOL)) count_sep++;
   }
   zAssert( rkChainInertiaMatBiasVec, count_im == N );
   zAssert( rkChainInertiaMatBiasVec + rkChainKE, count_ke == N );
   zAssert( rkChainInertiaMatBiasVec (FD-ID), count_fd == N );
-  zAssert( rkChainBiasVec/rkChainInertiaMat, count_sep == N );
 
   /* termination */
-  zMatFreeAO( 2, h, hs);
-  zVecFreeAO( 4, b, bs, dis, vel );
+  zMatFree( h );
+  zVecFreeAO( 3, b, dis, vel );
   rkChainDestroy( &chain );
   return EXIT_SUCCESS;
 }

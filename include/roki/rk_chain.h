@@ -250,29 +250,34 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec trq);
 
 /*! \brief update kinematic chain motion state.
  *
- * rkChainUpdateFrame() updates the whole link frame of the
- * kinematic chain \a r with respect to the world frame.
+ * rkChainUpdateFrame() updates the whole link frames of a kinematic chain
+ * \a c with respect to the world frame.
  *
- * rkChainUpdateRate() updates the motion rates, namely,
- * velocities and accelerations of the whole links of \a c
- * with respect to the inertia frame.
+ * rkChainUpdateVel() and rkChainUpdateAcc() update velocities and accelerations
+ * of the whole link frames of \a c with respect to the inertia frame, respectively.
  *
- * rkChainUpdateRateZeroGravity() updates the motion rates, namely,
- * velocities and accelerations of the whole links of \a c
- * with respect to the inertia frame under zero gravity.
+ * rkChainUpdateRate() updates both the velocities and the accelerations of the
+ * whole links of \a c with respect to the inertia frame.
+ * rkChainUpdateRateZeroGravity() updates velocities and accelerations of the
+ * whole links of \a c with respect to the inertia frame under the gravity-free
+ * condition.
  *
- * rkChainUpdateForce() computes forces and moments acting
- * to the whole links of \a c.
+ * rkChainUpdateWrench() computes wrenches, namely, combinations of force and
+ * torque acting at the original points of the whole links of \a c.
  * \return
- * All of those functions return no values.
+ * rkChainUpdateFrame(), rkChainUpdateVel(), rkChainUpdateAcc(), rkChainUpdateRate(),
+ * rkChainUpdateRateZeroGravity() and rkChainUpdateWrench() do not return any values.
+ * Actually, they are not functions but macros. Refer rk_chain.h for their
+ * implementations.
  * \sa
- * rkLinkUpdateFrame, rkLinkUpdateRate, rkLinkUpdateForce
+ * rkLinkUpdateFrame, rkLinkUpdateVel, rkLinkUpdateAcc, rkLinkUpdateRate,
+ * rkLinkUpdateWrench
  */
 #define rkChainUpdateFrame(c)  rkLinkUpdateFrame( rkChainRoot(c), ZFRAME3DIDENT )
 #define rkChainUpdateVel(c)    rkLinkUpdateVel( rkChainRoot(c), ZVEC6DZERO )
 #define rkChainUpdateAcc(c)    rkLinkUpdateAcc( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
 #define rkChainUpdateRate(c)   rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
-#define rkChainUpdateRateZeroGravity(c)   rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, ZVEC6DZERO )
+#define rkChainUpdateRateZeroGravity(c) rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, ZVEC6DZERO )
 #define rkChainUpdateWrench(c) rkLinkUpdateWrench( rkChainRoot(c) )
 
 /*! \brief gravity orientation with respect to the root link.
@@ -311,21 +316,26 @@ __EXPORT void rkChainFK(rkChain *c, zVec dis);
 
 /*! \brief inverse dynamics of kinematic chain.
  *
- * rkChainID() computes inverse dynamics of a kinematic chain
- * \a c in accordance with Newton-Euler's method.
- * Joint displacement, velocity, and acceleration of each link
- * should be set and posture of \a c should be updated before
- * calling this function.
+ * rkChainUpdateID() computes the inverse dynamics of a kinematic chain \a c
+ * by the Newton-Euler's method. It supposes that the joint displacements,
+ * velocities, and accelerations of \a c are updated in advance.
+ * rkChainUpdateIDZeroGravity() computes the inverse dynamics of \a c as well
+ * as rkChainUpdateID() except that the chain is supposed to be in the
+ * gravity-free space.
  *
- * rkChainFKCNT() continuously updates the joint displacement
- * for \a dis over the time step \a dt, and then computs the
- * inverse dynamics.
- * All the joint velocity and accelerations will be updated in
- * accordance with a simple numerical differentiation.
+ * rkChainID() computes the inverse dynamics of \a c, provided the joint
+ * velocity \a vel and the acceleration \a acc.
+ *
+ * rkChainFKCNT() continuously updates the joint displacement for \a dis over
+ * the time step \a dt, and then computes the inverse dynamics. All the joint
+ * velocities and accelerations of \a c will be updated in accordance with a
+ * simple numerical differentiation.
  * \return
- * Neither rkChainID() nor rkChainFKCNT() return any values.
+ * rkChainUpdateID(), rkChainUpdateIDZeroGravity(), rkChainID() and rkChainFKCNT()
+ * do not return any values.
  */
 __EXPORT void rkChainUpdateID(rkChain *c);
+__EXPORT void rkChainUpdateIDZeroGravity(rkChain *c);
 __EXPORT void rkChainID(rkChain *c, zVec vel, zVec acc);
 __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
 
@@ -342,8 +352,9 @@ __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
  * of \a chain and calls rkChainUpdateRate().
  * \return
  * rkChainLinkZeroAcc() returns a pointer \a a0.
+ * \notes
+ * Joint acceleration of the kinematic chain is set for zero.
  */
-/* Note: joint acceleration of the kinematic chain is set for zero. */
 __EXPORT zVec6D *rkChainLinkZeroAcc(rkChain *chain, int id, zVec3D *p, zVec6D *a0);
 
 /*! \brief total mass of a kinematic chain.
@@ -415,32 +426,39 @@ __EXPORT double rkChainKE(rkChain *c);
 
 /*! \brief inertia matrix and bias force vector of a kinematic chain by the unit vector method.
  *
+ * rkChainInertiaMat() computes the inertia matrix of a kinematic chain
+ * \a chain at the current posture, and puts it into \a inertia.
+ * rkChainBiasVec() computes the bias force vector, namely, summation of
+ * the centrifugal force, Coriolis force, gravitational force and external
+ * force applied to \a chain at the current posture and velocity, and puts
+ * it into \a bias.
+ *
+ * The inertia matrix and the bias force vector are computed based on the
+ * unit vector matrix proposed by Walker and Orin, 1980:
+ *  M. W. Walker and D. E. Orin, Efficient Dynamic Computer Simulation of
+ *  Robotic Mechanisms, Transactions of the ASME, Journal of Dynamic Systems,
+ *  Measurement, and Control, Vol. 104, PP. 205-211, 1982.
+ * \a chain has to take the posture and the velocity at which the dynamics
+ * is computed in advance. The acceleration of \a chain is directly modified.
+ *
  * rkChainInertiaMatBiasVec() computes the inertia matrix and the bias force
- * vector of a kinematic chain \a chain based on the unit vector matrix proposed
- * by Walker and Orin, 1980:
- *  M. W. Walker and D. E. Orin, Efficient Dynamic Computer Simulation of Robotic
- *  Mechanisms, Transactions of the ASME, Journal of Dynamic Systems, Measurement,
- *  and Control, Vol. 104, PP. 205-211, 1982.
- * \a chain has to take the posture and the velocity at which the dynamics is
- * computed in advance. The acceleration of \a chain is directly modified.
- * The result is put into \a inertia and \a bias, respectively.
+ * vector of \a chain at once, and puts them into \a inertia and \a bias,
+ * respectively.
+ * \notes
+ * All external wrenches exerted to \a c have to be removed before calling
+ * rkChainInertiaMat().
+ *
+ * rkChainInertiaMat() internally zeros velocities and accelerations of the
+ * whole links of \a c.
  * \return
- * rkChainInertiaMatBiasVec() returns the true value if it succeeds to compute
- * the matrix and the vector. If the sizes of the given matrix and vector do not
- * match the total degree of freedom of the chain, the false value is returned.
- * 
- * rkChainInertiaMat() returns the true value if it succeeds to compute
- * the matrix and the vector. If the sizes of the given matrix does not
- * match the total degree of freedom of the chain, the false value is returned.
- * 
- * rkChainBiasVec() returns the true value if it succeeds to compute
- * the matrix and the vector. If the sizes of the given vector does not
- * match the total degree of freedom of the chain, the false value is returned.
+ * rkChainInertiaMatBiasVec(), rkChainInertiaMat() and rkChainBiasVec() return
+ * the true value if they succeed to compute the matrix and/or the vector.
+ * If the sizes of the given matrix and vector do not match the total degree
+ * of freedom of the chain, the false value is returned.
  */
-__EXPORT bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias);
 __EXPORT bool rkChainInertiaMat(rkChain *chain, zMat inertia);
 __EXPORT bool rkChainBiasVec(rkChain *chain, zVec bias);
-
+__EXPORT bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias);
 
 /*! \brief external force applied to kinematic chain.
  *
