@@ -30,7 +30,7 @@ rkLink *rkLinkABIAlloc(rkLink *link)
   bool result = true;
 
   ap = rkLinkABIPrp(link);
-  memset( ap, 0, sizeof(rkABIPrp) );
+  memset( (void *)ap, 0, sizeof(rkABIPrp) );
   if( rkLinkJointSize(link) == 0 ){
     ap->axi = ap->iaxi = NULL;
   } else{
@@ -49,7 +49,7 @@ rkLink *rkLinkABIAlloc(rkLink *link)
 /* allocate memory for ABI of a kinematic chain. */
 rkChain *rkChainABIAlloc(rkChain *chain)
 {
-  register int i;
+  uint i;
   bool result = true;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
@@ -72,7 +72,7 @@ void rkLinkABIDestroy(rkLink *link)
 /* destroy ABI of a kinematic chain. */
 void rkChainABIDestroy(rkChain *chain)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkABIDestroy( rkChainLink(chain,i) );
@@ -114,7 +114,7 @@ void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel)
 /* initialize ABI of a kinematic chain for recursive computation. */
 void rkChainABIUpdateInit(rkChain *chain)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkABIUpdateInit( rkChainLink(chain,i), rkChainLinkParent(chain,i) ?
@@ -206,7 +206,7 @@ void rkLinkABIUpdateForwardGetWrench(rkLink *link, zVec6D *pa)
 /* zero velocity and acceleration of links of a kinematic chain. */
 static void _rkChainZeroLinkRate(rkChain *chain)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkZeroRate( rkChainLink(chain,i) );
@@ -304,7 +304,7 @@ static void _rkLinkABIUpdateBackwardAddExForce(rkLink *link)
 
 static void _rkChainABIUpdateBackwardAddExForce(rkChain *chain)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkABIPrp(rkChainLink(chain,i))->abi_backward_path = false;
@@ -341,7 +341,7 @@ void rkChainABIUpdateAddExForceGetWrench(rkChain *chain)
  */
 void rkChainABIPushPrpAccBias(rkChain *chain)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ ){
     zVec6DCopy( &rkLinkABIPrp(rkChainLink(chain,i))->b, &rkLinkABIPrp(rkChainLink(chain,i))->b0 );
@@ -351,7 +351,7 @@ void rkChainABIPushPrpAccBias(rkChain *chain)
 
 void rkChainABIPopPrpAccBias(rkChain *chain)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ ){
     zVec6DCopy( &rkLinkABIPrp(rkChainLink(chain,i))->b0, &rkLinkABIPrp(rkChainLink(chain,i))->b );
@@ -361,7 +361,7 @@ void rkChainABIPopPrpAccBias(rkChain *chain)
 
 void rkChainABIPopPrpAccBiasAddExForceTwo(rkChain *chain, rkLink *link, rkLink *link2)
 {
-  register int i;
+  uint i;
 
   if( link )  zVec6DCopy( &rkLinkABIPrp(link)->b0, &rkLinkABIPrp(link)->b );
   if( link2 ) zVec6DCopy( &rkLinkABIPrp(link2)->b0, &rkLinkABIPrp(link2)->b );
@@ -382,7 +382,7 @@ static void _rkLinkABIFindBackwardPathAddExForceOne(rkChain *chain, rkLink *link
 
 static void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkABIPrp(rkChainLink(chain,i))->abi_backward_path = false;

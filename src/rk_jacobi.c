@@ -33,7 +33,7 @@
 } while(0)
 
 #define __rk_jacobi_ang_col(l,f,m,op,s) do{\
-  register int __i;\
+  int __i;\
 \
   for( __i=0; __i<rkLinkJointSize(l); __i++ )\
     if( rkJointAngAxis( rkLinkJoint(l), __i, f, s ) )\
@@ -54,7 +54,7 @@ static zVec3D *_rkJacobiLinCol(rkLink *l, int i, zFrame3D *f, zVec3D *p, zVec3D 
 }
 
 #define __rk_jacobi_lin_col(l,f,p,k,m,op,s) do{\
-  register int __i;\
+  int __i;\
 \
   for( __i=0; __i<rkLinkJointSize(l); __i++ )\
     if( _rkJacobiLinCol( l, __i, f, p, s ) )\
@@ -131,7 +131,7 @@ zMat rkChainLinkToLinkLinJacobi(rkChain *c, int from, int to, zVec3D *p, zMat ja
 /* COM Jacobian matrix of a chain with respect to the world frame. */
 zMat rkChainCOMJacobi(rkChain *c, zMat jacobi)
 {
-  register int i;
+  uint i;
   rkLink *l;
   zVec3D s;
   double m;
@@ -151,7 +151,7 @@ zMat rkChainCOMJacobi(rkChain *c, zMat jacobi)
 /* link angular momentum matrix. */
 static zMat _rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat mat)
 {
-  register int i;
+  int i;
   rkLink *l;
   zVec3D s, dp, v;
   zMat3D m;
@@ -184,7 +184,7 @@ zMat rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat m)
 /* angular momentum matrix of a kinematic chain. */
 zMat rkChainAMMat(rkChain *c, zVec3D *p, zMat m)
 {
-  register int i;
+  uint i;
 
   zMatZero( m );
   for( i=0; i<rkChainLinkNum(c); i++ )

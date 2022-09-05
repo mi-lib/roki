@@ -6,11 +6,8 @@
 
 #include <roki/rk_ik.h>
 
-static zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv);
-
-/* (static)
- * strict referential velocity for impedance control. */
-zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv)
+/* strict referential velocity for impedance control. */
+static zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv)
 {
   zVec3D dv;
 
@@ -31,7 +28,7 @@ zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
   /* rotation velocity */
   zMulMat3DVec3D( rkChainLinkWldAtt(chain,attr->id),
     rkChainLinkAngVel(chain,attr->id), &v );
-  return _rkIKImpSRV( &err, &v, priv, srv );
+  return _rkIKImpSRV( &err, &v, (rkIKImp *)priv, srv );
 }
 
 /* position control with respect to the world frame. */
@@ -45,7 +42,7 @@ zVec3D *rkIKImpWldPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
   /* velocity */
   rkChainLinkPointVel( chain, attr->id, &attr->ap, &v );
   zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,attr->id), &v );
-  return _rkIKImpSRV( &err, &v, priv, srv );
+  return _rkIKImpSRV( &err, &v, (rkIKImp *)priv, srv );
 }
 
 /* COM position control with respect to the world frame. */
@@ -56,5 +53,5 @@ zVec3D *rkIKImpWldCOM(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
   /* position error */
   zVec3DSub( &ref->pos, rkChainWldCOM(chain), &err );
   /* velocity */
-  return _rkIKImpSRV( &err, rkChainCOMVel(chain), priv, srv );
+  return _rkIKImpSRV( &err, rkChainCOMVel(chain), (rkIKImp *)priv, srv );
 }

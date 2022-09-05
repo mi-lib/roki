@@ -160,9 +160,9 @@ __EXPORT void rkIKDestroy(rkIK *ik);
  *
  * rkIKCellReg() returns the entry number of the registered cell.
  */
-__EXPORT bool rkIKJointReg(rkIK *ik, int id, double weight);
+__EXPORT bool rkIKJointReg(rkIK *ik, uint id, double weight);
 __EXPORT bool rkIKJointRegAll(rkIK *ik, double weight);
-__EXPORT bool rkIKJointUnreg(rkIK *ik, int id);
+__EXPORT bool rkIKJointUnreg(rkIK *ik, uint id);
 
 /*! \brief register a joint into which the residual of constraints is resolved. */
 

@@ -11,10 +11,6 @@
  * B-Rep vertex, edge and face class
  * ********************************************************** */
 
-static rkBREPVertListCell *_rkBREPVertListFindnReg(rkBREPVertList *vlist, zVec3D *v);
-static rkBREPEdgeListCell *_rkBREPEdgeListFindnReg(rkBREPEdgeList *elist, rkBREPVertListCell *v1, rkBREPVertListCell *v2);
-static bool _rkBREPFaceInsert(zTri3D *face, rkBREPFaceList *flist, rkBREPEdgeList *elist, rkBREPVertList *vlist);
-
 /* initialize B-Rep for a kinematic chain. */
 void rkBREPInit(rkBREP *brep)
 {
@@ -34,7 +30,7 @@ rkBREPVertListCell *rkBREPVertListFind(rkBREPVertList *vlist, zVec3D *v)
 }
 
 /* find a vertex in a list of vertices of a B-Rep, and if unfound, register it. */
-rkBREPVertListCell *_rkBREPVertListFindnReg(rkBREPVertList *vlist, zVec3D *v)
+static rkBREPVertListCell *_rkBREPVertListFindnReg(rkBREPVertList *vlist, zVec3D *v)
 {
   rkBREPVertListCell *vp;
 
@@ -62,7 +58,7 @@ rkBREPEdgeListCell *rkBREPEdgeListFind(rkBREPEdgeList *elist, rkBREPVertListCell
 }
 
 /* find an edge in a list of edges of a B-Rep, and if unfound, register it. */
-rkBREPEdgeListCell *_rkBREPEdgeListFindnReg(rkBREPEdgeList *elist, rkBREPVertListCell *v1, rkBREPVertListCell *v2)
+static rkBREPEdgeListCell *_rkBREPEdgeListFindnReg(rkBREPEdgeList *elist, rkBREPVertListCell *v1, rkBREPVertListCell *v2)
 {
   rkBREPEdgeListCell *ep;
 
@@ -81,10 +77,10 @@ rkBREPEdgeListCell *_rkBREPEdgeListFindnReg(rkBREPEdgeList *elist, rkBREPVertLis
 }
 
 /* insert a face into a list of faces of a B-Rep. */
-bool _rkBREPFaceInsert(zTri3D *face, rkBREPFaceList *flist, rkBREPEdgeList *elist, rkBREPVertList *vlist)
+static bool _rkBREPFaceInsert(zTri3D *face, rkBREPFaceList *flist, rkBREPEdgeList *elist, rkBREPVertList *vlist)
 {
   rkBREPFaceListCell *f;
-  register int i;
+  int i;
 
   if( !( f = zAlloc( rkBREPFaceListCell, 1 ) ) ){
     ZALLOCERROR();
@@ -113,7 +109,7 @@ bool _rkBREPFaceInsert(zTri3D *face, rkBREPFaceList *flist, rkBREPEdgeList *elis
 /* convert a polyhedron to a B-Rep. */
 rkBREP *rkPH3D2BREP(zPH3D *ph, rkBREP *brep)
 {
-  register int i;
+  int i;
 
   zListInit( &brep->vlist );
   zListInit( &brep->elist );
@@ -131,7 +127,7 @@ rkBREP *rkPH3D2BREP(zPH3D *ph, rkBREP *brep)
 rkBREP *rkPH3D2BREPInBox(zPH3D *ph, zAABox3D *box, rkBREP *brep)
 {
   zTri3D *tri;
-  register int i;
+  int i;
 
   for( i=0; i<zPH3DFaceNum(ph); i++ )
     if( zColChkTriAABox3D( ( tri = zPH3DFace(ph,i) ), box ) ){
@@ -147,7 +143,7 @@ rkBREP *rkPH3D2BREPInBox(zPH3D *ph, zAABox3D *box, rkBREP *brep)
 /* convert a B-Rep to a polyhedron. */
 zPH3D *rkBREP2PH3D(rkBREP *brep, zPH3D *ph)
 {
-  register int i;
+  int i;
   rkBREPVertListCell *vp;
   rkBREPFaceListCell *fp;
 
@@ -183,7 +179,7 @@ void rkBREPReset(rkBREP *brep)
   rkBREPVertListCell *vp, *vpp;
   rkBREPEdgeListCell *ep, *epp;
   rkBREPFaceListCell *fp, *fpp;
-  register int i;
+  int i;
 
   brep->discard = 0;
   zListForEach( &brep->vlist, vp ){

@@ -19,7 +19,7 @@ __BEGIN_DECLS
  * ********************************************************** */
 
 typedef struct{
-  char *typestr; /*!< \brief a string for type identification */
+  const char *typestr; /*!< \brief a string for type identification */
   byte size; /*!< \brief size of motor input signals */
   void (* _init)(void*);
   void *(* _alloc)(void);

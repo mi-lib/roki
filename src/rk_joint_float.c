@@ -197,7 +197,7 @@ static void _rkJointFloatMotorDrivingTrq(void *prp, double *val){ zVec6DZero( (z
 
 /* ABI */
 static void _rkJointFloatABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih){
-  register int i, j;
+  int i, j;
 
   _rkJointFloatMotorInertia( prp, zMatBuf(h) );
   for( i=0; i<3; i++ )
@@ -218,7 +218,7 @@ static void _rkJointFloatABIDrivingTorque(void *prp){}
 
 static void _rkJointFloatABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   zVec6D tmpv, tmpv2;
-  register int i;
+  int i;
   /* acc */
   zVec6DRev( b, &tmpv2 );
   for( i=zX; i<=zZA; i++ )

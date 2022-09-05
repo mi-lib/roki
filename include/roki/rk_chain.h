@@ -159,7 +159,7 @@ __EXPORT rkChain *rkChainCopyState(rkChain *src, rkChain *dst);
  * \sa
  * rkJointSize
  */
-__EXPORT int rkChainJointSize(rkChain *c);
+__EXPORT uint rkChainJointSize(rkChain *c);
 __EXPORT zIndex rkChainCreateDefaultJointIndex(rkChain *c);
 __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
 

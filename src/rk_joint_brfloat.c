@@ -204,7 +204,7 @@ static void _rkJointBrFloatMotorDrivingTrq(void *prp, double *val){ zVec6DZero( 
 
 /* ABI for breakable joints */
 static void _rkJointBrFloatABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih){
-  register int i, j;
+  int i, j;
   _rkJointBrFloatMotorInertia( prp, zMatBuf(h) );
   for( i=0; i<3; i++ )
     for( j=0; j<3; j++ ){
@@ -221,7 +221,7 @@ static void _rkJointBrFloatABIAddBias(void *prp, zMat6D *m, zVec6D *b, zFrame3D 
 static void _rkJointBrFloatABIDrivingTorque(void *prp){}
 static void _rkJointBrFloatABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   zVec6D tmpv, tmpv2;
-  register int i;
+  int i;
   /* acc */
   zVec6DRev( b, &tmpv2 );
   for( i=zX; i<=zZA; i++ )

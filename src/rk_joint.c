@@ -24,7 +24,7 @@ rkJoint *rkJointAssign(rkJoint *j, rkJointCom *com)
 
 rkJoint *rkJointQueryAssign(rkJoint *j, char *str)
 {
-  register int i;
+  int i;
 
   for( i=0; rk_joint_com[i]; i++ )
     if( strcmp( rk_joint_com[i]->typestr, str ) == 0 )
@@ -50,7 +50,7 @@ void rkJointNeutral(rkJoint *j)
 bool rkJointIsNeutral(rkJoint *j)
 {
   double dis[6];
-  register int i;
+  int i;
 
   rkJointGetDis( j, dis );
   for( i=0; i<rkJointSize(j); i++ )

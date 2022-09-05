@@ -93,8 +93,8 @@ static bool _rkIKAllocCMat(rkIK *ik)
 /* register/unregister a cooperating joint to inverse kinematics solver. */
 static bool _rkIKAllocJointIndex(rkIK *ik)
 {
-  register int i, j;
-  int count, ofs;
+  uint count, ofs, i;
+  int j;
   double *wp;
 
   for( count=0, i=0; i<rkChainLinkNum(ik->chain); i++ ){
@@ -132,7 +132,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik)
   return _rkIKAllocCMat( ik );
 }
 
-static bool _rkIKJointReg(rkIK *ik, int id, bool sw, double weight)
+static bool _rkIKJointReg(rkIK *ik, uint id, bool sw, double weight)
 {
   if( id < 0 || id >= rkChainLinkNum(ik->chain) ){
     ZRUNERROR( RK_ERR_LINK_INVID, id );
@@ -142,17 +142,17 @@ static bool _rkIKJointReg(rkIK *ik, int id, bool sw, double weight)
   ik->joint_weight[id] = weight;
   return _rkIKAllocJointIndex( ik );
 }
-bool rkIKJointReg(rkIK *ik, int id, double weight){
+bool rkIKJointReg(rkIK *ik, uint id, double weight){
   return _rkIKJointReg( ik, id, true, weight );
 }
-bool rkIKJointUnreg(rkIK *ik, int id){
+bool rkIKJointUnreg(rkIK *ik, uint id){
   return _rkIKJointReg( ik, id, false, 0.0 );
 }
 
 /* register all joints to inverse kinematics solver. */
 bool rkIKJointRegAll(rkIK *ik, double weight)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(ik->chain); i++ )
     if( rkChainLinkJointSize(ik->chain,i) > 0 )
@@ -245,7 +245,8 @@ void rkIKAcmZero(rkIK *ik)
 /* form the motion rate contraint equation. */
 static int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row)
 {
-  register int i, j;
+  uint i;
+  int j;
 
   if( !( ( RK_IK_CELL_XON << s ) & cell->data.attr.mode ) ) return 0;
   zVecSetElemNC( ik->_c_srv, row, ik->_c_srv_cell.e[s] );
@@ -265,7 +266,7 @@ static int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row)
 }
 void rkIKEq(rkIK *ik)
 {
-  register int i;
+  int i;
   rkIKCell *cell;
   int row = 0;
 
@@ -307,7 +308,7 @@ zVec rkIKJointVelSR(rkIK *ik)
 /* resolve the motion rate with SR-inverse matrix and auto-damping. */
 zVec rkIKJointVelAD(rkIK *ik)
 {
-  register int i;
+  uint i;
   double e;
 
   zVecAmpNC( ik->_c_srv, ik->_c_we, ik->__c );
@@ -323,7 +324,8 @@ zVec rkIKJointVelAD(rkIK *ik)
 /* resolve the motion rate into joint angle rate. */
 zVec rkIKSolveRate(rkIK *ik)
 {
-  register int i, j, k;
+  uint i;
+  int j, k;
   double *vp;
 
   rkIKEq( ik );
@@ -350,7 +352,7 @@ zVec rkIKSolveOne(rkIK *ik, zVec dis, double dt)
 /* solve inverse kinematics based on Newton=Raphson's method. */
 int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter)
 {
-  register int i;
+  int i;
   double rest = HUGE_VAL;
 
   rkChainGetJointDisAll( ik->chain, dis );
@@ -406,7 +408,7 @@ rkIKCell *rkIKCellRegAMCOM(rkIK *ik, rkIKCellAttr *attr, int mask)
 
 /* IK item lookup table */
 static struct _rkIKLookup{
-  char *str;
+  const char *str;
   rkIKCell *(*ik_cell_reg)(rkIK*,rkIKCellAttr*,int);
 } __rk_ik_lookup[] = {
   { "world_pos", rkIKCellRegWldPos },
@@ -491,7 +493,7 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){
       ZTKValNext( ztk );
     }
   }
-  return lookup->ik_cell_reg( obj, &attr, mask ) ? obj : NULL;
+  return lookup->ik_cell_reg( (rkIK *)obj, &attr, mask ) ? obj : NULL;
 }
 
 static ZTKPrp __ztk_prp_rkik[] = {

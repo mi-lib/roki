@@ -100,7 +100,7 @@ static ZTKPrp __ztk_prp_rkcontactinfo[] = {
 
 static void *_rkContactInfoFromZTK(void *obj, int i, void *arg, ZTK *ztk)
 {
-  if( !ZTKEvalKey( zArrayElem((rkContactInfoArray*)obj,i), arg, ztk, __ztk_prp_rkcontactinfo ) ) return NULL;
+  if( !ZTKEvalKey( zArrayElem((rkContactInfoArray*)obj,(uint)i), arg, ztk, __ztk_prp_rkcontactinfo ) ) return NULL;
   return obj;
 }
 
@@ -132,7 +132,7 @@ void rkContactInfoFPrintZTK(FILE *fp, rkContactInfo *ci)
 /* destroy contact information array */
 void rkContactInfoArrayDestroy(rkContactInfoArray *carray)
 {
-  register int i;
+  uint i;
 
   if( !carray ) return;
   for( i=0; i<zArraySize(carray); i++ )
@@ -143,7 +143,7 @@ void rkContactInfoArrayDestroy(rkContactInfoArray *carray)
 /* associate contact information with a pair of keys. */
 rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *carray, char *stf1, char *stf2)
 {
-  register int i;
+  uint i;
 
   if( !stf1 || !stf2 ) return NULL;
   for( i=0; i<zArraySize(carray); i++ )
@@ -155,10 +155,9 @@ rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *carray, char *stf1, c
 /* associate contact information that matches specified type with a pair of keys. */
 rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *carray, char *stf1, char *stf2, char type)
 {
-  register int i;
+  uint i;
 
   if( !stf1 || !stf2) return NULL;
-
   for( i=0; i<zArraySize(carray); i++ )
     if( rkContactInfoType( zArrayElemNC(carray,i) ) == type && rkContactInfoAssoc( zArrayElemNC(carray,i), stf1, stf2 ) )
       return zArrayElemNC(carray,i);
@@ -189,7 +188,7 @@ rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *z
 /* print contact information array out to the current position of a ZTK format file. */
 void rkContactInfoArrayFPrintZTK(FILE *fp, rkContactInfoArray *carray)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<zArraySize(carray); i++ ){
     fprintf( fp, "[%s]\n", ZTK_TAG_RKCONTACTINFO );

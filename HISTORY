@@ -1,3 +1,7 @@
+2022. 9. 5. Corrected arithmetic of signed integer values. [rk_contact, rk_chain, rk_ik, rk_abi]
+2022. 9. 5. Added explicit castings from void pointers. [rk_contact, rk_motor, rk_joint_revol, rk_joint_prism, rk_joint_hooke, rk_joint_spher, rk_chain, rk_ik, rk_ik_imp, rk_abi]
+2022. 9. 5. Added castings from const char * to char *. [rk_motor_none, rk_motor_trq, rk_motor_dc, rk_joint]
+2022. 9. 5. Removed register keywords. [rk_contact, rk_motor, rk_joint, rk_joint_float, rk_joint_brfloat, rk_chain, rk_jacobi, rk_ik, rk_ik_seq, rk_abi, rk_cd, rk_cd_brep, rk_cd_brep_trunc]
 2022. 9. 5. Exported rkIKInit (thanks to Kenta Imanishi). [rk_ik]
 2022. 9. 3. Added _rkChainBiasVec, rkChainBiasVec, _rkChainInertiaMat and rkChainInertiaMat (thanks to Kenta Imanishi), and reimplemented rkChainInertiaMatBiasVec. [rk_chain]
 2022. 9. 2. Added rkChainUpdateRateZeroGravity and rkChainUpdateIDZeroGravity. [rk_chain]

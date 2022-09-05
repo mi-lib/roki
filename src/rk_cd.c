@@ -262,7 +262,7 @@ void rkCDPairChainUnreg(rkCD *cd, rkChain *chain)
 void rkCDPairPrint(rkCD *cd)
 {
   rkCDPair *cp;
-  register int i = 0;
+  int i = 0;
 
   printf( "number : flag : chain1 link1 shape1 : chain2 link2 shape2\n" );
   zListForEach( &cd->plist, cp ){
@@ -281,7 +281,7 @@ void rkCDPairVertPrint(rkCD *cd)
 {
   rkCDPair *cp;
   rkCDVert *v;
-  register int i = 0;
+  int i = 0;
 
   printf( "number : flag : chain1 shape1 : chain2 shape2\n" );
   zListForEach( &cd->plist, cp ){
@@ -306,7 +306,7 @@ void rkCDPairVertPrint(rkCD *cd)
 rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
 {
   zShapeListCell *sc;
-  register int i;
+  uint i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     zListForEach( &rkChainLink(chain,i)->body.shapelist, sc ){
@@ -487,7 +487,7 @@ static rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkC
 static int _rkCDPairColChkVert(rkCD *cd, rkCDPair *cp)
 {
   rkCDVertList temp;
-  register int i;
+  uint i;
   int ret = 0;
 
   zListInit( &temp );
@@ -505,7 +505,6 @@ static int _rkCDPairColChkVert(rkCD *cd, rkCDPair *cp)
   zListMove( &temp, &cp->data.vlist );
   if( zListIsEmpty( &cp->data.vlist ) )
     cp->data.is_col = false;
-
   return ret;
 }
 
@@ -537,7 +536,7 @@ static void _rkCDColChkOBBVert(rkCD *cd)
 {
   rkCDPair *cp;
   rkCDVertList temp;
-  register int i;
+  uint i;
 
   cd->colnum = 0;
   zListForEach( &cd->plist, cp ){
@@ -645,8 +644,8 @@ static zPH3D *_rkCDBREPMergeCH(zBREP *b1, zBREP *b2, zPH3D *ph)
 
 static bool _rkCDColVolError(zPH3D *ph)
 {
-  register int i, j;
-  int v[3];
+  uint i, j, v[3];
+
   for( i=0; i<zPH3DFaceNum(ph); i++ ){
     for( j=0; j<3; j++ )
       v[j] = (int)( zPH3DFaceVert(ph,i,j)-zPH3DVertBuf(ph) );

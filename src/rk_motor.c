@@ -18,10 +18,10 @@ rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com)
   return m;
 }
 
-rkMotor *rkMotorQueryAssign(rkMotor *m, char *str)
+rkMotor *rkMotorQueryAssign(rkMotor *m, const char *str)
 {
   RK_MOTOR_COM_ARRAY;
-  register int i;
+  int i;
 
   for( i=0; _rk_motor_com[i]; i++ )
     if( strcmp( str, _rk_motor_com[i]->typestr ) == 0 )
@@ -50,7 +50,7 @@ static void *_rkMotorNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return zNamePtr((rkMotor*)obj) ? obj : NULL;
 }
 static void *_rkMotorTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  return rkMotorQueryAssign( obj, ZTKVal(ztk) );
+  return rkMotorQueryAssign( (rkMotor *)obj, ZTKVal(ztk) );
 }
 
 static void _rkMotorNameFPrintZTK(FILE *fp, int i, void *obj){
@@ -88,7 +88,7 @@ void rkMotorFPrintZTK(FILE *fp, rkMotor *motor)
 rkMotorArray *rkMotorArrayClone(rkMotorArray *org)
 {
   rkMotorArray *cln;
-  register int i;
+  uint i;
 
   if( !( cln = zAlloc( rkMotorArray, 1 ) ) ){
     ZALLOCERROR();
@@ -106,6 +106,7 @@ rkMotorArray *rkMotorArrayClone(rkMotorArray *org)
 rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name)
 {
   rkMotor *mp;
+
   zArrayFindName( marray, name, mp );
   if( !mp ){
     ZRUNERROR( RK_ERR_MOTOR_UNKNOWN, name );
@@ -116,7 +117,7 @@ rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name)
 
 void rkMotorArrayFPrintZTK(FILE *fp, rkMotorArray *m)
 {
-  register int i;
+  uint i;
 
   for( i=0; i<zArraySize(m); i++ ){
     fprintf( fp, "[%s]\n", ZTK_TAG_RKMOTOR );

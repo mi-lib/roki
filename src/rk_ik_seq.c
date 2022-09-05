@@ -9,7 +9,7 @@
 /* set IK sequence cell to IK solver. */
 void rkIKSeqCellSet(rkIK *ik, rkIKSeqCell *c)
 {
-  register int i;
+  int i;
   rkIKEntry *e;
   rkIKCell *cell;
 
@@ -61,7 +61,7 @@ bool rkIKSeqScanFile(rkIKSeq *seq, char filename[])
 rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;
-  register int i;
+  int i;
 
   rkIKSeqInit( seq );
   while( !feof(fp) ){
@@ -111,7 +111,7 @@ bool rkIKSeqPrintFile(rkIKSeq *seq, char filename[])
 void rkIKSeqFPrint(FILE *fp, rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;
-  register int i;
+  int i;
 
   zListForEachRew( seq, cp ){
     fprintf( fp, "%.10g ", cp->data.dt );

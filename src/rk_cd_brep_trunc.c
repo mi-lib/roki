@@ -6,18 +6,8 @@
 
 #include <roki/rk_cd_brep.h>
 
-static int _rkBREPTruncBBCheck(rkBREPVertList *vlist, zPlane3D *pl);
-static bool _rkBREPTruncIntersect(rkBREP *brep, zPlane3D *pl);
-
-static bool _rkBREPTruncFaceA(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3);
-static bool _rkBREPTruncFaceV(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3);
-static bool _rkBREPTruncFaceE(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3);
-static bool _rkBREPTruncFace(rkBREP *brep, rkBREPFaceListCell **fp);
-static void _rkBREPTruncEdgeShrink(rkBREPEdgeList *elist);
-static void _rkBREPTruncGR(rkBREP *brep);
-
 /* beneath-beyond check with respect to a plane. */
-int _rkBREPTruncBBCheck(rkBREPVertList *vlist, zPlane3D *pl)
+static int _rkBREPTruncBBCheck(rkBREPVertList *vlist, zPlane3D *pl)
 {
   int count = 0;
   rkBREPVertListCell *vp;
@@ -34,7 +24,7 @@ int _rkBREPTruncBBCheck(rkBREPVertList *vlist, zPlane3D *pl)
 }
 
 /* compute intersections of edges and a cutting plane. */
-bool _rkBREPTruncIntersect(rkBREP *brep, zPlane3D *pl)
+static bool _rkBREPTruncIntersect(rkBREP *brep, zPlane3D *pl)
 {
   rkBREPEdgeListCell *ep;
   rkBREPVertListCell *vp;
@@ -62,7 +52,7 @@ bool _rkBREPTruncIntersect(rkBREP *brep, zPlane3D *pl)
 }
 
 /* A type face reconfiguration (2-beneath, 1-beyond). */
-bool _rkBREPTruncFaceA(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
+static bool _rkBREPTruncFaceA(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 {
   rkBREPEdgeListCell *e4, *e5;
   rkBREPFaceListCell *fp;
@@ -104,7 +94,7 @@ bool _rkBREPTruncFaceA(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 }
 
 /* V type face reconfiguration (1-beneath, 2-beyond). */
-bool _rkBREPTruncFaceV(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
+static bool _rkBREPTruncFaceV(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 {
   rkBREPEdgeListCell *e4;
 
@@ -125,7 +115,7 @@ bool _rkBREPTruncFaceV(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 }
 
 /* E type face reconfiguration (1-beneath, 1-beyond, 1-border). */
-bool _rkBREPTruncFaceE(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
+static bool _rkBREPTruncFaceE(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 {
   rkBREPEdgeListCell *e4;
 
@@ -145,7 +135,7 @@ bool _rkBREPTruncFaceE(rkBREP *brep, rkBREPFace *f, int i1, int i2, int i3)
 }
 
 /* shrink intersecting edges. */
-void _rkBREPTruncEdgeShrink(rkBREPEdgeList *elist)
+static void _rkBREPTruncEdgeShrink(rkBREPEdgeList *elist)
 {
   rkBREPEdgeListCell *ep;
 
@@ -160,12 +150,12 @@ void _rkBREPTruncEdgeShrink(rkBREPEdgeList *elist)
 }
 
 /* release garbages. */
-void _rkBREPTruncGR(rkBREP *brep)
+static void _rkBREPTruncGR(rkBREP *brep)
 {
   rkBREPVertListCell *vp;
   rkBREPEdgeListCell *ep;
   rkBREPFaceListCell *fp;
-  register int i;
+  int i;
 
   /* initialize mark */
   zListForEach( &brep->vlist, vp )
@@ -201,7 +191,7 @@ void _rkBREPTruncGR(rkBREP *brep)
 
 /* face reconfiguration. */
 #define __z_brep_trunc_pat(d) ( (d)<0 ? 3: ( (d)>0 ? 1 : 0 ) )
-bool _rkBREPTruncFace(rkBREP *brep, rkBREPFaceListCell **fp)
+static bool _rkBREPTruncFace(rkBREP *brep, rkBREPFaceListCell **fp)
 {
   rkBREPFace *f;
 
@@ -233,8 +223,7 @@ bool _rkBREPTruncFace(rkBREP *brep, rkBREPFaceListCell **fp)
   return false;
 }
 
-/* truncate B-Rep by a plane.
- */
+/* truncate B-Rep by a plane. */
 rkBREP *rkBREPTrunc(rkBREP *brep, zPlane3D *pl)
 {
   rkBREPFaceListCell *fp;
@@ -253,7 +242,7 @@ rkBREP *rkBREPTrunc(rkBREP *brep, zPlane3D *pl)
 /* truncate B-Rep by a polyhedron. */
 rkBREP *rkBREPTruncPH3D(rkBREP *brep, zPH3D *ph)
 {
-  register int i;
+  int i;
   zPlane3D pl;
 
   for( i=0; i<zPH3DFaceNum(ph); i++ ){

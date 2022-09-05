@@ -238,7 +238,7 @@ static void *_rkJointSpherDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
 }
 static void *_rkJointSpherMotorFromZTK(void *prp, int i, void *arg, ZTK *ztk){
   rkMotor *mp;
-  if( !( mp = rkMotorArrayFind( arg, ZTKVal(ztk) ) ) ) return NULL;
+  if( !( mp = rkMotorArrayFind( (rkMotorArray *)arg, ZTKVal(ztk) ) ) ) return NULL;
   return rkMotorClone( mp, &_rkc(prp)->m ) ? prp : NULL;
 }
 
