@@ -102,6 +102,13 @@ typedef struct _rkIK{
 
 /*! \brief create and destroy inverse kinematics solver.
  *
+ * rkIKInit() initializes an instance of inverse kinematics
+ * solver \a ik.
+ * 
+ * rkIKLoad() assigns a kinematic chain \a chain.
+ * It prepares the internal working spaces to compute
+ * constraint equation matrix and vectors.
+ * 
  * rkIKCreate() creates an instance of inverse kinematics
  * solver \a ik, assigning a kinematic chain \a chain.
  * It prepares the internal working spaces to compute
@@ -115,6 +122,8 @@ typedef struct _rkIK{
  *
  * rkIKDestroy() returns no value.
  */
+__EXPORT void rkIKInit(rkIK *ik);
+__EXPORT rkIK *rkIKLoad(rkIK *ik, rkChain *chain);
 __EXPORT rkIK *rkIKCreate(rkIK *ik, rkChain *chain);
 __EXPORT void rkIKDestroy(rkIK *ik);
 

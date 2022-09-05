@@ -12,7 +12,7 @@
  * ********************************************************** */
 
 /* initialize inverse kinematics solver. */
-static void _rkIKInit(rkIK *ik)
+void rkIKInit(rkIK *ik)
 {
   ik->chain = NULL;
   ik->joint_sw = NULL;
@@ -37,10 +37,13 @@ static void _rkIKInit(rkIK *ik)
   zLEInit( &ik->__le );
 }
 
-/* create inverse kinematics solver. */
-rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
+/* load kinematics model onto inverse kinematics. */
+rkIK *rkIKLoad(rkIK *ik, rkChain *chain)
 {
-  _rkIKInit( ik );
+  if(ik->_jv != rkIKJointVelAD /* check initialized or not */){
+    ZRUNERROR(RK_ERR_IK_NOT_INITIALIZED);
+    return ik;
+  }
   ik->chain = chain;
   ik->joint_sw = zAlloc( bool, rkChainLinkNum(chain) );
   ik->joint_weight = zAlloc( double, rkChainLinkNum(chain) );
@@ -53,6 +56,13 @@ rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
     return NULL;
   }
   return ik;
+}
+
+/* create inverse kinematics solver. */
+rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
+{
+  rkIKInit( ik );
+  return rkIKLoad(ik, chain);
 }
 
 /* destroy inverse kinematics solver. */
