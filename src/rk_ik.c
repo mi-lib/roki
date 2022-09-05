@@ -37,32 +37,21 @@ void rkIKInit(rkIK *ik)
   zLEInit( &ik->__le );
 }
 
-/* load kinematics model onto inverse kinematics. */
-rkIK *rkIKLoad(rkIK *ik, rkChain *chain)
+/* create an inverse kinematics solver for a given kinematic chain. */
+rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
 {
-  if(ik->_jv != rkIKJointVelAD /* check initialized or not */){
-    ZRUNERROR(RK_ERR_IK_NOT_INITIALIZED);
-    return ik;
-  }
+  rkIKInit( ik );
   ik->chain = chain;
   ik->joint_sw = zAlloc( bool, rkChainLinkNum(chain) );
   ik->joint_weight = zAlloc( double, rkChainLinkNum(chain) );
   ik->joint_vel = zVecAlloc( rkChainJointSize(chain) );
   ik->_j_ofs = zIndexCreate( rkChainLinkNum(chain) );
   ik->_c_mat_cell = zMatAlloc( 3, rkChainJointSize(chain) );
-  if( !ik->joint_sw || !ik->joint_weight ||
-      !ik->joint_vel || !ik->_c_mat_cell ){
+  if( !ik->joint_sw || !ik->joint_weight || !ik->joint_vel || !ik->_c_mat_cell ){
     ZALLOCERROR();
     return NULL;
   }
   return ik;
-}
-
-/* create inverse kinematics solver. */
-rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
-{
-  rkIKInit( ik );
-  return rkIKLoad(ik, chain);
 }
 
 /* destroy inverse kinematics solver. */

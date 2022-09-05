@@ -102,28 +102,27 @@ typedef struct _rkIK{
 
 /*! \brief create and destroy inverse kinematics solver.
  *
- * rkIKInit() initializes an instance of inverse kinematics
- * solver \a ik.
+ * rkIKInit() initializes an instance of the inverse kinematics solver
+ * \a ik.
  * 
  * rkIKLoad() assigns a kinematic chain \a chain.
  * It prepares the internal working spaces to compute
  * constraint equation matrix and vectors.
  * 
- * rkIKCreate() creates an instance of inverse kinematics
- * solver \a ik, assigning a kinematic chain \a chain.
- * It prepares the internal working spaces to compute
- * constraint equation matrix and vectors.
+ * rkIKCreate() creates an instance of the inverse kinematics solver
+ * \a ik by assigning a kinematic chain \a chain. It prepares internal
+ * workspaces to compute constraint equation matrix and vectors.
  *
  * rkIKDestroy() destroys the internal working spaces of \a ik.
  * \return
- * rkIKCreate() returns a pointer \a ik if succeeding.
- * If failing to allocate the internal working spaces,
- * the null pointer is returned.
+ * rkIKInit() returns no value.
+ *
+ * rkIKCreate() returns a pointer \a ik if succeeding. If it failes to
+ * allocate the internal workspaces, the null pointer is returned.
  *
  * rkIKDestroy() returns no value.
  */
 __EXPORT void rkIKInit(rkIK *ik);
-__EXPORT rkIK *rkIKLoad(rkIK *ik, rkChain *chain);
 __EXPORT rkIK *rkIKCreate(rkIK *ik, rkChain *chain);
 __EXPORT void rkIKDestroy(rkIK *ik);
 

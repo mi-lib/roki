@@ -62,6 +62,4 @@
 
 #define RK_ERR_FATAL               "fatal error! - please report to the author"
 
-#define RK_ERR_IK_NOT_INITIALIZED  "ik solver have not be initialized"
-
 #endif /* __RK_ERRMSG_H__ */
