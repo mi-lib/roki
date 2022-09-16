@@ -319,6 +319,16 @@ void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc)
     }
 }
 
+/* set all joint torques of a kinematic chain. */
+void rkChainSetJointTrqAll(rkChain *c, zVec trq)
+{
+  uint i;
+
+  for( i=0; i<rkChainLinkNum(c); i++ )
+    if( rkChainLinkOffset(c,i) >= 0 )
+      rkChainLinkJointSetTrq( c, i, &zVecElemNC(trq,rkChainLinkOffset(c,i)) );
+}
+
 /* get all joint displacements of a kinematic chain. */
 zVec rkChainGetJointDisAll(rkChain *c, zVec dis)
 {
@@ -384,13 +394,13 @@ void rkChainSetConf(rkChain *chain, zVec conf)
 }
 
 /* set all joint motor trq of a kinematic chain. */
-void rkChainSetMotorInputAll(rkChain *c, zVec trq)
+void rkChainSetMotorInputAll(rkChain *c, zVec input)
 {
   uint i;
 
   for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkOffset(c,i) >= 0 ){
-      rkChainLinkJointMotorSetInput(c,i,&zVecElemNC(trq,rkChainLinkOffset(c,i)));
+      rkChainLinkJointMotorSetInput(c,i,&zVecElemNC(input,rkChainLinkOffset(c,i)));
     }
 }
 
@@ -588,14 +598,14 @@ bool rkChainBiasVec(rkChain *chain, zVec bias)
 }
 
 /* inertia matrix of a kinematic chain by the unit vector method. */
-static void _rkChainInertiaMat(rkChain *chain, zMat inertia)
+/* note: bias is an input and has to be precomputed. */
+static void _rkChainInertiaMat(rkChain *chain, zVec bias, zMat inertia)
 {
   uint i, j;
   int k;
   zVecStruct h;
   double acc[] = { 0, 0, 0, 0, 0, 0 };
 
-  rkChainSetJointVelAll( chain, NULL );
   rkChainSetJointAccAll( chain, NULL );
   /* inertia matrix */
   h.size = zMatRowSizeNC(inertia);
@@ -604,8 +614,9 @@ static void _rkChainInertiaMat(rkChain *chain, zMat inertia)
       h.buf = zMatRowBuf( inertia, i );
       acc[k] = 1;
       rkChainLinkJointSetAcc( chain, j, acc );
-      rkChainUpdateIDZeroGravity( chain );
+      rkChainUpdateID( chain );
       rkChainGetJointTrqAll( chain, &h );
+      zVecSubDRC( &h, bias );
       acc[k] = 0;
       rkChainLinkJointSetAcc( chain, j, acc );
     }
@@ -614,11 +625,16 @@ static void _rkChainInertiaMat(rkChain *chain, zMat inertia)
 /* inertia matrix of a kinematic chain by the unit vector method. */
 bool rkChainInertiaMat(rkChain *chain, zMat inertia)
 {
+  zVec b;
+
   if( !zMatIsSqr( inertia ) || zMatColSizeNC(inertia) != rkChainJointSize(chain) ){
     ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
     return false;
   }
-  _rkChainInertiaMat( chain, inertia );
+  if( !( b = zVecAlloc( zMatRowSizeNC(inertia) ) ) ) return false;
+  _rkChainBiasVec( chain, b );
+  _rkChainInertiaMat( chain, b, inertia );
+  zVecFree( b );
   return true;
 }
 
@@ -630,10 +646,8 @@ bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias)
     ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
     return false;
   }
-  rkChainGetJointVelAll( chain, bias ); /* temporary save */
-  _rkChainInertiaMat( chain, inertia );
-  rkChainSetJointVelAll( chain, bias ); /* restore */
   _rkChainBiasVec( chain, bias );
+  _rkChainInertiaMat( chain, bias, inertia );
   return true;
 }
 

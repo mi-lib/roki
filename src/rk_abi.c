@@ -8,6 +8,7 @@
 #include <roki/rk_abi.h>
 
 /* initialize invariant mass properties. */
+/* RENAME: _rkLinkABIInitInertia -> _rkLinkInitABIInertia */
 static void _rkLinkABIInitInertia(rkLink *link)
 {
   rkABIPrp *ap;
@@ -24,6 +25,8 @@ static void _rkLinkABIInitInertia(rkLink *link)
 }
 
 /* allocate memory for ABI of a link. */
+/* RENAME: rkLinkABIAlloc -> rkLinkAllocABI */
+/* TODO: _abiprp -> *_abiprp */
 rkLink *rkLinkABIAlloc(rkLink *link)
 {
   rkABIPrp *ap;
@@ -47,6 +50,7 @@ rkLink *rkLinkABIAlloc(rkLink *link)
 }
 
 /* allocate memory for ABI of a kinematic chain. */
+/* RENAME: rkChainABIAlloc -> rkChainAllocABI */
 rkChain *rkChainABIAlloc(rkChain *chain)
 {
   uint i;
@@ -62,6 +66,8 @@ rkChain *rkChainABIAlloc(rkChain *chain)
 }
 
 /* destroy ABI of a link. */
+/* RENAME: rkLinkABIDestroy -> rkLinkDestroyABI */
+/* TODO: free _abiprp */
 void rkLinkABIDestroy(rkLink *link)
 {
   zMatFree( rkLinkABIPrp(link)->axi );
@@ -70,6 +76,7 @@ void rkLinkABIDestroy(rkLink *link)
 }
 
 /* destroy ABI of a kinematic chain. */
+/* RENAME: rkChainABIDestroy -> rkChainDestroyABI */
 void rkChainABIDestroy(rkChain *chain)
 {
   uint i;
@@ -79,6 +86,7 @@ void rkChainABIDestroy(rkChain *chain)
 }
 
 /* initialize ABI of a link for recursive computation. */
+/* RENAME: rkLinkABIUpdateInit -> rkLinkInitABI */
 void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel)
 {
   rkABIPrp *ap;
@@ -112,6 +120,7 @@ void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel)
 }
 
 /* initialize ABI of a kinematic chain for recursive computation. */
+/* RENAME: rkChainABIUpdateInit -> rkChainInitABI */
 void rkChainABIUpdateInit(rkChain *chain)
 {
   uint i;
@@ -122,6 +131,7 @@ void rkChainABIUpdateInit(rkChain *chain)
 }
 
 /* add bias acceleration term in backward computation to update ABI of a link. */
+/* RENAME: _rkLinkABIAddBias -> _rkLinkUpdateABIBias */
 static void _rkLinkABIAddBias(rkLink *link)
 {
   zVec6D icb;
@@ -133,6 +143,7 @@ static void _rkLinkABIAddBias(rkLink *link)
 }
 
 /* update ABI of a link in backward computation. */
+/* RENAME: _rkLinkABIUpdateBackward -> _rkLinkUpdateABIBackward */
 static void _rkLinkABIUpdateBackward(rkLink *link)
 {
   rkABIPrp *ap;
@@ -151,6 +162,7 @@ static void _rkLinkABIUpdateBackward(rkLink *link)
 }
 
 /* backward computation to update ABI of a link. */
+/* RENAME: rkLinkABIUpdateBackward -> rkLinkUpdateABIBackward */
 void rkLinkABIUpdateBackward(rkLink *link)
 {
   /* recursive update of ABI */
@@ -163,6 +175,7 @@ void rkLinkABIUpdateBackward(rkLink *link)
 }
 
 /* update acceleration from ABI of a link in forward computation. */
+/* RENAME: _rkLinkABIUpdateForward -> _rkLinkUpdateABIForward */
 static void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 {
   rkABIPrp *ap;
@@ -178,6 +191,7 @@ static void _rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 }
 
 /* forward computation to update acceleration from ABI of a link. */
+/* RENAME: rkLinkABIUpdateForward -> rkLinkUpdateABIForward */
 void rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 {
   _rkLinkABIUpdateForward( link, pa );
@@ -190,6 +204,7 @@ void rkLinkABIUpdateForward(rkLink *link, zVec6D *pa)
 }
 
 /* forward computation to update acceleration and wrench from ABI of a link. */
+/* RENAME: rkLinkABIUpdateForwardGetWrench -> rkLinkUpdateABIWrenchForward */
 void rkLinkABIUpdateForwardGetWrench(rkLink *link, zVec6D *pa)
 {
   _rkLinkABIUpdateForward( link, pa );
@@ -213,6 +228,7 @@ static void _rkChainZeroLinkRate(rkChain *chain)
 }
 
 /* update ABI and acceleration of a kinematic chain. */
+/* RENAME: rkChainABIUpdate -> rkChainUpdateABI */
 void rkChainABIUpdate(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
@@ -225,6 +241,7 @@ void rkChainABIUpdate(rkChain *chain)
 }
 
 /* update ABI, acceleration and wrench of a kinematic chain. */
+/* RENAME: rkChainABIUpdateGetWrench -> rkChainUpdateABIWrench */
 void rkChainABIUpdateGetWrench(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
@@ -237,6 +254,8 @@ void rkChainABIUpdateGetWrench(rkChain *chain)
 }
 
 /* compute accleration of a kinematic chain based on ABI method. */
+/* RENAME: rkChainABI -> rkChainFD_ABI */
+/* QUESTION: joint motor input */
 zVec rkChainABI(rkChain *chain, zVec dis, zVec vel, zVec acc)
 {
   if( rkChainJointSize(chain) == 0 ){
@@ -265,6 +284,7 @@ zVec rkChainABI(rkChain *chain, zVec dis, zVec vel, zVec acc)
  * the ABI and ABbias must not be overwritten, and
  * the forces except rigid contact forces in the list 'wlist' must be removed.
  */
+/* RENAME: _rkLinkABIFindBackwardPathAddExForce -> _rkLinkCheckABIExtWrench */
 static void _rkLinkABIFindBackwardPathAddExForce(rkLink *link)
 {
   if( rkLinkChild(link) )
@@ -277,6 +297,7 @@ static void _rkLinkABIFindBackwardPathAddExForce(rkLink *link)
     rkLinkABIPrp(rkLinkParent(link))->abi_backward_path = true;
 }
 
+/* RENAME: _rkLinkABISubBiasNetWrenchAddExForce -> _rkLinkSubABIExtWrench */
 static void _rkLinkABISubBiasNetWrenchAddExForce(rkLink *link)
 {
   zVec6D w;
@@ -287,6 +308,7 @@ static void _rkLinkABISubBiasNetWrenchAddExForce(rkLink *link)
   }
 }
 
+/* RENAME: _rkLinkABIUpdateBackwardAddExForce -> _rkLinkUpdateCachedABIBackward */
 static void _rkLinkABIUpdateBackwardAddExForce(rkLink *link)
 {
   if( rkLinkABIPrp(link)->abi_backward_path ){
@@ -302,6 +324,7 @@ static void _rkLinkABIUpdateBackwardAddExForce(rkLink *link)
   }
 }
 
+/* RENAME: _rkChainABIUpdateBackwardAddExForce -> _rkChainUpdateCachedABIBackward */
 static void _rkChainABIUpdateBackwardAddExForce(rkChain *chain)
 {
   uint i;
@@ -312,6 +335,7 @@ static void _rkChainABIUpdateBackwardAddExForce(rkChain *chain)
   _rkLinkABIUpdateBackwardAddExForce( rkChainRoot(chain) );
 }
 
+/* RENAME: rkChainABIUpdateAddExForce -> rkChainUpdateCachedABI */
 void rkChainABIUpdateAddExForce(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
@@ -322,6 +346,7 @@ void rkChainABIUpdateAddExForce(rkChain *chain)
   rkChainABIUpdateForward( chain );
 }
 
+/* RENAME: rkChainABIUpdateAddExForceGetWrench -> rkChainUpdateCachedABIWrench */
 void rkChainABIUpdateAddExForceGetWrench(rkChain *chain)
 {
   if( rkChainJointSize(chain) == 0 ){
@@ -339,6 +364,7 @@ void rkChainABIUpdateAddExForceGetWrench(rkChain *chain)
  * before rkChainABIUpdateAddExForceTwo is called,
  * call rkChainABIPushPrpAccBias to store the ABIprp at no rigid contact forces.
  */
+/* RENAME: rkChainABIPushPrpAccBias -> rkChainSaveABIAccBias */
 void rkChainABIPushPrpAccBias(rkChain *chain)
 {
   uint i;
@@ -349,6 +375,7 @@ void rkChainABIPushPrpAccBias(rkChain *chain)
   }
 }
 
+/* RENAME: rkChainABIPopPrpAccBias -> rkChainRestoreABIAccBias */
 void rkChainABIPopPrpAccBias(rkChain *chain)
 {
   uint i;
@@ -359,6 +386,7 @@ void rkChainABIPopPrpAccBias(rkChain *chain)
   }
 }
 
+/* RENAME: rkChainABIPopPrpAccBiasAddExForceTwo -> rkChainRestoreABIAccBiasPair */
 void rkChainABIPopPrpAccBiasAddExForceTwo(rkChain *chain, rkLink *link, rkLink *link2)
 {
   uint i;
@@ -372,6 +400,7 @@ void rkChainABIPopPrpAccBiasAddExForceTwo(rkChain *chain, rkLink *link, rkLink *
   }
 }
 
+/* RENAME: _rkLinkABIFindBackwardPathAddExForceOne -> _rkLinkCheckABIBackwardPathSole */
 static void _rkLinkABIFindBackwardPathAddExForceOne(rkChain *chain, rkLink *link)
 {
   rkLink *l;
@@ -380,6 +409,7 @@ static void _rkLinkABIFindBackwardPathAddExForceOne(rkChain *chain, rkLink *link
     rkLinkABIPrp(l)->abi_backward_path = true;
 }
 
+/* RENAME: _rkChainABIUpdateBackwardAddExForceTwo -> _rkChainCheckBackwardPathPair */
 static void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2)
 {
   uint i;
@@ -395,12 +425,12 @@ static void _rkChainABIUpdateBackwardAddExForceTwo(rkChain *chain, rkLink *link,
     rkWrenchListPush( &rkLinkABIPrp(link2)->wlist, w2 );
   }
   _rkLinkABIUpdateBackwardAddExForce( rkChainRoot(chain) );
-
   /* clean-up wrench list */
   if( link && w )   zListPurge( &rkLinkABIPrp(link)->wlist, w );
   if( link2 && w2 ) zListPurge( &rkLinkABIPrp(link2)->wlist, w2 );
 }
 
+/* RENAME: rkChainABIUpdateAddExForceTwo -> _rkChainUpdateCachedABIPair */
 void rkChainABIUpdateAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2)
 {
   if( rkChainJointSize(chain) == 0 ){

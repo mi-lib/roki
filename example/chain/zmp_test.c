@@ -1,6 +1,6 @@
 #include <roki/rk_chain.h>
 
-#define CHAIN_FILE "../model/humanoid.zkc"
+#define CHAIN_FILE "../model/humanoid.ztk"
 
 #define DT 0.001
 #define DTHETA 0.001
@@ -30,7 +30,7 @@ int main(void)
 {
   register int i;
 
-  rkChainScanFile( &chain, CHAIN_FILE );
+  rkChainReadZTK( &chain, CHAIN_FILE );
   rkChainUpdateID( &chain );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
   rkChainGetJointDisAll( &chain, dis );

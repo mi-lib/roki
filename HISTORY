@@ -1,3 +1,7 @@
+2022. 9.16. Added rkChainLinkJointSetTrq and rkChainSetJointTrqAll. [rk_chain]
+2022. 9.16. Added rkLinkJointSetTrq. [rk_link]
+2022. 9.15. Reimplemented _rkChainInertiaMat, rkChainInertiaMat and rkChainInertiaMatBiasVec. [rk_chain]
+2022. 9.15. Abolished _util member of rkLink. [rk_link]
 2022. 9. 6. Corrected prototype of rkMotorQueryAssign. [rk_motor]
 2022. 9. 5. Corrected arithmetic of signed integer values. [rk_contact, rk_chain, rk_ik, rk_abi]
 2022. 9. 5. Added explicit castings from void pointers. [rk_contact, rk_motor, rk_joint_revol, rk_joint_prism, rk_joint_hooke, rk_joint_spher, rk_chain, rk_ik, rk_ik_imp, rk_abi]

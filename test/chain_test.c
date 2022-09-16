@@ -139,43 +139,48 @@ int chain_init(rkChain *chain)
 #define N 1000
 #define TOL (1.0e-10)
 
-int main(int argc, char *argv[])
+void assert_inertia_mat(rkChain *chain, int n)
 {
-  rkChain chain;
   zMat h;
   zVec b, dis, vel;
   int i, count_im, count_ke, count_fd;
-  int n;
 
-  /* initialization */
-  zRandInit();
-  n = chain_init( &chain );
   h = zMatAllocSqr( n );
   dis = zVecAlloc( n );
   vel = zVecAlloc( n );
   b = zVecAlloc( n );
-
   count_im = count_ke = count_fd = 0;
   for( i=0; i<N; i++ ){
     /* generate posture and velocity randomly */
     zVecRandUniform( dis, -10, 10 );
     zVecRandUniform( vel, -10, 10 );
-    rkChainFK( &chain, dis );
-    rkChainSetJointVelAll( &chain, vel );
+    rkChainFK( chain, dis );
+    rkChainSetJointVelAll( chain, vel );
     /* verifications */
-    rkChainInertiaMatBiasVec( &chain, h, b );
+    rkChainInertiaMatBiasVec( chain, h, b );
     /* count success */
-    if( check_inertia_matrix( &chain, h, TOL ) ) count_im++;
-    if( check_kinetic_energy( &chain, h, vel, TOL ) ) count_ke++;
-    if( check_fd( &chain, h, b, vel, TOL ) ) count_fd++;
+    if( check_inertia_matrix( chain, h, TOL ) ) count_im++;
+    if( check_kinetic_energy( chain, h, vel, TOL ) ) count_ke++;
+    if( check_fd( chain, h, b, vel, TOL ) ) count_fd++;
   }
   zAssert( rkChainInertiaMatBiasVec, count_im == N );
   zAssert( rkChainInertiaMatBiasVec + rkChainKE, count_ke == N );
   zAssert( rkChainInertiaMatBiasVec (FD-ID), count_fd == N );
 
-  /* termination */
   zMatFree( h );
   zVecFreeAO( 3, b, dis, vel );
+}
+
+int main(int argc, char *argv[])
+{
+  rkChain chain;
+  int n;
+
+  /* initialization */
+  zRandInit();
+  n = chain_init( &chain );
+  assert_inertia_mat( &chain, n );
+  /* termination */
   rkChainDestroy( &chain );
   return EXIT_SUCCESS;
 }

@@ -27,7 +27,9 @@ void rkLinkInit(rkLink *l)
   rkLinkSetChild( l, NULL );
   rkLinkSetSibl( l, NULL );
 
+#if 0
   l->_util = NULL;
+#endif
 }
 
 /* destroy a link. */

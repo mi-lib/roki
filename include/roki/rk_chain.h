@@ -216,10 +216,13 @@ __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
 #define rkChainLinkJointSetDisCNT(r,i,d,t) rkLinkJointSetDisCNT( rkChainLink(r,i), d, t )
 #define rkChainLinkJointSetVel(r,i,v)      rkLinkJointSetVel( rkChainLink(r,i), v )
 #define rkChainLinkJointSetAcc(r,i,a)      rkLinkJointSetAcc( rkChainLink(r,i), a )
+#define rkChainLinkJointSetTrq(r,i,t)      rkLinkJointSetTrq( rkChainLink(r,i), t )
+
 #define rkChainLinkJointGetDis(r,i,d)      rkLinkJointGetDis( rkChainLink(r,i), d )
 #define rkChainLinkJointGetVel(r,i,v)      rkLinkJointGetVel( rkChainLink(r,i), v )
 #define rkChainLinkJointGetAcc(r,i,a)      rkLinkJointGetAcc( rkChainLink(r,i), a )
-#define rkChainLinkJointGetTrq(r,i,d)      rkLinkJointGetTrq( rkChainLink(r,i), d )
+#define rkChainLinkJointGetTrq(r,i,t)      rkLinkJointGetTrq( rkChainLink(r,i), t )
+
 #define rkChainLinkJointGetMotor(r,i,m)    rkLinkJointGetMotor( rkChainLink(r,i), m )
 
 #define rkChainLinkJointMotorSetInput(r,i,t)  rkLinkJointMotorSetInput( rkChainLink(r,i), t )
@@ -238,6 +241,8 @@ __EXPORT void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt);
 __EXPORT void rkChainSetJointVelAll(rkChain *c, zVec vel);
 __EXPORT void rkChainSetJointAccAll(rkChain *c, zVec acc);
 __EXPORT void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc);
+__EXPORT void rkChainSetJointTrqAll(rkChain *c, zVec trq);
+
 __EXPORT zVec rkChainGetJointDisAll(rkChain *c, zVec dis);
 __EXPORT zVec rkChainGetJointVelAll(rkChain *c, zVec vel);
 __EXPORT zVec rkChainGetJointAccAll(rkChain *c, zVec acc);
@@ -246,7 +251,7 @@ __EXPORT zVec rkChainGetJointTrqAll(rkChain *c, zVec trq);
 __EXPORT zVec rkChainGetConf(rkChain *chain, zVec conf);
 __EXPORT void rkChainSetConf(rkChain *chain, zVec conf);
 
-__EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec trq);
+__EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
 
 /*! \brief update kinematic chain motion state.
  *

@@ -46,7 +46,9 @@ typedef struct _rkLink{
   struct _rkLink *sibl;   /*!< \brief a pointer to a sibling link */
   /*! \cond */
   rkABIPrp _abiprp;  /* for ABI method */
+#if 0
   void *_util;  /* for utility */
+#endif
   /* additional property */
   /* 1: constraint list for inverse kinematics
      2: visualization information
@@ -298,13 +300,15 @@ __EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
 #define rkLinkJointSetMin(l,m)      rkJointSetMin( rkLinkJoint(l), m )
 #define rkLinkJointSetMax(l,m)      rkJointSetMax( rkLinkJoint(l), m )
 #define rkLinkJointSetDisCNT(l,d,t) rkJointSetDisCNT( rkLinkJoint(l), d, t )
+#define rkLinkJointSetTrq(l,t)      rkJointSetTrq( rkLinkJoint(l), t )
+
 #define rkLinkJointGetDis(l,d)      rkJointGetDis( rkLinkJoint(l), d )
 #define rkLinkJointGetVel(l,v)      rkJointGetVel( rkLinkJoint(l), v )
 #define rkLinkJointGetAcc(l,a)      rkJointGetAcc( rkLinkJoint(l), a )
 #define rkLinkJointGetMin(l,m)      rkJointGetMin( rkLinkJoint(l), m )
 #define rkLinkJointGetMax(l,m)      rkJointGetMax( rkLinkJoint(l), m )
 #define rkLinkJointGetTrq1(l,i)     rkJointGetTrq1( rkLinkJoint(l), i )
-#define rkLinkJointGetTrq(l,d)      rkJointGetTrq( rkLinkJoint(l), d )
+#define rkLinkJointGetTrq(l,t)      rkJointGetTrq( rkLinkJoint(l), t )
 
 #define rkLinkJointGetMotor(l,m)      rkJointGetMotor( rkLinkJoint(l), m )
 #define rkLinkJointMotorSetInput(l,t) rkJointMotorSetInput( rkLinkJoint(l), t )
