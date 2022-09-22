@@ -356,6 +356,7 @@ __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
  * Joint acceleration of the kinematic chain is set for zero.
  */
 __EXPORT zVec6D *rkChainLinkZeroAcc(rkChain *chain, int id, zVec3D *p, zVec6D *a0);
+__EXPORT zVec6D *rkChainLinkZeroAccZeroGravity(rkChain *chain, int id, zVec3D *p, zVec6D *a0);
 
 /*! \brief total mass of a kinematic chain.
  *
