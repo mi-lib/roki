@@ -463,7 +463,7 @@ zVec6D *rkChainLinkZeroAcc(rkChain *chain, int id, zVec3D *p, zVec6D *a0)
   zVec3D tmp;
 
   rkChainSetJointAccAll( chain, NULL );
-  rkChainUpdateRate( chain );
+  rkChainUpdateRateZeroGravity( chain );
   rkChainLinkPointAcc( chain, id, p, &tmp );
   _zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), &tmp, zVec6DLin(a0) );
   _zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), rkChainLinkAngAcc(chain,id), zVec6DAng(a0) );

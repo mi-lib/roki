@@ -1,3 +1,4 @@
+2022.12.13. Modified rkChainLinkZeroAcc to exclude acceleration due to gravity. [rk_chain]
 2022. 9.16. Added rkChainLinkJointSetTrq and rkChainSetJointTrqAll. [rk_chain]
 2022. 9.16. Added rkLinkJointSetTrq. [rk_link]
 2022. 9.15. Reimplemented _rkChainInertiaMat, rkChainInertiaMat and rkChainInertiaMatBiasVec. [rk_chain]

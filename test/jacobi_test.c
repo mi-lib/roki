@@ -154,6 +154,7 @@ bool assert_zeroacc(rkChain *chain, int id, zVec dis, zVec vel, zVec acc, zMat j
   rkChainLinkPointAcc( chain, id, &p, &tmp );
   zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), &tmp, zVec6DLin(&av) );
   zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), rkChainLinkAngAcc(chain,id), zVec6DAng(&av) );
+  zVec6DLin(&av)->c.z -= RK_G; /* note: zero-acceleration does not include acceleration due to gravity. */
   zVec6DSubDRC( &av, &a0 );
   /* linear acceleration */
   rkChainLinkWldLinJacobi( chain, id, &p, jacobi );
