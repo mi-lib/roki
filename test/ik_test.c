@@ -201,7 +201,7 @@ void assert_ik_revol(void)
   rkChainSetMass( &chain, 1.0 ); /* dummy weight */
   rkChainSetOffset( &chain );
   rkChainUpdateFK( &chain );
-  rkChainUpdateIDGravity( &chain );
+  rkChainUpdateID( &chain );
 
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkIKCreate( &ik, &chain );
@@ -263,7 +263,7 @@ void assert_ik_spher(void)
   rkChainSetMass( &chain, 1.0 ); /* dummy weight */
   rkChainSetOffset( &chain );
   rkChainUpdateFK( &chain );
-  rkChainUpdateIDGravity( &chain );
+  rkChainUpdateID( &chain );
 
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainGetJointDisAll( &chain, dis );
@@ -329,7 +329,7 @@ void assert_ik_float(void)
   rkChainSetMass( &chain, 1.0 ); /* dummy weight */
   rkChainSetOffset( &chain );
   rkChainUpdateFK( &chain );
-  rkChainUpdateIDGravity( &chain );
+  rkChainUpdateID( &chain );
 
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainGetJointDisAll( &chain, dis );
@@ -401,7 +401,7 @@ void assert_ik_l2l(void)
   rkChainSetOffset( &chain );
 
   rkChainUpdateFK( &chain );
-  rkChainUpdateIDGravity( &chain );
+  rkChainUpdateID( &chain );
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainGetJointDisAll( &chain, dis );
 

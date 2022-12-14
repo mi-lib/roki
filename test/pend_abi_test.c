@@ -1,7 +1,4 @@
-/* this code is to check if the forward dynamics computation
-   are correct, comparing with the analytical solutions on
-   a simple pendulum.
- */
+/* Test if the forward dynamics computation is correct based on the analytical solution of a pendulum. */
 #include <roki/roki.h>
 
 typedef struct{
@@ -9,14 +6,14 @@ typedef struct{
 } Test;
 
 Test tests[] = {
-  {0.0, 0.0, 0.0},
-  {0.0, 0.0, 10.0},
-  {zDeg2Rad(30), 0.0, 0.0},
-  {zDeg2Rad(30), 0.0, 10.0},
-  {zDeg2Rad(60), 0.0, 0.0},
-  {zDeg2Rad(60), 0.0, 10.0},
-  {zDeg2Rad(30), zDeg2Rad(-30)*100.0, 0.0},
-  {zDeg2Rad(30), zDeg2Rad(-30)*100.0, 10.0}
+  { 0.0, 0.0, 0.0 },
+  { 0.0, 0.0, 10.0 },
+  { zDeg2Rad(30), 0.0, 0.0 },
+  { zDeg2Rad(30), 0.0, 10.0 },
+  { zDeg2Rad(60), 0.0, 0.0 },
+  { zDeg2Rad(60), 0.0, 10.0 },
+  { zDeg2Rad(30), zDeg2Rad(-30)*100.0, 0.0 },
+  { zDeg2Rad(30), zDeg2Rad(-30)*100.0, 10.0 },
 };
 
 void check_test(rkChain *pend, zVec dis, zVec vel, zVec acc)
@@ -52,7 +49,7 @@ void check_test(rkChain *pend, zVec dis, zVec vel, zVec acc)
     rkJointMotorSetInput( joint, &test->trq );
 
     /* forward dynamics computation */
-    rkChainABIUpdate( pend );
+    rkChainUpdateABI( pend );
 
     /* analytical solution */
     zMulMat3DTVec3D( rkLinkWldAtt(link), &grav, &tmp );
@@ -71,7 +68,7 @@ int main(void)
   zVec dis, vel, acc;
 
   rkChainReadZTK( &pend, "simple_pend.ztk" );
-  rkChainABIAlloc( &pend );
+  rkChainAllocABI( &pend );
   dis = zVecAlloc( rkChainJointSize(&pend) );
   vel = zVecAlloc( rkChainJointSize(&pend) );
   acc = zVecAlloc( rkChainJointSize(&pend) );

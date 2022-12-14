@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
   int n, i, count_success = 0;
 
   rkChainReadZTK( &chain, "../model/arm_2DoF_trq.ztk" ); /* torque-controlled robot */
-  rkChainABIAlloc( &chain );
+  rkChainAllocABI( &chain );
   n = rkChainJointSize( &chain );
   dis = zVecAlloc( n );
   vel = zVecAlloc( n );
@@ -24,8 +24,8 @@ int main(int argc, char *argv[])
     zVecRandUniform( expected, 10, -10 );
 
     rkChainSetMotorInputAll( &chain, expected );
-    rkChainABI( &chain, dis, vel, acc ); /* forward dynamics (ABI method) */
-    rkChainID( &chain, vel, acc );       /* inverse dynamics (Newton-Euler method) */
+    rkChainFD_ABI( &chain, dis, vel, acc ); /* forward dynamics (ABI method) */
+    rkChainID( &chain, vel, acc ); /* inverse dynamics (Newton-Euler method) */
     rkChainGetJointTrqAll( &chain, actual );
     if( zVecIsEqual( actual, expected, zTOL ) ){
       count_success++;
@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
     }
   }
   printf( "Success rate = %d / %d\n", count_success, N );
-  rkChainABIDestroy( &chain );
+  rkChainDestroyABI( &chain );
   rkChainDestroy( &chain );
+  zAssert( rkChainFD_ABI + rkChainID, count_success == N );
   return 0;
 }

@@ -75,7 +75,7 @@ void create_hooke2(rkChain *chain)
   zMat3DCreate( rkChainLinkOrgAtt(chain,1), 0, 1, 0, 0, 0, 1, 1, 0, 0 );
   /* link 3 */
   rkLinkInit( rkChainLink(chain,2) );
-  zNameSet( rkChainLink(chain,2), "link3(aligner)" );
+  zNameSet( rkChainLink(chain,2), "link3 (aligner)" );
   rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_fixed );
   zMat3DCreate( rkChainLinkOrgAtt(chain,2), 0, 0, 1, 1, 0, 0, 0, 1, 0 );
   /* link E */
@@ -100,7 +100,8 @@ int main(void)
   rkChain chain1, chain2;
   zVec dis, vel, acc;
   zFrame3D f;
-  zVec6D v, a, err;
+  zVec6D v, a, w, wj, err1, err2;
+  double u1[2], u2[2];
 
   /* create chain */
   create_hooke1( &chain1 );
@@ -113,6 +114,8 @@ int main(void)
   zVecRandUniform( dis, -zPI, zPI );
   zVecRandUniform( vel,  -10,  10 );
   zVecRandUniform( acc, -100, 100 );
+  /* create wrench */
+  zVec6DCreate( &w, zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
 
   /* FK test */
   rkChainFK( &chain1, dis );
@@ -122,57 +125,27 @@ int main(void)
   truth( dis, vel, acc, &f, &v, &a );
 
   /* output */
-  printf( ">> frame test\n" );
-  printf( " True answer ..." );
-  zFrame3DPrint( &f );
-  printf( " Hooke joint ..." );
-  zFrame3DPrint( rkLinkWldFrame(le1) );
-  printf( " (error) ...\n" );
-  zFrame3DError( &f, rkLinkWldFrame(le1), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  printf( " Successive revolute joints ... " );
-  zFrame3DPrint( rkLinkWldFrame(le2) );
-  printf( " (error) ...\n" );
-  zFrame3DError( &f, rkLinkWldFrame(le2), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  printf( "Hit enter key." );
-  getchar();
+  zFrame3DError( &f, rkLinkWldFrame(le1), &err1 );
+  zFrame3DError( &f, rkLinkWldFrame(le2), &err2 );
+  zAssert( rkChainFK (hooke joint), zVec6DIsTiny(&err1) && zVec6DIsTiny(&err2) );
+  zVec6DSub( &v, rkLinkVel(le1), &err1 );
+  zVec6DSub( &v, rkLinkVel(le2), &err2 );
+  zAssert( rkChainID (hooke joint velocity), zVec6DIsTiny(&err1) && zVec6DIsTiny(&err2) );
+  zVec6DSub( &a, rkLinkAcc(le1), &err1 );
+  zVec6DSub( &a, rkLinkAcc(le2), &err2 );
+  zAssert( rkChainID (hooke joint acceleration), zVec6DIsTiny(&err1) && zVec6DIsTiny(&err2) );
 
-  printf( ">> velocity test\n" );
-  printf( " True answer ...\n" );
-  zVec6DPrint( &v );
-  printf( " Hooke joint ...\n" );
-  zVec6DPrint( rkLinkVel(le1) );
-  printf( " (error) ...\n" );
-  zVec6DSub( &v, rkLinkVel(le1), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  printf( " Successive revolute joints ... " );
-  zVec6DPrint( rkLinkVel(le2) );
-  printf( " (error) ...\n" );
-  zVec6DSub( &v, rkLinkVel(le2), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  printf( "Hit enter key." );
-  getchar();
-
-  printf( ">> acceleration test\n" );
-  printf( " True answer ...\n" );
-  zVec6DPrint( &a );
-  printf( " Hooke joint ...\n" );
-  zVec6DPrint( rkLinkAcc(le1) );
-  printf( " (error) ...\n" );
-  zVec6DSub( &a, rkLinkAcc(le1), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  printf( " Successive revolute joints ... " );
-  zVec6DPrint( rkLinkAcc(le2) );
-  printf( " (error) ...\n" );
-  zVec6DSub( &a, rkLinkAcc(le2), &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  zVec6DPrint( &err );
+  /* torque */
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&chain1,0), &w, &wj );
+  rkJointCalcTrq( rkChainLinkJoint(&chain1,0), &wj );
+  rkJointGetTrq( rkChainLinkJoint(&chain1,0), u1 );
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&chain2,0), &w, &wj );
+  rkJointCalcTrq( rkChainLinkJoint(&chain2,0), &wj );
+  rkJointGetTrq( rkChainLinkJoint(&chain2,0), &u2[0] );
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&chain2,1), &w, &wj );
+  rkJointCalcTrq( rkChainLinkJoint(&chain2,1), &wj );
+  rkJointGetTrq( rkChainLinkJoint(&chain2,1), &u2[1] );
+  zAssert( rkJointCalcTrq (hooke joint), zIsTiny( u1[0] - u2[0] ) && zIsTiny( u1[1] - u2[1] ) );
 
   /* terminate */
   zVecFree( dis );

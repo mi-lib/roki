@@ -57,7 +57,8 @@ int main(void)
 {
   rkChain chain1, chain2;
   zVec dis, vel, acc;
-  zVec6D err;
+  zVec6D w, wj, err;
+  double u1[2], u2[2];
 
   /* create chain */
   create_cylin1( &chain1 );
@@ -70,42 +71,32 @@ int main(void)
   zVecRandUniform( dis, -zPI, zPI );
   zVecRandUniform( vel,  -10,  10 );
   zVecRandUniform( acc, -100, 100 );
+  /* create wrench */
+  zVec6DCreate( &w, zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
+
   /* FK test */
   rkChainFK( &chain1, dis );
   rkChainFK( &chain2, dis );
   rkChainID( &chain1, vel, acc );
   rkChainID( &chain2, vel, acc );
   /* output */
-  rkChainConnectionPrint( &chain1 );
-  printf( " frame ... " );
-  zFrame3DPrint( rkChainLinkWldFrame(&chain1,1) );
-  printf( " velocity ...\n" );
-  zVec6DPrint( rkChainLinkVel(&chain1,1) );
-  printf( " acceleration ...\n" );
-  zVec6DPrint( rkChainLinkAcc(&chain1,1) );
-
-  printf( "\n" );
-  rkChainConnectionPrint( &chain2 );
-  printf( " frame ... " );
-  zFrame3DPrint( rkChainLinkWldFrame(&chain2,2) );
-  printf( " velocity ...\n" );
-  zVec6DPrint( rkChainLinkVel(&chain2,2) );
-  printf( " acceleration ...\n" );
-  zVec6DPrint( rkChainLinkAcc(&chain2,2) );
-
-  printf( "\n>> evaluation <<\n" );
-  printf( " frame error ...\n" );
   zFrame3DError( rkChainLinkWldFrame(&chain1,1), rkChainLinkWldFrame(&chain2,2), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  printf( " velocity error ...\n" );
+  zAssert( rkChainFK (cylindrical joint), zVec6DIsTiny(&err) );
   zVec6DSub( rkChainLinkVel(&chain1,1), rkChainLinkVel(&chain2,2), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-  printf( " acceleration error ...\n" );
+  zAssert( rkChainID (cylindrical joint velocity), zVec6DIsTiny(&err) );
   zVec6DSub( rkChainLinkAcc(&chain1,1), rkChainLinkAcc(&chain2,2), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
+  zAssert( rkChainID (cylindrical joint acceleration), zVec6DIsTiny(&err) );
+  /* torque */
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&chain1,0), &w, &wj );
+  rkJointCalcTrq( rkChainLinkJoint(&chain1,0), &wj );
+  rkJointGetTrq( rkChainLinkJoint(&chain1,0), u1 );
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&chain2,0), &w, &wj );
+  rkJointCalcTrq( rkChainLinkJoint(&chain2,0), &wj );
+  rkJointGetTrq( rkChainLinkJoint(&chain2,0), &u2[0] );
+  zMulMat3DTVec6D( rkChainLinkWldAtt(&chain2,1), &w, &wj );
+  rkJointCalcTrq( rkChainLinkJoint(&chain2,1), &wj );
+  rkJointGetTrq( rkChainLinkJoint(&chain2,1), &u2[1] );
+  zAssert( rkJointCalcTrq (cylindrical joint), zIsTiny( u1[0] - u2[0] ) && zIsTiny( u1[1] - u2[1] ) );
 
   /* terminate */
   zVecFree( dis );

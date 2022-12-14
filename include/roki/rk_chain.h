@@ -286,13 +286,13 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
  * rkLinkUpdateFrame, rkLinkUpdateVel, rkLinkUpdateAcc, rkLinkUpdateRate,
  * rkLinkUpdateWrench
  */
-#define rkChainUpdateFrame(c)  rkLinkUpdateFrame( rkChainRoot(c), ZFRAME3DIDENT )
-#define rkChainUpdateVel(c)    rkLinkUpdateVel( rkChainRoot(c), ZVEC6DZERO )
-#define rkChainUpdateAcc(c)    rkLinkUpdateAcc( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
-#define rkChainUpdateRate(c,g) rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, (g) )
-#define rkChainUpdateRateGravity(c)     rkChainUpdateRate( c, RK_GRAVITY6D )
-#define rkChainUpdateRateZeroGravity(c) rkChainUpdateRate( c, ZVEC6DZERO )
-#define rkChainUpdateWrench(c) rkLinkUpdateWrench( rkChainRoot(c) )
+#define rkChainUpdateFrame(c)   rkLinkUpdateFrame( rkChainRoot(c), ZFRAME3DIDENT )
+#define rkChainUpdateVel(c)     rkLinkUpdateVel( rkChainRoot(c), ZVEC6DZERO )
+#define rkChainUpdateAcc(c)     rkLinkUpdateAcc( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
+#define rkChainUpdateRateG(c,g) rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, (g) )
+#define rkChainUpdateRate(c)    rkChainUpdateRateG( c, RK_GRAVITY6D )
+#define rkChainUpdateRate0G(c)  rkChainUpdateRateG( c, ZVEC6DZERO )
+#define rkChainUpdateWrench(c)  rkLinkUpdateWrench( rkChainRoot(c) )
 
 /*! \brief gravity orientation with respect to the root link.
  *
@@ -355,12 +355,12 @@ __EXPORT void rkChainFK(rkChain *c, zVec dis);
  * rkChainID(), rkChainIDGravity(), rkChainIDZeroGravity(), and rkChainFKCNT()
  * do not return any values.
  */
-__EXPORT void rkChainUpdateID(rkChain *c, zVec6D *g);
-#define rkChainUpdateIDGravity(c)       rkChainUpdateID( c, RK_GRAVITY6D )
-#define rkChainUpdateIDZeroGravity(c)   rkChainUpdateID( c, ZVEC6DZERO )
-__EXPORT void rkChainID(rkChain *c, zVec vel, zVec acc, zVec6D *g);
-#define rkChainIDGravity(c,vel,acc)     rkChainID( c,vel,acc, RK_GRAVITY6D )
-#define rkChainIDZeroGravity(c,vel,acc) rkChainID( c,vel,acc, ZVEC6DZERO )
+__EXPORT void rkChainUpdateID_G(rkChain *c, zVec6D *g);
+#define rkChainUpdateID(c)     rkChainUpdateID_G( c, RK_GRAVITY6D )
+#define rkChainUpdateID0G(c)   rkChainUpdateID_G( c, ZVEC6DZERO )
+__EXPORT void rkChainID_G(rkChain *c, zVec vel, zVec acc, zVec6D *g);
+#define rkChainID(c,vel,acc)   rkChainID_G( c,vel,acc, RK_GRAVITY6D )
+#define rkChainID0G(c,vel,acc) rkChainID_G( c,vel,acc, ZVEC6DZERO )
 __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
 
 /*! \brief link acceleration at zero joint acceleration.
@@ -386,9 +386,9 @@ __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
  * rkChainLinkZeroAcc(),rkChainLinkZeroAccGravity(), and rkChainLinkZeroAccZeroGravity()
  * return a pointer \a a0.
  */
-__EXPORT zVec6D *rkChainLinkZeroAcc(rkChain *c, int id, zVec3D *p, zVec6D *g, zVec6D *a0);
-#define rkChainLinkZeroAccGravity(c,i,p,a0)     rkChainLinkZeroAcc( (c), (i), (p), RK_GRAVITY6D, (a0) )
-#define rkChainLinkZeroAccZeroGravity(c,i,p,a0) rkChainLinkZeroAcc( (c), (i), (p), ZVEC6DZERO, (a0) )
+__EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *c, int id, zVec3D *p, zVec6D *g, zVec6D *a0);
+#define rkChainLinkZeroAcc(c,i,p,a0)   rkChainLinkZeroAccG( (c), (i), (p), RK_GRAVITY6D, (a0) )
+#define rkChainLinkZeroAcc0G(c,i,p,a0) rkChainLinkZeroAccG( (c), (i), (p), ZVEC6DZERO, (a0) )
 
 /*! \brief total mass of a kinematic chain.
  *

@@ -1,3 +1,37 @@
+2022.12.14. Renamed rkChainLinkZeroAcc, rkChainLinkZeroAccGravity, and rkChainLinkZeroAccZeroGravity to rkChainLinkZeroAccG, rkChainLinkZeroAcc, and rkChainLinkZeroAcc0G, respectively. [rk_chain]
+2022.12.14. Renamed rkChainID, rkChainIDGravity, and rkChainIDZeroGravity to rkChainID_G, rkChainID, and rkChainID0G, respectively. [rk_chain]
+2022.12.14. Renamed rkChainUpdateID, rkChainUpdateIDGravity, and rkChainUpdateIDZeroGravity to rkChainUpdateID_G, rkChainUpdateID, and rkChainUpdateID0G, respectively. [rk_chain]
+2022.12.14. Renamed rkChainUpdateRate, rkChainUpdateRateGravity, and rkChainUpdateRateZeroGravity to rkChainUpdateRateG, rkChainUpdateRate, and rkChainUpdateRate0G, respectively. [rk_chain]
+2022.12.14. Renamed functions for ABI method as follows:
+ _rkLinkABIInitInertia -> _rkLinkInitABIInertia
+ rkLinkABIAlloc -> rkLinkAllocABI
+ rkChainABIAlloc -> rkChainAllocABI
+ rkLinkABIDestroy -> rkLinkDestroyABI
+ rkChainABIDestroy -> rkChainDestroyABI
+ rkLinkABIUpdateInit -> rkLinkInitABI
+ rkChainABIUpdateInit -> rkChainInitABI
+ _rkLinkABIAddBias -> _rkLinkUpdateABIBias
+ _rkLinkABIUpdateBackward -> _rkLinkUpdateABIBackward
+ rkLinkABIUpdateBackward -> rkLinkUpdateABIBackward
+ _rkLinkABIUpdateForward -> _rkLinkUpdateABIForward
+ rkLinkABIUpdateForward -> rkLinkUpdateABIForward
+ rkLinkABIUpdateForwardGetWrench -> rkLinkUpdateABIWrenchForward
+ rkChainABIUpdate -> rkChainUpdateABI
+ rkChainABIUpdateGetWrench -> rkChainUpdateABIWrench
+ rkChainABI -> rkChainFD_ABI
+ _rkLinkABIFindBackwardPathAddExForce -> _rkLinkCheckABIExtWrench
+ _rkLinkABISubBiasNetWrenchAddExForce -> _rkLinkSubABIExtWrench
+ _rkLinkABIUpdateBackwardAddExForce -> _rkLinkUpdateCachedABIBackward
+ _rkChainABIUpdateBackwardAddExForce -> _rkChainUpdateCachedABIBackward
+ rkChainABIUpdateAddExForce -> rkChainUpdateCachedABI
+ rkChainABIUpdateAddExForceGetWrench -> rkChainUpdateCachedABIWrench
+ rkChainABIPushPrpAccBias -> rkChainSaveABIAccBias
+ rkChainABIPopPrpAccBias -> rkChainRestoreABIAccBias
+ rkChainABIPopPrpAccBiasAddExForceTwo -> rkChainRestoreABIAccBiasPair
+ _rkLinkABIFindBackwardPathAddExForceOne -> _rkLinkCheckABIBackwardPathSole
+ _rkChainABIUpdateBackwardAddExForceTwo -> _rkChainCheckBackwardPathPair
+ rkChainABIUpdateAddExForceTwo -> _rkChainUpdateCachedABIPair
+ [rk_abi]
 2022.12.14. Modified rkChainFKCNT, _rkChainBiasVec, _rkChainInertiaMat, rkChainFromZTK, and rkChainInitFromZTK. [rk_chain]
 2022.12.14. Redefined rkChainLinkZroAcc, added rkChainLinkZeroAccGravity as a macro, and reimplemented rkChainLinkZeroAccZeroGravity as a macro. [rk_chain]
 2022.12.14. Redefined rkChainID, added rkChainIDGravity as a macro, and reimplemented rkChainIDZeroGravity as a macro. [rk_chain]

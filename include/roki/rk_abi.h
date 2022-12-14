@@ -17,47 +17,48 @@ __BEGIN_DECLS
  * ********************************************************** */
 
 /* allocate memory for ABI of a link. */
-__EXPORT rkLink *rkLinkABIAlloc(rkLink *link);
+__EXPORT rkLink *rkLinkAllocABI(rkLink *link);
 /* allocate memory for ABI of a kinematic chain. */
-__EXPORT rkChain *rkChainABIAlloc(rkChain *chain);
+__EXPORT rkChain *rkChainAllocABI(rkChain *chain);
 
 /* destroy ABI of a link. */
-__EXPORT void rkLinkABIDestroy(rkLink *link);
+__EXPORT void rkLinkDestroyABI(rkLink *link);
 /* destroy ABI of a kinematic chain. */
-__EXPORT void rkChainABIDestroy(rkChain *chain);
+__EXPORT void rkChainDestroyABI(rkChain *chain);
 
 /* initialize ABI of a link for recursive computation. */
-__EXPORT void rkLinkABIUpdateInit(rkLink *link, zVec6D *pvel);
+__EXPORT void rkLinkInitABI(rkLink *link, zVec6D *pvel);
 /* backward computation to update ABI of a link. */
-__EXPORT void rkLinkABIUpdateBackward(rkLink *link);
+__EXPORT void rkLinkUpdateABIBackward(rkLink *link);
 /* forward computation to update acceleration from ABI of a link. */
-__EXPORT void rkLinkABIUpdateForward(rkLink *link, zVec6D *pa);
+__EXPORT void rkLinkUpdateABIForward(rkLink *link, zVec6D *pa);
 /* forward computation to update acceleration and wrench from ABI of a link. */
-__EXPORT void rkLinkABIUpdateForwardGetWrench(rkLink *link, zVec6D *pa);
+__EXPORT void rkLinkUpdateABIWrenchForward(rkLink *link, zVec6D *pa);
 
 /* initialize ABI of a kinematic chain for recursive computation. */
-__EXPORT void rkChainABIUpdateInit(rkChain *chain);
+__EXPORT void rkChainInitABI(rkChain *chain);
 /* backward computation to update ABI of a kinematic chain. */
-#define rkChainABIUpdateBackward(c) rkLinkABIUpdateBackward( rkChainRoot(c) )
+#define rkChainUpdateABIBackward(c) rkLinkUpdateABIBackward( rkChainRoot(c) )
 /* forward computation to update acceleration from ABI of a kinematic chain. */
-#define rkChainABIUpdateForward(c) rkLinkABIUpdateForward( rkChainRoot(c), ZVEC6DZERO )
+#define rkChainUpdateABIForward(c) rkLinkUpdateABIForward( rkChainRoot(c), ZVEC6DZERO )
 /* forward computation to update acceleration and wrench from ABI of a kinematic chain. */
-#define rkChainABIUpdateForwardGetWrench(c) rkLinkABIUpdateForwardGetWrench( rkChainRoot(c), ZVEC6DZERO )
+#define rkChainUpdateABIWrenchForward(c) rkLinkUpdateABIWrenchForward( rkChainRoot(c), ZVEC6DZERO )
 
 /* update ABI and acceleration of a kinematic chain. */
-__EXPORT void rkChainABIUpdate(rkChain *chain);
+__EXPORT void rkChainUpdateABI(rkChain *chain);
 /* update ABI, acceleration and wrench of a kinematic chain. */
-__EXPORT void rkChainABIUpdateGetWrench(rkChain *chain);
-__EXPORT void rkChainABIUpdateAddExForce(rkChain *chain);
-__EXPORT void rkChainABIUpdateAddExForceGetWrench(rkChain *chain);
+__EXPORT void rkChainUpdateABIWrench(rkChain *chain);
 
 /* compute accleration of a kinematic chain based on ABI method. */
-__EXPORT zVec rkChainABI(rkChain *chain, zVec dis, zVec vel, zVec acc);
+__EXPORT zVec rkChainFD_ABI(rkChain *chain, zVec dis, zVec vel, zVec acc);
 
-__EXPORT void rkChainABIPushPrpAccBias(rkChain *chain);
-__EXPORT void rkChainABIPopPrpAccBias(rkChain *chain);
-__EXPORT void rkChainABIPopPrpAccBiasAddExForceTwo(rkChain *chain, rkLink *link, rkLink *link2);
-__EXPORT void rkChainABIUpdateAddExForceTwo(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2);
+__EXPORT void rkChainUpdateCachedABI(rkChain *chain);
+__EXPORT void rkChainUpdateCachedABIWrench(rkChain *chain);
+
+__EXPORT void rkChainSaveABIAccBias(rkChain *chain);
+__EXPORT void rkChainRestoreABIAccBias(rkChain *chain);
+__EXPORT void rkChainRestoreABIAccBiasPair(rkChain *chain, rkLink *link, rkLink *link2);
+__EXPORT void rkChainUpdateCachedABIPair(rkChain *chain, rkLink *link, rkWrench *w, rkLink *link2, rkWrench *w2);
 
 __END_DECLS
 

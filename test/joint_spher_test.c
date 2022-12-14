@@ -89,37 +89,12 @@ int main(void)
   rkChainFK( &chain, dis );
   rkChainID( &chain, vel, acc );
   truth( &aa1, &w1, &a1, &aa2, &w2, &a2, &f, &v, &a );
-
-  /* output */
-  printf( ">> frame test\n" );
-  printf( " spherical joint ..." );
-  zFrame3DPrint( rkLinkWldFrame(le) );
-  printf( " answer ..." );
-  zFrame3DPrint( &f );
-  printf( " (error) ...\n" );
   zFrame3DError( &f, rkLinkWldFrame(le), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-
-  printf( ">> velocity test\n" );
-  printf( " spherical joint ...\n" );
-  zVec6DPrint( rkLinkVel(le) );
-  printf( " answer ...\n" );
-  zVec6DPrint( &v );
-  printf( " (error) ...\n" );
+  zAssert( rkChainFK (spherical joint), zVec6DIsTiny(&err) );
   zVec6DSub( &v, rkLinkVel(le), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
-
-  printf( ">> acceleration test\n" );
-  printf( " spherical joint ...\n" );
-  zVec6DPrint( rkLinkAcc(le) );
-  printf( " answer ...\n" );
-  zVec6DPrint( &a );
-  printf( " (error) ...\n" );
+  zAssert( rkChainID (spherical joint velocity), zVec6DIsTiny(&err) );
   zVec6DSub( &a, rkLinkAcc(le), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
+  zAssert( rkChainID (spherical joint acceleration), zVec6DIsTiny(&err) );
 
   /* terminate */
   zVecFree( dis );
