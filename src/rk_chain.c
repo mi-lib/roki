@@ -425,28 +425,19 @@ void rkChainFK(rkChain *c, zVec dis)
 }
 
 /* update link states and joint torques of a kinematic chain via inverse dynamics. */
-void rkChainUpdateID(rkChain *c)
+void rkChainUpdateID(rkChain *c, zVec6D *g)
 {
-  rkChainUpdateRate( c );
-  rkChainUpdateWrench( c );
-  rkChainUpdateCOMVel( c );
-  rkChainUpdateCOMAcc( c );
-}
-
-/* update link states and joint torques of a kinematic chain via inverse dynamics under the gravity-free condition. */
-void rkChainUpdateIDZeroGravity(rkChain *c)
-{
-  rkChainUpdateRateZeroGravity( c );
+  rkChainUpdateRate( c, g );
   rkChainUpdateWrench( c );
   rkChainUpdateCOMVel( c );
   rkChainUpdateCOMAcc( c );
 }
 
 /* solve inverse dynamics of a kinematic chain. */
-void rkChainID(rkChain *c, zVec vel, zVec acc)
+void rkChainID(rkChain *c, zVec vel, zVec acc, zVec6D *g)
 {
   rkChainSetJointRateAll( c, vel, acc );
-  rkChainUpdateID( c );
+  rkChainUpdateID( c, g );
 }
 
 /* continuously update joint displacements of a kinematic chain over a time step. */
@@ -454,19 +445,19 @@ void rkChainFKCNT(rkChain *c, zVec dis, double dt)
 {
   rkChainSetJointDisCNTAll( c, dis, dt );
   rkChainUpdateFK( c );
-  rkChainUpdateID( c );
+  rkChainUpdateIDGravity( c );
 }
 
 /* link acceleration at zero joint acceleration. */
-zVec6D *rkChainLinkZeroAcc(rkChain *chain, int id, zVec3D *p, zVec6D *a0)
+zVec6D *rkChainLinkZeroAcc(rkChain *c, int id, zVec3D *p, zVec6D *g, zVec6D *a0)
 {
   zVec3D tmp;
 
-  rkChainSetJointAccAll( chain, NULL );
-  rkChainUpdateRateZeroGravity( chain );
-  rkChainLinkPointAcc( chain, id, p, &tmp );
-  _zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), &tmp, zVec6DLin(a0) );
-  _zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), rkChainLinkAngAcc(chain,id), zVec6DAng(a0) );
+  rkChainSetJointAccAll( c, NULL );
+  rkChainUpdateRate( c, g );
+  rkChainLinkPointAcc( c, id, p, &tmp );
+  _zMulMat3DVec3D( rkChainLinkWldAtt(c,id), &tmp, zVec6DLin(a0) );
+  _zMulMat3DVec3D( rkChainLinkWldAtt(c,id), rkChainLinkAngAcc(c,id), zVec6DAng(a0) );
   return a0;
 }
 
@@ -582,7 +573,7 @@ double rkChainKE(rkChain *c)
 static void _rkChainBiasVec(rkChain *chain, zVec bias)
 {
   rkChainSetJointAccAll( chain, NULL );
-  rkChainUpdateID( chain );
+  rkChainUpdateIDGravity( chain );
   rkChainGetJointTrqAll( chain, bias );
 }
 
@@ -614,7 +605,7 @@ static void _rkChainInertiaMat(rkChain *chain, zVec bias, zMat inertia)
       h.buf = zMatRowBuf( inertia, i );
       acc[k] = 1;
       rkChainLinkJointSetAcc( chain, j, acc );
-      rkChainUpdateID( chain );
+      rkChainUpdateIDGravity( chain );
       rkChainGetJointTrqAll( chain, &h );
       zVecSubDRC( &h, bias );
       acc[k] = 0;
@@ -881,7 +872,7 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     rkChainSetMass( chain, 1.0 ); /* dummy weight */
   rkChainSetOffset( chain ); /* offset value arrangement */
   rkChainUpdateFK( chain );
-  rkChainUpdateID( chain );
+  rkChainUpdateIDGravity( chain );
   return chain;
 }
 
@@ -947,7 +938,7 @@ rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk)
 {
   ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_init );
   rkChainUpdateFK( chain );
-  rkChainUpdateID( chain );
+  rkChainUpdateIDGravity( chain );
   return chain;
 }
 

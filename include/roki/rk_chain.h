@@ -16,18 +16,23 @@ __BEGIN_DECLS
  * kinematic chain class
  * ********************************************************** */
 
+struct _rkIK;
+
 typedef struct{
   Z_NAMED_CLASS
-  rkLinkArray link;
-  zMShape3D *shape;
-  rkMotorArray *motor; /* may not need to be a pointer */
+  rkLinkArray link; /*!< array of links */
+  zMShape3D *shape; /*!< multishape */
+  rkMotorArray *motor; /*!< array of motors (may not need to be a pointer) */
 
-  double mass;
-  zVec3D wldcom;
-  zVec3D wldcomvel;
-  zVec3D wldcomacc;
+  double mass; /*!< total mass */
+  zVec3D wldcom;    /*!< position of COM in the world frame */
+  zVec3D wldcomvel; /*!< velocity of COM in the world frame */
+  zVec3D wldcomacc; /*!< acceleration of COM in the world frame */
 
-  bool _iscol;
+  /*! \cond */
+  bool _iscol; /* flag for collision check */
+  struct _rkIK *ik; /* to be renamed to task stack */
+  /*! \endcond */
 } rkChain;
 
 #define rkChainRoot(c)                zArrayBuf( &(c)->link )
@@ -261,17 +266,20 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
  * rkChainUpdateVel() and rkChainUpdateAcc() update velocities and accelerations
  * of the whole link frames of \a c with respect to the inertia frame, respectively.
  *
- * rkChainUpdateRate() updates both the velocities and the accelerations of the
- * whole links of \a c with respect to the inertia frame.
- * rkChainUpdateRateZeroGravity() updates velocities and accelerations of the
- * whole links of \a c with respect to the inertia frame under the gravity-free
- * condition.
+ * rkChainUpdateRate() updates the rate, namely, the velocities and the accelerations
+ * of the whole links of \a c with respect to the frame that has an acceleration
+ * of the field \a g.
+ * rkChainUpdateRateGravity() updates the rate of the whole links of \a c in
+ * the gravitational field.
+ * rkChainUpdateRateZeroGravity() updates the rate of the whole links of \a c
+ * in the gravity-free field.
  *
  * rkChainUpdateWrench() computes wrenches, namely, combinations of force and
  * torque acting at the original points of the whole links of \a c.
  * \return
  * rkChainUpdateFrame(), rkChainUpdateVel(), rkChainUpdateAcc(), rkChainUpdateRate(),
- * rkChainUpdateRateZeroGravity() and rkChainUpdateWrench() do not return any values.
+ * rkChainUpdateRateGravity(), rkChainUpdateRateZeroGravity(), and rkChainUpdateWrench()
+ * do not return any values.
  * Actually, they are not functions but macros. Refer rk_chain.h for their
  * implementations.
  * \sa
@@ -281,8 +289,9 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
 #define rkChainUpdateFrame(c)  rkLinkUpdateFrame( rkChainRoot(c), ZFRAME3DIDENT )
 #define rkChainUpdateVel(c)    rkLinkUpdateVel( rkChainRoot(c), ZVEC6DZERO )
 #define rkChainUpdateAcc(c)    rkLinkUpdateAcc( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
-#define rkChainUpdateRate(c)   rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, RK_GRAVITY6D )
-#define rkChainUpdateRateZeroGravity(c) rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, ZVEC6DZERO )
+#define rkChainUpdateRate(c,g) rkLinkUpdateRate( rkChainRoot(c), ZVEC6DZERO, (g) )
+#define rkChainUpdateRateGravity(c)     rkChainUpdateRate( c, RK_GRAVITY6D )
+#define rkChainUpdateRateZeroGravity(c) rkChainUpdateRate( c, ZVEC6DZERO )
 #define rkChainUpdateWrench(c) rkLinkUpdateWrench( rkChainRoot(c) )
 
 /*! \brief gravity orientation with respect to the root link.
@@ -322,45 +331,64 @@ __EXPORT void rkChainFK(rkChain *c, zVec dis);
 /*! \brief inverse dynamics of kinematic chain.
  *
  * rkChainUpdateID() computes the inverse dynamics of a kinematic chain \a c
- * by the Newton-Euler's method. It supposes that the joint displacements,
- * velocities, and accelerations of \a c are updated in advance.
- * rkChainUpdateIDZeroGravity() computes the inverse dynamics of \a c as well
- * as rkChainUpdateID() except that the chain is supposed to be in the
- * gravity-free space.
+ * under an acceleration of field \a g by the Newton-Euler's method. It supposes
+ * that the joint displacements, velocities, and accelerations of \a c are
+ * updated in advance.
+ * rkChainUpdateIDGravity() computes the inverse dynamics of \a c in the
+ * gravitational field.
+ * rkChainUpdateIDZeroGravity() computes the inverse dynamics of \a c in the
+ * gravity-free field.
  *
  * rkChainID() computes the inverse dynamics of \a c, provided the joint
- * velocity \a vel and the acceleration \a acc.
+ * velocity \a vel, the acceleration \a acc, and an acceleration of field
+ * \a g.
+ * rkChainIDGravity() and rkChainIDZeroGravity() compute the inverse dynamics
+ * of \a c in the gravitational field and the gravity-free field, respectively,
+ * provided \a vel and \a acc.
  *
  * rkChainFKCNT() continuously updates the joint displacement for \a dis over
- * the time step \a dt, and then computes the inverse dynamics. All the joint
- * velocities and accelerations of \a c will be updated in accordance with a
- * simple numerical differentiation.
+ * the time step \a dt, and then, computes the inverse dynamics in the graviational
+ * field. All the joint velocities and accelerations of \a c will be updated
+ * in accordance with a simple numerical differentiation.
  * \return
- * rkChainUpdateID(), rkChainUpdateIDZeroGravity(), rkChainID() and rkChainFKCNT()
+ * rkChainUpdateID(), rkChainUpdateIDGravity(), rkChainUpdateIDZeroGravity(),
+ * rkChainID(), rkChainIDGravity(), rkChainIDZeroGravity(), and rkChainFKCNT()
  * do not return any values.
  */
-__EXPORT void rkChainUpdateID(rkChain *c);
-__EXPORT void rkChainUpdateIDZeroGravity(rkChain *c);
-__EXPORT void rkChainID(rkChain *c, zVec vel, zVec acc);
+__EXPORT void rkChainUpdateID(rkChain *c, zVec6D *g);
+#define rkChainUpdateIDGravity(c)       rkChainUpdateID( c, RK_GRAVITY6D )
+#define rkChainUpdateIDZeroGravity(c)   rkChainUpdateID( c, ZVEC6DZERO )
+__EXPORT void rkChainID(rkChain *c, zVec vel, zVec acc, zVec6D *g);
+#define rkChainIDGravity(c,vel,acc)     rkChainID( c,vel,acc, RK_GRAVITY6D )
+#define rkChainIDZeroGravity(c,vel,acc) rkChainID( c,vel,acc, ZVEC6DZERO )
 __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
 
 /*! \brief link acceleration at zero joint acceleration.
  *
- * rkChainLinkZeroAcc() computes 6D acceleration of a point \a p
- * on the \a id'th link of a kinematic chain \a chain with respect
- * to the inertia frame at zero-joint acceleration. This corresponds
- * to the multiplication of the rate of Jacobian matrix and the
- * joint velocity vector.
+ * rkChainLinkZeroAcc() computes 6D acceleration of a point \a p on the
+ * \a id th link of a kinematic chain \a c at zero-joint acceleration.
+ * This corresponds to the multiplication of the rate of Jacobian matrix and
+ * the joint velocity vector.
+ * \a g is an acceleration of the field.
  * The result is put into \a a0.
+ *
+ * rkChainLinkZeroAccGravity() and rkChainLinkZeroAccZeroGravity() compute
+ * 6D acceleration of a point \a p on the \a id th link of \a c at zero-joint
+ * acceleration.
+ * The difference between rkChainLinkZeroAccGravity() and rkChainLinkZeroAccZeroGravity()
+ * are that \a a0 includes the acceleration due to the gravity in the
+ * former, while it does not in the latter.
+ * For both functions, the result is put into \a a0.
  * \notes
- * rkChainLinkZeroAcc() internally zeroes the joint acceleration
- * of \a chain and calls rkChainUpdateRate().
+ * rkChainLinkZeroAcc(),rkChainLinkZeroAccGravity(), and rkChainLinkZeroAccZeroGravity()
+ * internally zero the joint acceleration of \a c.
  * \return
- * rkChainLinkZeroAcc() returns a pointer \a a0.
- * \notes
- * Joint acceleration of the kinematic chain is set for zero.
+ * rkChainLinkZeroAcc(),rkChainLinkZeroAccGravity(), and rkChainLinkZeroAccZeroGravity()
+ * return a pointer \a a0.
  */
-__EXPORT zVec6D *rkChainLinkZeroAcc(rkChain *chain, int id, zVec3D *p, zVec6D *a0);
+__EXPORT zVec6D *rkChainLinkZeroAcc(rkChain *c, int id, zVec3D *p, zVec6D *g, zVec6D *a0);
+#define rkChainLinkZeroAccGravity(c,i,p,a0)     rkChainLinkZeroAcc( (c), (i), (p), RK_GRAVITY6D, (a0) )
+#define rkChainLinkZeroAccZeroGravity(c,i,p,a0) rkChainLinkZeroAcc( (c), (i), (p), ZVEC6DZERO, (a0) )
 
 /*! \brief total mass of a kinematic chain.
  *

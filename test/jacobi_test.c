@@ -55,7 +55,7 @@ void chain_init(rkChain *chain)
 
   rkChainSetOffset( chain );
   rkChainUpdateFK( chain );
-  rkChainUpdateID( chain );
+  rkChainUpdateIDGravity( chain );
 }
 
 void world_ang_test(rkChain *chain, zMat jacobi, zVec3D *v)
@@ -142,19 +142,18 @@ bool assert_zeroacc(rkChain *chain, int id, zVec dis, zVec vel, zVec acc, zMat j
   zVecRandUniform( vel, -1, 1 );
   zVecRandUniform( acc, -1, 1 );
   zVec3DCreate( &p, zRandF(-0.1,0.1), zRandF(-0.1,0.1), zRandF(-0.1,0.1) );
-  /* forward kinematics & Jacobian matrix */
+  /* forward kinematics */
   rkChainSetJointDisAll( chain, dis );
   rkChainUpdateFK( chain );
   /* link acceleration */
   rkChainSetJointVelAll( chain, vel );
-  rkChainLinkZeroAcc( chain, id, &p, &a0 );
+  rkChainLinkZeroAccZeroGravity( chain, id, &p, &a0 );
   rkChainSetJointAccAll( chain, acc );
-  rkChainUpdateRate( chain );
+  rkChainUpdateRateZeroGravity( chain );
   /* check */
   rkChainLinkPointAcc( chain, id, &p, &tmp );
   zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), &tmp, zVec6DLin(&av) );
   zMulMat3DVec3D( rkChainLinkWldAtt(chain,id), rkChainLinkAngAcc(chain,id), zVec6DAng(&av) );
-  zVec6DLin(&av)->c.z -= RK_G; /* note: zero-acceleration does not include acceleration due to gravity. */
   zVec6DSubDRC( &av, &a0 );
   /* linear acceleration */
   rkChainLinkWldLinJacobi( chain, id, &p, jacobi );
@@ -186,7 +185,7 @@ int main(int argc, char *argv[])
   zVecRandUniform( dis, -10.0, 10.0 );
   zVecRandUniform( vel, -10.0, 10.0 );
   rkChainFK( &chain, dis );
-  rkChainID( &chain, vel, acc );
+  rkChainIDGravity( &chain, vel, acc );
 
   zAssert( rkChainLinkWldAngJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, world_ang_test ) );
   zAssert( rkChainLinkWldLinJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, world_lin_test ) );

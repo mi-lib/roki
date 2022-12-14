@@ -46,9 +46,6 @@ typedef struct _rkLink{
   struct _rkLink *sibl;   /*!< \brief a pointer to a sibling link */
   /*! \cond */
   rkABIPrp _abiprp;  /* for ABI method */
-#if 0
-  void *_util;  /* for utility */
-#endif
   /* additional property */
   /* 1: constraint list for inverse kinematics
      2: visualization information

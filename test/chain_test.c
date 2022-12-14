@@ -68,7 +68,7 @@ bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec vel, double tol)
   trq_id = zVecAlloc( n );
   zVecRandUniform( acc, -1.0, 1.0 );
   /* inverse dynamics */
-  rkChainID( chain, vel, acc );
+  rkChainIDGravity( chain, vel, acc );
   rkChainGetJointTrqAll( chain, trq_id );
   /* forward dynamics */
   zMulMatVec( inertia, acc, trq_fd );
@@ -132,7 +132,7 @@ int chain_init(rkChain *chain)
 
   rkChainSetOffset( chain );
   rkChainUpdateFK( chain );
-  rkChainUpdateID( chain );
+  rkChainUpdateIDGravity( chain );
   return rkChainJointSize( chain );
 }
 

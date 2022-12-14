@@ -83,7 +83,7 @@ void invpend_set_joint_state(rkChain *ip, zVec q, zVec dq, zVec ddq)
   zVecSetElem( ddq, 0, zRandF(-zPI,zPI) * zSqr(0.1/DT) );
   zVecSetElem( ddq, 1, zRandF(-zPI,zPI) * zSqr(0.1/DT) );
   rkChainFK( ip, q );
-  rkChainID( ip, dq, ddq );
+  rkChainIDGravity( ip, dq, ddq );
 }
 
 void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq)

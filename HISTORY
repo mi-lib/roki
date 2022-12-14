@@ -1,3 +1,8 @@
+2022.12.14. Modified rkChainFKCNT, _rkChainBiasVec, _rkChainInertiaMat, rkChainFromZTK, and rkChainInitFromZTK. [rk_chain]
+2022.12.14. Redefined rkChainLinkZroAcc, added rkChainLinkZeroAccGravity as a macro, and reimplemented rkChainLinkZeroAccZeroGravity as a macro. [rk_chain]
+2022.12.14. Redefined rkChainID, added rkChainIDGravity as a macro, and reimplemented rkChainIDZeroGravity as a macro. [rk_chain]
+2022.12.14. Redefined rkChainUpdateID, added rkChainUpdateIDGravity as a macro, and reimplemented rkChainUpdateIDZeroGravity as a macro. [rk_chain]
+2022.12.14. Redefined rkChainUpdateRate to accept the acceleration of the field, and added rkChainUpdateRateGravity. [rk_chain]
 2022.12.13. Modified rkChainLinkZeroAcc to exclude acceleration due to gravity. [rk_chain]
 2022. 9.16. Added rkChainLinkJointSetTrq and rkChainSetJointTrqAll. [rk_chain]
 2022. 9.16. Added rkLinkJointSetTrq. [rk_link]
