@@ -1,4 +1,4 @@
-#include <roki/rk_ik.h>
+#include <roki/rk_chain.h>
 
 #define DT 0.001
 
@@ -17,35 +17,32 @@ zVec3D *att_srv(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zV
   return ZVEC3DZERO;
 }
 
-
-void init(rkChain *puma, rkChain *puma_v, rkIK *ik, rkIKSRV_fp srv_fp, zVec *dis, rkIKCell *cell[])
+void init(rkChain *puma, rkChain *puma_v, rkIKSRV_fp srv_fp, zVec *dis, rkIKCell *cell[])
 {
   rkIKCellAttr attr;
 
-  if( !rkChainScanFile( puma, "../model/puma.ztk" ) ) exit( 1 );
+  if( !rkChainReadZTK( puma, "../model/puma.ztk" ) ) exit( 1 );
   rkChainClone( puma, puma_v );
-  rkIKCreate( ik, puma_v );
-  rkIKJointRegAll( ik, 0.001 );
+  rkChainCreateIK( puma_v );
+  rkChainRegIKJointAll( puma_v, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkIKCellReg( ik, &attr, RK_IK_CELL_ATTR_ID, rkIKRefSetAA,  rkIKJacobiLinkWldAng, att_srv, rkIKBindLinkWldAtt, NULL, NULL );
-  cell[1] = rkIKCellReg( ik, &attr, RK_IK_CELL_ATTR_ID, rkIKRefSetPos, rkIKJacobiLinkWldLin, srv_fp, rkIKBindLinkWldPos, NULL, NULL );
+  cell[0] = rkChainRegIKCell( puma_v, &attr, RK_IK_CELL_ATTR_ID, rkIKRefSetAA,  rkIKJacobiLinkWldAng, att_srv, rkIKBindLinkWldAtt, NULL, NULL );
+  cell[1] = rkChainRegIKCell( puma_v, &attr, RK_IK_CELL_ATTR_ID, rkIKRefSetPos, rkIKJacobiLinkWldLin, srv_fp, rkIKBindLinkWldPos, NULL, NULL );
 
-  rkIKSetJointVelMethod( ik, rkIKJointVelSR );
-  rkIKDeactivate( ik );
-  rkIKBind( ik ); /* bind current status to the reference. */
+  rkIKSetJointVelMethod( puma_v->_ik, rkIKJointVelSR );
+  rkChainDeactivateIK( puma_v );
+  rkChainBindIK( puma_v );
 
   *dis = zVecAlloc( rkChainJointSize( puma ) );
 }
 
-void destroy(rkChain *puma, rkChain *puma_v, rkIK *ik, zVec dis)
+void destroy(rkChain *puma, rkChain *puma_v, zVec dis)
 {
-  rkIKDestroy( ik );
   rkChainDestroy( puma );
   rkChainDestroy( puma_v );
   zVecFree( dis );
 }
-
 
 #define T  5.0
 
@@ -67,7 +64,6 @@ void cmp(rkChain *ra, rkChain *rb)
 int main(int argc, char *argv[])
 {
   rkChain pumaA, pumaA_v, pumaB, pumaB_v;
-  rkIK ikA, ikB;
   zVec disA, disB;
   rkIKCell *cellA[2], *cellB[2];
   double phase, x, y, z;
@@ -76,9 +72,9 @@ int main(int argc, char *argv[])
   FILE *fpA, *fpB;
 
   /* type A: task space tracking */
-  init( &pumaA, &pumaA_v, &ikA, rkIKLinkWldPosErr, &disA, cellA );
+  init( &pumaA, &pumaA_v, rkIKLinkWldPosErr, &disA, cellA );
   /* type B: configuration space tracking */
-  init( &pumaB, &pumaB_v, &ikB, pos_srv, &disB, cellB );
+  init( &pumaB, &pumaB_v, pos_srv, &disB, cellB );
   x = rkChainLinkWldPos(&pumaA,6)->e[zX];
   y = rkChainLinkWldPos(&pumaA,6)->e[zY];
   z = rkChainLinkWldPos(&pumaA,6)->e[zZ];
@@ -96,13 +92,13 @@ int main(int argc, char *argv[])
     y += v.e[zY] * DT;
     z += v.e[zZ] * DT;
     rkIKCellSetRef( cellA[1], x, y, z );
-    rkIKSync( &ikA, &pumaA );
-    rkIKSolve( &ikA, disA, zTOL, 1000 );
+    rkChainCopyState( &pumaA, &pumaA_v );
+    rkChainIK( &pumaA_v, disA, zTOL, 1000 );
     rkChainFKCNT( &pumaA, disA, DT );
     fprintf( fpA, "%f ", DT ); zVecFPrint( fpA, disA );
 
-    rkIKSync( &ikB, &pumaB );
-    rkIKSolveOne( &ikB, disB, DT );
+    rkChainCopyState( &pumaB, &pumaB_v );
+    rkChainIKOne( &pumaB_v, disB, DT );
     rkChainFKCNT( &pumaB, disB, DT );
     fprintf( fpB, "%f ", DT ); zVecFPrint( fpB, disB );
 
@@ -111,7 +107,7 @@ int main(int argc, char *argv[])
   fclose( fpA );
   fclose( fpB );
 
-  destroy( &pumaA, &pumaA_v, &ikA, disA );
-  destroy( &pumaB, &pumaB_v, &ikB, disB );
+  destroy( &pumaA, &pumaA_v, disA );
+  destroy( &pumaB, &pumaB_v, disB );
   return 0;
 }

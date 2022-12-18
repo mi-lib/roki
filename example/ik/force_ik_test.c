@@ -1,4 +1,4 @@
-#include <roki/rk_ik.h>
+#include <roki/rk_chain.h>
 
 /*
 base(float)
@@ -44,7 +44,6 @@ void chain_init(rkChain *chain)
 int main(int argc, char *argv[])
 {
   rkChain chain;
-  rkIK ik;
   rkIKCellAttr attr;
   zVec dis;
   zVec6D err;
@@ -55,17 +54,17 @@ int main(int argc, char *argv[])
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainFK( &chain, dis );
 
-  rkIKCreate( &ik, &chain );
-  rkIKJointRegAll( &ik, 0.01 );
+  rkChainCreateIK( &chain );
+  rkChainRegIKJointAll( &chain, 0.01 );
 
   for( i=0; i<3; i++ ){
     attr.id = i*3+3;
     attr.mode = RK_IK_CELL_FORCE;
-    cell[i*2]   = rkIKCellRegWldPos( &ik, &attr, RK_IK_CELL_ATTR_ID | RK_IK_CELL_ATTR_FORCE );
-    cell[i*2+1] = rkIKCellRegWldAtt( &ik, &attr, RK_IK_CELL_ATTR_ID | RK_IK_CELL_ATTR_FORCE );
+    cell[i*2]   = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_CELL_ATTR_ID | RK_IK_CELL_ATTR_FORCE );
+    cell[i*2+1] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID | RK_IK_CELL_ATTR_FORCE );
   }
-  rkIKDeactivate( &ik );
-  rkIKBind( &ik ); /* bind current status to the reference. */
+  rkChainDeactivateIK( &chain );
+  rkChainBindIK( &chain );
 
   zVec3DCreate( &cell[0]->data.ref.pos, 1,  1, 0 );
   zVec3DCreate( &cell[2]->data.ref.pos, 1, -1, 0 );
@@ -80,17 +79,15 @@ int main(int argc, char *argv[])
 
   for( i=0; i<=DIV; i++ ){
     zVec3DCreate( &cell[4]->data.ref.pos,-4.0*(double)i/DIV,  0, 0 );
-    rkIKSolve( &ik, dis, zTOL, 0 );
-    rkChainFK( ik.chain, dis );
+    rkChainIK( &chain, dis, zTOL, 0 );
+    rkChainFK( &chain, dis );
     for( j=0; j<3; j++ ){
-      zVec3DSub( &cell[j*2]->data.ref.pos, zFrame3DPos(rkChainLinkWldFrame(ik.chain,j*3+3)), zVec6DLin(&err) );
-      zMat3DError( &cell[j*2+1]->data.ref.att, rkChainLinkWldAtt(ik.chain,j*3+3), zVec6DAng(&err) );
+      zVec3DSub( &cell[j*2]->data.ref.pos, zFrame3DPos(rkChainLinkWldFrame(&chain,j*3+3)), zVec6DLin(&err) );
+      zMat3DError( &cell[j*2+1]->data.ref.att, rkChainLinkWldAtt(&chain,j*3+3), zVec6DAng(&err) );
       printf( "%g %g ", zVec3DNorm(zVec6DLin(&err)), zVec3DNorm(zVec6DAng(&err)) );
     }
     zEndl();
   }
-
-  rkIKDestroy( &ik );
   rkChainDestroy( &chain );
   zVecFree( dis );
   return 0;

@@ -17,72 +17,64 @@ __BEGIN_DECLS
  * inverse kinematics solver class
  * **********************************************************
 
- Inverse Kinematics Computation Procedure featuring rkIK
+ Inverse Kinematics Computation Procedure
 
- suppose 'ik' is an instance of inverse kinematics solver.
+ Suppose \a chain is a kinematic chain.
 
- 1. initialize a kinematic chain \a c and set the initial posture.
+ 1. rkChainCreateIK( &chain );
 
- 2. rkIKCreate( &ik, c );
-
- 3. register cooperating joints, using
-     rkIKJointReg( &ik, id, weight );
+ 2. Register cooperating joints, using
+     rkChainRegIKJoint( &chain, id, weight );
      ...
-    where 'id' is the identifier of a link which the joint
-    is assigned to.
-    Note that 'rkIKJointReg()' is utilized when changing
-    the weight of the relative joint displacement norm.
-    Simply calling rkIKJointReg( &ik, id, weight2 ),
-    weight would be changed from 'weight' to 'weight2'.
+     \a id : the identifier of a link which the joint is assigned to.
+    rkChainRegIKJoint() is also available for changing the weight
+    on the joint displacement. rkChainRegIKJoint( &ik, id, weight2 )
+    changes the weight from \a weight to \a weight2.
 
- 4. register constraint cell of inverse kinematics, using
-     entry = rkIKCellReg( &ik, &attr, ref_fp, jacobi_fp, vel_fp, bind_fp, acm_fp, util );
+ 3. Register constraint cell of inverse kinematics, using
+     entry = rkChainRegIKCell( &chain, &attr, ref_fp, jacobi_fp, vel_fp, bind_fp, acm_fp, util );
      ...
-    where 'attr' stores attributes of the attented property
-    (see 'rk_ik_cell.h/c'), 'ref_fp' is a pointer to the
-    function which composes reference from a set of three
-    values, 'jacobi_fp' is a pointer to the function which
-    computes Jacobian matrix relating joint velocity to
-    the constrained property, 'vel_fp' is a pointer to the
-    function which computes the constrained 3D vector
-    (velocity or residual error of displacement in most
-    cases), 'bind_fp' is a pointer to the function which
-    computes the current amount of the constrained property,
-    and 'util' is for programmers' utility to attach any type
-    of data chunk.
+     \a attr : attributes of the attented property (see 'rk_ik_cell.h/c')
+     \a ref_fp : a function that provides reference (a set of three values)
+     \a jacobi_fp : a function that computes Jacobian matrix relating
+        joint velocity to the constrained property
+     \a vel_fp : a function that computes the constrained 3D vector
+        (velocity or residual error of displacement in most cases)
+     \a bind_fp : a function that computes the current amount of the
+        constrained property
+     \a util : programmers' utility to attach any type of data chunk.
+    Note that the constraint is not activated just by being registered;
+    calling rkIKSetRef() family function activates it.
 
-    Note that the constraint is not activated just by being
-    registered; calling rkIKSetRef family function activates
-    it.
+ 4. Initialize the posture of \a chain.
 
- 5. deactivate all constraint cells by rkIKDeactivate( &ik );
+ 5. rkChainDeactivateIK( &chain );
 
- 6. bind the current status of all constraints by calling
-    rkIKBind( &ik ), if necessary.
+ 6. Bind the current status of all constraints by calling
+    rkChainBindIK( &chain ), if necessary.
 
- 7. set the referential values of constrained properties
-    by rkIKCellSetRef and so forth. Note that rkIKCellSetRef
-    internally calls rkIKCellSetMask to activate the constraint.
+ 7. Set the referential values of constrained properties by rkIKCellSetRef()
+    and so forth. Note that rkIKCellSetRef() internally calls rkIKCellSetMask()
+    to activate the constraint.
 
- 8. rkIKSolve( &ik, dis, tol, iter );
-    where 'dis' is a vector to store the solution of inverse
-    kinematics, 'tol' is the tolerance of error, and 'iter' is
-    the maximum number of iteration. When 'iter' is zero, the
-    default number is applied.
+ 8. rkChainIK( &chain, dis, tol, iter );
+     \a dis : a vector to store the solution of inverse kinematics
+     \a tol : tolerance of error
+     \a iter : the maximum number of iteration (if 0, the default number
+        is applied.
 
- 9. rkIKDestroy( &ik );
+ 9. rkChainDestroyIK( &chain );
     when terminating the program.
 
  * ***********************************************************/
 
 typedef struct _rkIK{
-  rkChain *chain;       /* a pointer to a kinematic chain */
+  bool *joint_sw;       /*!< joint cooperation switch */
+  double *joint_weight; /*!< joint cooperating weight */
+  zVec joint_vel;       /*!< joint velocity */
+  double eval;          /*!< evaluation function */
 
-  bool *joint_sw;       /* joint cooperation switch */
-  double *joint_weight; /* joint cooperating weight */
-  zVec joint_vel;       /* joint velocity */
-  double eval;          /* evaluation function */
-
+  /*! \cond */
   rkIKCellList clist;   /* constraint cell list */
   zMat _c_mat_cell;     /* constraint coefficient matrix cell */
   zVec3D _c_srv_cell;   /* strict referential velocity vector cell */
@@ -98,107 +90,112 @@ typedef struct _rkIK{
   /* workspace for joint velocity computation */
   zLE __le;
   zVec __c;
+  /*! \endcond */
 } rkIK;
 
 /*! \brief create and destroy inverse kinematics solver.
  *
- * rkIKInit() initializes an instance of the inverse kinematics solver
- * \a ik.
- * 
- * rkIKLoad() assigns a kinematic chain \a chain.
- * It prepares the internal working spaces to compute
- * constraint equation matrix and vectors.
- * 
- * rkIKCreate() creates an instance of the inverse kinematics solver
- * \a ik by assigning a kinematic chain \a chain. It prepares internal
- * workspaces to compute constraint equation matrix and vectors.
+ * rkChainCreateIK() creates the inverse kinematics solver of a kinematic
+ * chain \a chain.
  *
- * rkIKDestroy() destroys the internal working spaces of \a ik.
+ * rkChainDestroyIK() destroys the inverse kinematics solver of \a chain.
  * \return
- * rkIKInit() returns no value.
+ * rkIKCreate() returns a pointer \a chain if succeeding. If it failes to
+ * allocate the internal memory, the null pointer is returned.
  *
- * rkIKCreate() returns a pointer \a ik if succeeding. If it failes to
- * allocate the internal workspaces, the null pointer is returned.
- *
- * rkIKDestroy() returns no value.
+ * rkChainDestroyIK() returns no value.
  */
-__EXPORT void rkIKInit(rkIK *ik);
-__EXPORT rkIK *rkIKCreate(rkIK *ik, rkChain *chain);
-__EXPORT void rkIKDestroy(rkIK *ik);
+__EXPORT rkChain *rkChainCreateIK(rkChain *chain);
+__EXPORT void rkChainDestroyIK(rkChain *chain);
 
-/*! \brief register/unregister cooperating joints and constraint cells.
+/*! \brief register/unregister cooperating joints of the inverse kinematics.
  *
- * rkIKJointReg() registers a joint assigned to \a id'th
- * link of a kinematic chain as one of the cooperating
- * joints. \a weight is the weighting value to the norm of
- * relative joint displacement.
- * rkIKJointUnreg() unregisters the joint \a id from the
- * cooperating joints.
- *
- * rkIKCellReg() registers a constraint cell denoted by \a attr,
- * \a rf, \a mf, \a vf and \a bf, to the internal cell list of
- * \a ik.
- * \a attr is to denote attributes of the attented link or point
- * to the constraint, if necessary. See rk_ik_cell.h for the
- * detail.
- * \a rf is a pointer to the function which composes reference
- * from a set of the three values.
- * \a mf is a pointer to the function which computes Jacobian
- * matrix relating joint velocity to the constrained property.
- * \a vf is a pointer to the function which computes the
- * constrained 3D vector - velocity or residual error of
- * displacement, typically. Namely, for a constraint J q = v,
- * \a mf computes J and \a vf does v.
- * \a bf is a pointer to the function which computes the current
- * amount of the constrained property.
- * \a util is for programmers utility to attach any type of data
- * chunk, utilized in \a vf.
+ * rkChainRegIKJoint() registers a joint assigned to \a id th link of a
+ * kinematic chain \a chain as one of the cooperating joints.
+ * \a weight is the weighting value to the joint displacement.
+ * rkChainUnregIKJoint() unregisters the joint \a id from the cooperating
+ * joints.
  * \return
- * rkIKJointReg() and rkIKCellReg() return the boolean value.
- * If \a id is a valid link identifier, they return the true
- * value. Otherwise, the false value is returned.
- *
- * rkIKCellReg() returns the entry number of the registered cell.
+ * rkChainRegIKJoint() returns the boolean value.
+ * If \a id is a valid link identifier, it returns the true value.
+ * Otherwise, the false value is returned.
  */
-__EXPORT bool rkIKJointReg(rkIK *ik, uint id, double weight);
-__EXPORT bool rkIKJointRegAll(rkIK *ik, double weight);
-__EXPORT bool rkIKJointUnreg(rkIK *ik, uint id);
+__EXPORT bool rkChainRegIKJoint(rkChain *chain, uint id, double weight);
+__EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
+__EXPORT bool rkChainUnregIKJoint(rkChain *chain, uint id);
 
-/*! \brief register a joint into which the residual of constraints is resolved. */
-
-__EXPORT rkIKCell *rkIKCellReg(rkIK *ik, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
-__EXPORT bool rkIKCellUnreg(rkIK *ik, rkIKCell *cell);
-
-/*! \brief register a constraint cell of the inverse kinematics. */
-__EXPORT rkIKCell *rkIKCellRegWldPos(rkIK *ik, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkIKCellRegWldAtt(rkIK *ik, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkIKCellRegL2LPos(rkIK *ik, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkIKCellRegL2LAtt(rkIK *ik, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkIKCellRegCOM(rkIK *ik, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkIKCellRegAM(rkIK *ik, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkIKCellRegAMCOM(rkIK *ik, rkIKCellAttr *attr, int mask);
+/*! \brief register/unregister a constraint cell of the inverse kinematics.
+ *
+ * rkChainRegIKCell() registers a constraint cell denoted by \a attr, \a rf,
+ * \a mf, \a vf, and \a bf, to the cell list of the inverse kinematics
+ * solver of \a chain.
+ * \a attr contains attributes of the attented property (link or point to
+ * be constrained). See rk_ik_cell.h for detail.
+ * \a rf points a function that provides reference (a set of three values).
+ * \a mf points a function that computes Jacobian matrix relating joint
+ * velocity to the constrained property.
+ * \a vf is a function that computes the constrained 3D vector (velocity
+ * or residual error of displacement in many cases).
+ * \a bf is a function that computes the current amount of the constrained
+ * property.
+ * \a util is available for programmers' conveniences, which points any type
+ * of data chunk.
+ *
+ * rkChainUnregIKCell() unregisters a constraint cell of the inverse kinematics
+ * solver of \a chain. \a id is the identifier of the cell to be unregistered.
+ * \return
+ * rkChainRegIKCell() returns a pointer to the registered cell. If it fails,
+ * the null pointer is returned.
+ * rkChainUnregIKCell() returns the boolean value. If it fails to reallocate
+ * internal memory for the inverse kinematics, the false value is returned.
+ * Otherwise, the true value is returned.
+ */
+__EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
+__EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
 
 __EXPORT rkIKCell *rkIKFindCell(rkIK *ik, int id);
+__EXPORT rkIKCell *rkChainFindIKCell(rkChain *chain, int id);
 
 /*! \brief deactivate and bind constraint properties.
  *
- * rkIKDeactivate() deactivates all the constraints registered
- * to the inverse kinematics solver \a ik. In order to activate
- * each constraint cell, call rkIKSetRef family functions, or
- * activate it manually by rkIKCellOn().
+ * rkChainDeactivateIK() deactivates all the constraints registered
+ * to the inverse kinematics solver of a kinematic chain \a chain.
+ * In order to activate each constraint cell, call rkIKSetRef family
+ * functions, or activate it manually by rkIKCellOn().
  *
- * rkIKBind() sets the references of the properties constrained
- * by \a ik for the current values. It activates the all cells
- * which binding functions are assigned.
+ * rkChainBindIK() sets the references of the constrained properties
+ * of \a chain for the current values. It activates the all cells
+ * that binding functions are assigned.
  * \return
  * They return no values.
  */
-__EXPORT void rkIKDeactivate(rkIK *ik);
-__EXPORT void rkIKBind(rkIK *ik);
-__EXPORT void rkIKAcmClear(rkIK *ik);
+__EXPORT void rkChainDeactivateIK(rkChain *chain);
+__EXPORT void rkChainBindIK(rkChain *chain);
+__EXPORT void rkChainZeroIKAcm(rkChain *chain);
 
-/*! \brief synchronize state of the virtual kinematic chain to an actual. */
-#define rkIKSync(ik,c) rkChainCopyState( c, (ik)->chain )
+/*! \brief solve inverse kinematics.
+ *
+ * rkChainCreateIKEq() creates the motion rate constraint equation for the
+ * inverse kinematics solver of a kinematic chain \a chain. It computes
+ * coefficient matrix and strict referential vector of constrained values.
+ *
+ * rkChainIKRate() computes the joint velocity vector by solving the motion
+ * rate constraint equation J q = v. The solution method can be defined by
+ * rkIKSetJointVelMethod(). The following methods are predefined:
+ *  - rkIKJointVelMP() for Moore-Penrose generalized inverse
+ *  - rkIKJointVelSR() for Singularity-robust inverse
+ *  - rkIKJointVelAD() for auto error-damped inverse
+ * rkIKJointVelAD() is initially chosen as the default method.
+ *
+ * rkChainIK() solves the invserse kinematics of \a chain with numerical
+ * iteration based on Levenberg-Marquardt method. It internally calls
+ * rkChainIKOne() in an interative manner.
+ * \return
+ * rkChainCreateIKEq() does not return any value.
+ * rkChainIKRate() returns a pointer to the joint rate vector.
+ * rkChainIK() returns the actual number of iteration.
+ */
+__EXPORT void rkChainCreateIKEq(rkChain *chain);
 
 /*! \brief resolve the motion rate. */
 #define rkIKSetJointVelMethod(ik,f) ( (ik)->_jv = (f) )
@@ -206,29 +203,18 @@ __EXPORT zVec rkIKJointVelMP(rkIK *ik);
 __EXPORT zVec rkIKJointVelSR(rkIK *ik);
 __EXPORT zVec rkIKJointVelAD(rkIK *ik);
 
-/*! \brief solve inverse kinematics.
- *
- * rkIKEq() forms the motion rate constraint equation for the
- * inverse kinematics solver \a ik, computing coefficient
- * matrix and strict referential vector of constrained values.
- *
- * rkIKSolveOne() computes the joint velocity vector by solving
- * the motion rate constraint equation J q = v with
- * singularity-robust inverse matrix of J, namely,
- *  q = J^T Wn ( J Wn J^T + We )^-1 v.
- *
- * rkIKSolve() solves the invserse kinematics with numerical
- * iteration based on Levenberg=Marquardt's method, repetitively
- * calling rkIKSolveOne().
- * \return
- * Neither rkIKEq() nor rkIKSolveOne() return any values.
- *
- * rkIKSolve() returns the number of iteration.
- */
-__EXPORT void rkIKEq(rkIK *ik);
-__EXPORT zVec rkIKSolveRate(rkIK *ik);
-__EXPORT zVec rkIKSolveOne(rkIK *ik, zVec dis, double dt);
-__EXPORT int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter);
+__EXPORT zVec rkChainIKRate(rkChain *chain);
+__EXPORT zVec rkChainIKOne(rkChain *chain, zVec dis, double dt);
+__EXPORT int rkChainIK(rkChain *chain, zVec dis, double tol, int iter);
+
+/*! \brief register a constraint cell of the inverse kinematics. */
+__EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKCellAttr *attr, int mask);
+__EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKCellAttr *attr, int mask);
+__EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKCellAttr *attr, int mask);
+__EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKCellAttr *attr, int mask);
+__EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKCellAttr *attr, int mask);
+__EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKCellAttr *attr, int mask);
+__EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKCellAttr *attr, int mask);
 
 /* ********************************************************** */
 /* IK configuration file I/O
@@ -240,8 +226,8 @@ __EXPORT int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter);
 
 #define ZTK_TAG_RKIK "ik"
 
-__EXPORT rkIK *rkIKConfFromZTK(rkIK *ik, ZTK *ztk);
-__EXPORT rkIK *rkIKConfReadZTK(rkIK *ik, rkChain *chain, char filename[]);
+__EXPORT rkChain *rkChainIKConfFromZTK(rkChain *ik, ZTK *ztk);
+__EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, char filename[]);
 
 __END_DECLS
 

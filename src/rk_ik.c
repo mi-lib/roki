@@ -11,10 +11,9 @@
  * inverse kinematics class
  * ********************************************************** */
 
-/* initialize inverse kinematics solver. */
-void rkIKInit(rkIK *ik)
+/* initialize an inverse kinematics solver. */
+static void _rkIKInit(rkIK *ik)
 {
-  ik->chain = NULL;
   ik->joint_sw = NULL;
   ik->joint_weight = NULL;
   ik->joint_vel = NULL;
@@ -37,27 +36,28 @@ void rkIKInit(rkIK *ik)
   zLEInit( &ik->__le );
 }
 
-/* create an inverse kinematics solver for a given kinematic chain. */
-rkIK *rkIKCreate(rkIK *ik, rkChain *chain)
+/* create an inverse kinematics solver for a kinematic chain. */
+rkChain *rkChainCreateIK(rkChain *chain)
 {
-  rkIKInit( ik );
-  ik->chain = chain;
-  ik->joint_sw = zAlloc( bool, rkChainLinkNum(chain) );
-  ik->joint_weight = zAlloc( double, rkChainLinkNum(chain) );
-  ik->joint_vel = zVecAlloc( rkChainJointSize(chain) );
-  ik->_j_ofs = zIndexCreate( rkChainLinkNum(chain) );
-  ik->_c_mat_cell = zMatAlloc( 3, rkChainJointSize(chain) );
-  if( !ik->joint_sw || !ik->joint_weight || !ik->joint_vel || !ik->_c_mat_cell ){
+  if( !( chain->_ik = zAlloc( rkIK, 1 ) ) ) return NULL;
+  _rkIKInit( chain->_ik );
+  chain->_ik->joint_sw = zAlloc( bool, rkChainLinkNum(chain) );
+  chain->_ik->joint_weight = zAlloc( double, rkChainLinkNum(chain) );
+  chain->_ik->joint_vel = zVecAlloc( rkChainJointSize(chain) );
+  chain->_ik->_j_ofs = zIndexCreate( rkChainLinkNum(chain) );
+  chain->_ik->_c_mat_cell = zMatAlloc( 3, rkChainJointSize(chain) );
+  if( !chain->_ik->joint_sw || !chain->_ik->joint_weight ||
+      !chain->_ik->joint_vel || !chain->_ik->_c_mat_cell ){
     ZALLOCERROR();
+    rkChainDestroyIK( chain );
     return NULL;
   }
-  return ik;
+  return chain;
 }
 
-/* destroy inverse kinematics solver. */
-void rkIKDestroy(rkIK *ik)
+/* destroy an inverse kinematics solver. */
+static void _rkIKDestroy(rkIK *ik)
 {
-  ik->chain = NULL;
   zFree( ik->joint_sw );
   zFree( ik->joint_weight );
   zVecFree( ik->joint_vel );
@@ -77,6 +77,15 @@ void rkIKDestroy(rkIK *ik)
   zLEFree( &ik->__le );
 }
 
+/* destroy an inverse kinematics solver of a kinematic chain. */
+void rkChainDestroyIK(rkChain *chain)
+{
+  if( chain->_ik ){
+    _rkIKDestroy( chain->_ik );
+    zFree( chain->_ik );
+  }
+}
+
 /* allocate working memory for constraint coefficient matrix of inverse kinematics solver. */
 static bool _rkIKAllocCMat(rkIK *ik)
 {
@@ -91,14 +100,14 @@ static bool _rkIKAllocCMat(rkIK *ik)
 }
 
 /* register/unregister a cooperating joint to inverse kinematics solver. */
-static bool _rkIKAllocJointIndex(rkIK *ik)
+static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
 {
   uint count, ofs, i;
   int j;
   double *wp;
 
-  for( count=0, i=0; i<rkChainLinkNum(ik->chain); i++ ){
-    if( rkChainLinkJointSize(ik->chain,i) == 0 )
+  for( count=0, i=0; i<rkChainLinkNum(chain); i++ ){
+    if( rkChainLinkJointSize(chain,i) == 0 )
       ik->joint_sw[i] = false;
     if( ik->joint_sw[i] ) count++;
   }
@@ -108,18 +117,18 @@ static bool _rkIKAllocJointIndex(rkIK *ik)
     ZALLOCERROR();
     return false;
   }
-  for( count=0, ofs=0, i=0; i<rkChainLinkNum(ik->chain); i++ )
+  for( count=0, ofs=0, i=0; i<rkChainLinkNum(chain); i++ )
     if( ik->joint_sw[i] ){
       zIndexSetElemNC( ik->_j_idx, count++, i );
       zIndexSetElemNC( ik->_j_ofs, i, ofs );
-      ofs += rkChainLinkJointSize(ik->chain,i);
+      ofs += rkChainLinkJointSize(chain,i);
     } else
       zIndexSetElemNC( ik->_j_ofs, i, -1 );
   /* allocate joint vector */
   zVecFree( ik->_j_vel );
   zVecFree( ik->_j_wn );
   zLEFree( &ik->__le );
-  count = rkChainJointIndexSize( ik->chain, ik->_j_idx );
+  count = rkChainJointIndexSize( chain, ik->_j_idx );
   if( !( ik->_j_vel = zVecAlloc(count) ) ||
       !( ik->_j_wn = zVecAlloc(count) ) ||
       !zLEAlloc( &ik->__le, NULL, count ) ){
@@ -127,36 +136,36 @@ static bool _rkIKAllocJointIndex(rkIK *ik)
     return false;
   }
   for( wp=zVecBuf(ik->_j_wn), i=0; i<zArraySize(ik->_j_idx); i++ )
-    for( j=0; j<rkChainLinkJointSize(ik->chain,zIndexElemNC(ik->_j_idx,i)); j++ )
+    for( j=0; j<rkChainLinkJointSize(chain,zIndexElemNC(ik->_j_idx,i)); j++ )
       *wp++ = ik->joint_weight[zIndexElemNC(ik->_j_idx,i)];
   return _rkIKAllocCMat( ik );
 }
 
-static bool _rkIKJointReg(rkIK *ik, uint id, bool sw, double weight)
+static bool _rkIKJointReg(rkIK *ik, rkChain *chain, uint id, bool sw, double weight)
 {
-  if( id < 0 || id >= rkChainLinkNum(ik->chain) ){
+  if( id < 0 || id >= rkChainLinkNum(chain) ){
     ZRUNERROR( RK_ERR_LINK_INVID, id );
     return false;
   }
   ik->joint_sw[id] = sw;
   ik->joint_weight[id] = weight;
-  return _rkIKAllocJointIndex( ik );
+  return _rkIKAllocJointIndex( ik, chain );
 }
-bool rkIKJointReg(rkIK *ik, uint id, double weight){
-  return _rkIKJointReg( ik, id, true, weight );
+bool rkChainRegIKJoint(rkChain *chain, uint id, double weight){
+  return _rkIKJointReg( chain->_ik, chain, id, true, weight );
 }
-bool rkIKJointUnreg(rkIK *ik, uint id){
-  return _rkIKJointReg( ik, id, false, 0.0 );
+bool rkChainUnregIKJoint(rkChain *chain, uint id){
+  return _rkIKJointReg( chain->_ik, chain, id, false, 0.0 );
 }
 
 /* register all joints to inverse kinematics solver. */
-bool rkIKJointRegAll(rkIK *ik, double weight)
+bool rkChainRegIKJointAll(rkChain *chain, double weight)
 {
   uint i;
 
-  for( i=0; i<rkChainLinkNum(ik->chain); i++ )
-    if( rkChainLinkJointSize(ik->chain,i) > 0 )
-      if( !rkIKJointReg( ik, i, weight ) ) return false;
+  for( i=0; i<rkChainLinkNum(chain); i++ )
+    if( rkChainLinkJointSize(chain,i) > 0 )
+      if( !rkChainRegIKJoint( chain, i, weight ) ) return false;
   return true;
 }
 
@@ -175,7 +184,7 @@ static bool _rkIKAllocSRV(rkIK *ik)
   }
   return _rkIKAllocCMat( ik );
 }
-rkIKCell *rkIKCellReg(rkIK *ik, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
+static rkIKCell *_rkIKCellReg(rkIK *ik, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
 {
   rkIKCell *cell, *cp;
 
@@ -198,11 +207,21 @@ rkIKCell *rkIKCellReg(rkIK *ik, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkI
   /* return registered entry no., if it succeeds. */
   return _rkIKAllocSRV( ik ) ? cell : NULL;
 }
-bool rkIKCellUnreg(rkIK *ik, rkIKCell *cell)
+static bool _rkIKCellUnreg(rkIK *ik, rkIKCell *cell)
 {
   zListPurge( &ik->clist, cell );
   zFree( cell );
   return _rkIKAllocSRV( ik );
+}
+
+rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
+{
+  return _rkIKCellReg( chain->_ik, attr, mask, rf, mf, vf, bf, af, util );
+}
+
+bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell)
+{
+  return _rkIKCellUnreg( chain->_ik, cell );
 }
 
 /* find a constraint cell of inverse kinematics solver from identifier. */
@@ -214,36 +233,48 @@ rkIKCell *rkIKFindCell(rkIK *ik, int id)
     if( cp->data.id == id ) return cp;
   return NULL;
 }
+rkIKCell *rkChainFindIKCell(rkChain *chain, int id)
+{
+  return rkIKFindCell( chain->_ik, id );
+}
 
 /* deactivate all constraint cells of inverse kinematics solver. */
-void rkIKDeactivate(rkIK *ik)
+static void _rkIKDeactivate(rkIK *ik)
 {
   rkIKCell *cp;
 
   zListForEach( &ik->clist, cp )
     rkIKCellDisable( cp );
 }
+void rkChainDeactivateIK(rkChain *chain)
+{
+  _rkIKDeactivate( chain->_ik );
+}
 
 /* bind current state of properties to be constrained in inverse kinematics to references. */
-void rkIKBind(rkIK *ik)
+void rkChainBindIK(rkChain *chain)
 {
   rkIKCell *cp;
 
-  zListForEach( &ik->clist, cp )
-    rkIKCellBind( cp, ik->chain );
+  zListForEach( &chain->_ik->clist, cp )
+    rkIKCellBind( cp, chain );
 }
 
 /* zero accumulator of each cell. */
-void rkIKAcmZero(rkIK *ik)
+static void _rkIKAcmZero(rkIK *ik)
 {
   rkIKCell *cp;
 
   zListForEach( &ik->clist, cp )
     rkIKCellAcmZero( cp );
 }
+void rkChainZeroIKAcm(rkChain *chain)
+{
+  _rkIKAcmZero( chain->_ik );
+}
 
 /* form the motion rate contraint equation. */
-static int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row)
+static int _rkIKCellEq(rkIK *ik, rkChain *chain, rkIKCell *cell, int s, int row)
 {
   uint i;
   int j;
@@ -251,20 +282,22 @@ static int _rkIKCellEq(rkIK *ik, rkIKCell *cell, int s, int row)
   if( !( ( RK_IK_CELL_XON << s ) & cell->data.attr.mode ) ) return 0;
   zVecSetElemNC( ik->_c_srv, row, ik->_c_srv_cell.e[s] );
   zVecSetElemNC( ik->_c_we, row, cell->data.attr.w.e[s] );
-  for( i=0; i<rkChainLinkNum(ik->chain); i++ )
+  for( i=0; i<rkChainLinkNum(chain); i++ )
     if( ik->joint_sw[i] ){
-      for( j=0; j<rkChainLinkJointSize(ik->chain,i); j++ )
+      for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
+
         zMatSetElemNC( ik->_c_mat, row, zIndexElemNC(ik->_j_ofs,i)+j,
-          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkOffset(ik->chain,i)+j) );
+          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkOffset(chain,i)+j) );
     } else{
-      for( j=0; j<rkChainLinkJointSize(ik->chain,i); j++ )
+      for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
         zVecElemNC(ik->_c_srv,row) -=
-          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkOffset(ik->chain,i)+j)
-            * zVecElemNC(ik->joint_vel,rkChainLinkOffset(ik->chain,i)+j);
+          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkOffset(chain,i)+j)
+            * zVecElemNC(ik->joint_vel,rkChainLinkOffset(chain,i)+j);
     }
   return 1;
 }
-void rkIKEq(rkIK *ik)
+
+static void _rkIKEq(rkIK *ik, rkChain *chain)
 {
   int i;
   rkIKCell *cell;
@@ -273,21 +306,26 @@ void rkIKEq(rkIK *ik)
   ik->eval = 0;
   zListForEach( &ik->clist, cell ){
     if( rkIKCellIsDisabled( cell ) ) continue;
-    rkIKCellCMat( cell, ik->chain, ik->_c_mat_cell );
-    rkIKCellSRV( cell, ik->chain, &ik->_c_srv_cell );
+    rkIKCellCMat( cell, chain, ik->_c_mat_cell );
+    rkIKCellSRV( cell, chain, &ik->_c_srv_cell );
     cell->data._eval = zVec3DWSqrNorm( &ik->_c_srv_cell, &cell->data.attr.w );
     ik->eval += cell->data._eval;
     cell->data._eval = sqrt( cell->data._eval );
     if( rkIKCellIsForced( cell ) )
-      rkIKCellAcm( cell, ik->chain, &ik->_c_srv_cell );
+      rkIKCellAcm( cell, chain, &ik->_c_srv_cell );
     for( i=0; i<3; i++ )
-      row += _rkIKCellEq( ik, cell, i, row );
+      row += _rkIKCellEq( ik, chain, cell, i, row );
   }
   ik->eval = sqrt( ik->eval );
   zMatSetRowSize( ik->_c_mat, row );
   zVecSetSize( ik->_c_srv, row );
   zVecSetSize( ik->__c, row );
   zVecSetSize( ik->_c_we, row );
+}
+
+void rkChainCreateIKEq(rkChain *chain)
+{
+  _rkIKEq( chain->_ik, chain );
 }
 
 /* resolve the motion rate with MP-inverse matrix. */
@@ -322,102 +360,95 @@ zVec rkIKJointVelAD(rkIK *ik)
 }
 
 /* resolve the motion rate into joint angle rate. */
-zVec rkIKSolveRate(rkIK *ik)
+zVec rkChainIKRate(rkChain *chain)
 {
   uint i;
   int j, k;
   double *vp;
 
-  rkIKEq( ik );
-  ik->_jv( ik );
-  for( vp=zVecBuf(ik->_j_vel), i=0; i<zArraySize(ik->_j_idx); i++ ){
-    k = zIndexElemNC( ik->_j_idx, i );
-    for( j=0; j<rkChainLinkJointSize(ik->chain,k); j++ )
-      zVecSetElemNC( ik->joint_vel, rkChainLinkOffset(ik->chain,k)+j, *vp++ );
+  rkChainCreateIKEq( chain );
+  chain->_ik->_jv( chain->_ik ); /* DIK solution */
+  for( vp=zVecBuf(chain->_ik->_j_vel), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
+    k = zIndexElemNC( chain->_ik->_j_idx, i );
+    for( j=0; j<rkChainLinkJointSize(chain,k); j++ )
+      zVecSetElemNC( chain->_ik->joint_vel, rkChainLinkOffset(chain,k)+j, *vp++ );
   }
-  return ik->joint_vel;
+  return chain->_ik->joint_vel;
 }
 
 /* solve one-step inverse kinematics based on Newton=Raphson's method. */
-zVec rkIKSolveOne(rkIK *ik, zVec dis, double dt)
+zVec rkChainIKOne(rkChain *chain, zVec dis, double dt)
 {
-  rkIKSolveRate( ik );
-  rkChainCatJointDisAll( ik->chain, dis, dt, ik->joint_vel );
-  rkChainSetJointDisAll( ik->chain, dis );
-  rkChainGetJointDisAll( ik->chain, dis );
-  rkChainUpdateFK( ik->chain );
+  rkChainIKRate( chain );
+  rkChainCatJointDisAll( chain, dis, dt, chain->_ik->joint_vel );
+  rkChainSetJointDisAll( chain, dis );
+  rkChainGetJointDisAll( chain, dis );
+  rkChainUpdateFK( chain );
   return dis;
 }
 
 /* solve inverse kinematics based on Newton=Raphson's method. */
-int rkIKSolve(rkIK *ik, zVec dis, double tol, int iter)
+int rkChainIK(rkChain *chain, zVec dis, double tol, int iter)
 {
   int i;
   double rest = HUGE_VAL;
 
-  rkChainGetJointDisAll( ik->chain, dis );
+  rkChainGetJointDisAll( chain, dis );
   ZITERINIT( iter );
-  rkIKAcmZero( ik );
+  rkChainZeroIKAcm( chain );
   for( i=0; i<iter; i++ ){
-    rkIKSolveOne( ik, dis, 1.0 );
-    if( zIsTol( ik->eval - rest, tol ) )
+    rkChainIKOne( chain, dis, 1.0 );
+    if( zIsTol( chain->_ik->eval - rest, tol ) )
       return i; /* probably no more decrease */
-    rest = ik->eval;
+    rest = chain->_ik->eval;
   }
   return -1;
+}
+
+rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKCellAttr *attr, int mask){
+  return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiLinkWldLin, rkIKLinkWldPosErr, rkIKBindLinkWldPos, rkIKAcmPos, NULL );
+}
+
+rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKCellAttr *attr, int mask){
+  return rkChainRegIKCell( chain, attr, mask, rkIKRefSetZYX, rkIKJacobiLinkWldAng, rkIKLinkWldAttErr, rkIKBindLinkWldAtt, rkIKAcmAtt, NULL );
+}
+
+rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKCellAttr *attr, int mask){
+  return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiLinkL2LLin, rkIKLinkL2LPosErr, rkIKBindLinkL2LPos, rkIKAcmPos, NULL );
+}
+
+rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKCellAttr *attr, int mask){
+  return rkChainRegIKCell( chain, attr, mask, rkIKRefSetZYX, rkIKJacobiLinkL2LAng, rkIKLinkL2LAttErr, rkIKBindLinkL2LAtt, rkIKAcmAtt, NULL );
+}
+
+rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKCellAttr *attr, int mask){
+  return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiCOM, rkIKCOMErr, rkIKBindCOM, rkIKAcmPos, NULL );
+}
+
+rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKCellAttr *attr, int mask){
+  return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiAM, rkIKAMErr, rkIKBindAM, rkIKAcmAtt, NULL );
+}
+
+rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKCellAttr *attr, int mask){
+  return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiAMCOM, rkIKAMCOMErr, rkIKBindAMCOM, rkIKAcmAtt, NULL );
 }
 
 /* ********************************************************** */
 /* IK configuration file I/O
  * ********************************************************** */
 
-rkIKCell *rkIKCellRegWldPos(rkIK *ik, rkIKCellAttr *attr, int mask)
-{
-  return rkIKCellReg( ik, attr, mask, rkIKRefSetPos, rkIKJacobiLinkWldLin, rkIKLinkWldPosErr, rkIKBindLinkWldPos, rkIKAcmPos, NULL );
-}
-
-rkIKCell *rkIKCellRegWldAtt(rkIK *ik, rkIKCellAttr *attr, int mask)
-{
-  return rkIKCellReg( ik, attr, mask, rkIKRefSetZYX, rkIKJacobiLinkWldAng, rkIKLinkWldAttErr, rkIKBindLinkWldAtt, rkIKAcmAtt, NULL );
-}
-
-rkIKCell *rkIKCellRegL2LPos(rkIK *ik, rkIKCellAttr *attr, int mask)
-{
-  return rkIKCellReg( ik, attr, mask, rkIKRefSetPos, rkIKJacobiLinkL2LLin, rkIKLinkL2LPosErr, rkIKBindLinkL2LPos, rkIKAcmPos, NULL );
-}
-
-rkIKCell *rkIKCellRegL2LAtt(rkIK *ik, rkIKCellAttr *attr, int mask)
-{
-  return rkIKCellReg( ik, attr, mask, rkIKRefSetZYX, rkIKJacobiLinkL2LAng, rkIKLinkL2LAttErr, rkIKBindLinkL2LAtt, rkIKAcmAtt, NULL );
-}
-
-rkIKCell *rkIKCellRegCOM(rkIK *ik, rkIKCellAttr *attr, int mask)
-{
-  return rkIKCellReg( ik, attr, mask, rkIKRefSetPos, rkIKJacobiCOM, rkIKCOMErr, rkIKBindCOM, rkIKAcmPos, NULL );
-}
-
-rkIKCell *rkIKCellRegAM(rkIK *ik, rkIKCellAttr *attr, int mask)
-{
-  return rkIKCellReg( ik, attr, mask, rkIKRefSetPos, rkIKJacobiAM, rkIKAMErr, rkIKBindAM, rkIKAcmAtt, NULL );
-}
-
-rkIKCell *rkIKCellRegAMCOM(rkIK *ik, rkIKCellAttr *attr, int mask)
-{
-  return rkIKCellReg( ik, attr, mask, rkIKRefSetPos, rkIKJacobiAMCOM, rkIKAMCOMErr, rkIKBindAMCOM, rkIKAcmAtt, NULL );
-}
-
 /* IK item lookup table */
 static struct _rkIKLookup{
   const char *str;
-  rkIKCell *(*ik_cell_reg)(rkIK*,rkIKCellAttr*,int);
+  rkIKCell *(*reg_ik_cell)(rkChain*,rkIKCellAttr*,int);
 } __rk_ik_lookup[] = {
-  { "world_pos", rkIKCellRegWldPos },
-  { "world_att", rkIKCellRegWldAtt },
-  { "l2l_pos",   rkIKCellRegL2LPos },
-  { "l2l_att",   rkIKCellRegL2LAtt },
-  { "com",       rkIKCellRegCOM    },
-  { "am",        rkIKCellRegAM     },
-  { "amcom",     rkIKCellRegAMCOM  },
+  { "world_pos", rkChainRegIKCellWldPos },
+  { "world_att", rkChainRegIKCellWldAtt },
+  { "l2l_pos",   rkChainRegIKCellL2LPos },
+  { "l2l_att",   rkChainRegIKCellL2LAtt },
+  { "com",       rkChainRegIKCellCOM    },
+  { "am",        rkChainRegIKCellAM     },
+  { "amcom",     rkChainRegIKCellAMCOM  },
   { NULL, NULL },
 };
 
@@ -441,8 +472,8 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   linkname = ZTKVal(ztk);
   if( ZTKValNext(ztk) ) w = ZTKDouble(ztk);
   if( strcmp( linkname, "all" ) == 0 )
-    return rkIKJointRegAll( (rkIK*)obj, w ) ? obj : NULL;
-  zArrayFindName( &((rkIK*)obj)->chain->link, linkname, link );
+    return rkChainRegIKJointAll( (rkChain*)obj, w ) ? obj : NULL;
+  zArrayFindName( &((rkChain*)obj)->link, linkname, link );
   if( !link ){
     ZRUNERROR( RK_ERR_LINK_UNKNOWN, linkname );
     return NULL;
@@ -452,7 +483,7 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     return obj;
   }
   if( rkLinkJointSize(link) == 0 ) return NULL;
-  return rkIKJointReg( (rkIK*)obj, link - rkChainRoot(((rkIK*)obj)->chain), w ) ? obj : NULL;
+  return rkChainRegIKJoint( (rkChain*)obj, link - rkChainRoot((rkChain*)obj), w ) ? obj : NULL;
 }
 static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   struct _rkIKLookup *lookup;
@@ -478,22 +509,22 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){
       ZTKValNext( ztk );
       mask |= RK_IK_CELL_ATTR_FORCE;
     } else{
-      zArrayFindName( &((rkIK*)obj)->chain->link, ZTKVal(ztk), link );
+      zArrayFindName( &((rkChain*)obj)->link, ZTKVal(ztk), link );
       if( !link ){
         ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
         return NULL;
       }
       if( linknum++ == 0 ){
-        attr.id = link - rkChainRoot(((rkIK*)obj)->chain);
+        attr.id = link - rkChainRoot((rkChain*)obj);
         mask |= RK_IK_CELL_ATTR_ID;
       } else{
-        attr.id_sub = link - rkChainRoot(((rkIK*)obj)->chain);
+        attr.id_sub = link - rkChainRoot((rkChain*)obj);
         mask |= RK_IK_CELL_ATTR_ID_SUB;
       }
       ZTKValNext( ztk );
     }
   }
-  return lookup->ik_cell_reg( (rkIK *)obj, &attr, mask ) ? obj : NULL;
+  return lookup->reg_ik_cell( (rkChain *)obj, &attr, mask ) ? obj : NULL;
 }
 
 static ZTKPrp __ztk_prp_rkik[] = {
@@ -511,20 +542,20 @@ static ZTKPrp __ztk_prp_tag_rkik[] = {
   { ZTK_TAG_RKIK, 1, _rkIKFromZTK, NULL },
 };
 
-rkIK *rkIKConfFromZTK(rkIK *ik, ZTK *ztk)
+rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk)
 {
-  ZTKEvalTag( ik, NULL, ztk, __ztk_prp_tag_rkik );
-  return ik;
+  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkik );
+  return chain;
 }
 
-rkIK *rkIKConfReadZTK(rkIK *ik, rkChain *chain, char filename[])
+rkChain *rkChainIKConfReadZTK(rkChain *chain, char filename[])
 {
   ZTK ztk;
 
-  if( !rkIKCreate( ik, chain ) ) return NULL;
+  if( !rkChainCreateIK( chain ) ) return NULL;
   ZTKInit( &ztk );
   if( ZTKParse( &ztk, filename ) )
-    ik = rkIKConfFromZTK( ik, &ztk );
+    chain = rkChainIKConfFromZTK( chain, &ztk );
   ZTKDestroy( &ztk );
-  return ik;
+  return chain;
 }

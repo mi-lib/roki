@@ -3,7 +3,6 @@
 #include <roki/rk_ik.h>
 
 static rkChain chain;
-static rkIK ik;
 static rkIKSeq ik_seq;
 
 enum{
@@ -82,7 +81,7 @@ FILE *rk_ik_command_args(int argc, char *argv[])
   if( !rkChainReadZTK( &chain, option[RK_IK_MODELFILE].arg ) ) exit( 1 );
   rk_ik_message( "done.\n" );
   rk_ik_message( "Read an IK configuration file ..." );
-  if( !rkIKConfReadZTK( &ik, &chain, option[RK_IK_CONFFILE].arg ) ) exit( 1 );
+  if( !rkChainIKConfReadZTK( &chain, option[RK_IK_CONFFILE].arg ) ) exit( 1 );
   rk_ik_message( "done.\n" );
   rk_ik_message( "Read an IK entry file ..." );
   if( option[RK_IK_ENTRYFILE].flag )
@@ -106,7 +105,7 @@ FILE *rk_ik_command_args(int argc, char *argv[])
   return fout;
 }
 
-void rk_ik_solve(rkIKSeq *seq, FILE *fout, rkIK *ik)
+void rk_ik_solve(FILE *fout)
 {
   rkIKSeqListCell *cp;
   zVec v;
@@ -120,13 +119,13 @@ void rk_ik_solve(rkIKSeq *seq, FILE *fout, rkIK *ik)
   }
   iter = atoi( option[RK_IK_ITERNUM].arg );
   tol = atof( option[RK_IK_TOL].arg );
-  while( !zListIsEmpty(seq) ){
-    zQueueDequeue( seq, &cp );
-    rkIKDeactivate( ik );
-    rkIKBind( ik ); /* bind current status to the reference. */
-    rkIKSeqCellSet( ik, &cp->data );
+  while( !zListIsEmpty(&ik_seq) ){
+    zQueueDequeue( &ik_seq, &cp );
+    rkChainDeactivateIK( &chain );
+    rkChainBindIK( &chain ); /* bind current status to the reference. */
+    rkIKSeqCellSet( chain._ik, &cp->data );
     eprintf( "output: %d\n", ++i );
-    rkIKSolve( ik, v, tol, iter );
+    rkChainIK( &chain, v, tol, iter );
     /* output */
     fprintf( fout, "%.10f ", cp->data.dt );
     zVecFPrint( fout, v ); fflush( fout );
@@ -140,10 +139,9 @@ int main(int argc, char *argv[])
   FILE *fout;
 
   fout = rk_ik_command_args( argc, argv+1 );
-  rk_ik_solve( &ik_seq, fout, &ik );
+  rk_ik_solve( fout );
   if( !option[RK_IK_OUTPUTFILE].flag ) fclose( fout );
   rkIKSeqFree( &ik_seq );
-  rkIKDestroy( &ik );
   rkChainDestroy( &chain );
   return 0;
 }

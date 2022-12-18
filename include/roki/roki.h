@@ -17,8 +17,7 @@
 #ifndef __ROKI_H__
 #define __ROKI_H__
 
-#include <roki/rk_ik.h>
-#include <roki/rk_cd.h>
 #include <roki/rk_abi.h>
+#include <roki/rk_cd.h>
 
 #endif /* __ROKI_H__ */

@@ -31,7 +31,7 @@ typedef struct{
 
   /*! \cond */
   bool _iscol; /* flag for collision check */
-  struct _rkIK *ik; /* to be renamed to task stack */
+  struct _rkIK *_ik; /* to be renamed to task stack */
   /*! \endcond */
 } rkChain;
 
@@ -581,5 +581,7 @@ __EXPORT void rkChainExtWrenchFPrint(FILE *fp, rkChain *c);
 #define rkChainExtWrenchPrint(c)  rkChainExtWrenchFPrint( stdout, (c) )
 
 __END_DECLS
+
+#include <roki/rk_ik.h>
 
 #endif /* __RK_CHAIN_H__ */

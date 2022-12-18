@@ -22,6 +22,7 @@ void rkChainInit(rkChain *c)
   rkChainSetWldCOM( c, ZVEC3DZERO );
   rkChainSetCOMVel( c, ZVEC3DZERO );
   rkChainSetCOMAcc( c, ZVEC3DZERO );
+  c->_ik = NULL;
 }
 
 /* destroy a kinematic chain. */
@@ -40,6 +41,7 @@ void rkChainDestroy(rkChain *c)
     zArrayFree( rkChainMotor(c) );
     zFree( rkChainMotor(c) );
   }
+  rkChainDestroyIK( c );
   rkChainInit( c );
 }
 
@@ -72,6 +74,7 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
       return NULL;
   rkChainSetMass( cln, rkChainMass(org) );
   rkChainCopyState( org, cln );
+  /* TODO: clone IK */
   return cln;
 }
 
