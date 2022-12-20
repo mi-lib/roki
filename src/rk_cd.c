@@ -644,7 +644,8 @@ static zPH3D *_rkCDBREPMergeCH(zBREP *b1, zBREP *b2, zPH3D *ph)
 
 static bool _rkCDColVolError(zPH3D *ph)
 {
-  uint i, j, v[3];
+  uint i, j;
+  int v[3];
 
   for( i=0; i<zPH3DFaceNum(ph); i++ ){
     for( j=0; j<3; j++ )
