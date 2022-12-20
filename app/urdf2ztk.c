@@ -44,6 +44,7 @@ typedef struct{
   char *name;
   rkMP mp;
   zMat3D _iw;
+  zVec3D _cw;
   shape_p_list_t shape_p_list;
   struct _joint_t *joint;
   struct _joint_t *child;
@@ -490,6 +491,7 @@ bool urdf2ztk_xform(joint_t *joint)
   else
     zFrame3DCascade( &joint->parent->joint->fw, &joint->fl, &joint->fw );
   zRotMat3D( zFrame3DAtt(&joint->fw), &joint->child->mp.inertia, &joint->child->_iw );
+  zMulMat3DVec3D( zFrame3DAtt(&joint->fw), &joint->child->mp.com, &joint->child->_cw );
   zListForEach( &joint->child->shape_p_list, spc ){
     zFrame3DCascade( &joint->fw, &spc->data->fl, &spc->data->fw );
   }
@@ -511,6 +513,7 @@ bool urdf2ztk_xform_inv(joint_t *joint)
   else
     zFrame3DCopy( &joint->fw, &joint->fl );
   zRotMat3DInv( zFrame3DAtt(&joint->fl), &joint->child->_iw, &joint->child->mp.inertia );
+  zMulMat3DTVec3D( zFrame3DAtt(&joint->fw), &joint->child->_cw, &joint->child->mp.com );
   zListForEach( &joint->child->shape_p_list, spc ){
     zFrame3DXform( &joint->fw, &spc->data->fw, &spc->data->fl );
   }
