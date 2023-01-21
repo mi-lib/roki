@@ -315,12 +315,15 @@ static void *_rkLinkParentFromZTK(void *obj, int i, void *arg, ZTK *ztk){
 }
 static void *_rkLinkShapeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   zShape3D *sp;
-  zArrayFindName( ((_rkLinkRefPrp*)arg)->sarray, ZTKVal(ztk), sp );
-  if( !sp ){
-    ZRUNERROR( RK_ERR_SHAPE_UNKNOWN, ZTKVal(ztk) );
-    return NULL;
-  }
-  return rkLinkShapePush( (rkLink*)obj, sp ) ? obj : NULL;
+  do{
+    zArrayFindName( ((_rkLinkRefPrp*)arg)->sarray, ZTKVal(ztk), sp );
+    if( !sp ){
+      ZRUNERROR( RK_ERR_SHAPE_UNKNOWN, ZTKVal(ztk) );
+      return NULL;
+    }
+    if( !rkLinkShapePush( (rkLink*)obj, sp ) ) return NULL;
+  } while( ZTKValNext( ztk ) );
+  return obj;
 }
 
 static void _rkLinkNameFPrintZTK(FILE *fp, int i, void *obj){

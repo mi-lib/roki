@@ -1,3 +1,4 @@
+2023. 1.21. Modified _rkLinkShapeFromZTK to read multiple shapes. [rk_link]
 2022.12.21. Corrected _rkCDColVolError (thanks to Mr. Kenta Imanishi). [rk_cd]
 2022.12.18. Modified specification of the inverse kinematics solver. rkChainIK is now available. [rk_chain, rk_ik, rk_ik_seq]
 2022.12.14. Renamed rkChainLinkZeroAcc, rkChainLinkZeroAccGravity, and rkChainLinkZeroAccZeroGravity to rkChainLinkZeroAccG, rkChainLinkZeroAcc, and rkChainLinkZeroAcc0G, respectively. [rk_chain]
