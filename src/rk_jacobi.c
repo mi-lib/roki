@@ -213,3 +213,11 @@ double rkJacobiManip(zMat jacobi)
   zMatFree( k );
   return result;
 }
+
+#undef __rk_jacobi_set_vector
+#undef __rk_jacobi_add_vector
+#undef __rk_jacobi_sub_vector
+#undef __rk_jacobi_cat_vector
+#undef __rk_jacobi_ang_col
+
+#undef __rk_jacobi_lin_col

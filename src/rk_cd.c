@@ -302,6 +302,8 @@ void rkCDPairVertPrint(rkCD *cd)
   }
 }
 
+#undef __vec_label_print
+
 /* register a chain to a collision detector. */
 rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
 {
