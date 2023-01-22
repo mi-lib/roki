@@ -131,6 +131,15 @@ int rkChainJointIndexSize(rkChain *c, zIndex idx)
   return size;
 }
 
+/* find a link of a kinematic chain from name. */
+rkLink *rkChainFindLink(rkChain *chain, char *name)
+{
+  rkLink *l;
+
+  zNameFind( rkChainRoot(chain), rkChainLinkNum(chain), name, l );
+  return l;
+}
+
 /* set joint displacements of a kinematic chain. */
 void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis)
 {

@@ -168,20 +168,24 @@ __EXPORT uint rkChainJointSize(rkChain *c);
 __EXPORT zIndex rkChainCreateDefaultJointIndex(rkChain *c);
 __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
 
+/*! \brief find a link of a kinematic chain from name.
+ */
+__EXPORT rkLink *rkChainFindLink(rkChain *chain, char *name);
+
 /*! \brief update joint state.
  *
- * rkChainLinkSetJointDis() sets the joint displacement of the
+ * rkChainLinkJointSetDis() sets the joint displacement of the
  * \a i'th link of a kinematic chain \a c for \a dis.
  * Components of \a dis for a revolutional joint are in radian.
  * It automatically limits components of \a dis which is out of
  * motion range.
  *
- * rkChainLinkSetJointDisCNT() continuously updates the joint
+ * rkChainLinkJointSetDisCNT() continuously updates the joint
  * displacement of the \a i'th link of \a c to \a dis over a
  * time step \a dt. Then, the joint velocity and acceleration
  * is calculated in accordance with a simple differentiation.
  *
- * rkChainLinkGetJointDis() gets the joint displacement of the
+ * rkChainLinkJointGetDis() gets the joint displacement of the
  * \a i'th link of \a c and puts it into \a dis.
  *
  * rkChainSetJointDis() sets all the joint displacements of

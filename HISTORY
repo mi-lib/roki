@@ -1,3 +1,4 @@
+2023. 1.22. Added rkChainFindLink. [rk_chain]
 2023. 1.22. Added undef for locally defined macros. [rk_jacobi, rk_cd]
 2023. 1.21. Modified _rkLinkShapeFromZTK to read multiple shapes. [rk_link]
 2022.12.21. Corrected _rkCDColVolError (thanks to Mr. Kenta Imanishi). [rk_cd]
