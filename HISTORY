@@ -1,3 +1,6 @@
+2023. 1.23. Renamed rkChainSetOffset to rkChainSetJointIDOffset. [rk_chain]
+2023. 1.23. Renamed rkLinkOffset, rkLinkSetOffset, and rkChainLinkOffset to rkLinkJointIDOffset, rkLinkSetJointIDOffset and rkChainLinkJointIDOffset, respectively. [rk_link, rk_chain, rk_jacobi, rk_ik]
+2023. 1.23. Added rkLinkPointWldPos and rkChainPointWldPos. [rk_link, rk_chain]
 2023. 1.22. Added rkChainFindLink. [rk_chain]
 2023. 1.22. Added undef for locally defined macros. [rk_jacobi, rk_cd]
 2023. 1.21. Modified _rkLinkShapeFromZTK to read multiple shapes. [rk_link]

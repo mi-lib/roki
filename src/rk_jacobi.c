@@ -37,7 +37,7 @@
 \
   for( __i=0; __i<rkLinkJointSize(l); __i++ )\
     if( rkJointAngAxis( rkLinkJoint(l), __i, f, s ) )\
-      op( m, rkLinkOffset(l)+__i, 0 /* dummy */, s );\
+      op( m, rkLinkJointIDOffset(l)+__i, 0 /* dummy */, s );\
 } while(0)
 
 /* column vector of linear Jacobian matrix. */
@@ -58,7 +58,7 @@ static zVec3D *_rkJacobiLinCol(rkLink *l, int i, zFrame3D *f, zVec3D *p, zVec3D 
 \
   for( __i=0; __i<rkLinkJointSize(l); __i++ )\
     if( _rkJacobiLinCol( l, __i, f, p, s ) )\
-      op( m, rkLinkOffset(l)+__i, k, s );\
+      op( m, rkLinkJointIDOffset(l)+__i, k, s );\
 } while(0)
 
 /* Jacobian matrix about angular movement of a link with respect to the world frame. */
@@ -162,11 +162,11 @@ static zMat _rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat mat)
     for( i=0; i<rkLinkJointSize(l); i++ ){
       if( rkJointAngAxis( rkLinkJoint(l), i, rkLinkWldFrame(l), &s ) ){
         zMulMat3DVec3DDRC( &m, &s );
-        __rk_jacobi_add_vector( mat, rkLinkOffset(l)+i, 0, &s );
+        __rk_jacobi_add_vector( mat, rkLinkJointIDOffset(l)+i, 0, &s );
       }
       if( _rkJacobiLinCol( l, i, rkLinkWldFrame(l), rkChainLinkWldCOM(c,id), &s ) ){
         zVec3DOuterProd( &dp, &s, &v );
-        __rk_jacobi_cat_vector( mat, rkLinkOffset(l)+i, rkChainLinkMass(c,id), &v );
+        __rk_jacobi_cat_vector( mat, rkLinkJointIDOffset(l)+i, rkChainLinkMass(c,id), &v );
       }
     }
     if( l == rkChainRoot(c) ) break;

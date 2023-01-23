@@ -53,7 +53,7 @@ typedef struct{
 #define rkChainSetCOMAcc(c,a)         zVec3DCopy( a, rkChainCOMAcc(c) )
 
 #define rkChainLinkName(c,i)          zName(rkChainLink(c,i))
-#define rkChainLinkOffset(c,i)        rkLinkOffset(rkChainLink(c,i))
+#define rkChainLinkJointIDOffset(c,i) rkLinkJointIDOffset(rkChainLink(c,i))
 #define rkChainLinkJoint(c,i)         rkLinkJoint(rkChainLink(c,i))
 #define rkChainLinkJointSize(c,i)     rkLinkJointSize(rkChainLink(c,i))
 #define rkChainLinkJointTypeStr(c,i)  rkLinkJointTypeStr(rkChainLink(c,i))
@@ -309,6 +309,9 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
  */
 __EXPORT zVec3D *rkChainGravityDir(rkChain *c, zVec3D *v);
 
+/*! \brief position of a point on a link of a kinematic chain in the world frame. */
+#define rkChainPointWldPos(c,i,p,pw) rkLinkPointWldPos( rkChainLink(c,i), p, pw )
+
 /*! \brief calculate velocity and acceleration of a point on a link
  * with respect to the inertia frame.
  */
@@ -515,25 +518,23 @@ __EXPORT bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias);
 __EXPORT zVec6D *rkChainNetExtWrench(rkChain *c, zVec6D *w);
 __EXPORT void rkChainExtWrenchDestroy(rkChain *c);
 
-/*! \brief set offset value of each link.
+/*! \brief set joint identifier offset value of each link.
  *
- * rkChainSetOffset() sets the offset values of all links of a
- * kinematic chain model \a c. Each offset value corresponds to
- * the column offset of Jacobian matrices and the component
- * offset of joint displacement vectors.
+ * rkChainSetJointIDOffset() sets the joint identifier offset values of
+ * all links of a kinematic chain model \a c. Each offset value corresponds
+ * to the column offset of Jacobian matrices and the component offset of
+ * joint displacement vectors.
  *
- * For links with fixed joints, the offset values of them are
- * set for -1.
+ * For links with fixed joints, the offset values of them are set for -1.
  *
- * For example, suppose the kinematic chain consists of a fixed
- * base link, a link with spherical joint and a link with
- * revolutional joint, which are connected in this order.
- * rkChainSetOffset() sets the offsets of each for -1, 0 and 4,
- * respectively.
+ * For example, suppose the kinematic chain consists of a fixed base link,
+ * a link with spherical joint and a link with revolutional joint, which
+ * are connected in this order. rkChainSetJointIDOffset() sets the offsets
+ * of each for -1, 0 and 4, respectively.
  * \return
- * rkChainSetOffset() returns no value.
+ * rkChainSetJointIDOffset() returns no value.
  */
-__EXPORT void rkChainSetOffset(rkChain *c);
+__EXPORT void rkChainSetJointIDOffset(rkChain *c);
 
 /*! \brief make a list of vertices of a chain.
  *

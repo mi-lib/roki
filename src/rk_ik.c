@@ -285,14 +285,13 @@ static int _rkIKCellEq(rkIK *ik, rkChain *chain, rkIKCell *cell, int s, int row)
   for( i=0; i<rkChainLinkNum(chain); i++ )
     if( ik->joint_sw[i] ){
       for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
-
         zMatSetElemNC( ik->_c_mat, row, zIndexElemNC(ik->_j_ofs,i)+j,
-          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkOffset(chain,i)+j) );
+          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkJointIDOffset(chain,i)+j) );
     } else{
       for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
         zVecElemNC(ik->_c_srv,row) -=
-          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkOffset(chain,i)+j)
-            * zVecElemNC(ik->joint_vel,rkChainLinkOffset(chain,i)+j);
+          zMatElemNC(ik->_c_mat_cell,s,rkChainLinkJointIDOffset(chain,i)+j)
+            * zVecElemNC(ik->joint_vel,rkChainLinkJointIDOffset(chain,i)+j);
     }
   return 1;
 }
@@ -371,7 +370,7 @@ zVec rkChainIKRate(rkChain *chain)
   for( vp=zVecBuf(chain->_ik->_j_vel), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
     k = zIndexElemNC( chain->_ik->_j_idx, i );
     for( j=0; j<rkChainLinkJointSize(chain,k); j++ )
-      zVecSetElemNC( chain->_ik->joint_vel, rkChainLinkOffset(chain,k)+j, *vp++ );
+      zVecSetElemNC( chain->_ik->joint_vel, rkChainLinkJointIDOffset(chain,k)+j, *vp++ );
   }
   return chain->_ik->joint_vel;
 }

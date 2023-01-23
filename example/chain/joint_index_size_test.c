@@ -24,7 +24,7 @@ void chain_init(rkChain *chain)
   rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_revol ); /* 6 */
   rkJointAssign( rkChainLinkJoint(chain,5), &rk_joint_spher ); /* 7-9 */
   rkJointAssign( rkChainLinkJoint(chain,6), &rk_joint_fixed );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
 }
 
 int main(void)

@@ -32,7 +32,7 @@ void chain_init(rkChain *chain)
   for( i=0; i<N; i++ )
     zFrame3DCopy( rkChainLinkOrgFrame(chain,i), rkChainLinkAdjFrame(chain,i) );
   rkChainSetMass( chain, 1.0 ); /* dummy */
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
 }
@@ -45,13 +45,13 @@ void set_dis(rkChain *chain, zVec dis, int st)
 
   val = 0.5*zPI*st/STEP;
   for( i=0; i<rkChainLinkNum(chain); i++ ){
-    if( rkChainLinkOffset(chain,i) < 0 ) continue;
+    if( rkChainLinkJointIDOffset(chain,i) < 0 ) continue;
     if( rkChainLinkJoint(chain,i)->com == &rk_joint_spher ){
       zMat3DFromZYX( &r, val, val, val );
-      zMat3DToEP( &r, (zEP*)&zVecElemNC(dis,rkChainLinkOffset(chain,i)) );
+      zMat3DToEP( &r, (zEP*)&zVecElemNC(dis,rkChainLinkJointIDOffset(chain,i)) );
     } else
       for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
-        zVecSetElem( dis, rkChainLinkOffset(chain,i)+j, val );
+        zVecSetElem( dis, rkChainLinkJointIDOffset(chain,i)+j, val );
   }
 }
 

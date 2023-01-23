@@ -37,7 +37,7 @@ void chain_ik_init(rkChain *chain)
     if( i > 0 )
       rkLinkAddChild( rkChainLink(chain,i-1), rkChainLink(chain,i) );
   }
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainCreateIK( chain );
 }
 
@@ -192,7 +192,7 @@ void assert_ik_revol(void)
     zFrame3DCopy( rkChainLinkOrgFrame(&chain,i), rkChainLinkAdjFrame(&chain,i) );
   }
   rkChainSetMass( &chain, 1.0 ); /* dummy weight */
-  rkChainSetOffset( &chain );
+  rkChainSetJointIDOffset( &chain );
   rkChainUpdateFK( &chain );
   rkChainUpdateID( &chain );
 
@@ -252,7 +252,7 @@ void assert_ik_spher(void)
   rkLinkAddChild( rkChainLink(&chain,1), rkChainLink(&chain,2) );
 
   rkChainSetMass( &chain, 1.0 ); /* dummy weight */
-  rkChainSetOffset( &chain );
+  rkChainSetJointIDOffset( &chain );
   rkChainUpdateFK( &chain );
   rkChainUpdateID( &chain );
 
@@ -316,7 +316,7 @@ void assert_ik_float(void)
   rkLinkAddChild( rkChainLink(&chain,1), rkChainLink(&chain,2) );
 
   rkChainSetMass( &chain, 1.0 ); /* dummy weight */
-  rkChainSetOffset( &chain );
+  rkChainSetJointIDOffset( &chain );
   rkChainUpdateFK( &chain );
   rkChainUpdateID( &chain );
 
@@ -385,7 +385,7 @@ void assert_ik_l2l(void)
   chain_add_link( &chain, NL*2, NL*2-1, &rk_joint_spher );
 
   rkChainSetMass( &chain, 1.0 ); /* dummy weight */
-  rkChainSetOffset( &chain );
+  rkChainSetJointIDOffset( &chain );
 
   rkChainUpdateFK( &chain );
   rkChainUpdateID( &chain );

@@ -10,7 +10,7 @@ void create_chain(rkChain *chain)
   rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
 
   rkChainSetMass( chain, 1.0 );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
 }

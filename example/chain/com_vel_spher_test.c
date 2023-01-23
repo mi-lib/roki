@@ -66,7 +66,7 @@ void chain_init(rkChain *chain)
   rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_fixed );
   zVec3DCreate( rkChainLinkOrgPos(chain,1), 1, 0, 0 );
   zFrame3DCopy( rkChainLinkOrgFrame(chain,1), rkChainLinkAdjFrame(chain,1) );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
 }
 
 int main(void)

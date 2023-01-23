@@ -53,7 +53,7 @@ void chain_init(rkChain *chain)
   rkJointAssign( rkChainLinkJoint(chain,6), &rk_joint_hooke );
   rkJointAssign( rkChainLinkJoint(chain,7), &rk_joint_fixed );
 
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
 }

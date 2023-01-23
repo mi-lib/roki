@@ -30,17 +30,17 @@ typedef struct{
   zVec6D b0; /* ABbios at no rigid contact forces */
   zVec6D a0; /* link acc at no rigid contact forces */
   bool abi_backward_path;
-  /* joint inertia */
+  /* joint inertial tensor */
   zMat axi, iaxi;
 } rkABIPrp;
 
 typedef struct _rkLink{
   Z_NAMED_CLASS
-  rkJoint joint;     /*!< \brief joint */
-  rkBody body;       /*!< \brief rigid body */
-  int offset;        /*!< \brief link identifier offset due to joint size */
-  zFrame3D orgframe; /*!< \brief original adjacent transformation */
-  zFrame3D adjframe; /*!< \brief adjacent transformation */
+  rkJoint joint;          /*!< \brief joint */
+  rkBody body;            /*!< \brief rigid body */
+  int joint_id_offset;    /*!< \brief joint identifier offset due to joint size */
+  zFrame3D orgframe;      /*!< \brief original adjacent transformation */
+  zFrame3D adjframe;      /*!< \brief adjacent transformation */
   struct _rkLink *parent; /*!< \brief a pointer to the parent link */
   struct _rkLink *child;  /*!< \brief a pointer to a child link */
   struct _rkLink *sibl;   /*!< \brief a pointer to a sibling link */
@@ -55,7 +55,7 @@ typedef struct _rkLink{
 
 #define RK_LINK_INVALID (-1)
 
-#define rkLinkOffset(l)        (l)->offset
+#define rkLinkJointIDOffset(l) (l)->joint_id_offset
 #define rkLinkJoint(l)         ( &(l)->joint )
 #define rkLinkJointSize(l)     rkJointSize( rkLinkJoint(l) )
 #define rkLinkJointTypeStr(l)  rkJointTypeStr( rkLinkJoint(l) )
@@ -96,7 +96,7 @@ typedef struct _rkLink{
 #define rkLinkABIPrp(l)        ( &(l)->_abiprp )
 #define rkLinkExtWrenchBuf(l)  ( &(l)->_abiprp.wlist )
 
-#define rkLinkSetOffset(l,o)   ( rkLinkOffset(l) = (o) )
+#define rkLinkSetJointIDOffset(l,o) ( rkLinkJointIDOffset(l) = (o) )
 #define rkLinkSetMass(l,m)     rkBodySetMass( rkLinkBody(l), m )
 #define rkLinkSetCOM(l,c)      rkBodySetCOM( rkLinkBody(l), c )
 #define rkLinkSetInertia(l,i)  rkBodySetInertia( rkLinkBody(l), i )
@@ -251,6 +251,9 @@ __EXPORT rkLink *rkLinkAddChild(rkLink *l, rkLink *cl);
 #define rkLinkShapeDestroy(l) rkBodyShapeDestroy( rkLinkBody(l) )
 
 #define rkLinkContigVert(l,p,d) rkBodyContigVert( rkLinkBody(l), p, d )
+
+/*! \brief position of a point on a link in the world frame. */
+#define rkLinkPointWldPos(l,p,pw) zXform3D( rkLinkWldFrame(l), p, pw )
 
 /*! \brief velocity of a point on link.
  *

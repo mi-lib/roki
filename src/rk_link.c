@@ -14,7 +14,7 @@
 /* initialize a link. */
 void rkLinkInit(rkLink *l)
 {
-  rkLinkSetOffset( l, -1 );
+  rkLinkSetJointIDOffset( l, -1 );
   zNameSetPtr( l, NULL );
   rkJointInit( rkLinkJoint(l) );
   rkBodyInit( rkLinkBody(l) );
@@ -51,7 +51,7 @@ rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc)
     ZALLOCERROR();
     return NULL;
   }
-  rkLinkSetOffset( cln, rkLinkOffset(org) );
+  rkLinkSetJointIDOffset( cln, rkLinkJointIDOffset(org) );
   rkLinkSetOrgFrame( cln, rkLinkOrgFrame(org) );
 
   rkLinkSetParent( cln,
@@ -447,7 +447,7 @@ void rkLinkFPrintZTK(FILE *fp, rkLink *link)
 /* print link posture out to a file. */
 void rkLinkPostureFPrint(FILE *fp, rkLink *l)
 {
-  fprintf( fp, "Link(name:%s offset:%d)\n", zName(l), rkLinkOffset(l) );
+  fprintf( fp, "Link(name:%s joint ID offset:%d)\n", zName(l), rkLinkJointIDOffset(l) );
   fprintf( fp, " adjacent frame:\n" );
   zFrame3DFPrint( fp, rkLinkAdjFrame( l ) );
   fprintf( fp, " world frame:\n" );
@@ -459,7 +459,7 @@ void rkLinkPostureFPrint(FILE *fp, rkLink *l)
 void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n)
 {
   zFIndent( fp, n );
-  fprintf( fp, "|-%s (%s:%d)\n", zName(l), rkJointTypeStr(rkLinkJoint(l)), rkLinkOffset(l) );
+  fprintf( fp, "|-%s (%s:%d)\n", zName(l), rkJointTypeStr(rkLinkJoint(l)), rkLinkJointIDOffset(l) );
 
   if( rkLinkChild( l ) )
     rkLinkConnectionFPrint( fp, rkLinkChild(l), n+RK_LINK_CONNECTION_INDENT );

@@ -38,7 +38,7 @@ void chain_init(rkChain *chain)
   zVec3DCreate( rkChainLinkOrgPos(chain,7), 1, 0, 0 );
   for( i=0; i<N; i++ )
     zFrame3DCopy( rkChainLinkOrgFrame(chain,i), rkChainLinkAdjFrame(chain,i) );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
 }

@@ -33,7 +33,7 @@ void chain_init(rkChain *chain)
   for( i=0; i<10; i++ )
     zFrame3DCopy( rkChainLinkOrgFrame(chain,i), rkChainLinkAdjFrame(chain,i) );
   rkChainSetMass( chain, 1.0 ); /* dummy weight */
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
   rkChainWriteZTK( chain, "trident.ztk" );

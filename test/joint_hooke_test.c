@@ -53,7 +53,7 @@ void create_hooke1(rkChain *chain)
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
 
   rkChainSetMass( chain, 1.0 );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
   le1 = rkChainLink(chain,1);
@@ -89,7 +89,7 @@ void create_hooke2(rkChain *chain)
   rkLinkAddChild( rkChainLink(chain,2), rkChainLink(chain,3) );
 
   rkChainSetMass( chain, 1.0 );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
   le2 = rkChainLink(chain,3);

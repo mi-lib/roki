@@ -19,7 +19,7 @@ void create_cylin1(rkChain *chain)
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
 
   rkChainSetMass( chain, 1.0 );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
 }
@@ -48,7 +48,7 @@ void create_cylin2(rkChain *chain)
   rkLinkAddChild( rkChainLink(chain,1), rkChainLink(chain,2) );
 
   rkChainSetMass( chain, 1.0 );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
 }

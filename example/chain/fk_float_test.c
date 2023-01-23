@@ -53,7 +53,7 @@ void create_float(rkChain *chain)
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
 
   rkChainSetMass( chain, 1.0 );
-  rkChainSetOffset( chain );
+  rkChainSetJointIDOffset( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
   le = rkChainLink(chain,1);
