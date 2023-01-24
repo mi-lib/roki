@@ -321,7 +321,7 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
 #define rkChainGravityDir(c,v) zMat3DRow( rkChainRootAtt(c), zZ, v )
 
 /*! \brief position of a point on a link of a kinematic chain in the world frame. */
-#define rkChainPointWldPos(c,i,p,pw) rkLinkPointWldPos( rkChainLink(c,i), p, pw )
+#define rkChainLinkPointWldPos(c,i,p,pw) rkLinkPointWldPos( rkChainLink(c,i), p, pw )
 
 /*! \brief calculate velocity and acceleration of a point on a link
  * with respect to the inertia frame.
