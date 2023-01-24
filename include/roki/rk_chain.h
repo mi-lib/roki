@@ -169,8 +169,21 @@ __EXPORT zIndex rkChainCreateDefaultJointIndex(rkChain *c);
 __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
 
 /*! \brief find a link of a kinematic chain from name.
+ *
+ * rkChainFindLink() returns a pointer to the link named \a name of a kinematic
+ * chain \a chain.
+ * rkChainFindLinkID() returns a link identifier of the link named \a name of
+ * \a chain.
+ * rkChainFindLinkJointIDOffset() returns a joint identifier offset of a link
+ * \a name of \a chain.
+ * \return
+ * If a link with \a name does not exist in \a chain, rkChainFindLink() returns
+ * the null pointer, and rkChainFindLinkID() and rkChainFindLinkJointIDOffset()
+ * return -1 as an invaid value.
  */
 __EXPORT rkLink *rkChainFindLink(rkChain *chain, char *name);
+__EXPORT uint rkChainFindLinkID(rkChain *chain, char *name);
+__EXPORT uint rkChainFindLinkJointIDOffset(rkChain *chain, char *name);
 
 /*! \brief update joint state.
  *
@@ -298,16 +311,14 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
 #define rkChainUpdateRate0G(c)  rkChainUpdateRateG( c, ZVEC6DZERO )
 #define rkChainUpdateWrench(c)  rkLinkUpdateWrench( rkChainRoot(c) )
 
-/*! \brief gravity orientation with respect to the root link.
+/*! \brief direction vector of gravity with respect to the body frame of a kinematic chain.
  *
- * rkChainGravityDir() computes the direction vector of
- * gravity with respect to the total frame of kinematic
- * chain \a c, and store it into \a v.
+ * rkChainGravityDir() computes the direction vector of gravity with respect to
+ * the total frame of kinematic chain \a c, and store it into \a v.
  * \return
- * rkChainGravityDir() returns a pointer to the resultant
- * vector \a v.
+ * rkChainGravityDir() returns a pointer to the resultant vector \a v.
  */
-__EXPORT zVec3D *rkChainGravityDir(rkChain *c, zVec3D *v);
+#define rkChainGravityDir(c,v) zMat3DRow( rkChainRootAtt(c), zZ, v )
 
 /*! \brief position of a point on a link of a kinematic chain in the world frame. */
 #define rkChainPointWldPos(c,i,p,pw) rkLinkPointWldPos( rkChainLink(c,i), p, pw )

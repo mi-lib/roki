@@ -1,3 +1,5 @@
+2023. 1.24. Added rkChainFindLinkID and rkChainFindLinkJointIDOffset. [rk_chain]
+2023. 1.24. Reimplemented rkChainGravityDir as a macro. [rk_chain]
 2023. 1.23. Renamed rkChainSetOffset to rkChainSetJointIDOffset. [rk_chain]
 2023. 1.23. Renamed rkLinkOffset, rkLinkSetOffset, and rkChainLinkOffset to rkLinkJointIDOffset, rkLinkSetJointIDOffset and rkChainLinkJointIDOffset, respectively. [rk_link, rk_chain, rk_jacobi, rk_ik]
 2023. 1.23. Added rkLinkPointWldPos and rkChainPointWldPos. [rk_link, rk_chain]

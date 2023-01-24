@@ -140,6 +140,20 @@ rkLink *rkChainFindLink(rkChain *chain, char *name)
   return l;
 }
 
+/* find a link identifier of a kinematic chain from name. */
+uint rkChainFindLinkID(rkChain *chain, char *name)
+{
+  rkLink *l;
+  return ( l = rkChainFindLink( chain, name ) ) ? (uint)( l - rkChainRoot(chain) ) : -1;
+}
+
+/* find a joint identifier offset of a link of a kinematic chain from name. */
+uint rkChainFindLinkJointIDOffset(rkChain *chain, char *name)
+{
+  rkLink *l;
+  return ( l = rkChainFindLink( chain, name ) ) ? rkLinkJointIDOffset(l) : -1;
+}
+
 /* set joint displacements of a kinematic chain. */
 void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis)
 {
@@ -413,12 +427,6 @@ void rkChainSetMotorInputAll(rkChain *c, zVec input)
   for( i=0; i<rkChainLinkNum(c); i++ )
     if( rkChainLinkJointIDOffset(c,i) >= 0 )
       rkChainLinkJointMotorSetInput(c,i,&zVecElemNC(input,rkChainLinkJointIDOffset(c,i)));
-}
-
-/* direction vector of gravity with respect to the body frame of a kinematic chain. */
-zVec3D *rkChainGravityDir(rkChain *c, zVec3D *v)
-{
-  return zMat3DRow( rkChainRootAtt(c), 2, v );
 }
 
 /* update link frames of a kinematic chain via forward kinematics. */
