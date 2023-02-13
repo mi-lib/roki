@@ -141,14 +141,14 @@ rkLink *rkChainFindLink(rkChain *chain, char *name)
 }
 
 /* find a link identifier of a kinematic chain from name. */
-uint rkChainFindLinkID(rkChain *chain, char *name)
+int rkChainFindLinkID(rkChain *chain, char *name)
 {
   rkLink *l;
   return ( l = rkChainFindLink( chain, name ) ) ? (uint)( l - rkChainRoot(chain) ) : -1;
 }
 
 /* find a joint identifier offset of a link of a kinematic chain from name. */
-uint rkChainFindLinkJointIDOffset(rkChain *chain, char *name)
+int rkChainFindLinkJointIDOffset(rkChain *chain, char *name)
 {
   rkLink *l;
   return ( l = rkChainFindLink( chain, name ) ) ? rkLinkJointIDOffset(l) : -1;

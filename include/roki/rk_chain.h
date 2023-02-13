@@ -182,8 +182,8 @@ __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
  * return -1 as an invaid value.
  */
 __EXPORT rkLink *rkChainFindLink(rkChain *chain, char *name);
-__EXPORT uint rkChainFindLinkID(rkChain *chain, char *name);
-__EXPORT uint rkChainFindLinkJointIDOffset(rkChain *chain, char *name);
+__EXPORT int rkChainFindLinkID(rkChain *chain, char *name);
+__EXPORT int rkChainFindLinkJointIDOffset(rkChain *chain, char *name);
 
 /*! \brief update joint state.
  *
