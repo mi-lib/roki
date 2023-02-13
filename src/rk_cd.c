@@ -652,9 +652,9 @@ static bool _rkCDColVolError(zPH3D *ph)
   for( i=0; i<zPH3DFaceNum(ph); i++ ){
     for( j=0; j<3; j++ )
       v[j] = (int)( zPH3DFaceVert(ph,i,j)-zPH3DVertBuf(ph) );
-    if( v[0] < 0 || v[0] > zPH3DVertNum(ph) ||
-        v[1] < 0 || v[1] > zPH3DVertNum(ph) ||
-        v[2] < 0 || v[2] > zPH3DVertNum(ph)){
+    if( v[0] < 0 || (uint)v[0] > zPH3DVertNum(ph) ||
+        v[1] < 0 || (uint)v[1] > zPH3DVertNum(ph) ||
+        v[2] < 0 || (uint)v[2] > zPH3DVertNum(ph)){
       return true;
     }
   }
