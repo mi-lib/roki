@@ -330,7 +330,7 @@ __END_DECLS
 
 __BEGIN_DECLS
 
-extern rkJointCom *rk_joint_com[];
+__EXPORT rkJointCom *rk_joint_com[];
 
 /* add the handle to the following list when you create a new joint class. */
 #define RK_JOINT_COM_ARRAY \

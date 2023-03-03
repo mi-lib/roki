@@ -37,7 +37,7 @@ typedef struct {
   double _comp_l;
 } rkMotorDCPrp;
 
-extern rkMotorCom rk_motor_dc;
+__EXPORT rkMotorCom rk_motor_dc;
 
 __END_DECLS
 

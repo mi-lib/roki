@@ -17,7 +17,7 @@ __BEGIN_DECLS
  * link class
  * ********************************************************** */
 /* for ABI method */
-typedef struct{
+ZDEF_STRUCT( rkABIPrp ){
   zMat6D m; /* mass matrix */
   zMat6D i; /* ABI matrix */
   zVec6D f; /* bias force */
@@ -32,18 +32,18 @@ typedef struct{
   bool abi_backward_path;
   /* joint inertial tensor */
   zMat axi, iaxi;
-} rkABIPrp;
+};
 
-typedef struct _rkLink{
+ZDEF_STRUCT( rkLink ){
   Z_NAMED_CLASS
   rkJoint joint;          /*!< \brief joint */
   rkBody body;            /*!< \brief rigid body */
   int joint_id_offset;    /*!< \brief joint identifier offset due to joint size */
   zFrame3D orgframe;      /*!< \brief original adjacent transformation */
   zFrame3D adjframe;      /*!< \brief adjacent transformation */
-  struct _rkLink *parent; /*!< \brief a pointer to the parent link */
-  struct _rkLink *child;  /*!< \brief a pointer to a child link */
-  struct _rkLink *sibl;   /*!< \brief a pointer to a sibling link */
+  rkLink *parent; /*!< \brief a pointer to the parent link */
+  rkLink *child;  /*!< \brief a pointer to a child link */
+  rkLink *sibl;   /*!< \brief a pointer to a sibling link */
   /*! \cond */
   rkABIPrp _abiprp;  /* for ABI method */
   /* additional property */
@@ -51,7 +51,17 @@ typedef struct _rkLink{
      2: visualization information
    */
   /*! \endcond */
-} rkLink;
+#ifdef __cplusplus
+  rkJoint &Joint();
+  rkBody &Body();
+  int jointIDoffset() const;
+  zFrame3D &orgFrame();
+  zFrame3D &adjFrame();
+  rkLink *Parent() const;
+  rkLink *Child() const;
+  rkLink *Sibl() const;
+#endif /* __cplusplus */
+};
 
 #define RK_LINK_INVALID (-1)
 
@@ -132,7 +142,7 @@ typedef struct _rkLink{
  * all inner properties.
  *
  * rkLinkDestroy() destroys \a l, freeing the memory space
- * allocated for its name and extern force, and cleaning it up.
+ * allocated for its name and external force, and cleaning it up.
  * \return
  * Neither rkLinkInit() nor rkLinkDestroy() returns any values.
  */
@@ -465,6 +475,17 @@ __EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l);
 #define rkLinkPosturePrint(l)      rkLinkPostureFPrint( stdout, (l) )
 #define rkLinkConnectionPrint(l,n) rkLinkConnectionFPrint( stdout, (l), (n) )
 #define rkLinkExtWrenchPrint(l)     rkLinkExtWrenchFPrint( stdout, (l) )
+
+#ifdef __cplusplus
+inline rkJoint &rkLink::Joint(){ return joint; }
+inline rkBody &rkLink::Body(){ return body; }
+inline int rkLink::jointIDoffset() const { return joint_id_offset; }
+inline zFrame3D &rkLink::orgFrame(){ return orgframe; }
+inline zFrame3D &rkLink::adjFrame(){ return adjframe; }
+inline rkLink *rkLink::Parent() const { return parent; }
+inline rkLink *rkLink::Child() const { return child; }
+inline rkLink *rkLink::Sibl() const { return sibl; }
+#endif /* __cplusplus */
 
 __END_DECLS
 

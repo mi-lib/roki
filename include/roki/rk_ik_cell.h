@@ -16,18 +16,26 @@ __BEGIN_DECLS
  * inverse kinematics cell class
  * ********************************************************** */
 
-typedef union{
+ZDEF_UNION( rkIKRef ){
   zVec3D pos; /*!< position reference */
   zMat3D att; /*!< attitude reference */
-} rkIKRef;
+#ifdef __cplusplus
+  rkIKRef() : att{*ZMAT3DZERO} {};
+#endif /* __cplusplus */
+};
 
-typedef struct{
+#define rkIKRefClear(ref) zMat3DZero(&(ref)->att)
+
+ZDEF_STRUCT( rkIKAcm ){
   union{
     zVec3D p; /*!< accumulated position error */
     zEP e;    /*!< accumulated attitude error by Euler parameter */
   } ae, e_old; /*!< accumulated error */
   zVec3D h_old;
-} rkIKAcm;
+#ifdef __cplusplus
+  rkIKAcm() : ae{*ZVEC3DZERO}, e_old{*ZVEC3DZERO}, h_old{*ZVEC3DZERO} {};
+#endif /* __cplusplus */
+};
 
 /*! \brief masks to specify attributes to be reflected */
 #define RK_IK_CELL_ATTR_NONE   0x00
@@ -37,13 +45,13 @@ typedef struct{
 #define RK_IK_CELL_ATTR_FORCE  0x08
 #define RK_IK_CELL_ATTR_WEIGHT 0x10
 
-typedef struct{
+ZDEF_STRUCT( rkIKCellAttr ){
   int id;     /*!< attented link IDs */
   int id_sub; /*!< attented subordinate link IDs */
   zVec3D ap;  /*!< attented point */
   byte mode;  /*!< constraint mode */
   zVec3D w;   /*!< weight on constraint */
-} rkIKCellAttr;
+};
 
 #define RK_IK_CELL_XON    0x1
 #define RK_IK_CELL_YON    0x2
@@ -67,7 +75,7 @@ typedef zVec3D* (* rkIKSRV_fp)(rkChain*,rkIKCellAttr*,void*,rkIKRef*,zVec3D*);
 typedef void (* rkIKBind_fp)(rkChain*,rkIKCellAttr*,void*,rkIKRef*);
 typedef zVec3D* (* rkIKAcm_fp)(rkChain*,rkIKAcm*,void*,zVec3D*);
 
-typedef struct{
+ZDEF_STRUCT( rkIKCellDat ){
   int id;            /*!< identifier */
   rkIKCellAttr attr; /*!< attributes of attented quantity */
   rkIKRef ref;       /*!< referential position or attitude */
@@ -82,7 +90,7 @@ typedef struct{
   double _eval;  /* weighted-squared norm of residual */
   /* void-type pointer for utility */
   void *_util;
-} rkIKCellDat;
+};
 
 zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 

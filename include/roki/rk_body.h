@@ -18,12 +18,24 @@ __BEGIN_DECLS
  * mass property class
  * ********************************************************** */
 
-typedef struct _rkMP{
+ZDEF_STRUCT( rkMP ){
   /* mass property */
   double mass;
   zVec3D com;
   zMat3D inertia;
-} rkMP;
+#ifdef __cplusplus
+  rkMP();
+  double Mass() const;
+  zVec3D &COM();
+  zMat3D &Inertia();
+  double setMass(double);
+  zVec3D &setCOM(zVec3D &);
+  zMat3D &setInertia(zMat3D &);
+  rkMP *copy(rkMP &);
+  void zero();
+  friend rkMP operator*(zFrame3D &f, rkMP &src);
+#endif /* __cplusplus */
+};
 
 #define rkMPMass(mp)           (mp)->mass
 #define rkMPCOM(mp)            ( &(mp)->com )
@@ -98,12 +110,29 @@ __EXPORT zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie);
 __EXPORT void rkMPFPrint(FILE *fp, rkMP *mp);
 #define rkMPPrint(mp) rkMPFPrint( stdout, mp )
 
+#ifdef __cplusplus
+inline rkMP::rkMP(){ rkMPZero( this ); }
+inline double rkMP::Mass() const { return rkMPMass( this ); }
+inline zVec3D &rkMP::COM(){ return *rkMPCOM( this ); }
+inline zMat3D &rkMP::Inertia(){ return *rkMPInertia( this ); }
+inline double rkMP::setMass(double m){ return rkMPSetMass( this, m ); }
+inline zVec3D &rkMP::setCOM(zVec3D &p){ rkMPSetCOM( this, &p ); return COM(); }
+inline zMat3D &rkMP::setInertia(zMat3D &i){ rkMPSetInertia( this, &i ); return Inertia(); }
+inline rkMP *rkMP::copy(rkMP &src){ rkMPCopy( &src, this ); return this; }
+inline void rkMP::zero(){ rkMPZero( this ); }
+inline rkMP operator*(zFrame3D &f, rkMP &src){
+  rkMP dest;
+  rkMPXform( &src, &f, &dest );
+  return dest;
+}
+#endif /* __cplusplus */
+
 /* ********************************************************** */
 /* CLASS: rkBody
  * rigid body class
  * ********************************************************** */
 
-typedef struct{
+ZDEF_STRUCT( rkBody ){
   rkMP mp;           /*!< \brief mass property */
   zFrame3D frame;    /*!< \brief absolute transformation frame */
   zVec6D vel;        /*!< \brief velocity */
@@ -114,7 +143,7 @@ typedef struct{
   rkWrenchList extw; /*!< \brief external wrench with respect to body frame */
   zShapeList shapelist; /*!< \brief shapes */
   char *stuff;          /*!< \brief stuff identifier */
-} rkBody;
+};
 
 #define rkBodyMP(b)           ( &(b)->mp )
 #define rkBodyMass(b)         rkMPMass( rkBodyMP(b) )

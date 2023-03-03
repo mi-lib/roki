@@ -34,7 +34,7 @@ typedef struct{
   double _u[2];
 } rkJointHookePrp;
 
-extern rkJointCom rk_joint_hooke;
+__EXPORT rkJointCom rk_joint_hooke;
 
 __END_DECLS
 

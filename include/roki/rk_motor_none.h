@@ -12,7 +12,7 @@
 
 __BEGIN_DECLS
 
-extern rkMotorCom rk_motor_none;
+__EXPORT rkMotorCom rk_motor_none;
 
 __END_DECLS
 

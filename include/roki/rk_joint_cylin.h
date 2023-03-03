@@ -34,7 +34,7 @@ typedef struct{
   double _u[2];
 } rkJointCylinPrp;
 
-extern rkJointCom rk_joint_cylin;
+__EXPORT rkJointCom rk_joint_cylin;
 
 __END_DECLS
 

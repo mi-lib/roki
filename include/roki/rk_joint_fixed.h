@@ -11,7 +11,7 @@
 
 __BEGIN_DECLS
 
-extern rkJointCom rk_joint_fixed;
+__EXPORT rkJointCom rk_joint_fixed;
 
 __END_DECLS
 

@@ -18,7 +18,7 @@ __BEGIN_DECLS
  * RK_GRAVITY3D, RK_GRAVITY6D
  * acceleration vector of gravity.
  */
-extern zVec6D rk_gravity6D;
+__EXPORT zVec6D rk_gravity6D;
 #define RK_GRAVITY6D ( &rk_gravity6D )
 #define RK_GRAVITY3D zVec6DLin( RK_GRAVITY6D )
 

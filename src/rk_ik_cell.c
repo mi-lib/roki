@@ -11,9 +11,7 @@
  * inverse kinematics cell class
  * ********************************************************** */
 
-/* rkIKCellInit
- * - initialize constraint cell.
- */
+/* initialize constraint cell. */
 void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
 {
   cell->data.id = -1; /* dummy identifier */
@@ -29,7 +27,7 @@ void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, r
   else
     rkIKCellSetWeight( cell, 1.0, 1.0, 1.0 ); /* default weight on constraint*/
 
-  memset( &cell->data.ref, 0, sizeof(rkIKRef) );
+  rkIKRefClear( &cell->data.ref );
   rkIKCellAcmZero( cell );
   rkIKCellDisable( cell );
   cell->data._ref_fp = rf;
