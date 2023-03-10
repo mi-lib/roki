@@ -68,30 +68,31 @@ __BEGIN_DECLS
 
  * ***********************************************************/
 
-typedef struct _rkIK{
+ZDEF_STRUCT( rkIK ){
   bool *joint_sw;       /*!< joint cooperation switch */
   double *joint_weight; /*!< joint cooperating weight */
   zVec joint_vel;       /*!< joint velocity */
   double eval;          /*!< evaluation function */
 
-  /*! \cond */
   rkIKCellList clist;   /* constraint cell list */
-  zMat _c_mat_cell;     /* constraint coefficient matrix cell */
-  zVec3D _c_srv_cell;   /* strict referential velocity vector cell */
+
+  /*! \cond */
+  zMat _c_mat_cell;     /* constraint matrix cell */
+  zVec3D _c_vec_cell;   /* constraint vector cell */
 
   zIndex _j_idx;        /* cooperative joint index */
   zIndex _j_ofs;        /* reverse index */
   zVec _j_vel;          /* joint velocity vector */
   zVec _j_wn;           /* weight on joint velocity norm */
-  zMat _c_mat;          /* constraint coefficient matrix */
-  zVec _c_srv;          /* strict referential velocity vector */
+  zMat _c_mat;          /* constraint matrix */
+  zVec _c_vec;          /* constraint vector */
   zVec _c_we;           /* weight on residual constraint error */
-  zVec (*_jv)(struct _rkIK*); /* joint velocity computation method */
+  zVec (*_jv)(rkIK*); /* joint velocity computation method */
   /* workspace for joint velocity computation */
   zLE __le;
   zVec __c;
   /*! \endcond */
-} rkIK;
+};
 
 /*! \brief create and destroy inverse kinematics solver.
  *
@@ -150,10 +151,9 @@ __EXPORT bool rkChainUnregIKJoint(rkChain *chain, uint id);
  * internal memory for the inverse kinematics, the false value is returned.
  * Otherwise, the true value is returned.
  */
-__EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
+__EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
 __EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
 
-__EXPORT rkIKCell *rkIKFindCell(rkIK *ik, int id);
 __EXPORT rkIKCell *rkChainFindIKCell(rkChain *chain, int id);
 
 /*! \brief deactivate and bind constraint properties.

@@ -33,7 +33,7 @@ typedef struct{
 } while(0)
 
 /*! \brief set IK cell to IK solver. */
-__EXPORT void rkIKSeqCellSet(rkIK *ik, rkIKSeqCell *c);
+__EXPORT bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c);
 
 /*! \brief IK sequence. */
 zListClass( rkIKSeq, rkIKSeqListCell, rkIKSeqCell);

@@ -1,3 +1,6 @@
+2023. 3.10. Renamed rkIKSeqCellSet to rkChainSetIKSeqCell. [rk_ik_seq]
+2023. 3.10. Renamed rkIKSRV_fp to rkIKCVec_fp. [rk_ik_cell, rk_ik]
+2023. 3. 9. Redefined rkIK by using ZDEF_STRUCT, and renamed some member variables. [rk_ik]
 2023. 3. 3. Modified rkBody and rkLink by using ZDEF_STRUCT. [rk_body, rk_link]
 2023. 3. 3. Added rkIKRefClear, and modified rkIKCellInit to remove memset. [rk_ik_cell]
 2023. 3. 3. Modified rkIKRef, rkIKAcm, rkIKCellAttr, and rkIKCellDat by using ZDEF_STRUCT and ZDEF_UNION with default constructors. [rk_ik_cell]

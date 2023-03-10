@@ -123,7 +123,7 @@ void rk_ik_solve(FILE *fout)
     zQueueDequeue( &ik_seq, &cp );
     rkChainDeactivateIK( &chain );
     rkChainBindIK( &chain ); /* bind current status to the reference. */
-    rkIKSeqCellSet( chain._ik, &cp->data );
+    rkChainSetIKSeqCell( &chain, &cp->data );
     eprintf( "output: %d\n", ++i );
     rkChainIK( &chain, v, tol, iter );
     /* output */

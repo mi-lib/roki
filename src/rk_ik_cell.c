@@ -12,7 +12,7 @@
  * ********************************************************** */
 
 /* initialize constraint cell. */
-void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKSRV_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
+void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
 {
   cell->data.id = -1; /* dummy identifier */
   cell->data.attr.id = attr && ( mask & RK_IK_CELL_ATTR_ID ) ? attr->id : 0;
@@ -32,7 +32,7 @@ void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, r
   rkIKCellDisable( cell );
   cell->data._ref_fp = rf;
   cell->data._cmat_fp = mf;
-  cell->data._srv_fp = vf;
+  cell->data._cvec_fp = vf;
   cell->data._bind_fp = bf;
   cell->data._acm_fp = af;
   cell->data.index_offset = 0;
@@ -202,17 +202,17 @@ void rkIKBindAMCOM(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref)
 
 /* error accumulation correction */
 
-zVec3D *rkIKAcmPos(rkChain *chain, rkIKAcm *acm, void *util, zVec3D *srv)
+zVec3D *rkIKAcmPos(rkChain *chain, rkIKAcm *acm, void *util, zVec3D *vec)
 {
-  return zVec3DAddDRC( srv, zVec3DCatDRC( &acm->ae.p, 1.0, srv ) );
+  return zVec3DAddDRC( vec, zVec3DCatDRC( &acm->ae.p, 1.0, vec ) );
 }
 
-zVec3D *rkIKAcmAtt(rkChain *chain, rkIKAcm *acm, void *util, zVec3D *srv)
+zVec3D *rkIKAcmAtt(rkChain *chain, rkIKAcm *acm, void *util, zVec3D *vec)
 {
   zEP e;
 
-  zAA2EP( srv, &e );
+  zAA2EP( vec, &e );
   zEPCatDRC( &acm->ae.e, 1.0, &e );
   zEPCascade( &e, &acm->ae.e, &e );
-  return zEP2AA( &e, srv );
+  return zEP2AA( &e, vec );
 }

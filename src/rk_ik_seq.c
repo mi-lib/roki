@@ -7,21 +7,24 @@
 #include <roki/rk_ik.h>
 
 /* set IK sequence cell to IK solver. */
-void rkIKSeqCellSet(rkIK *ik, rkIKSeqCell *c)
+bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c)
 {
   int i;
   rkIKEntry *e;
   rkIKCell *cell;
+  bool ret = true;
 
   for( i=0; i<c->nc; i++ ){
     e = &c->entry[i];
-    if( !( cell = rkIKFindCell( ik, e->id ) ) ){
+    if( !( cell = rkChainFindIKCell( chain, e->id ) ) ){
       ZRUNWARN( RK_WARN_IK_CELL_NOTFOUND );
+      ret = false;
       continue;
     }
     rkIKCellSetWeight( cell, e->w[0], e->w[1], e->w[2] );
     rkIKCellSetRef( cell, e->val[0], e->val[1], e->val[2] );
   }
+  return ret;
 }
 
 /* initialize IK sequence. */
