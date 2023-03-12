@@ -136,7 +136,8 @@ rkLink *rkChainFindLink(rkChain *chain, char *name)
 {
   rkLink *l;
 
-  zNameFind( rkChainRoot(chain), rkChainLinkNum(chain), name, l );
+  zArrayFindName( rkChainLinkArray(chain), name, l );
+  if( !l ) ZRUNERROR( RK_ERR_LINK_UNKNOWN, name );
   return l;
 }
 
@@ -793,8 +794,7 @@ static void *_rkChainInitFrameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
 }
 static void *_rkChainInitJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   rkLink *link;
-  zArrayFindName( &((rkChain*)obj)->link, ZTKVal(ztk), link );
-  if( !link ){
+  if( !( link = rkChainFindLink( (rkChain*)obj, ZTKVal(ztk) ) ) ){
     ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
     return NULL;
   }

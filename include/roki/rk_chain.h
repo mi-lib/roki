@@ -18,7 +18,7 @@ __BEGIN_DECLS
 
 struct _rkIK;
 
-typedef struct{
+ZDEF_STRUCT( rkChain ){
   Z_NAMED_CLASS
   rkLinkArray link; /*!< array of links */
   zMShape3D *shape; /*!< multishape */
@@ -31,10 +31,11 @@ typedef struct{
 
   /*! \cond */
   bool _iscol; /* flag for collision check */
-  struct _rkIK *_ik; /* to be renamed to task stack */
+  struct _rkIK *_ik; /* IK solver */
   /*! \endcond */
-} rkChain;
+};
 
+#define rkChainLinkArray(c)           ( &(c)->link )
 #define rkChainRoot(c)                zArrayBuf( &(c)->link )
 #define rkChainLink(c,i)              zArrayElemNC( &(c)->link, i )
 #define rkChainLinkNum(c)             zArraySize( &(c)->link )

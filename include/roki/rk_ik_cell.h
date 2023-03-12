@@ -60,11 +60,13 @@ ZDEF_STRUCT( rkIKCellAttr ){
 #define RK_IK_CELL_ON     ( RK_IK_CELL_XON | RK_IK_CELL_YON | RK_IK_CELL_ZON )
 
 /* set constraint mode */
-#define rkIKCellAttrSetMode(a,m)   ( (a)->mode |= (m) )
-#define rkIKCellAttrUnsetMode(a,m) ( (a)->mode &= ~(m) )
-#define rkIKCellAttrEnable(a)      rkIKCellAttrSetMode( a, RK_IK_CELL_ON )
-#define rkIKCellAttrDisable(a)     rkIKCellAttrUnsetMode( a, RK_IK_CELL_ON )
-#define rkIKCellAttrForce(a)       rkIKCellAttrSetMode( a, RK_IK_CELL_ON | RK_IK_CELL_FORCE )
+#define rkIKCellAttrSetLink(a,c,n)    ( (a)->id = rkChainFindLinkID( c, n ) )
+#define rkIKCellAttrSetSubLink(a,c,n) ( (a)->id_sub = rkChainFindLinkID( c, n ) )
+#define rkIKCellAttrSetMode(a,m)      ( (a)->mode |= (m) )
+#define rkIKCellAttrUnsetMode(a,m)    ( (a)->mode &= ~(m) )
+#define rkIKCellAttrEnable(a)         rkIKCellAttrSetMode( a, RK_IK_CELL_ON )
+#define rkIKCellAttrDisable(a)        rkIKCellAttrUnsetMode( a, RK_IK_CELL_ON )
+#define rkIKCellAttrForce(a)          rkIKCellAttrSetMode( a, RK_IK_CELL_ON | RK_IK_CELL_FORCE )
 
 /* set weight on constraint of IK cell */
 #define rkIKCellAttrSetWeight(a,w1,w2,w3) zVec3DCreate( &(a)->w, w1, w2, w3 )
@@ -124,6 +126,7 @@ __EXPORT void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef
 #define rkIKCellSetRefVecForce(c,v) \
   rkIKCellSetRefForce(c,(v)->e[0],(v)->e[1],(v)->e[2])
 
+/*! \brief zero accumulated errors of high-priority constraints. */
 __EXPORT void rkIKCellAcmZero(rkIKCell *cell);
 
 #define rkIKCellCMat(c,r,mat) \

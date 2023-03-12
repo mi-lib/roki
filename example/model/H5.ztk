@@ -1,0 +1,1613 @@
+[robot]
+name : H5
+
+[optic]
+name: silver-metalic
+ambient: 0.6, 0.6, 0.6
+diffuse: 1.0, 1.0, 1.0
+specular: 0.8, 0.8, 0.8
+esr: 0.0
+alpha: 1
+
+[shape]
+name : torso
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.04, 0.1125, 0.0765 }
+vert: 1 { 0.0915, 0.1125, 0.045 }
+vert: 2 { 0.0915, 0.1125, -0.05 }
+vert: 3 { 0.0415, 0.1125, -0.197 }
+vert: 4 { -0.0935, 0.1125, -0.197 }
+vert: 5 { -0.0935, 0.1125, 0.0765 }
+vert: 6 { 0.0415, 0.1125, -0.2 }
+vert: 7 { 0.0415, 0.1125, -0.268 }
+vert: 8 { -0.0935, 0.1125, -0.268 }
+vert: 9 { -0.0935, 0.1125, -0.2 }
+vert: 10 { 0.04, -0.1125, 0.0765 }
+vert: 11 { 0.0915, -0.1125, 0.045 }
+vert: 12 { 0.0915, -0.1125, -0.05 }
+vert: 13 { 0.0415, -0.1125, -0.197 }
+vert: 14 { -0.0935, -0.1125, -0.197 }
+vert: 15 { -0.0935, -0.1125, 0.0765 }
+vert: 16 { 0.0415, -0.1125, -0.2 }
+vert: 17 { 0.0415, -0.1125, -0.268 }
+vert: 18 { -0.0935, -0.1125, -0.268 }
+vert: 19 { -0.0935, -0.1125, -0.2 }
+vert: 20 { 0.02, 0.01, 0.0765 }
+vert: 21 { 0.01, 0.02, 0.0765 }
+vert: 22 { -0.01, 0.02, 0.0765 }
+vert: 23 { -0.02, 0.01, 0.0765 }
+vert: 24 { -0.02, -0.01, 0.0765 }
+vert: 25 { -0.01, -0.02, 0.0765 }
+vert: 26 { 0.01, -0.02, 0.0765 }
+vert: 27 { 0.02, -0.01, 0.0765 }
+vert: 28 { 0.02, 0.01, 0.1535 }
+vert: 29 { 0.01, 0.02, 0.1535 }
+vert: 30 { -0.01, 0.02, 0.1535 }
+vert: 31 { -0.02, 0.01, 0.1535 }
+vert: 32 { -0.02, -0.01, 0.1535 }
+vert: 33 { -0.01, -0.02, 0.1535 }
+vert: 34 { 0.01, -0.02, 0.1535 }
+vert: 35 { 0.02, -0.01, 0.1535 }
+vert: 36 { -0.0935, 0.1125, 0.1185 }
+vert: 37 { -0.0935, 0.1125, -0.21 }
+vert: 38 { -0.1645, 0.1125, -0.183 }
+vert: 39 { -0.1645, 0.1125, 0.1185 }
+vert: 40 { -0.0935, -0.1125, 0.1185 }
+vert: 41 { -0.0935, -0.1125, -0.21 }
+vert: 42 { -0.1645, -0.1125, -0.183 }
+vert: 43 { -0.1645, -0.1125, 0.1185 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 6 7 8
+face: 6 8 9
+face: 15 14 13
+face: 15 13 12
+face: 15 12 11
+face: 15 11 10
+face: 19 18 17
+face: 19 17 16
+face: 0 10 11
+face: 0 11 1
+face: 1 11 12
+face: 1 12 2
+face: 2 12 13
+face: 2 13 3
+face: 6 16 17
+face: 6 17 7
+face: 0 5 15
+face: 0 15 10
+face: 20 21 29
+face: 20 29 28
+face: 21 22 30
+face: 21 30 29
+face: 22 23 31
+face: 22 31 30
+face: 23 24 32
+face: 23 32 31
+face: 24 25 33
+face: 24 33 32
+face: 25 26 34
+face: 25 34 33
+face: 26 27 35
+face: 26 35 34
+face: 27 20 28
+face: 27 28 35
+face: 36 37 38
+face: 36 38 39
+face: 43 42 41
+face: 43 41 40
+face: 5 36 40
+face: 5 40 41
+face: 36 39 43
+face: 36 43 40
+face: 39 38 42
+face: 39 42 43
+face: 41 42 38
+face: 41 38 37
+
+[shape]
+name : left_shoulder_flexion
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.075, -0.033, 0.05 }
+vert: 1 { 0.02, -0.033, 0.05 }
+vert: 2 { 0.02, -0.033, -0.03 }
+vert: 3 { 0.0012, -0.033, -0.03 }
+vert: 4 { -0.075, -0.033, -0.018 }
+vert: 5 { -0.075, 0.043, 0.05 }
+vert: 6 { 0.02, 0.043, 0.05 }
+vert: 7 { 0.02, 0.043, -0.03 }
+vert: 8 { 0.0012, 0.043, -0.03 }
+vert: 9 { -0.075, 0.043, -0.018 }
+face: 0 4 3
+face: 0 3 2
+face: 0 2 1
+face: 5 6 7
+face: 5 7 8
+face: 5 8 9
+face: 0 5 9
+face: 0 9 4
+face: 4 9 8
+face: 4 8 3
+
+[shape]
+name : right_shoulder_flexion
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.075, -0.033, -0.05 }
+vert: 1 { 0.02, -0.033, -0.05 }
+vert: 2 { 0.02, -0.033, 0.03 }
+vert: 3 { 0.0012, -0.033, 0.03 }
+vert: 4 { -0.075, -0.033, 0.018 }
+vert: 5 { -0.075, 0.043, -0.05 }
+vert: 6 { 0.02, 0.043, -0.05 }
+vert: 7 { 0.02, 0.043, 0.03 }
+vert: 8 { 0.0012, 0.043, 0.03 }
+vert: 9 { -0.075, 0.043, 0.018 }
+face: 0 4 3
+face: 0 3 2
+face: 0 2 1
+face: 5 6 7
+face: 5 7 8
+face: 5 8 9
+face: 0 5 9
+face: 0 9 4
+face: 4 9 8
+face: 4 8 3
+
+[shape]
+name : left_shoulder_rotation
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.0245, 0, 0.0156 }
+vert: 1 { 0.0065, 0.018, 0.0156 }
+vert: 2 { -0.0065, 0.018, 0.0156 }
+vert: 3 { -0.0245, 0, 0.0156 }
+vert: 4 { -0.0065, -0.018, 0.0156 }
+vert: 5 { 0.0065, -0.018, 0.0156 }
+vert: 6 { 0.0245, 0, -0.1655 }
+vert: 7 { 0.0065, 0.018, -0.1655 }
+vert: 8 { -0.0065, 0.018, -0.1655 }
+vert: 9 { -0.0245, 0, -0.1655 }
+vert: 10 { -0.0065, -0.018, -0.1655 }
+vert: 11 { 0.0065, -0.018, -0.1655 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 7 6
+face: 0 6 7
+face: 0 7 1
+face: 1 7 8
+face: 1 8 2
+face: 2 8 9
+face: 2 9 3
+face: 3 9 10
+face: 3 10 4
+face: 4 10 11
+face: 4 11 5
+face: 5 11 6
+face: 5 6 0
+
+[shape]
+name : right_shoulder_rotation
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.0245, 0, -0.0156 }
+vert: 1 { 0.0065, 0.018, -0.0156 }
+vert: 2 { -0.0065, 0.018, -0.0156 }
+vert: 3 { -0.0245, 0, -0.0156 }
+vert: 4 { -0.0065, -0.018, -0.0156 }
+vert: 5 { 0.0065, -0.018, -0.0156 }
+vert: 6 { 0.0245, 0, 0.1655 }
+vert: 7 { 0.0065, 0.018, 0.1655 }
+vert: 8 { -0.0065, 0.018, 0.1655 }
+vert: 9 { -0.0245, 0, 0.1655 }
+vert: 10 { -0.0065, -0.018, 0.1655 }
+vert: 11 { 0.0065, -0.018, 0.1655 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 7 6
+face: 0 6 7
+face: 0 7 1
+face: 1 7 8
+face: 1 8 2
+face: 2 8 9
+face: 2 9 3
+face: 3 9 10
+face: 3 10 4
+face: 4 10 11
+face: 4 11 5
+face: 5 11 6
+face: 5 6 0
+
+[shape]
+name : left_elbow_flexion
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.023, 0.01, -0.0325 }
+vert: 1 { 0, 0.023, -0.0325 }
+vert: 2 { 0.047, 0.023, -0.0325 }
+vert: 3 { 0.047, -0.023, -0.0325 }
+vert: 4 { 0, -0.023, -0.0325 }
+vert: 5 { -0.023, -0.01, -0.0325 }
+vert: 6 { -0.023, 0.01, 0.028 }
+vert: 7 { 0, 0.023, 0.028 }
+vert: 8 { 0.047, 0.023, 0.028 }
+vert: 9 { 0.047, -0.023, 0.028 }
+vert: 10 { 0, -0.023, 0.028 }
+vert: 11 { -0.023, -0.01, 0.028 }
+vert: 12 { 0.047, 0.021, 0.0035 }
+vert: 13 { 0.047, 0.021, -0.0035 }
+vert: 14 { 0.047, 0.0035, -0.021 }
+vert: 15 { 0.047, -0.0035, -0.021 }
+vert: 16 { 0.047, -0.021, -0.0035 }
+vert: 17 { 0.047, -0.021, 0.0035 }
+vert: 18 { 0.047, -0.0035, 0.021 }
+vert: 19 { 0.047, 0.0035, 0.021 }
+vert: 20 { 0.081, 0.021, 0.0035 }
+vert: 21 { 0.081, 0.021, -0.0035 }
+vert: 22 { 0.081, 0.0035, -0.021 }
+vert: 23 { 0.081, -0.0035, -0.021 }
+vert: 24 { 0.081, -0.021, -0.0035 }
+vert: 25 { 0.081, -0.021, 0.0035 }
+vert: 26 { 0.081, -0.0035, 0.021 }
+vert: 27 { 0.081, 0.0035, 0.021 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 6 7
+face: 4 3 9
+face: 4 9 10
+face: 2 8 9
+face: 2 9 3
+face: 12 20 21
+face: 12 21 13
+face: 13 21 22
+face: 13 22 14
+face: 14 22 23
+face: 14 23 15
+face: 15 23 24
+face: 15 24 16
+face: 16 24 25
+face: 16 25 17
+face: 17 25 26
+face: 17 26 18
+face: 18 26 27
+face: 18 27 19
+face: 19 27 20
+face: 19 20 12
+
+[shape]
+name : right_elbow_flexion
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.023, 0.01, 0.0325 }
+vert: 1 { 0, 0.023, 0.0325 }
+vert: 2 { 0.047, 0.023, 0.0325 }
+vert: 3 { 0.047, -0.023, 0.0325 }
+vert: 4 { 0, -0.023, 0.0325 }
+vert: 5 { -0.023, -0.01, 0.0325 }
+vert: 6 { -0.023, 0.01, -0.028 }
+vert: 7 { 0, 0.023, -0.028 }
+vert: 8 { 0.047, 0.023, -0.028 }
+vert: 9 { 0.047, -0.023, -0.028 }
+vert: 10 { 0, -0.023, -0.028 }
+vert: 11 { -0.023, -0.01, -0.028 }
+vert: 12 { 0.047, 0.021, -0.0035 }
+vert: 13 { 0.047, 0.021, 0.0035 }
+vert: 14 { 0.047, 0.0035, 0.021 }
+vert: 15 { 0.047, -0.0035,0.021 }
+vert: 16 { 0.047, -0.021, 0.0035 }
+vert: 17 { 0.047, -0.021, -0.0035 }
+vert: 18 { 0.047, -0.0035, -0.021 }
+vert: 19 { 0.047, 0.0035, -0.021 }
+vert: 20 { 0.081, 0.021, -0.0035 }
+vert: 21 { 0.081, 0.021, 0.0035 }
+vert: 22 { 0.081, 0.0035, 0.021 }
+vert: 23 { 0.081, -0.0035, 0.021 }
+vert: 24 { 0.081, -0.021, 0.0035 }
+vert: 25 { 0.081, -0.021, -0.0035 }
+vert: 26 { 0.081, -0.0035, -0.021 }
+vert: 27 { 0.081, 0.0035, -0.021 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 6 7
+face: 4 3 9
+face: 4 9 10
+face: 2 8 9
+face: 2 9 3
+face: 12 20 21
+face: 12 21 13
+face: 13 21 22
+face: 13 22 14
+face: 14 22 23
+face: 14 23 15
+face: 15 23 24
+face: 15 24 16
+face: 16 24 25
+face: 16 25 17
+face: 17 25 26
+face: 17 26 18
+face: 18 26 27
+face: 18 27 19
+face: 19 27 20
+face: 19 20 12
+
+[shape]
+name : left_elbow_rotation
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.02, 0, -0.081 }
+vert: 1 { 0.02, 0.01, -0.081 }
+vert: 2 { 0, 0.03, -0.081 }
+vert: 3 { -0.02, 0.01, -0.081 }
+vert: 4 { -0.02, 0, -0.081 }
+vert: 5 { 0, -0.02, -0.081 }
+vert: 6 { 0.02, 0, -0.2125 }
+vert: 7 { 0.02, 0.01, -0.2125 }
+vert: 8 { 0, 0.03, -0.2125 }
+vert: 9 { -0.02, 0.01, -0.2125 }
+vert: 10 { -0.02, 0, -0.2125 }
+vert: 11 { 0, -0.02, -0.2125 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 7 6
+face: 0 6 7
+face: 0 7 1
+face: 1 7 8
+face: 1 8 2
+face: 2 8 9
+face: 2 9 3
+face: 3 9 10
+face: 3 10 4
+face: 4 10 11
+face: 4 11 5
+face: 5 11 6
+face: 5 6 0
+
+[shape]
+name : right_elbow_rotation
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.02, 0, 0.081 }
+vert: 1 { 0.02, 0.01, 0.081 }
+vert: 2 { 0, 0.03, 0.081 }
+vert: 3 { -0.02, 0.01, 0.081 }
+vert: 4 { -0.02, 0, 0.081 }
+vert: 5 { 0, -0.02, 0.081 }
+vert: 6 { 0.02, 0, 0.2125 }
+vert: 7 { 0.02, 0.01, 0.2125 }
+vert: 8 { 0, 0.03, 0.2125 }
+vert: 9 { -0.02, 0.01, 0.2125 }
+vert: 10 { -0.02, 0, 0.2125 }
+vert: 11 { 0, -0.02, 0.2125 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 7 6
+face: 0 6 7
+face: 0 7 1
+face: 1 7 8
+face: 1 8 2
+face: 2 8 9
+face: 2 9 3
+face: 3 9 10
+face: 3 10 4
+face: 4 10 11
+face: 4 11 5
+face: 5 11 6
+face: 5 6 0
+
+[shape]
+name : left_wrist
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.012, 0.009, -0.029 }
+vert: 1 { 0.027, 0.0275, -0.029 }
+vert: 2 { 0.0565, 0.0275, -0.029 }
+vert: 3 { 0.0565, -0.0275, -0.029 }
+vert: 4 { 0.027, -0.0275, -0.029 }
+vert: 5 { -0.012, -0.009, -0.029 }
+vert: 6 { -0.012, 0.009, 0.033 }
+vert: 7 { 0.027, 0.0275, 0.033 }
+vert: 8 { 0.0565, 0.0275, 0.033 }
+vert: 9 { 0.0565, -0.0275, 0.033 }
+vert: 10 { 0.027, -0.0275, 0.033 }
+vert: 11 { -0.012, -0.009, 0.033 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 7 6
+face: 0 6 7
+face: 0 7 1
+face: 5 4 10
+face: 5 10 11
+
+[shape]
+name : right_wrist
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.012, 0.009, 0.029 }
+vert: 1 { 0.027, 0.0275, 0.029 }
+vert: 2 { 0.0565, 0.0275, 0.029 }
+vert: 3 { 0.0565, -0.0275, 0.029 }
+vert: 4 { 0.027, -0.0275, 0.029 }
+vert: 5 { -0.012, -0.009, 0.029 }
+vert: 6 { -0.012, 0.009, -0.033 }
+vert: 7 { 0.027, 0.0275, -0.033 }
+vert: 8 { 0.0565, 0.0275, -0.033 }
+vert: 9 { 0.0565, -0.0275, -0.033 }
+vert: 10 { 0.027, -0.0275, -0.033 }
+vert: 11 { -0.012, -0.009, -0.033 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 7 6
+face: 0 6 7
+face: 0 7 1
+face: 5 4 10
+face: 5 10 11
+
+[shape]
+name : gripper
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.06, 0, 0 }
+vert: 1 { 0.06, -0.03, 0 }
+vert: 2 { 0.02, 0, 0 }
+vert: 3 { 0.06, 0.05, 0 }
+face: 0 1 2
+face: 0 2 3
+
+[shape]
+name : left_hip_rotation
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.04, 0.034, 0.0805 }
+vert: 1 { 0.04, 0.034, 0.049 }
+vert: 2 { 0.04, 0.024, 0.049 }
+vert: 3 { 0.04, 0.024, -0.031 }
+vert: 4 { 0.04, -0.024, -0.031 }
+vert: 5 { 0.04, -0.024, 0.049 }
+vert: 6 { 0.04, -0.034, 0.049 }
+vert: 7 { 0.04, -0.034, 0.0805 }
+vert: 8 { -0.079, 0.034, 0.0805 }
+vert: 9 { -0.079, 0.034, 0.049 }
+vert: 10 { -0.079, 0.024, 0.049 }
+vert: 11 { -0.079, 0.024, -0.031 }
+vert: 12 { -0.079, -0.024, -0.031 }
+vert: 13 { -0.079, -0.024, 0.049 }
+vert: 14 { -0.079, -0.034, 0.049 }
+vert: 15 { -0.079, -0.034, 0.0805 }
+face: 0 7 6
+face: 0 6 1
+face: 1 5 4
+face: 1 4 3
+face: 8 14 15
+face: 8 9 14
+face: 10 12 13
+face: 10 11 12
+face: 0 8 15
+face: 0 15 7
+face: 0 1 9
+face: 0 9 8
+face: 6 7 15
+face: 6 15 14
+
+[shape]
+name : right_hip_rotation
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.04, 0.034, -0.0805 }
+vert: 1 { 0.04, 0.034, -0.049 }
+vert: 2 { 0.04, 0.024, -0.049 }
+vert: 3 { 0.04, 0.024, 0.031 }
+vert: 4 { 0.04, -0.024, 0.031 }
+vert: 5 { 0.04, -0.024, -0.049 }
+vert: 6 { 0.04, -0.034, -0.049 }
+vert: 7 { 0.04, -0.034, -0.0805 }
+vert: 8 { -0.079, 0.034, -0.0805 }
+vert: 9 { -0.079, 0.034, -0.049 }
+vert: 10 { -0.079, 0.024, -0.049 }
+vert: 11 { -0.079, 0.024, 0.031 }
+vert: 12 { -0.079, -0.024, 0.031 }
+vert: 13 { -0.079, -0.024, -0.049 }
+vert: 14 { -0.079, -0.034, -0.049 }
+vert: 15 { -0.079, -0.034, -0.0805 }
+face: 0 7 6
+face: 0 6 1
+face: 1 5 4
+face: 1 4 3
+face: 8 14 15
+face: 8 9 14
+face: 10 12 13
+face: 10 11 12
+face: 0 8 15
+face: 0 15 7
+face: 0 1 9
+face: 0 9 8
+face: 6 7 15
+face: 6 15 14
+
+[shape]
+name : hip_flexion
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.031, 0.02, -0.043 }
+vert: 1 { 0.024, 0.038, -0.043 }
+vert: 2 { 0.045, 0.038, -0.043 }
+vert: 3 { 0.3, 0.038, -0.043 }
+vert: 4 { 0.331, 0.02, -0.043 }
+vert: 5 { 0.331, -0.02, -0.043 }
+vert: 6 { 0.3, -0.035, -0.043 }
+vert: 7 { 0.0823, -0.059, -0.043 }
+vert: 8 { 0.031, -0.059, -0.043 }
+vert: 9 { -0.031, -0.02, -0.043 }
+vert: 10 { -0.031, 0.02, 0.043 }
+vert: 11 { 0.024, 0.038, 0.043 }
+vert: 12 { 0.045, 0.038, 0.043 }
+vert: 13 { 0.3, 0.038, 0.043 }
+vert: 14 { 0.331, 0.02, 0.043 }
+vert: 15 { 0.331, -0.02, 0.043 }
+vert: 16 { 0.3, -0.035, 0.043 }
+vert: 17 { 0.0823, -0.059, 0.043 }
+vert: 18 { 0.031, -0.059, 0.043 }
+vert: 19 { -0.031, -0.02, 0.043 }
+face: 0 1 3
+face: 0 3 4
+face: 0 4 5
+face: 0 5 6
+face: 0 6 7
+face: 0 7 8
+face: 0 8 9
+face: 19 18 17
+face: 19 17 16
+face: 19 16 15
+face: 19 15 14
+face: 19 14 13
+face: 19 13 11
+face: 19 11 10
+face: 2 12 13
+face: 2 13 3
+
+[shape]
+name : knee_flexion
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0, -0.038, 0.037 }
+vert: 1 { 0.255, -0.038, 0.037 }
+vert: 2 { 0.3, -0.038, 0.037 }
+vert: 3 { 0.331, -0.02, 0.037 }
+vert: 4 { 0.331, 0.01, 0.037 }
+vert: 5 { 0.3, 0.055, 0.037 }
+vert: 6 { 0, 0.035, 0.037 }
+vert: 7 { 0, -0.038, -0.037 }
+vert: 8 { 0.255, -0.038, -0.037 }
+vert: 9 { 0.3, -0.038, -0.037 }
+vert: 10 { 0.331, -0.02, -0.037 }
+vert: 11 { 0.331, 0.01, -0.037 }
+vert: 12 { 0.3, 0.055, -0.037 }
+vert: 13 { 0, 0.035, -0.037 }
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 0 5 6
+face: 13 12 11
+face: 13 11 10
+face: 13 10 9
+face: 13 9 7
+face: 0 7 8
+face: 0 8 1
+
+[shape]
+name : left_ankle_abduction
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.031, 0.024, 0.04 }
+vert: 1 { 0.0505, 0.024, 0.04 }
+vert: 2 { 0.0505, 0.054, 0.04 }
+vert: 3 { 0.0665, 0.054, 0.04 }
+vert: 4 { 0.0665, -0.054, 0.04 }
+vert: 5 { 0.0505, -0.054, 0.04 }
+vert: 6 { 0.0505, -0.024, 0.04 }
+vert: 7 { -0.031, -0.024, 0.04 }
+vert: 8 { -0.031, 0.024, -0.04 }
+vert: 9 { 0.0505, 0.024, -0.04 }
+vert: 10 { 0.0505, 0.054, -0.04 }
+vert: 11 { 0.0665, 0.054, -0.04 }
+vert: 12 { 0.0665, -0.054, -0.04 }
+vert: 13 { 0.0505, -0.054, -0.04 }
+vert: 14 { 0.0505, -0.024, -0.04 }
+vert: 15 { -0.031, -0.024, -0.04 }
+vert: 16 { 0.04, 0.054, 0.04 }
+vert: 17 { 0.0715, 0.054, 0.127 }
+vert: 18 { 0.0715, 0.054, -0.072 }
+vert: 19 { 0.04, 0.054, -0.04 }
+vert: 20 { 0.04, -0.054, 0.04 }
+vert: 21 { 0.0715, -0.054, 0.127 }
+vert: 22 { 0.0715, -0.054, -0.072 }
+vert: 23 { 0.04, -0.054, -0.04 }
+vert: 24 { 0.0715, 0.062, 0.133 }
+vert: 25 { 0.0715, -0.062, 0.133 }
+vert: 26 { 0.0715, -0.062, -0.078 }
+vert: 27 { 0.0715, 0.062, -0.078 }
+face: 0 7 6
+face: 0 6 1
+face: 2 5 4
+face: 2 4 3
+face: 8 9 14
+face: 8 14 15
+face: 10 11 12
+face: 10 12 13
+face: 16 17 18
+face: 16 18 19
+face: 23 22 21
+face: 23 21 20
+face: 24 27 26
+face: 24 26 25
+
+[shape]
+name : right_ankle_abduction
+type : polyhedron
+optic: silver-metalic
+vert: 0 { -0.031, 0.024, -0.04 }
+vert: 1 { 0.0505, 0.024, -0.04 }
+vert: 2 { 0.0505, 0.054, -0.04 }
+vert: 3 { 0.0665, 0.054, -0.04 }
+vert: 4 { 0.0665, -0.054, -0.04 }
+vert: 5 { 0.0505, -0.054, -0.04 }
+vert: 6 { 0.0505, -0.024, -0.04 }
+vert: 7 { -0.031, -0.024, -0.04 }
+vert: 8 { -0.031, 0.024, 0.04 }
+vert: 9 { 0.0505, 0.024, 0.04 }
+vert: 10 { 0.0505, 0.054, 0.04 }
+vert: 11 { 0.0665, 0.054, 0.04 }
+vert: 12 { 0.0665, -0.054, 0.04 }
+vert: 13 { 0.0505, -0.054, 0.04 }
+vert: 14 { 0.0505, -0.024, 0.04 }
+vert: 15 { -0.031, -0.024, 0.04 }
+vert: 16 { 0.04, 0.054, -0.04 }
+vert: 17 { 0.0715, 0.054, -0.127 }
+vert: 18 { 0.0715, 0.054, 0.072 }
+vert: 19 { 0.04, 0.054, 0.04 }
+vert: 20 { 0.04, -0.054, -0.04 }
+vert: 21 { 0.0715, -0.054, -0.127 }
+vert: 22 { 0.0715, -0.054, 0.072 }
+vert: 23 { 0.04, -0.054, 0.04 }
+vert: 24 { 0.0715, 0.062, -0.133 }
+vert: 25 { 0.0715, -0.062, -0.133 }
+vert: 26 { 0.0715, -0.062, 0.078 }
+vert: 27 { 0.0715, 0.062, 0.078 }
+face: 0 7 6
+face: 0 6 1
+face: 2 5 4
+face: 2 4 3
+face: 8 9 14
+face: 8 14 15
+face: 10 11 12
+face: 10 12 13
+face: 16 17 18
+face: 16 18 19
+face: 23 22 21
+face: 23 21 20
+face: 24 27 26
+face: 24 26 25
+
+[shape]
+name : foot
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.133, 0.062, 0 }
+vert: 1 { 0.133, -0.062, 0 }
+vert: 2 { -0.078, -0.062, 0 }
+vert: 3 { -0.078, 0.062, 0 }
+face: 0 1 2
+face: 0 2 3
+
+[shape]
+name : pan
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.005, 0.043, 0.01 }
+vert: 1 { 0.01, 0.043, 0 }
+vert: 2 { 0.01, 0.043, -0.023 }
+vert: 3 { -0.01, 0.043, -0.023 }
+vert: 4 { -0.01, 0.043, 0 }
+vert: 5 { -0.005, 0.043, 0.01 }
+vert: 6 { 0.005, -0.041, 0.01 }
+vert: 7 { 0.01, -0.041, 0 }
+vert: 8 { 0.01, -0.041, -0.023 }
+vert: 9 { -0.01, -0.041, -0.023 }
+vert: 10 { -0.01, -0.041, 0 }
+vert: 11 { -0.005, -0.041, 0.01 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 11 10 9
+face: 11 9 8
+face: 11 8 7
+face: 11 7 6
+face: 3 2 8
+face: 3 8 9
+
+[shape]
+name : tilt
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.045, 0, -0.07 }
+vert: 1 { -0.04, 0, -0.07 }
+vert: 2 { -0.04, 0, 0.07 }
+vert: 3 { 0.045, 0, 0.07 }
+vert: 4 { 0.01, 0, -0.06 }
+vert: 5 { 0, 0, -0.07 }
+vert: 6 { -0.01, 0, -0.06 }
+vert: 7 { 0, 0, -0.05 }
+vert: 8 { 0.01, -0.0794, -0.06 }
+vert: 9 { 0, -0.0794, -0.07 }
+vert: 10 { -0.01, -0.0794, -0.06 }
+vert: 11 { 0, -0.0794, -0.05 }
+vert: 12 { 0.01, 0, 0.06 }
+vert: 13 { 0, 0, 0.07 }
+vert: 14 { -0.01, 0, 0.06 }
+vert: 15 { 0, 0, 0.05 }
+vert: 16 { 0.01, -0.0794, 0.06 }
+vert: 17 { 0, -0.0794, 0.07 }
+vert: 18 { -0.01, -0.0794, 0.06 }
+vert: 19 { 0, -0.0794, 0.05 }
+face: 0 1 2
+face: 0 2 3
+face: 4 8 9
+face: 4 9 5
+face: 5 9 10
+face: 5 10 6
+face: 6 10 11
+face: 6 11 7
+face: 7 11 8
+face: 7 8 4
+face: 12 13 17
+face: 12 17 16
+face: 13 14 18
+face: 13 18 17
+face: 14 15 19
+face: 14 19 18
+face: 15 12 16
+face: 15 16 19
+
+[shape]
+name : left_camera
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.069, 0.0285, 0.054 }
+vert: 1 { 0.069, 0.014, 0.0685 }
+vert: 2 { 0.069, -0.014, 0.0685 }
+vert: 3 { 0.069, -0.0285, 0.054 }
+vert: 4 { 0.069, -0.0285, 0.026 }
+vert: 5 { 0.069, -0.014, 0.0115 }
+vert: 6 { 0.069, 0.014, 0.0115 }
+vert: 7 { 0.069, 0.0285, 0.026 }
+vert: 8 { 0.034, 0.026, 0.0654 }
+vert: 9 { 0.034, 0.026, 0.0156 }
+vert: 10 { -0.0761, 0.026, 0.0156 }
+vert: 11 { -0.0761, 0.026, 0.0654 }
+vert: 12 { 0.034, -0.026, 0.0654 }
+vert: 13 { 0.034, -0.026, 0.0156 }
+vert: 14 { -0.0761, -0.026, 0.0156 }
+vert: 15 { -0.0761, -0.026, 0.0654 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 0 5 6
+face: 0 6 7
+face: 8 9 10
+face: 8 10 11
+face: 15 14 13
+face: 15 13 12
+face: 8 11 15
+face: 8 15 12
+
+[shape]
+name : right_camera
+type : polyhedron
+optic: silver-metalic
+vert: 0 { 0.069, 0.0285, -0.054 }
+vert: 1 { 0.069, 0.014, -0.0685 }
+vert: 2 { 0.069, -0.014, -0.0685 }
+vert: 3 { 0.069, -0.0285, -0.054 }
+vert: 4 { 0.069, -0.0285, -0.026 }
+vert: 5 { 0.069, -0.014, -0.0115 }
+vert: 6 { 0.069, 0.014, -0.0115 }
+vert: 7 { 0.069, 0.0285, -0.026 }
+vert: 8 { 0.034, 0.026, -0.0654 }
+vert: 9 { 0.034, 0.026, -0.0156 }
+vert: 10 { -0.0761, 0.026, -0.0156 }
+vert: 11 { -0.0761, 0.026, -0.0654 }
+vert: 12 { 0.034, -0.026, -0.0654 }
+vert: 13 { 0.034, -0.026, -0.0156 }
+vert: 14 { -0.0761, -0.026, -0.0156 }
+vert: 15 { -0.0761, -0.026, -0.0654 }
+face: 0 1 2
+face: 0 2 3
+face: 0 3 4
+face: 0 4 5
+face: 0 5 6
+face: 0 6 7
+face: 8 9 10
+face: 8 10 11
+face: 15 14 13
+face: 15 13 12
+face: 8 11 15
+face: 8 15 12
+
+
+% link name
+%  0: torso
+%  1: waist
+%  2: left_shoulder_flexion
+%  3: left_shoulder_abduction
+%  4: left_shoulder_rotation
+%  5: left_elbow_flexion
+%  6: left_elbow_rotation
+%  7: left_wrist
+%  8: left_gripper
+%  9: left_hip_rotation
+% 10: left_hip_abduction
+% 11: left_hip_flexion
+% 12: left_knee_flexion
+% 13: left_ankle_flexion
+% 14: left_ankle_abduction
+% 15: left_foot
+% 16: right_shoulder_flexion
+% 17: right_shoulder_abduction
+% 18: right_shoulder_rotation
+% 19: right_elbow_flexion
+% 20: right_elbow_rotation
+% 21: right_wrist
+% 22: right_gripper
+% 23: right_hip_rotation
+% 24: right_hip_abduction
+% 25: right_hip_flexion
+% 26: right_knee_flexion
+% 27: right_ankle_flexion
+% 28: right_ankle_abduction
+% 29: right_foot
+% 30: pan
+% 31: tilt
+% 32: left_eye
+% 33: right_eye
+
+[link]
+name: torso
+jointtype: float
+mass: 11.8798
+inertia: {
+ 0.1685143, -0.000103642, 0.0138298
+ -0.000103642, 0.1749219, 0.000622586
+ 0.0138298, 0.000622586, 0.0808022
+}
+COM: { -0.04509, 0.000494762, -0.0593372 }
+shape: torso
+
+[link]
+name: waist
+jointtype: fixed
+pos: { 0, 0, -0.3495 }
+parent: torso
+
+[link]
+name: left_shoulder_flexion
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.505882
+inertia: {
+ 0.00145669, -2.97978e-05, -0.000386764
+ -2.97978e-05, 0.0015282, -5.64612e-05
+ -0.000386764, -5.64612e-05, 0.000620526
+}
+frame: {
+ 0, 1, 0, 0
+ 0, 0, -1, 0.165
+ -1, 0, 0, 0
+}
+COM: { -0.0306699, -0.00530463, 0.041788 }
+shape: left_shoulder_flexion
+parent: torso
+
+[link]
+name: left_shoulder_abduction
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.190307
+inertia: {
+ 8.27881e-05, -1.04881e-07, -1.1687e-08
+ -1.04881e-07, 5.67802e-05, 8.6373e-08
+ -1.1687e-08, 8.6373e-08, 4.81977e-05
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, 1, 0
+ 0, -1, 0, 0
+}
+COM: { -0.000159668, 0.00057196, -0.000701019 }
+parent: left_shoulder_flexion
+
+[link]
+name: left_shoulder_rotation
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.702808
+inertia: {
+ 0.00331686, -1.1728e-08, 1.40472e-07
+ -1.1728e-08, 0.00328361, 2.9609e-05
+ 1.40472e-07, 2.9609e-05, 0.000158734
+}
+frame: {
+ 0, 0, -1, 0
+ 0, 1, 0, 0
+ 1, 0, 0, 0
+}
+COM: { -2.502e-06, 0.00180597, -0.114822 }
+shape: left_shoulder_rotation
+parent: left_shoulder_abduction
+
+[link]
+name: left_elbow_flexion
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.235585
+inertia: {
+ 0.000129726, -9.94953e-06, -3.16595e-05
+ -9.94953e-06, 0.000271585, 9.84395e-07
+ -3.16595e-05, 9.84396e-07, 0.000232099
+}
+frame: {
+ 0, 1, 0, 0
+ 0, 0, -1, 0
+ -1, 0, 0, -0.205
+}
+COM: { 0.037769, -0.00215042, -0.004229 }
+shape: left_elbow_flexion
+parent: left_shoulder_rotation
+
+[link]
+name: left_elbow_rotation
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.359714
+inertia: {
+ 0.00109297, 5.492e-09, 8.58136e-07
+ 5.492e-09, 0.00108235, 6.14293e-06
+ 8.58136e-07, 6.14293e-06, 7.32903e-05
+}
+frame: {
+ 0, 0, -1, 0
+ 1, 0, 0, 0
+ 0, -1, 0, 0
+}
+COM: { 2.6001e-05, 0.002026, -0.147461 }
+shape: left_elbow_rotation
+parent: left_elbow_flexion
+
+[link]
+name: left_wrist
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.288811
+inertia: {
+ 0.000181273, -1.10919e-05, -2.66145e-06
+ -1.10919e-05, 0.000270184, -2.77408e-06
+ -2.66145e-06, -2.77408e-06, 0.000199155
+}
+frame: {
+ 0, 1, 0, 0
+ 0, 0, -1, 0
+ -1, 0, 0, -0.2305
+}
+COM: { 0.0408343, -0.00185356, -0.000836945 }
+shape: left_wrist
+parent: left_elbow_rotation
+
+[link]
+name: left_gripper
+jointtype: fixed
+frame: {
+ 0, 0, -1, 0.0565
+ 1, 0, 0, 0
+ 0, -1, 0, 0
+}
+shape: gripper
+parent: left_wrist
+
+[link]
+name: left_hip_rotation
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 1.04903
+inertia: {
+ 0.00182529, -3.1026e-08, -0.000523915
+ -3.1026e-08, 0.0028019, -5.3853e-08
+ -0.000523915, -5.3853e-08, 0.00150602
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 1, 0, 0.0725
+ 0, 0, 1, 0
+}
+COM: { -0.0348853, -6.1e-07, 0.043709 }
+shape: left_hip_rotation
+parent: waist
+
+[link]
+name: left_hip_abduction
+jointtype: revolute
+min: -90
+max: 90
+stiffness: 0
+viscosity: 0
+mass: 0.617259
+inertia: {
+ 0.000521936, -2.6454e-08, -2.127e-09
+ -2.6454e-08, 0.000419193, 3.01778e-06
+ -2.127e-09, 3.01778e-06, 0.000342393
+}
+frame: {
+ 0, 0, 1, 0
+ 0, 1, 0, 0
+ -1, 0, 0, 0
+}
+COM: { 2.197e-06, -0.00207281, -0.00217142 }
+parent: left_hip_rotation
+
+[link]
+name: left_hip_flexion
+jointtype: revolute
+min: -90
+max: 90
+stiffness: 0
+viscosity: 0
+mass: 1.79617
+inertia: {
+ 0.00229264, -0.000224664, -0.000165082
+ -0.000224664, 0.0119593, 3.9206e-05
+ -0.000165082, 3.9206e-05, 0.0111215
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, -1, 0
+ 0, 1, 0, 0
+}
+COM: { 0.141293, 0.00878699, -0.00101968 }
+shape: hip_flexion
+parent: left_hip_abduction
+
+[link]
+name: left_knee_flexion
+jointtype: revolute
+min: 0
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 2.51942
+inertia: {
+ 0.00299964, -0.000596855, 0.0001451
+ -0.000596855, 0.0247038, 4.54375e-05
+ 0.0001451, 4.54376e-05, 0.0248087
+}
+frame: {
+ 1, 0, 0, 0.3
+ 0, -1, 0, 0
+ 0, 0, -1, 0
+}
+COM: { 0.109716, -0.00375848, -0.0074971 }
+shape: knee_flexion
+parent: left_hip_flexion
+
+[link]
+name: left_ankle_flexion
+jointtype: revolute
+min: -90
+max: 90
+stiffness: 0
+viscosity: 0
+mass: 0.60135
+inertia: {
+ 0.000435355, -3.9971e-08, 2.2312e-08
+ -3.9971e-08, 0.00026624, -2.9e-11
+ 2.2312e-08, -2.9e-11, 0.000405101
+}
+frame: {
+ 1, 0, 0, 0.3
+ 0, -1, 0, 0
+ 0, 0, -1, 0
+}
+COM: { 1.923e-06, -0.00222491, -0.000114197 }
+parent: left_knee_flexion
+
+[link]
+name: left_ankle_abduction
+jointtype: revolute
+min: -90
+max: 90
+stiffness: 0
+viscosity: 0
+mass: 1.2794
+inertia: {
+ 0.0042824, 2.1761e-08, -0.000987516
+ 2.1762e-08, 0.00453801, 5.42122e-07
+ -0.000987515, 5.42122e-07, 0.0019645
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, 1, 0
+ 0, -1, 0, 0
+}
+COM: { 0.0423186, 6.104e-06, -0.00626962 }
+shape: left_ankle_abduction
+parent: left_ankle_flexion
+
+[link]
+name: left_foot
+jointtype: fixed
+frame: {
+ 0, 0, -1, 0.0795
+ 0, 1, 0, 0
+ 1, 0, 0, 0
+}
+shape: foot
+parent: left_ankle_abduction
+
+[link]
+name: right_shoulder_flexion
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.505882
+inertia: {
+ 0.00145669, -2.97983e-05, 0.000386771
+ -2.97983e-05, 0.0015282, 5.64609e-05
+ 0.000386771, 5.64609e-05, 0.000620532
+}
+frame: {
+ 0, 1, 0, 0
+ 0, 0, -1, -0.165
+ -1, 0, 0, 0
+}
+COM: { -0.0306699, -0.00530463, -0.041788 }
+shape: right_shoulder_flexion
+parent: torso
+
+[link]
+name: right_shoulder_abduction
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.190307
+inertia: {
+ 8.27881e-05, -1.04798e-07, 1.1687e-08
+ -1.04798e-07, 5.67802e-05, -8.6346e-08
+ 1.1687e-08, -8.6346e-08, 4.81977e-05
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, -1, 0
+ 0, 1, 0, 0
+}
+COM: { -0.000159668, 0.00057196, 0.000701019 }
+parent: right_shoulder_flexion
+
+[link]
+name: right_shoulder_rotation
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.702808
+inertia: {
+ 0.00331686, -1.1624e-08, -1.40473e-07
+ -1.1624e-08, 0.00328361, -2.96248e-05
+ -1.40473e-07, -2.96248e-05, 0.000158735
+}
+frame: {
+ 0, 0, 1, 0
+ 0, 1, 0, 0
+ -1, 0, 0, 0
+}
+COM: { -2.502e-06, 0.00180597, 0.114822 }
+shape: right_shoulder_rotation
+parent: right_shoulder_abduction
+
+[link]
+name: right_elbow_flexion
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.235585
+inertia: {
+ 0.000129726, -9.94958e-06, 3.16588e-05
+ -9.94958e-06, 0.000271585, -9.84441e-07
+ 3.16588e-05, -9.84442e-07, 0.0002321
+}
+frame: {
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+ 1, 0, 0, 0.205
+}
+COM: { 0.037769, -0.00215042, 0.004229 }
+shape: right_elbow_flexion
+parent: right_shoulder_rotation
+
+[link]
+name: right_elbow_rotation
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.359714
+inertia: {
+ 0.00109297, 5.485e-09, -8.58132e-07
+ 5.485e-09, 0.00108235, -6.15124e-06
+ -8.58132e-07, -6.15124e-06, 7.32904e-05
+}
+frame: {
+ 0, 0, 1, 0
+ 1, 0, 0, 0
+ 0, 1, 0, 0
+}
+COM: { 2.6001e-05, 0.002026, 0.147461 }
+shape: right_elbow_rotation
+parent: right_elbow_flexion
+
+[link]
+name: right_wrist
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.288811
+inertia: {
+ 0.000181273, -1.10919e-05, 2.66195e-06
+ -1.10919e-05, 0.000270184, 2.77405e-06
+ 2.66195e-06, 2.77405e-06, 0.000199155
+}
+frame: {
+ 0, 1, 0, 0
+ 0, 0, 1, 0
+ 1, 0, 0, 0.2305
+}
+COM: { 0.0408343, -0.00185356, 0.000836945 }
+shape: right_wrist
+parent: right_elbow_rotation
+
+[link]
+name: right_gripper
+jointtype: fixed
+frame: {
+ 0, 0, -1, 0.0565
+ 1, 0, 0, 0
+ 0, -1, 0, 0
+}
+shape: gripper
+parent: right_wrist
+
+[link]
+name: right_hip_rotation
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 1.04903
+inertia: {
+ 0.00182529, 2.4913e-08, -0.000523914
+ 2.4913e-08, 0.0028019, 3.9438e-08
+ -0.000523914, 3.9438e-08, 0.00150602
+}
+frame: {
+ 1, 0, 0, 0
+ 0, -1, 0, -0.0725
+ 0, 0, -1, 0
+}
+COM: { -0.0348853, -6.1e-07, -0.043709 }
+shape: right_hip_rotation
+parent: waist
+
+[link]
+name: right_hip_abduction
+jointtype: revolute
+min: -90
+max: 90
+stiffness: 0
+viscosity: 0
+mass: 0.617259
+inertia: {
+ 0.000521936, 3.356e-09, -4.6366e-08
+ 3.356e-09, 0.000419193, 4.09197e-06
+ -4.6366e-08, 4.09197e-06, 0.000342393
+}
+frame: {
+ 0, 0,-1, 0
+ 0, 1, 0, 0
+ 1, 0, 0, 0
+}
+COM: { 2.197e-06, -0.00207281, 0.00217142 }
+parent: right_hip_rotation
+
+[link]
+name: right_hip_flexion
+jointtype: revolute
+min: -90
+max: 90
+stiffness: 0
+viscosity: 0
+mass: 1.79617
+inertia: {
+ 0.00229263, 0.00019508, 0.000165085
+ 0.00019508, 0.0119592, -1.67986e-05
+ 0.000165085, -1.67986e-05, 0.0111216
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, 1, 0
+ 0,-1, 0, 0
+}
+COM: { 0.141293, 0.00878699, 0.00101968 }
+shape: hip_flexion
+parent: right_hip_abduction
+
+[link]
+name: right_knee_flexion
+jointtype: revolute
+min: 0
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 2.51942
+inertia: {
+ 0.00299964, 0.000678094, -0.000145076
+ 0.000678094, 0.0247039, 4.04484e-05
+ -0.000145076, 4.04484e-05, 0.0248087
+}
+frame: {
+ 1, 0, 0, 0.3
+ 0, -1, 0, 0
+ 0, 0, -1, 0
+}
+COM: { 0.109716, -0.00375848, 0.0074971 }
+shape: knee_flexion
+parent: right_hip_flexion
+
+[link]
+name: right_ankle_flexion
+jointtype: revolute
+min: -90
+max: 90
+stiffness: 0
+viscosity: 0
+mass: 0.60135
+inertia: {
+ 0.000435355, -3.9971e-08, -2.2412e-08
+ -3.9971e-08, 0.00026624, 3e-11
+ -2.2412e-08, 3e-11, 0.000405101
+}
+frame: {
+ 1, 0, 0, 0.3
+ 0, -1, 0, 0
+ 0, 0, -1, 0
+}
+COM: { 1.923e-06, -0.00222491, 0.000114197 }
+parent: right_knee_flexion
+
+[link]
+name: right_ankle_abduction
+jointtype: revolute
+min: -90
+max: 90
+stiffness: 0
+viscosity: 0
+mass: 1.2794
+inertia: {
+ 0.00428239, 2.0746e-08, -0.000987529
+ 2.0746e-08, 0.00453801, 5.37914e-07
+ -0.000987529, 5.37914e-07, 0.00196451
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, -1, 0
+ 0, 1, 0, 0
+}
+COM: { 0.0423186, 6.104e-06, 0.00626962 }
+shape: right_ankle_abduction
+parent: right_ankle_flexion
+
+[link]
+name: right_foot
+jointtype: fixed
+frame: {
+ 0, 0, -1, 0.0795
+ 0, -1, 0, 0
+ -1, 0, 0, 0
+}
+shape: foot
+parent: right_ankle_abduction
+
+[link]
+name: pan
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.148396
+inertia: {
+ 0.000101433, 0, 0
+ 0, 3.4638e-05, -4.46637e-07
+ 0, -4.46637e-07, 7.94214e-05
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 1, 0, 0
+ 0, 0, 1, 0.177
+}
+COM: { 0, 0.000579651, -0.00962012 }
+shape: pan
+parent: torso
+
+[link]
+name: tilt
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.186452
+inertia: {
+ 0.00077118, 0, 0
+ 0, 0.000670427, -3.2e-06
+ 0, -3.2e-06, 0.000110027
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, -1, 0
+ 0, 1, 0, 0
+}
+COM: { -1.22e-07, -0.04127, 0.000425778 }
+shape: tilt
+parent: pan
+
+[link]
+name: left_eye
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.346832
+inertia: {
+ 0.000152871, -2.3489e-08, -4.19496e-06
+ -2.3489e-08, 0.000706125, -2.84e-10
+ -4.19496e-06, -2.84e-10, 0.00068594
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, 1, 0
+ 0, -1, 0, -0.06
+}
+COM: { -0.000286102, 0, 0.0411299 }
+shape: left_camera
+parent: tilt
+
+[link]
+name: right_eye
+jointtype: revolute
+min: -180
+max: 180
+stiffness: 0
+viscosity: 0
+mass: 0.346832
+inertia: {
+ 0.000152871, 2.3489e-08, 4.19496e-06
+ 2.3489e-08, 0.000706125, -2.84e-10
+ 4.19496e-06, -2.84e-10, 0.00068594
+}
+frame: {
+ 1, 0, 0, 0
+ 0, 0, -1, 0
+ 0, 1, 0, 0.06
+}
+COM: { -0.000286102, -1.07e-07, -0.0411299 }
+shape: right_camera
+parent: tilt
+
+% initial root position and pivot link
+[init]
+joint: torso 0 0 1.029 0 0 0
+
+[ik]
+joint: torso                 0.001
+joint: left_hip_rotation     0.001
+joint: left_hip_abduction    0.001
+joint: left_hip_flexion      0.001
+joint: left_knee_flexion     0.001
+joint: left_ankle_flexion    0.001
+joint: left_ankle_abduction  0.001
+joint: right_hip_rotation    0.001
+joint: right_hip_abduction   0.001
+joint: right_hip_flexion     0.001
+joint: right_knee_flexion    0.001
+joint: right_ankle_flexion   0.001
+joint: right_ankle_abduction 0.001
+constraint: com
+constraint: world_att torso
+constraint: world_pos left_foot f
+constraint: world_att left_foot f
+constraint: world_pos right_foot f
+constraint: world_att right_foot f

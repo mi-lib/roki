@@ -81,6 +81,8 @@ void step4(FILE *fout_vs, FILE *fout_cs, double t, rkChain *robot, rkIKCell *ent
   ik_solve( fout_vs, fout_cs, robot, entry, q, &pg, &pl, &pr );
 }
 
+#define H5_ZTK "../model/H5.ztk"
+
 int main(int argc, char *argv[])
 {
   rkChain robot;
@@ -89,8 +91,8 @@ int main(int argc, char *argv[])
   zVec q;
   FILE *fout_vs, *fout_cs;
 
-  rkChainReadZTK( &robot, "../model/humanoid.ztk" );
-  rkChainIKConfReadZTK( &robot, "../model/humanoid.ztk" );
+  rkChainReadZTK( &robot, H5_ZTK );
+  rkChainIKConfReadZTK( &robot, H5_ZTK );
   q = zVecAlloc( rkChainJointSize(&robot) );
   for( i=0; i<6; i++ )
     entry[i] = rkChainFindIKCell( &robot, i );
