@@ -1,3 +1,4 @@
+2023. 3.12. Added magnum.ztk. [example]
 2023. 3.12. Added rkChainIKConstraintMat, rkChainIKConstraintVec, and rkChainIKJointIndex. [rk_ik]
 2023. 3.12. Added rkIKCellAttrSetLink and rkIKCellAttrSetSubLink. [rk_ik_cell]
 2023. 3.12. Redefined rkChainRegIKJoint and rkChainUnregIKJoint. [rk_ik]
