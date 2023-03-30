@@ -98,7 +98,7 @@ static bool _rkIKAllocCMat(rkIK *ik)
 /* register/unregister a cooperating joint to the inverse kinematics solver. */
 static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
 {
-  uint count, ofs, i;
+  int count, ofs, i;
   int j;
   double *wp;
 
@@ -131,7 +131,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
   return _rkIKAllocCMat( ik );
 }
 
-static bool _rkIKRegJointID(rkIK *ik, rkChain *chain, uint id, bool sw, double weight)
+static bool _rkIKRegJointID(rkIK *ik, rkChain *chain, int id, bool sw, double weight)
 {
   if( id < 0 || id >= rkChainLinkNum(chain) ){
     ZRUNERROR( RK_ERR_LINK_INVID, id );
@@ -141,17 +141,17 @@ static bool _rkIKRegJointID(rkIK *ik, rkChain *chain, uint id, bool sw, double w
   ik->joint_weight[id] = weight;
   return _rkIKAllocJointIndex( ik, chain );
 }
-bool rkChainRegIKJointID(rkChain *chain, uint id, double weight){
+bool rkChainRegIKJointID(rkChain *chain, int id, double weight){
   return _rkIKRegJointID( chain->_ik, chain, id, true, weight );
 }
-bool rkChainUnregIKJointID(rkChain *chain, uint id){
+bool rkChainUnregIKJointID(rkChain *chain, int id){
   return _rkIKRegJointID( chain->_ik, chain, id, false, 0.0 );
 }
 
 /* register all joints to the inverse kinematics solver. */
 bool rkChainRegIKJointAll(rkChain *chain, double weight)
 {
-  uint i;
+  int i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     if( rkChainLinkJointSize(chain,i) > 0 )
@@ -297,8 +297,7 @@ void rkChainZeroIKAcm(rkChain *chain)
 /* form the motion contraint equation. */
 static int _rkIKCellEq(rkIK *ik, rkChain *chain, rkIKCell *cell, int s, int row)
 {
-  uint i;
-  int j;
+  int i, j;
 
   if( !( ( RK_IK_CELL_XON << s ) & cell->data.attr.mode ) ) return 0;
   zVecSetElemNC( ik->_c_vec, row, ik->_c_vec_cell.e[s] );
@@ -365,7 +364,7 @@ zVec rkIKSolveEqSR(rkIK *ik)
 /* solve the motion constraint equation with error-damped inverse matrix. */
 zVec rkIKSolveEqED(rkIK *ik)
 {
-  uint i;
+  int i;
   double e;
 
   zVecAmpNC( ik->_c_vec, ik->_c_we, ik->__c );
@@ -386,8 +385,7 @@ zVec rkIKSolveEqED(rkIK *ik)
 /* solve the motion constraint equation. */
 zVec rkChainIKSolveEq(rkChain *chain)
 {
-  uint i;
-  int j, k;
+  int i, j, k;
   double *vp;
 
   _rkChainIKSolveEq( chain );
@@ -410,15 +408,21 @@ zVec rkChainIKOne(rkChain *chain, zVec dis, double dt)
   return dis;
 }
 
+static zVec _rkChainGetJointDisRJO(rkChain *chain, zVec dis)
+{
+  return rkChainGetJointDis( chain, chain->_ik->_j_idx, dis );
+}
+
 /* solve one-step inverse kinematics only for registered joints based on Newton=Raphson's method. */
 zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
 {
-  uint i;
-  int k;
+  int i, k;
   double *dp, *vp;
 
   _rkChainIKSolveEq( chain );
+#if 0
   rkChainGetJointDis( chain, chain->_ik->_j_idx, dis );
+#endif
   for( dp=zVecBuf(dis), vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
     k = zIndexElemNC(chain->_ik->_j_idx,i);
     rkJointCatDis( rkChainLinkJoint(chain,k), dp, dt, vp );
@@ -432,11 +436,12 @@ zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
 }
 
 /* solve inverse kinematics based on Newton=Raphson's method. */
-static int _rkChainIK(rkChain *chain, zVec dis, zVec (*_solve_ik_one)(rkChain*,zVec,double), double tol, int iter)
+static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*,zVec), zVec (*_solve_ik_one)(rkChain*,zVec,double), double tol, int iter)
 {
   int i;
   double rest = HUGE_VAL;
 
+  _get_joint_dis( chain, dis );
   ZITERINIT( iter );
   rkChainZeroIKAcm( chain );
   for( i=0; i<iter; i++ ){
@@ -448,10 +453,10 @@ static int _rkChainIK(rkChain *chain, zVec dis, zVec (*_solve_ik_one)(rkChain*,z
   return -1;
 }
 int rkChainIK(rkChain *chain, zVec dis, double tol, int iter){
-  return _rkChainIK( chain, dis, rkChainIKOne, tol, iter );
+  return _rkChainIK( chain, dis, rkChainGetJointDisAll, rkChainIKOne, tol, iter );
 }
 int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter){
-  return _rkChainIK( chain, dis, rkChainIKOneRJO, tol, iter );
+  return _rkChainIK( chain, dis, _rkChainGetJointDisRJO, rkChainIKOneRJO, tol, iter );
 }
 
 /* ********************************************************** */
@@ -494,7 +499,7 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   if( ZTKValNext(ztk) ) w = ZTKDouble(ztk);
   if( strcmp( linkname, "all" ) == 0 )
     return rkChainRegIKJointAll( (rkChain*)obj, w ) ? obj : NULL;
-  if( !( link = rkChainFindLink( (rkChain*)obj, ZTKVal(ztk) ) ) ){
+  if( !( link = rkChainFindLink( (rkChain*)obj, linkname ) ) ){
     ZRUNERROR( RK_ERR_LINK_UNKNOWN, linkname );
     return NULL;
   }

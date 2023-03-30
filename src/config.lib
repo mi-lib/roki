@@ -7,4 +7,3 @@ OBJ=rk_g3d.o rk_contact.o\
 	rk_ik_cell.o rk_ik.o rk_ik_seq.o rk_ik_imp.o\
 	rk_cd.o\
 	rk_abi.o
-DLIB=libroki.so

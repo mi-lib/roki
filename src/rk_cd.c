@@ -308,7 +308,7 @@ void rkCDPairVertPrint(rkCD *cd)
 rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
 {
   zShapeListCell *sc;
-  uint i;
+  int i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     zListForEach( &rkChainLink(chain,i)->body.shapelist, sc ){
@@ -489,8 +489,7 @@ static rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkC
 static int _rkCDPairColChkVert(rkCD *cd, rkCDPair *cp)
 {
   rkCDVertList temp;
-  uint i;
-  int ret = 0;
+  int i, ret = 0;
 
   zListInit( &temp );
   for( i=0; i<zPH3DVertNum(&cp->data.cell[0]->data.ph); i++ )
@@ -538,7 +537,7 @@ static void _rkCDColChkOBBVert(rkCD *cd)
 {
   rkCDPair *cp;
   rkCDVertList temp;
-  uint i;
+  int i;
 
   cd->colnum = 0;
   zListForEach( &cd->plist, cp ){
@@ -646,15 +645,14 @@ static zPH3D *_rkCDBREPMergeCH(zBREP *b1, zBREP *b2, zPH3D *ph)
 
 static bool _rkCDColVolError(zPH3D *ph)
 {
-  uint i, j;
-  int v[3];
+  int i, j, v[3];
 
   for( i=0; i<zPH3DFaceNum(ph); i++ ){
     for( j=0; j<3; j++ )
       v[j] = (int)( zPH3DFaceVert(ph,i,j)-zPH3DVertBuf(ph) );
-    if( v[0] < 0 || (uint)v[0] > zPH3DVertNum(ph) ||
-        v[1] < 0 || (uint)v[1] > zPH3DVertNum(ph) ||
-        v[2] < 0 || (uint)v[2] > zPH3DVertNum(ph)){
+    if( v[0] < 0 || v[0] > zPH3DVertNum(ph) ||
+        v[1] < 0 || v[1] > zPH3DVertNum(ph) ||
+        v[2] < 0 || v[2] > zPH3DVertNum(ph)){
       return true;
     }
   }

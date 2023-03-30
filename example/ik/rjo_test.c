@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
   rkIKCellAttr attr;
   rkIKCell *entry[2];
   zVec q;
-  zVec3D pl = { { 0.01, 0.02, 0.05 } };
+  zVec6D ref = { { 0.01, 0.02, 0.05, 0.0, -zDeg2Rad(45), 0.0 } };
 
   rkChainReadZTK( &robot, "../model/H5.ztk" );
   rkChainCreateIK( &robot );
@@ -18,15 +18,27 @@ int main(int argc, char *argv[])
   rkChainRegIKJoint( &robot, "left_knee_flexion",    WN );
   rkChainRegIKJoint( &robot, "left_ankle_flexion",   WN );
   rkChainRegIKJoint( &robot, "left_ankle_abduction", WN );
+  zVec3DZero( &attr.ap );
   rkIKCellAttrSetLink( &attr, &robot, "left_foot" );
-  entry[0] = rkChainRegIKCellWldPos( &robot, &attr, RK_IK_CELL_ATTR_ID );
+  entry[0] = rkChainRegIKCellWldPos( &robot, &attr, RK_IK_CELL_ATTR_ID | RK_IK_CELL_ATTR_AP );
   entry[1] = rkChainRegIKCellWldAtt( &robot, &attr, RK_IK_CELL_ATTR_ID );
+#if 0
   q = zVecAlloc( zArraySize( rkChainIKJointIndex(&robot) ) );
+#else
+  q = zVecAlloc( rkChainJointSize(&robot) );
+#endif
+  rkChainDeactivateIK( &robot );
   rkChainBindIK( &robot );
-  rkIKCellSetRefVec( entry[0], &pl );
-  rkIKCellSetRefVec( entry[1], ZVEC3DZERO );
 
+  zVec6DPrint( &ref );
+  rkIKCellSetRefVec( entry[0], zVec6DLin(&ref) );
+  rkIKCellSetRefVec( entry[1], zVec6DAng(&ref) );
+
+#if 0
   rkChainIK_RJO( &robot, q, zTOL, 0 );
+#else
+  rkChainIK( &robot, q, zTOL, 0 );
+#endif
   zVecPrint( q );
   zFrame3DPrint( rkChainLinkWldFrame(&robot,attr.id) );
 

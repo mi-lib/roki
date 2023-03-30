@@ -1,3 +1,8 @@
+2023. 3.30. Debugged _rkIKJointFromZTK. [rk_ik]
+2023. 3.30. Corrected chain tag fields of H5.ztk and magnum.ztk. [example]
+2023. 3.30. Modified forward declaration of rkIK for C++ compatibility. [rk_chain]
+2023. 3.30. Reflected new specification of zArrayClass and zArray2Class. [rk_contact, rk_motor, rk_chain, rk_jacobi, rk_ik, rk_cd, rk_abi]
+2023. 3.29. Modified config.lib and config.tools for C++ compilation. [src, tools]
 2023. 3.12. Added magnum.ztk. [example]
 2023. 3.12. Added rkChainIKConstraintMat, rkChainIKConstraintVec, and rkChainIKJointIndex. [rk_ik]
 2023. 3.12. Added rkIKCellAttrSetLink and rkIKCellAttrSetSubLink. [rk_ik_cell]

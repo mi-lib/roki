@@ -88,7 +88,7 @@ void rkMotorFPrintZTK(FILE *fp, rkMotor *motor)
 rkMotorArray *rkMotorArrayClone(rkMotorArray *org)
 {
   rkMotorArray *cln;
-  uint i;
+  int i;
 
   if( !( cln = zAlloc( rkMotorArray, 1 ) ) ){
     ZALLOCERROR();
@@ -117,7 +117,7 @@ rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name)
 
 void rkMotorArrayFPrintZTK(FILE *fp, rkMotorArray *m)
 {
-  uint i;
+  int i;
 
   for( i=0; i<zArraySize(m); i++ ){
     fprintf( fp, "[%s]\n", ZTK_TAG_RKMOTOR );

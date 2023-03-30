@@ -124,8 +124,8 @@ __EXPORT void rkChainDestroyIK(rkChain *chain);
  * If \a id is a valid link identifier, it returns the true value.
  * Otherwise, the false value is returned.
  */
-__EXPORT bool rkChainRegIKJointID(rkChain *chain, uint id, double weight);
-__EXPORT bool rkChainUnregIKJointID(rkChain *chain, uint id);
+__EXPORT bool rkChainRegIKJointID(rkChain *chain, int id, double weight);
+__EXPORT bool rkChainUnregIKJointID(rkChain *chain, int id);
 
 #define rkChainRegIKJoint(chain,name,weight) \
   rkChainRegIKJointID( chain, rkChainFindLinkID( chain, name ), weight )

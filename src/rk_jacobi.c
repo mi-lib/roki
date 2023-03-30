@@ -131,7 +131,7 @@ zMat rkChainLinkToLinkLinJacobi(rkChain *c, int from, int to, zVec3D *p, zMat ja
 /* COM Jacobian matrix of a chain with respect to the world frame. */
 zMat rkChainCOMJacobi(rkChain *c, zMat jacobi)
 {
-  uint i;
+  int i;
   rkLink *l;
   zVec3D s;
   double m;
@@ -184,7 +184,7 @@ zMat rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat m)
 /* angular momentum matrix of a kinematic chain. */
 zMat rkChainAMMat(rkChain *c, zVec3D *p, zMat m)
 {
-  uint i;
+  int i;
 
   zMatZero( m );
   for( i=0; i<rkChainLinkNum(c); i++ )

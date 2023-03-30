@@ -16,7 +16,11 @@ __BEGIN_DECLS
  * kinematic chain class
  * ********************************************************** */
 
+#ifdef __cplusplus
+struct rkIK;
+#else
 struct _rkIK;
+#endif /* __cplusplus */
 
 ZDEF_STRUCT( rkChain ){
   Z_NAMED_CLASS
@@ -31,7 +35,11 @@ ZDEF_STRUCT( rkChain ){
 
   /*! \cond */
   bool _iscol; /* flag for collision check */
+#if __cplusplus
+  rkIK *_ik; /* IK solver */
+#else
   struct _rkIK *_ik; /* IK solver */
+#endif /* __cplusplus */
   /*! \endcond */
 };
 
@@ -165,7 +173,7 @@ __EXPORT rkChain *rkChainCopyState(rkChain *src, rkChain *dst);
  * \sa
  * rkJointSize
  */
-__EXPORT uint rkChainJointSize(rkChain *c);
+__EXPORT int rkChainJointSize(rkChain *c);
 __EXPORT zIndex rkChainCreateDefaultJointIndex(rkChain *c);
 __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
 
