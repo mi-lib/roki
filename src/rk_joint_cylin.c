@@ -157,6 +157,16 @@ static zVec3D* (*_rk_joint_cylin_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
 
+/* CRB method */
+static void _rkJointCylinCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){
+  _rkJointCRBWrenchLinZ( crb, &wi[0] );
+  _rkJointCRBWrenchAngZ( crb, &wi[1] );
+}
+static void _rkJointCylinCRBXform(void *prp, zFrame3D *f, zVec6D si[]){
+  _rkJointCRBXformLin( f, zZ, &si[0] );
+  _rkJointCRBXformAng( f, zZ, &si[1] );
+}
+
 static void _rkJointCylinSetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   fp[0] = _rkc(prp)->_fp[0];
   fp[1] = _rkc(prp)->_fp[1];
@@ -416,6 +426,9 @@ rkJointCom rk_joint_cylin = {
   _rkJointCylinTorsion,
   _rk_joint_cylin_axis_ang,
   _rk_joint_cylin_axis_lin,
+
+  _rkJointCylinCRBWrench,
+  _rkJointCylinCRBXform,
 
   _rkJointCylinSetFrictionPivot,
   _rkJointCylinGetFrictionPivot,

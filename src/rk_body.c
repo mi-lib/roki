@@ -52,9 +52,9 @@ rkMP *rkMPCombine(rkMP *mp1, rkMP *mp2, rkMP *mp)
   zVec3DAdd( &r1, &r2, rkMPCOM(mp) );
   /* inertia tensor */
   zVec3DSub( rkMPCOM(mp1), rkMPCOM(mp), &r1 );
-  zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp1), -rkMPMass(mp1), &r1, &i1 );
+  rkMPShiftInertia( mp1, &r1, &i1 );
   zVec3DSub( rkMPCOM(mp2), rkMPCOM(mp), &r2 );
-  zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp2), -rkMPMass(mp2), &r2, &i2 );
+  rkMPShiftInertia( mp2, &r2, &i2 );
   zMat3DAdd( &i1, &i2, rkMPInertia(mp) );
   return mp;
 }
@@ -62,7 +62,7 @@ rkMP *rkMPCombine(rkMP *mp1, rkMP *mp2, rkMP *mp)
 /* convert inertia tensor to that about the origin. */
 zMat3D *rkMPOrgInertia(rkMP *mp, zMat3D *i)
 {
-  return zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp), -rkMPMass(mp), rkMPCOM(mp), i );
+  return rkMPShiftInertia( mp, rkMPCOM(mp), i );
 }
 
 /* compute the inertial ellipsoid from a mass property set. */

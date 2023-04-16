@@ -1,43 +1,12 @@
 #include <roki/rk_jacobi.h>
 
-/* inertia matrix */
-zMat chain_inertia_matrix(rkChain *chain, zMat inertia)
-{
-  zMat jacobi;
-  zMat inertia_tmp;
-  zMat tmp;
-  zMat mp;
-  register int i;
-  int n;
-
-  n = rkChainJointSize( chain );
-  inertia_tmp = zMatAllocSqr( n );
-  jacobi = zMatAlloc( 3, n );
-  tmp = zMatAlloc( 3, n );
-  mp = zMatAllocSqr( 3 );
-  for( i=rkChainLinkNum(chain)-1; i>=0; i-- ){
-    /* linear component */
-    rkChainLinkWldLinJacobi( chain, i, rkChainLinkCOM(chain,i), jacobi );
-    zMulMatTMat( jacobi, jacobi, inertia_tmp );
-    zMatCatDRC( inertia, rkChainLinkMass(chain,i), inertia_tmp );
-    /* angular component */
-    rkChainLinkWldAngJacobi(chain, i, jacobi);
-    rkLinkWldInertia(rkChainLink(chain, i), (zMat3D*)zMatBufNC(mp) );
-    zMulMatMat(mp, jacobi, tmp );
-    zMulMatTMat( jacobi, tmp, inertia_tmp );
-    zMatAddDRC( inertia, inertia_tmp );
-  }
-  zMatFreeAO( 4, inertia_tmp, jacobi, tmp, mp );
-  return inertia;
-}
-
 bool check_inertia_matrix(rkChain *chain, zMat inertia, double tol)
 {
   zMat h;
   bool ret;
 
   h = zMatAllocSqr( rkChainJointSize(chain) );
-  chain_inertia_matrix( chain, h );
+  rkChainInertiaMatMJ( chain, h );
   ret = zMatIsEqual( h, inertia, tol );
   zMatFree( h );
   return ret;
@@ -84,21 +53,25 @@ bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec vel, double tol)
 void link_mp_rand(rkLink *l)
 {
   double i11, i12, i13, i22, i23, i33;
+  zVec3D com;
+  zMat3D inertia;
 
   rkLinkSetMass( l, zRandF(0.1,1.0) );
-  zVec3DCreate( rkLinkCOM(l), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
+  zVec3DCreate( &com, zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
+  rkLinkSetCOM( l, &com );
   i11 = zRandF(0.01,0.1);
   i12 =-zRandF(0.0001,0.001);
   i13 =-zRandF(0.0001,0.001);
   i22 = zRandF(0.01,0.1);
   i23 =-zRandF(0.00001,0.0001);
   i33 = zRandF(0.01,0.1);
-  zMat3DCreate( rkLinkInertia(l), i11, i12, i13, i12, i22, i23, i13, i23, i33 );
+  zMat3DCreate( &inertia, i11, i12, i13, i12, i22, i23, i13, i23, i33 );
+  rkLinkSetInertia( l, &inertia );
 }
 
 int chain_init(rkChain *chain)
 {
-  register int i;
+  int i;
   char name[BUFSIZ];
   zVec3D aa;
 
@@ -131,6 +104,7 @@ int chain_init(rkChain *chain)
   rkJointAssign( rkChainLinkJoint(chain,7), &rk_joint_fixed );
 
   rkChainSetJointIDOffset( chain );
+  rkChainUpdateCRBMass( chain );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
   return rkChainJointSize( chain );
@@ -139,17 +113,51 @@ int chain_init(rkChain *chain)
 #define N 1000
 #define TOL (1.0e-10)
 
+bool check_chain_net_inertia(rkChain *chain, zMat3D *inertia_net)
+{
+  zMat3D inertia;
+  zVec3D r;
+  int i;
+
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
+    zRotMat3D( rkChainLinkWldAtt(chain,i), rkChainLinkInertia(chain,i), &inertia );
+    zVec3DSub( rkChainLinkWldCOM(chain,i), rkChainWldCOM(chain), &r );
+    zMat3DCatVec3DDoubleOuterProdDRC( &inertia, -rkChainLinkMass(chain,i), &r );
+    zMat3DSubDRC( inertia_net, &inertia );
+  }
+  return zMat3DIsTiny( inertia_net );
+}
+
+void assert_crb(rkChain *chain, int n)
+{
+  zVec dis;
+  zVec3D com;
+  zMat3D inertia;
+
+  dis = zVecAlloc( n );
+  zVecRandUniform( dis, -10, 10 );
+  rkChainFK( chain, dis );
+  rkChainUpdateCRB( chain );
+  zXform3D( rkLinkAdjFrame(rkChainRoot(chain)), rkMPCOM(rkLinkCRB(rkChainRoot(chain))), &com );
+  zRotMat3D( rkLinkAdjAtt(rkChainRoot(chain)), rkMPInertia(rkLinkCRB(rkChainRoot(chain))), &inertia );
+  zAssert( rkChainUpdateCRB,
+    zIsTiny( rkChainMass(chain) - rkMPMass(rkLinkCRB(rkChainRoot(chain))) ) &&
+    zVec3DEqual( rkChainWldCOM(chain), &com ) &&
+    check_chain_net_inertia( chain, &inertia ) );
+  zVecFree( dis );
+}
+
 void assert_inertia_mat(rkChain *chain, int n)
 {
   zMat h;
   zVec b, dis, vel;
-  int i, count_im, count_ke, count_fd;
+  int i, count_iuv, count_icrb, count_ke, count_fd;
 
   h = zMatAllocSqr( n );
   dis = zVecAlloc( n );
   vel = zVecAlloc( n );
   b = zVecAlloc( n );
-  count_im = count_ke = count_fd = 0;
+  count_iuv = count_icrb = count_ke = count_fd = 0;
   for( i=0; i<N; i++ ){
     /* generate posture and velocity randomly */
     zVecRandUniform( dis, -10, 10 );
@@ -159,13 +167,25 @@ void assert_inertia_mat(rkChain *chain, int n)
     /* verifications */
     rkChainInertiaMatBiasVec( chain, h, b );
     /* count success */
-    if( check_inertia_matrix( chain, h, TOL ) ) count_im++;
+    if( check_inertia_matrix( chain, h, TOL ) ) count_icrb++;
     if( check_kinetic_energy( chain, h, vel, TOL ) ) count_ke++;
     if( check_fd( chain, h, b, vel, TOL ) ) count_fd++;
   }
-  zAssert( rkChainInertiaMatBiasVec, count_im == N );
+  zAssert( rkChainInertiaMatBiasVec, count_icrb == N );
   zAssert( rkChainInertiaMatBiasVec + rkChainKE, count_ke == N );
   zAssert( rkChainInertiaMatBiasVec (FD-ID), count_fd == N );
+  count_iuv = count_icrb = 0;
+  for( i=0; i<N; i++ ){
+    /* generate posture and velocity randomly */
+    zVecRandUniform( dis, -10, 10 );
+    rkChainFK( chain, dis );
+    rkChainInertiaMatUV( chain, h );
+    if( check_inertia_matrix( chain, h, TOL ) ) count_iuv++;
+    rkChainInertiaMatCRB( chain, h );
+    if( check_inertia_matrix( chain, h, TOL ) ) count_icrb++;
+  }
+  zAssert( rkChainInertiaMatUV, count_iuv == N );
+  zAssert( rkChainInertiaMatCRB, count_icrb == N );
 
   zMatFree( h );
   zVecFreeAO( 3, b, dis, vel );
@@ -179,6 +199,7 @@ int main(int argc, char *argv[])
   /* initialization */
   zRandInit();
   n = chain_init( &chain );
+  assert_crb( &chain, n );
   assert_inertia_mat( &chain, n );
   /* termination */
   rkChainDestroy( &chain );

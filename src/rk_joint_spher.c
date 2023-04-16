@@ -171,6 +171,31 @@ static zVec3D* (*_rk_joint_spher_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
 
+/* CRB method */
+static void _rkJointSpherCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){
+  zMat3D icrb;
+  zVec3D a;
+  int i;
+
+  rkMPOrgInertia( crb, &icrb );
+  for( i=0; i<3; i++ ){
+    _zMat3DRow( &((rkJointSpherPrp *)prp)->_att, i, &a );
+    _zVec3DOuterProd( rkMPCOM(crb), &a, zVec6DLin(&wi[i]) );
+    _zVec3DMulDRC( zVec6DLin(&wi[i]), -rkMPMass(crb) );
+    _zMulMat3DVec3D( &icrb, &a, zVec6DAng(&wi[i]) );
+  }
+}
+static void _rkJointSpherCRBXform(void *prp, zFrame3D *f, zVec6D si[]){
+  zMat3D r;
+  int i;
+
+  zMulMat3DMat3DT( zFrame3DAtt(f), &((rkJointSpherPrp *)prp)->_att, &r );
+  for( i=0; i<3; i++ ){
+    _zVec3DOuterProd( zFrame3DPos(f), &r.v[i], zVec6DLin(&si[i]) );
+    zVec3DCopy( &r.v[i], zVec6DAng(&si[i]) );
+  }
+}
+
 /* friction computation (to be implemented) */
 
 static void _rkJointSpherFrictionPivot(void *prp, rkJointFrictionPivot *fp){}
@@ -293,6 +318,9 @@ rkJointCom rk_joint_spher = {
   _rkJointSpherTorsion,
   _rk_joint_spher_axis_ang,
   _rk_joint_spher_axis_lin,
+
+  _rkJointSpherCRBWrench,
+  _rkJointSpherCRBXform,
 
   _rkJointSpherFrictionPivot,
   _rkJointSpherFrictionPivot,

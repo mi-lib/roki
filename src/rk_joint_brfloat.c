@@ -189,6 +189,35 @@ static zVec3D* (*_rk_joint_float_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
 
+/* CRB method */
+static void _rkJointBrFloatCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){
+  zMat3D icrb;
+  zVec3D a;
+  int i;
+
+  rkMPOrgInertia( crb, &icrb );
+  for( i=0; i<3; i++ ){
+    _zMat3DRow( &_rkc(prp)->_att, i, &a );
+    _zVec3DMul( &a, rkMPMass(crb), zVec6DLin(&wi[i]) );
+    _zVec3DOuterProd( rkMPCOM(crb), &a, zVec6DAng(&wi[i]) );
+    _zVec3DMulDRC( zVec6DAng(&wi[i]), rkMPMass(crb) );
+    _zVec3DRev( zVec6DAng(&wi[i]), zVec6DLin(&wi[i+3]) );
+    _zMulMat3DVec3D( &icrb, &a, zVec6DAng(&wi[i+3]) );
+  }
+}
+static void _rkJointBrFloatCRBXform(void *prp, zFrame3D *f, zVec6D si[]){
+  zMat3D r;
+  int i;
+
+  zMulMat3DMat3DT( zFrame3DAtt(f), &_rkc(prp)->_att, &r );
+  for( i=0; i<3; i++ ){
+    zVec3DCopy( &r.v[i], zVec6DLin(&si[i]) );
+    _zVec3DZero( zVec6DAng(&si[i]) );
+    _zVec3DOuterProd( zFrame3DPos(f), &r.v[i], zVec6DLin(&si[i+3]) );
+    zVec3DCopy( &r.v[i], zVec6DAng(&si[i+3]) );
+  }
+}
+
 static void _rkJointBrFloatFrictionPivot(void *prp, rkJointFrictionPivot *fp){}
 static void _rkJointBrFloatVal(void *prp, double *val){}
 
@@ -332,6 +361,9 @@ rkJointCom rk_joint_brfloat = {
   _rkJointBrFloatTorsion,
   _rk_joint_float_axis_ang,
   _rk_joint_float_axis_lin,
+
+  _rkJointBrFloatCRBWrench,
+  _rkJointBrFloatCRBXform,
 
   _rkJointBrFloatFrictionPivot,
   _rkJointBrFloatFrictionPivot,

@@ -7,7 +7,6 @@
 #ifndef __RK_LINK_H__
 #define __RK_LINK_H__
 
-#include <roki/rk_body.h>
 #include <roki/rk_joint.h>
 
 __BEGIN_DECLS
@@ -36,14 +35,15 @@ ZDEF_STRUCT( rkABIPrp ){
 
 ZDEF_STRUCT( rkLink ){
   Z_NAMED_CLASS
-  rkJoint joint;          /*!< \brief joint */
-  rkBody body;            /*!< \brief rigid body */
-  int joint_id_offset;    /*!< \brief joint identifier offset due to joint size */
-  zFrame3D orgframe;      /*!< \brief original adjacent transformation */
-  zFrame3D adjframe;      /*!< \brief adjacent transformation */
-  rkLink *parent; /*!< \brief a pointer to the parent link */
-  rkLink *child;  /*!< \brief a pointer to a child link */
-  rkLink *sibl;   /*!< \brief a pointer to a sibling link */
+  rkJoint joint;       /*!< \brief joint */
+  rkBody body;         /*!< \brief rigid body */
+  rkMP crb;            /*!< \brief composite rigid body */
+  int joint_id_offset; /*!< \brief joint identifier offset due to joint size */
+  zFrame3D orgframe;   /*!< \brief original adjacent transformation */
+  zFrame3D adjframe;   /*!< \brief adjacent transformation */
+  rkLink *parent;      /*!< \brief a pointer to the parent link */
+  rkLink *child;       /*!< \brief a pointer to a child link */
+  rkLink *sibl;        /*!< \brief a pointer to a sibling link */
   /*! \cond */
   rkABIPrp _abiprp;  /* for ABI method */
   /* additional property */
@@ -70,6 +70,7 @@ ZDEF_STRUCT( rkLink ){
 #define rkLinkJointSize(l)     rkJointSize( rkLinkJoint(l) )
 #define rkLinkJointTypeStr(l)  rkJointTypeStr( rkLinkJoint(l) )
 #define rkLinkBody(l)          ( &(l)->body )
+#define rkLinkCRB(l)           ( &(l)->crb )
 #define rkLinkMP(l)            ( &rkLinkBody(l)->mp )
 #define rkLinkMass(l)          rkBodyMass( rkLinkBody(l) )
 #define rkLinkCOM(l)           rkBodyCOM( rkLinkBody(l) )
@@ -107,9 +108,18 @@ ZDEF_STRUCT( rkLink ){
 #define rkLinkExtWrenchBuf(l)  ( &(l)->_abiprp.wlist )
 
 #define rkLinkSetJointIDOffset(l,o) ( rkLinkJointIDOffset(l) = (o) )
-#define rkLinkSetMass(l,m)     rkBodySetMass( rkLinkBody(l), m )
-#define rkLinkSetCOM(l,c)      rkBodySetCOM( rkLinkBody(l), c )
-#define rkLinkSetInertia(l,i)  rkBodySetInertia( rkLinkBody(l), i )
+#define rkLinkSetMass(l,m)     do{\
+  rkBodySetMass( rkLinkBody(l), m );\
+  rkMPSetMass( rkLinkCRB(l), rkLinkMass(l) );\
+} while(0)
+#define rkLinkSetCOM(l,c)      do{\
+  rkBodySetCOM( rkLinkBody(l), c );\
+  rkMPSetCOM( rkLinkCRB(l), rkLinkCOM(l) );\
+} while(0)
+#define rkLinkSetInertia(l,i)  do{\
+  rkBodySetInertia( rkLinkBody(l), i );\
+  rkMPSetInertia( rkLinkCRB(l), rkLinkInertia(l) );\
+} while(0)
 #define rkLinkSetVel(l,v)      rkBodySetVel( rkLinkBody(l), v )
 #define rkLinkSetAcc(l,a)      rkBodySetAcc( rkLinkBody(l), a )
 #define rkLinkSetLinVel(l,v)   rkBodySetLinVel( rkLinkBody(l), v )
@@ -356,6 +366,11 @@ __EXPORT void rkLinkUpdateVel(rkLink *l, zVec6D *pvel);
 __EXPORT void rkLinkUpdateAcc(rkLink *l, zVec6D *pvel, zVec6D *pacc);
 __EXPORT void rkLinkUpdateRate(rkLink *l, zVec6D *pvel, zVec6D *pacc);
 __EXPORT void rkLinkUpdateWrench(rkLink *l);
+
+/*! \brief update mass of the composite rigit body of a link. */
+__EXPORT double rkLinkUpdateCRBMass(rkLink *link);
+/*! \brief update the composite rigit body of a link. */
+__EXPORT rkMP *rkLinkUpdateCRB(rkLink *link);
 
 __EXPORT void rkLinkConfToJointDis(rkLink *l);
 

@@ -135,6 +135,14 @@ static zVec3D* (*_rk_joint_prism_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisZ,
 };
 
+/* CRB method */
+static void _rkJointPrismCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){
+  _rkJointCRBWrenchLinZ( crb, &wi[0] );
+}
+static void _rkJointPrismCRBXform(void *prp, zFrame3D *f, zVec6D si[]){
+  _rkJointCRBXformLin( f, zZ, &si[0] );
+}
+
 static void _rkJointPrismSetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   *fp = _rkc(prp)->_fp;
 }
@@ -357,6 +365,9 @@ rkJointCom rk_joint_prism = {
   _rkJointPrismTorsion,
   _rk_joint_prism_axis_ang,
   _rk_joint_prism_axis_lin,
+
+  _rkJointPrismCRBWrench,
+  _rkJointPrismCRBXform,
 
   _rkJointPrismSetFrictionPivot,
   _rkJointPrismGetFrictionPivot,

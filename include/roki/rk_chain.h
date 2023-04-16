@@ -449,6 +449,10 @@ __EXPORT zVec3D *rkChainUpdateCOM(rkChain *c);
 __EXPORT zVec3D *rkChainUpdateCOMVel(rkChain *c);
 __EXPORT zVec3D *rkChainUpdateCOMAcc(rkChain *c);
 
+/*! \brief update the composite rigid body of a kinematic chain. */
+#define rkChainUpdateCRBMass(c) rkLinkUpdateCRBMass( rkChainRoot(c) )
+#define rkChainUpdateCRB(c)     rkLinkUpdateCRB( rkChainRoot(c) )
+
 /*! \brief zero moment point of kinematic chain.
  *
  * rkChainZMP() computes the Zero Moment Point(ZMP) proposed by
@@ -484,41 +488,63 @@ __EXPORT double rkChainYawTorque(rkChain *c);
 __EXPORT zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am);
 __EXPORT double rkChainKE(rkChain *c);
 
-/*! \brief inertia matrix and bias force vector of a kinematic chain by the unit vector method.
+/*! \brief inertia matrix and bias force vector of a kinematic chain.
  *
  * rkChainInertiaMat() computes the inertia matrix of a kinematic chain
  * \a chain at the current posture, and puts it into \a inertia.
- * rkChainBiasVec() computes the bias force vector, namely, summation of
- * the centrifugal force, Coriolis force, gravitational force and external
- * force applied to \a chain at the current posture and velocity, and puts
- * it into \a bias.
+ * It is in fact a virtual function that points one of the three actual
+ * implementations, namely, rkChainInertiaMatBJ(), rkChainInertiaMatUV(),
+ * or rkChainInertiaMatCRB()
  *
- * The inertia matrix and the bias force vector are computed based on the
- * unit vector matrix proposed by Walker and Orin, 1980:
+ * rkChainInertiaMatBJ() computes the inertia matrix by summing up
+ * dyadic products of momentum Jacobian matrices, it is a naive but faster
+ * implementation than rkChainInertiaMatUV().
+ *
+ * rkChainInertiaMatUV() and rkChainInertiaMatCRB() compute the inertia
+ * matrix based on the unit vector method and the composite rigid body
+ * method, respectively, which were proposed by Walker and Orin, 1980:
  *  M. W. Walker and D. E. Orin, Efficient Dynamic Computer Simulation of
  *  Robotic Mechanisms, Transactions of the ASME, Journal of Dynamic Systems,
  *  Measurement, and Control, Vol. 104, PP. 205-211, 1982.
- * \a chain has to take the posture and the velocity at which the dynamics
- * is computed in advance. The acceleration of \a chain is directly modified.
+ *
+ * rkChainInertiaMatCRB() is the fastest method of the three, so that it
+ * is preset to rkChainInertiaMat().
+ *
+ * rkChainBiasVec() computes the bias force vector, namely, summation of
+ * the centrifugal force, Coriolis force, gravitational force and external
+ * force applied to \a chain at the current posture and velocity, and puts
+ * it into \a bias. It is also based on the unit vector method.
  *
  * rkChainInertiaMatBiasVec() computes the inertia matrix and the bias force
  * vector of \a chain at once, and puts them into \a inertia and \a bias,
  * respectively.
+ * It is also a virtual function that points either rkChainInertiaMatBiasVecUV()
+ * or rkChainInertiaMatBiasVecCRB(). The latter is preset.
  * \notes
+ * \a chain has to take the posture and the velocity at which the dynamics
+ * is computed in advance for rkChainInertiaMat() and rkChainBiasVec(),
+ * respectively. The acceleration of \a chain is directly modified.
+ *
  * All external wrenches exerted to \a c have to be removed before calling
  * rkChainInertiaMat().
  *
- * rkChainInertiaMat() internally zeros velocities and accelerations of the
- * whole links of \a c.
+ * rkChainInertiaMatUV() internally zeros velocities and accelerations of
+ * the whole links of \a c.
  * \return
  * rkChainInertiaMatBiasVec(), rkChainInertiaMat() and rkChainBiasVec() return
  * the true value if they succeed to compute the matrix and/or the vector.
  * If the sizes of the given matrix and vector do not match the total degree
  * of freedom of the chain, the false value is returned.
  */
-__EXPORT bool rkChainInertiaMat(rkChain *chain, zMat inertia);
+__EXPORT zMat rkChainInertiaMatMJ(rkChain *chain, zMat inertia);
+__EXPORT bool rkChainInertiaMatUV(rkChain *chain, zMat inertia);
+__EXPORT bool rkChainInertiaMatCRB(rkChain *chain, zMat inertia);
+__EXPORT bool (* rkChainInertiaMat)(rkChain*,zMat);
+
 __EXPORT bool rkChainBiasVec(rkChain *chain, zVec bias);
-__EXPORT bool rkChainInertiaMatBiasVec(rkChain *chain, zMat inertia, zVec bias);
+__EXPORT bool rkChainInertiaMatBiasVecUV(rkChain *chain, zMat inertia, zVec bias);
+__EXPORT bool rkChainInertiaMatBiasVecCRB(rkChain *chain, zMat inertia, zVec bias);
+__EXPORT bool (* rkChainInertiaMatBiasVec)(rkChain*,zMat,zVec);
 
 /*! \brief external force applied to kinematic chain.
  *

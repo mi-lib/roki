@@ -13,6 +13,7 @@
 #include <zeo/zeo_mat6d.h>
 
 #include <roki/rk_motor.h>
+#include <roki/rk_body.h>
 
 __BEGIN_DECLS
 
@@ -62,6 +63,10 @@ typedef struct{
   /* axis vector */
   zVec3D* (**_angaxis)(void*,zFrame3D*,zVec3D*); /* angular */
   zVec3D* (**_linaxis)(void*,zFrame3D*,zVec3D*); /* linear */
+
+  /* composite rigid body method */
+  void (*_crb_wrench)(void*,rkMP*,zVec6D[]);
+  void (*_crb_xform)(void*,zFrame3D*,zVec6D[]);
 
   /* for forward dynamics */
   void (*_setfrictionpivot)(void*,rkJointFrictionPivot*); /* set referential displacement of friction */
@@ -181,7 +186,47 @@ __EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 #define rkJointMotorRegistance(j,r) (j)->com->_motorregist( (j)->prp, r )
 #define rkJointMotorDrivingTrq(j,t) (j)->com->_motordestrq( (j)->prp, t )
 
-/* ABI */
+/* Composite Rigid Body */
+/* The following macros are supposed to be used only in internal methods for
+   the composite rigid body method computations. Never use them in user programs.
+ */
+#define _rkJointCRBWrenchLinZ(crb,w) _zVec6DCreate( w, \
+  0, 0, rkMPMass(crb), \
+  rkMPMass(crb)*rkMPCOM(crb)->c.y, \
+ -rkMPMass(crb)*rkMPCOM(crb)->c.x, \
+  0 )
+#define _rkJointCRBWrenchAngX(crb,w) _zVec6DCreate( w, \
+  0, \
+ -rkMPMass(crb)*rkMPCOM(crb)->c.z, \
+  rkMPMass(crb)*rkMPCOM(crb)->c.y, \
+  rkMPInertia(crb)->c.xx+rkMPMass(crb)*(zSqr(rkMPCOM(crb)->c.y)+zSqr(rkMPCOM(crb)->c.z)), \
+  rkMPInertia(crb)->c.xy-rkMPMass(crb)*rkMPCOM(crb)->c.x*rkMPCOM(crb)->c.y, \
+  rkMPInertia(crb)->c.xz-rkMPMass(crb)*rkMPCOM(crb)->c.z*rkMPCOM(crb)->c.x )
+#define _rkJointCRBWrenchAngY(crb,w) _zVec6DCreate( w, \
+  rkMPMass(crb)*rkMPCOM(crb)->c.z, \
+  0, \
+ -rkMPMass(crb)*rkMPCOM(crb)->c.x, \
+  rkMPInertia(crb)->c.yx-rkMPMass(crb)*rkMPCOM(crb)->c.x*rkMPCOM(crb)->c.y, \
+  rkMPInertia(crb)->c.yy+rkMPMass(crb)*(zSqr(rkMPCOM(crb)->c.z)+zSqr(rkMPCOM(crb)->c.x)), \
+  rkMPInertia(crb)->c.yz-rkMPMass(crb)*rkMPCOM(crb)->c.y*rkMPCOM(crb)->c.z )
+#define _rkJointCRBWrenchAngZ(crb,w) _zVec6DCreate( w, \
+ -rkMPMass(crb)*rkMPCOM(crb)->c.y, \
+  rkMPMass(crb)*rkMPCOM(crb)->c.x, \
+  0, \
+  rkMPInertia(crb)->c.zx-rkMPMass(crb)*rkMPCOM(crb)->c.z*rkMPCOM(crb)->c.x, \
+  rkMPInertia(crb)->c.zy-rkMPMass(crb)*rkMPCOM(crb)->c.y*rkMPCOM(crb)->c.z, \
+  rkMPInertia(crb)->c.zz+rkMPMass(crb)*(zSqr(rkMPCOM(crb)->c.x)+zSqr(rkMPCOM(crb)->c.y)) )
+
+#define _rkJointCRBXformLin(f,a,s) do{ \
+  zVec3DCopy( &zFrame3DAtt(f)->v[a], zVec6DLin(s) ); \
+  _zVec3DZero( zVec6DAng(s) ); \
+} while(0)
+#define _rkJointCRBXformAng(f,a,s) do{ \
+  _zVec3DOuterProd( zFrame3DPos(f), &zFrame3DAtt(f)->v[a], zVec6DLin(s) ); \
+  zVec3DCopy( &zFrame3DAtt(f)->v[a], zVec6DAng(s) ); \
+} while(0)
+
+/* Articulated Body Inertia */
 #define rkJointABIAxisInertia(j,m,h,ih) (j)->com->_axinertia( (j)->prp, m, h, ih )
 #define rkJointABIAddABI(j,i,f,h,pi)    (j)->com->_addabi( (j)->prp, i, f, h, pi )
 #define rkJointABIAddBias(j,i,b,f,h,pb) (j)->com->_addbias( (j)->prp, i, b, f, h, pb )
@@ -252,6 +297,9 @@ __EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
 
 #define rkJointTorsion(j,dev,t,d) (j)->com->_torsion( dev, t, d )
 
+__EXPORT double rkJointRevolTorsionDis(zFrame3D *dev, zVec6D *t);
+__EXPORT double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t);
+
 /*! \brief joint axis vector.
  *
  * rkJointAngAxis() and rkJointLinAxis() calculates axis vector of
@@ -274,8 +322,9 @@ __EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
 __EXPORT zVec3D *_rkJointAxisNull(void *prp, zFrame3D *f, zVec3D *a);
 __EXPORT zVec3D *_rkJointAxisZ(void *prp, zFrame3D *f, zVec3D *a);
 
-__EXPORT double rkJointRevolTorsionDis(zFrame3D *dev, zVec6D *t);
-__EXPORT double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t);
+/* composite rigid body method */
+#define rkJointCRBWrench(j,m,w) (j)->com->_crb_wrench( (j)->prp, m, w )
+#define rkJointCRBXform(j,f,s)  (j)->com->_crb_xform( (j)->prp, f, s )
 
 /* NOTE: The following macros and functions are for sharing
  * some operation codes. Do not use them in users programs. */

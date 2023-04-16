@@ -61,7 +61,7 @@ bool assert_joint_reg_one(void)
   ofs_head = 0;
   for( i=0; i<NJ; i++ ){
     if( zRandI(0,1) == 0 && rkChainLinkJointSize(&chain,i) > 0 ){
-      rkChainRegIKJoint( &chain, i, ( w = zRandF(0,100) ) );
+      rkChainRegIKJointID( &chain, i, ( w = zRandF(0,100) ) );
       zIndexIncSize( idx );
       zIndexSetElem( idx, zArraySize(idx)-1, i );
       zIndexSetElem( ofs, i, ofs_head );
@@ -148,8 +148,8 @@ bool assert_cell_reg_one(void)
     eprintf( "row size of constraint matrix = %d / %d\n", zMatRowSizeNC(chain._ik->_c_mat), cellcount );
     result = false;
   }
-  if( zVecSizeNC(chain._ik->_c_srv) != cellcount ){
-    eprintf( "size of SRV = %d / %d\n", zVecSizeNC(chain._ik->_c_srv), cellcount );
+  if( zVecSizeNC(rkChainIKConstraintVec(&chain)) != cellcount ){
+    eprintf( "size of SRV = %d / %d\n", zVecSizeNC(rkChainIKConstraintVec(&chain)), cellcount );
     result = false;
   }
   if( zVecSizeNC(chain._ik->_c_we) != cellcount ){
@@ -260,8 +260,8 @@ void assert_ik_spher(void)
   rkChainGetJointDisAll( &chain, dis );
 
   rkChainCreateIK( &chain );
-  rkChainRegIKJoint( &chain, 1, 0.01 );
-  rkChainRegIKJoint( &chain, 2, 0.00001 );
+  rkChainRegIKJointID( &chain, 1, 0.01 );
+  rkChainRegIKJointID( &chain, 2, 0.00001 );
 
   attr.id = 1;
   ca0 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID );
@@ -324,8 +324,8 @@ void assert_ik_float(void)
   rkChainGetJointDisAll( &chain, dis );
 
   rkChainCreateIK( &chain );
-  rkChainRegIKJoint( &chain, 1, 0.001 );
-  rkChainRegIKJoint( &chain, 2, 0.001 );
+  rkChainRegIKJointID( &chain, 1, 0.001 );
+  rkChainRegIKJointID( &chain, 2, 0.001 );
 
   attr.id = 1;
   cl0 = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_CELL_ATTR_ID );

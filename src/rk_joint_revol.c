@@ -142,6 +142,14 @@ static zVec3D* (*_rk_joint_revol_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
 
+/* CRB method */
+static void _rkJointRevolCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){
+  _rkJointCRBWrenchAngZ( crb, &wi[0] );
+}
+static void _rkJointRevolCRBXform(void *prp, zFrame3D *f, zVec6D si[]){
+  _rkJointCRBXformAng( f, zZ, &si[0] );
+}
+
 static void _rkJointRevolSetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   _rkc(prp)->_fp = *fp;
 }
@@ -365,6 +373,9 @@ rkJointCom rk_joint_revol = {
   _rkJointRevolTorsion,
   _rk_joint_revol_axis_ang,
   _rk_joint_revol_axis_lin,
+
+  _rkJointRevolCRBWrench,
+  _rkJointRevolCRBXform,
 
   _rkJointRevolSetFrictionPivot,
   _rkJointRevolGetFrictionPivot,

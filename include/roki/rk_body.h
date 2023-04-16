@@ -60,6 +60,9 @@ ZDEF_STRUCT( rkMP ){
 /*! \brief convert mass properties in [g,mm] to that in [kg,m]. */
 __EXPORT rkMP *rkMPgmm2kgm(rkMP *mp);
 
+/*! \brief shift inertia tensor by an offset 3D vector. */
+#define rkMPShiftInertia(mp,r,i) zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp), -rkMPMass(mp), (r), (i) )
+
 /*! \brief transform mass properties to that with respect to a frame.
  *
  * rkMPXform() transforms a set of mass properties \a src to that

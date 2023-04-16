@@ -208,6 +208,47 @@ void rkLinkUpdateWrench(rkLink *l)
     rkLinkUpdateWrench( rkLinkSibl(l) );
 }
 
+/* update mass of the composite rigit body of a link. */
+double rkLinkUpdateCRBMass(rkLink *link)
+{
+  rkLink *l;
+
+  if( !rkLinkChild(link) ) return rkMPMass( rkLinkCRB(link) );
+  rkMPSetMass( rkLinkCRB(link), rkLinkMass(link) );
+  for( l=rkLinkChild(link); l; l=rkLinkSibl(l) )
+    rkMPMass( rkLinkCRB(link) ) += rkLinkUpdateCRBMass( l );
+  return rkMPMass(rkLinkCRB(link));
+}
+
+/* update the composite rigit body of a link. */
+rkMP *rkLinkUpdateCRB(rkLink *link)
+{
+  rkLink *l;
+  zMat3D tmpi;
+  zVec3D tmpr;
+
+  if( !rkLinkChild(link) ) return rkLinkCRB(link);
+  /* composite COM */
+  _zVec3DMul( rkLinkCOM(link), rkLinkMass(link), rkMPCOM(rkLinkCRB(link)) );
+  for( l=rkLinkChild(link); l; l=rkLinkSibl(l) ){
+    rkLinkUpdateCRB( l );
+    _zXform3D( rkLinkAdjFrame(l), rkMPCOM(rkLinkCRB(l)), &tmpr );
+    _zVec3DCatDRC( rkMPCOM(rkLinkCRB(link)), rkMPMass(rkLinkCRB(l)), &tmpr );
+  }
+  zVec3DDivDRC( rkMPCOM(rkLinkCRB(link)), rkMPMass(rkLinkCRB(link)) );
+  /* composite inertia */
+  _zVec3DSub( rkLinkCOM(link), rkMPCOM(rkLinkCRB(link)), &tmpr );
+  rkMPShiftInertia( rkLinkMP(link), &tmpr, rkMPInertia(rkLinkCRB(link)) );
+  for( l=rkLinkChild(link); l; l=rkLinkSibl(l) ){
+    zRotMat3D( rkLinkAdjAtt(l), rkMPInertia(rkLinkCRB(l)), &tmpi );
+    _zXform3D( rkLinkAdjFrame(l), rkMPCOM(rkLinkCRB(l)), &tmpr );
+    _zVec3DSubDRC( &tmpr, rkMPCOM(rkLinkCRB(link)) );
+    zMat3DCatVec3DDoubleOuterProdDRC( &tmpi, -rkMPMass(rkLinkCRB(l)), &tmpr );
+    zMat3DAddDRC( rkMPInertia(rkLinkCRB(link)), &tmpi );
+  }
+  return rkLinkCRB(link);
+}
+
 void rkLinkConfToJointDis(rkLink *link)
 {
   zFrame3D org, dev;
@@ -268,17 +309,23 @@ static void *_rkLinkStuffFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return rkLinkSetStuff( (rkLink*)obj, ZTKVal(ztk) ) ? obj : NULL;
 }
 static void *_rkLinkCOMFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  if( strcmp( ZTKVal(ztk), "auto" ) == 0 )
+  zVec3D com;
+  if( strcmp( ZTKVal(ztk), "auto" ) == 0 ){
     ((_rkLinkRefPrp*)arg)->auto_com = true;
-  else
-    zVec3DFromZTK( rkLinkCOM((rkLink*)obj), ztk );
+  } else{
+    zVec3DFromZTK( &com, ztk );
+    rkLinkSetCOM( (rkLink*)obj, &com );
+  }
   return obj;
 }
 static void *_rkLinkInertiaFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  if( strcmp( ZTKVal(ztk), "auto" ) == 0 )
+  zMat3D inertia;
+  if( strcmp( ZTKVal(ztk), "auto" ) == 0 ){
     ((_rkLinkRefPrp*)arg)->auto_inertia = true;
-  else
-    zMat3DFromZTK( rkLinkInertia((rkLink*)obj), ztk );
+  } else{
+    zMat3DFromZTK( &inertia, ztk );
+    rkLinkSetInertia( (rkLink*)obj, &inertia );
+  }
   return obj;
 }
 static void *_rkLinkPosFromZTK(void *obj, int i, void *arg, ZTK *ztk){
@@ -413,8 +460,8 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
     } else
       rkLinkShapeMP( link, rkLinkMass(link)/v, &mp );
   }
-  if( prp.auto_com ) zVec3DCopy( rkMPCOM(&mp), rkLinkCOM(link) );
-  if( prp.auto_inertia ) zMat3DCopy( rkMPInertia(&mp), rkLinkInertia(link) );
+  if( prp.auto_com ) rkLinkSetCOM( link, rkMPCOM(&mp) );
+  if( prp.auto_inertia ) rkLinkSetInertia( link, rkMPInertia(&mp) );
 
   if( !rkLinkJoint(link)->com ) rkJointAssign( rkLinkJoint(link), &rk_joint_fixed );
   rkJointFromZTK( rkLinkJoint(link), motorarray, ztk );

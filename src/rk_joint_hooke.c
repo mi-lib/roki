@@ -184,6 +184,29 @@ static zVec3D* (*_rk_joint_hooke_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
 
+/* CRB method */
+static void _rkJointHookeCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){
+  zVec6D wx, wz;
+
+  _rkJointCRBWrenchAngX( crb, &wx );
+  _rkJointCRBWrenchAngZ( crb, &wz );
+  _zVec6DMul( &wx, -((rkJointHookePrp *)prp)->_s[1], &wi[0] );
+  _zVec6DCatDRC( &wi[0], ((rkJointHookePrp *)prp)->_c[1], &wz );
+
+  _rkJointCRBWrenchAngY( crb, &wi[1] );
+}
+static void _rkJointHookeCRBXform(void *prp, zFrame3D *f, zVec6D si[]){
+  zVec6D sx, sz;
+
+  _rkJointCRBXformAng( f, zX, &sx );
+  _rkJointCRBXformAng( f, zZ, &sz );
+  _zVec6DMul( &sx, -((rkJointHookePrp *)prp)->_s[1], &si[0] );
+  _zVec6DCatDRC( &si[0], ((rkJointHookePrp *)prp)->_c[1], &sz );
+
+  _rkJointCRBXformAng( f, zY, &si[1] );
+}
+
+
 static void _rkJointHookeSetFrictionPivot(void *prp, rkJointFrictionPivot *fp){
   fp[0] = _rkc(prp)->_fp[0];
   fp[1] = _rkc(prp)->_fp[1];
@@ -384,6 +407,9 @@ rkJointCom rk_joint_hooke = {
   _rkJointHookeTorsion,
   _rk_joint_hooke_axis_ang,
   _rk_joint_hooke_axis_lin,
+
+  _rkJointHookeCRBWrench,
+  _rkJointHookeCRBXform,
 
   _rkJointHookeSetFrictionPivot,
   _rkJointHookeGetFrictionPivot,

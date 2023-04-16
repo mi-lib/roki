@@ -51,6 +51,10 @@ static zVec3D* (*_rk_joint_fixed_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
 };
 
+/* CRB method */
+static void _rkJointFixedCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){}
+static void _rkJointFixedCRBXform(void *prp, zFrame3D *f, zVec6D si[]){}
+
 /* pivot for static friction computation */
 static void _rkJointFixedFrictionPivot(void *prp, rkJointFrictionPivot *fp){}
 
@@ -119,6 +123,9 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedTorsion,
   _rk_joint_fixed_axis_ang,
   _rk_joint_fixed_axis_lin,
+
+  _rkJointFixedCRBWrench,
+  _rkJointFixedCRBXform,
 
   _rkJointFixedFrictionPivot,
   _rkJointFixedFrictionPivot,
