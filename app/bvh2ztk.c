@@ -275,6 +275,7 @@ void bvh2ztk_write_joint(FILE *fp, joint_t *joint, joint_t *parent)
   fprintf( fp, "[link]\n" );
   fprintf( fp, "name: %s\n", zName(joint) );
   fprintf( fp, "jointtype: %s\n", joint->num_axis == 6 ? "float" : ( joint->child ? "spherical" : "fixed" ) );
+  fprintf( fp, "pos: " ); zVec3DDataFPrint( fp, zFrame3DPos(&joint->orgframe) ); fprintf( fp, "\n" );
   if( parent )
     fprintf( fp, "parent: %s\n", zName(parent) );
   fprintf( fp, "\n" );

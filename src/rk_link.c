@@ -251,7 +251,7 @@ rkMP *rkLinkUpdateCRB(rkLink *link)
 
 void rkLinkConfToJointDis(rkLink *link)
 {
-  zFrame3D org, dev;
+  zFrame3D org;
   double dis[6];
   zVec6D tor;
 
@@ -260,9 +260,10 @@ void rkLinkConfToJointDis(rkLink *link)
   } else{
     zFrame3DCopy( rkLinkOrgFrame(link), &org );
   }
-  zFrame3DXform( &org, rkLinkWldFrame(link), &dev );
-  rkJointTorsion( rkLinkJoint(link), &dev, &tor, dis );
+  zFrame3DXform( &org, rkLinkWldFrame(link), rkLinkAdjFrame(link) );
+  rkJointTorsion( rkLinkJoint(link), rkLinkAdjFrame(link), &tor, dis );
   rkJointSetDis( rkLinkJoint(link), dis );
+
   /* recursive computation */
   if( rkLinkChild(link) )
     rkLinkConfToJointDis( rkLinkChild(link) );

@@ -1,3 +1,4 @@
+2023. 5. 5. Modified rkLinkConfToJointDis. [rk_link]
 2023. 5. 5. Added bvh2ztk. [app]
 2023. 4.16. Added pointers rkChainInertiaMat and rkChainInertiaMatBiasVec to the actual implementations. [rk_chain]
 2023. 4.16. Renamed rkChainInertiaMat to rkChainInertiaMatUV, and added rkChainInertiaMatBJ. [rk_chain]
