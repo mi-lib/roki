@@ -1,3 +1,4 @@
+2023. 5.17. Reflected modification of Z_NAMED_CLASS. [app]
 2023. 5.17. Reflected modification of Z_NAMED_CLASS. [rk_motor, rk_link, rk_chain]
 2023. 5.16. Replaced __EXPORT to __ROKI_EXPORT. [all]
 2023. 5.16. Added rk_misc.h, and modified some header files. [rk_misc, rk_g3d, rk_contact, rk_force, rk_motor, rk_joint, rk_cd]

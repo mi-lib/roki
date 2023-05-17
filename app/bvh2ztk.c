@@ -48,7 +48,7 @@ bool bvh2ztk_cmp_token(stream_t *stream, const char *word)
 }
 
 ZDEF_STRUCT( joint_t ){
-  Z_NAMED_CLASS
+  Z_NAMED_CLASS;
   zFrame3D orgframe;
   zFrame3D adjframe;
   zFrame3D wldframe;
