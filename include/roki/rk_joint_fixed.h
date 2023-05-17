@@ -11,7 +11,7 @@
 
 __BEGIN_DECLS
 
-__EXPORT rkJointCom rk_joint_fixed;
+__ROKI_EXPORT rkJointCom rk_joint_fixed;
 
 __END_DECLS
 

@@ -23,7 +23,7 @@ struct _rkIK;
 #endif /* __cplusplus */
 
 ZDEF_STRUCT( rkChain ){
-  Z_NAMED_CLASS
+  Z_NAMED_CLASS;
   rkLinkArray link; /*!< array of links */
   zMShape3D *shape; /*!< multishape */
   rkMotorArray *motor; /*!< array of motors (may not need to be a pointer) */
@@ -133,15 +133,15 @@ ZDEF_STRUCT( rkChain ){
  * rkChainDestroy() destroys all internal objects of kinematic chain \a c,
  * including the array of shapes and links.
  */
-__EXPORT void rkChainInit(rkChain *c);
-__EXPORT void rkChainDestroy(rkChain *c);
+__ROKI_EXPORT void rkChainInit(rkChain *c);
+__ROKI_EXPORT void rkChainDestroy(rkChain *c);
 
 /*! \brief clone a kinematic chain.
  *
  * rkChainClone() clones a kinematic chain \a org to another \a cln.
  * \return cln
  */
-__EXPORT rkChain *rkChainClone(rkChain *org, rkChain *cln);
+__ROKI_EXPORT rkChain *rkChainClone(rkChain *org, rkChain *cln);
 
 /*! \brief copy state of a kinematic chain.
  *
@@ -150,7 +150,7 @@ __EXPORT rkChain *rkChainClone(rkChain *org, rkChain *cln);
  * to that of another \a dst.
  * \return dst
  */
-__EXPORT rkChain *rkChainCopyState(rkChain *src, rkChain *dst);
+__ROKI_EXPORT rkChain *rkChainCopyState(rkChain *src, rkChain *dst);
 
 /*! \brief count total number of joints of a kinematic chain.
  *
@@ -173,9 +173,9 @@ __EXPORT rkChain *rkChainCopyState(rkChain *src, rkChain *dst);
  * \sa
  * rkJointSize
  */
-__EXPORT int rkChainJointSize(rkChain *c);
-__EXPORT zIndex rkChainCreateDefaultJointIndex(rkChain *c);
-__EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
+__ROKI_EXPORT int rkChainJointSize(rkChain *c);
+__ROKI_EXPORT zIndex rkChainCreateDefaultJointIndex(rkChain *c);
+__ROKI_EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
 
 /*! \brief find a link of a kinematic chain from name.
  *
@@ -190,9 +190,9 @@ __EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
  * the null pointer, and rkChainFindLinkID() and rkChainFindLinkJointIDOffset()
  * return -1 as an invaid value.
  */
-__EXPORT rkLink *rkChainFindLink(rkChain *chain, char *name);
-__EXPORT int rkChainFindLinkID(rkChain *chain, char *name);
-__EXPORT int rkChainFindLinkJointIDOffset(rkChain *chain, char *name);
+__ROKI_EXPORT rkLink *rkChainFindLink(rkChain *chain, char *name);
+__ROKI_EXPORT int rkChainFindLinkID(rkChain *chain, char *name);
+__ROKI_EXPORT int rkChainFindLinkJointIDOffset(rkChain *chain, char *name);
 
 /*! \brief update joint state.
  *
@@ -258,31 +258,31 @@ __EXPORT int rkChainFindLinkJointIDOffset(rkChain *chain, char *name);
 
 #define rkChainLinkJointMotorSetInput(r,i,t)  rkLinkJointMotorSetInput( rkChainLink(r,i), t )
 
-__EXPORT void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis);
-__EXPORT void rkChainSetJointDisCNT(rkChain *c, zIndex idx, zVec dis, double dt);
-__EXPORT void rkChainSetJointVel(rkChain *c, zIndex idx, zVec vel);
-__EXPORT void rkChainSetJointAcc(rkChain *c, zIndex idx, zVec acc);
-__EXPORT void rkChainSetJointRate(rkChain *c, zIndex idx, zVec vel, zVec acc);
-__EXPORT zVec rkChainGetJointDis(rkChain *c, zIndex idx, zVec dis);
+__ROKI_EXPORT void rkChainSetJointDis(rkChain *c, zIndex idx, zVec dis);
+__ROKI_EXPORT void rkChainSetJointDisCNT(rkChain *c, zIndex idx, zVec dis, double dt);
+__ROKI_EXPORT void rkChainSetJointVel(rkChain *c, zIndex idx, zVec vel);
+__ROKI_EXPORT void rkChainSetJointAcc(rkChain *c, zIndex idx, zVec acc);
+__ROKI_EXPORT void rkChainSetJointRate(rkChain *c, zIndex idx, zVec vel, zVec acc);
+__ROKI_EXPORT zVec rkChainGetJointDis(rkChain *c, zIndex idx, zVec dis);
 
-__EXPORT void rkChainSetJointDisAll(rkChain *c, zVec dis);
-__EXPORT void rkChainCatJointDisAll(rkChain *c, zVec dis, double k, zVec v);
-__EXPORT void rkChainSubJointDisAll(rkChain *c, zVec dis, zVec sdis);
-__EXPORT void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt);
-__EXPORT void rkChainSetJointVelAll(rkChain *c, zVec vel);
-__EXPORT void rkChainSetJointAccAll(rkChain *c, zVec acc);
-__EXPORT void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc);
-__EXPORT void rkChainSetJointTrqAll(rkChain *c, zVec trq);
+__ROKI_EXPORT void rkChainSetJointDisAll(rkChain *c, zVec dis);
+__ROKI_EXPORT void rkChainCatJointDisAll(rkChain *c, zVec dis, double k, zVec v);
+__ROKI_EXPORT void rkChainSubJointDisAll(rkChain *c, zVec dis, zVec sdis);
+__ROKI_EXPORT void rkChainSetJointDisCNTAll(rkChain *c, zVec dis, double dt);
+__ROKI_EXPORT void rkChainSetJointVelAll(rkChain *c, zVec vel);
+__ROKI_EXPORT void rkChainSetJointAccAll(rkChain *c, zVec acc);
+__ROKI_EXPORT void rkChainSetJointRateAll(rkChain *c, zVec vel, zVec acc);
+__ROKI_EXPORT void rkChainSetJointTrqAll(rkChain *c, zVec trq);
 
-__EXPORT zVec rkChainGetJointDisAll(rkChain *c, zVec dis);
-__EXPORT zVec rkChainGetJointVelAll(rkChain *c, zVec vel);
-__EXPORT zVec rkChainGetJointAccAll(rkChain *c, zVec acc);
-__EXPORT zVec rkChainGetJointTrqAll(rkChain *c, zVec trq);
+__ROKI_EXPORT zVec rkChainGetJointDisAll(rkChain *c, zVec dis);
+__ROKI_EXPORT zVec rkChainGetJointVelAll(rkChain *c, zVec vel);
+__ROKI_EXPORT zVec rkChainGetJointAccAll(rkChain *c, zVec acc);
+__ROKI_EXPORT zVec rkChainGetJointTrqAll(rkChain *c, zVec trq);
 
-__EXPORT zVec rkChainGetConf(rkChain *chain, zVec conf);
-__EXPORT void rkChainSetConf(rkChain *chain, zVec conf);
+__ROKI_EXPORT zVec rkChainGetConf(rkChain *chain, zVec conf);
+__ROKI_EXPORT void rkChainSetConf(rkChain *chain, zVec conf);
 
-__EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
+__ROKI_EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
 
 /*! \brief update kinematic chain motion state.
  *
@@ -352,8 +352,8 @@ __EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
  * \sa
  * rkChainUpdateFrame
  */
-__EXPORT void rkChainUpdateFK(rkChain *c);
-__EXPORT void rkChainFK(rkChain *c, zVec dis);
+__ROKI_EXPORT void rkChainUpdateFK(rkChain *c);
+__ROKI_EXPORT void rkChainFK(rkChain *c, zVec dis);
 
 /*! \brief inverse dynamics of kinematic chain.
  *
@@ -382,13 +382,13 @@ __EXPORT void rkChainFK(rkChain *c, zVec dis);
  * rkChainID(), rkChainIDGravity(), rkChainIDZeroGravity(), and rkChainFKCNT()
  * do not return any values.
  */
-__EXPORT void rkChainUpdateID_G(rkChain *c, zVec6D *g);
+__ROKI_EXPORT void rkChainUpdateID_G(rkChain *c, zVec6D *g);
 #define rkChainUpdateID(c)     rkChainUpdateID_G( c, RK_GRAVITY6D )
 #define rkChainUpdateID0G(c)   rkChainUpdateID_G( c, ZVEC6DZERO )
-__EXPORT void rkChainID_G(rkChain *c, zVec vel, zVec acc, zVec6D *g);
+__ROKI_EXPORT void rkChainID_G(rkChain *c, zVec vel, zVec acc, zVec6D *g);
 #define rkChainID(c,vel,acc)   rkChainID_G( c,vel,acc, RK_GRAVITY6D )
 #define rkChainID0G(c,vel,acc) rkChainID_G( c,vel,acc, ZVEC6DZERO )
-__EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
+__ROKI_EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
 
 /*! \brief link acceleration at zero joint acceleration.
  *
@@ -413,7 +413,7 @@ __EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
  * rkChainLinkZeroAcc(),rkChainLinkZeroAccGravity(), and rkChainLinkZeroAccZeroGravity()
  * return a pointer \a a0.
  */
-__EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *c, int id, zVec3D *p, zVec6D *g, zVec6D *a0);
+__ROKI_EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *c, int id, zVec3D *p, zVec6D *g, zVec6D *a0);
 #define rkChainLinkZeroAcc(c,i,p,a0)   rkChainLinkZeroAccG( (c), (i), (p), RK_GRAVITY6D, (a0) )
 #define rkChainLinkZeroAcc0G(c,i,p,a0) rkChainLinkZeroAccG( (c), (i), (p), ZVEC6DZERO, (a0) )
 
@@ -426,7 +426,7 @@ __EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *c, int id, zVec3D *p, zVec6D *g, z
  * \sa
  * rkChainUpdateCOM()
  */
-__EXPORT double rkChainCalcMass(rkChain *chain);
+__ROKI_EXPORT double rkChainCalcMass(rkChain *chain);
 
 /*! \brief calculate the center of mass of kinematic chain.
  *
@@ -445,9 +445,9 @@ __EXPORT double rkChainCalcMass(rkChain *chain);
  * rkChainUpdateCOMAcc() includes the acceleration of gravity,
  * except one explicitly sets the zero gravity to the root link.
  */
-__EXPORT zVec3D *rkChainUpdateCOM(rkChain *c);
-__EXPORT zVec3D *rkChainUpdateCOMVel(rkChain *c);
-__EXPORT zVec3D *rkChainUpdateCOMAcc(rkChain *c);
+__ROKI_EXPORT zVec3D *rkChainUpdateCOM(rkChain *c);
+__ROKI_EXPORT zVec3D *rkChainUpdateCOMVel(rkChain *c);
+__ROKI_EXPORT zVec3D *rkChainUpdateCOMAcc(rkChain *c);
 
 /*! \brief update the composite rigid body of a kinematic chain. */
 #define rkChainUpdateCRBMass(c) rkLinkUpdateCRBMass( rkChainRoot(c) )
@@ -470,8 +470,8 @@ __EXPORT zVec3D *rkChainUpdateCOMAcc(rkChain *c);
  * In any cases of the three, inverse dynamics has to be computed
  * in advance.
  */
-__EXPORT zVec3D *rkChainZMP(rkChain *c, double z, zVec3D *zmp);
-__EXPORT double rkChainYawTorque(rkChain *c);
+__ROKI_EXPORT zVec3D *rkChainZMP(rkChain *c, double z, zVec3D *zmp);
+__ROKI_EXPORT double rkChainYawTorque(rkChain *c);
 
 /*! \brief angular momentum and kinematic energy of kinematic chain.
  *
@@ -485,8 +485,8 @@ __EXPORT double rkChainYawTorque(rkChain *c);
  * rkChainAM() returns a pointer \a am.
  * rkChainKE() returns a value calculated.
  */
-__EXPORT zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am);
-__EXPORT double rkChainKE(rkChain *c);
+__ROKI_EXPORT zVec3D *rkChainAM(rkChain *c, zVec3D *p, zVec3D *am);
+__ROKI_EXPORT double rkChainKE(rkChain *c);
 
 /*! \brief inertia matrix and bias force vector of a kinematic chain.
  *
@@ -536,15 +536,15 @@ __EXPORT double rkChainKE(rkChain *c);
  * If the sizes of the given matrix and vector do not match the total degree
  * of freedom of the chain, the false value is returned.
  */
-__EXPORT zMat rkChainInertiaMatMJ(rkChain *chain, zMat inertia);
-__EXPORT bool rkChainInertiaMatUV(rkChain *chain, zMat inertia);
-__EXPORT bool rkChainInertiaMatCRB(rkChain *chain, zMat inertia);
-__EXPORT bool (* rkChainInertiaMat)(rkChain*,zMat);
+__ROKI_EXPORT zMat rkChainInertiaMatMJ(rkChain *chain, zMat inertia);
+__ROKI_EXPORT bool rkChainInertiaMatUV(rkChain *chain, zMat inertia);
+__ROKI_EXPORT bool rkChainInertiaMatCRB(rkChain *chain, zMat inertia);
+__ROKI_EXPORT bool (* rkChainInertiaMat)(rkChain*,zMat);
 
-__EXPORT bool rkChainBiasVec(rkChain *chain, zVec bias);
-__EXPORT bool rkChainInertiaMatBiasVecUV(rkChain *chain, zMat inertia, zVec bias);
-__EXPORT bool rkChainInertiaMatBiasVecCRB(rkChain *chain, zMat inertia, zVec bias);
-__EXPORT bool (* rkChainInertiaMatBiasVec)(rkChain*,zMat,zVec);
+__ROKI_EXPORT bool rkChainBiasVec(rkChain *chain, zVec bias);
+__ROKI_EXPORT bool rkChainInertiaMatBiasVecUV(rkChain *chain, zMat inertia, zVec bias);
+__ROKI_EXPORT bool rkChainInertiaMatBiasVecCRB(rkChain *chain, zMat inertia, zVec bias);
+__ROKI_EXPORT bool (* rkChainInertiaMatBiasVec)(rkChain*,zMat,zVec);
 
 /*! \brief external force applied to kinematic chain.
  *
@@ -561,8 +561,8 @@ __EXPORT bool (* rkChainInertiaMatBiasVec)(rkChain*,zMat,zVec);
  *
  * rkChainExtWrenchDestroy() returns no value.
  */
-__EXPORT zVec6D *rkChainNetExtWrench(rkChain *c, zVec6D *w);
-__EXPORT void rkChainExtWrenchDestroy(rkChain *c);
+__ROKI_EXPORT zVec6D *rkChainNetExtWrench(rkChain *c, zVec6D *w);
+__ROKI_EXPORT void rkChainExtWrenchDestroy(rkChain *c);
 
 /*! \brief set joint identifier offset value of each link.
  *
@@ -580,7 +580,7 @@ __EXPORT void rkChainExtWrenchDestroy(rkChain *c);
  * \return
  * rkChainSetJointIDOffset() returns no value.
  */
-__EXPORT void rkChainSetJointIDOffset(rkChain *c);
+__ROKI_EXPORT void rkChainSetJointIDOffset(rkChain *c);
 
 /*! \brief make a list of vertices of a chain.
  *
@@ -594,7 +594,7 @@ __EXPORT void rkChainSetJointIDOffset(rkChain *c);
  * fails to allocate memory to store vertices, the null pointer is
  * returned.
  */
-__EXPORT zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl);
+__ROKI_EXPORT zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl);
 
 /*! \brief generate the bounding ball of a kinematic chain.
  *
@@ -604,28 +604,28 @@ __EXPORT zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl);
  * rkChainBBall() returns a pointer \a bb if succeeds. Otherwise,
  * the null pointer is returned.
  */
-__EXPORT zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb);
+__ROKI_EXPORT zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb);
 
 /* ZTK */
 
 #define ZTK_TAG_RKCHAIN "chain"
 #define ZTK_TAG_INIT "init"
 
-__EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
-__EXPORT void rkChainFPrintZTK(FILE *fp, rkChain *chain);
+__ROKI_EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
+__ROKI_EXPORT void rkChainFPrintZTK(FILE *fp, rkChain *chain);
 
-__EXPORT rkChain *rkChainReadZTK(rkChain *chain, char filename[]);
-__EXPORT bool rkChainWriteZTK(rkChain *c, char filename[]);
+__ROKI_EXPORT rkChain *rkChainReadZTK(rkChain *chain, char filename[]);
+__ROKI_EXPORT bool rkChainWriteZTK(rkChain *c, char filename[]);
 
-__EXPORT rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk);
-__EXPORT void rkChainInitFPrintZTK(FILE *fp, rkChain *chain);
+__ROKI_EXPORT rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk);
+__ROKI_EXPORT void rkChainInitFPrintZTK(FILE *fp, rkChain *chain);
 
-__EXPORT rkChain *rkChainInitReadZTK(rkChain *chain, char filename[]);
-__EXPORT bool rkChainInitWriteZTK(rkChain *chain, char filename[]);
+__ROKI_EXPORT rkChain *rkChainInitReadZTK(rkChain *chain, char filename[]);
+__ROKI_EXPORT bool rkChainInitWriteZTK(rkChain *chain, char filename[]);
 
-__EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *c);
-__EXPORT void rkChainConnectionFPrint(FILE *fp, rkChain *c);
-__EXPORT void rkChainExtWrenchFPrint(FILE *fp, rkChain *c);
+__ROKI_EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *c);
+__ROKI_EXPORT void rkChainConnectionFPrint(FILE *fp, rkChain *c);
+__ROKI_EXPORT void rkChainExtWrenchFPrint(FILE *fp, rkChain *c);
 
 #define rkChainPosturePrint(c)    rkChainPostureFPrint( stdout, (c) )
 #define rkChainConnectionPrint(c) rkChainConnectionFPrint( stdout, (c) )

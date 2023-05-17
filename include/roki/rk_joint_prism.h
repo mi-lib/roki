@@ -32,7 +32,7 @@ typedef struct{
   double _u;
 } rkJointPrismPrp;
 
-__EXPORT rkJointCom rk_joint_prism;
+__ROKI_EXPORT rkJointCom rk_joint_prism;
 
 __END_DECLS
 

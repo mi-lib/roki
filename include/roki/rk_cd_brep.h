@@ -39,7 +39,7 @@ zListClass( rkBREPVertList, rkBREPVertListCell, rkBREPVert );
  * rkBREPVertListFind() returns a pointer to the found cell.
  * Otherwise, the null pointer is returned.
  */
-__EXPORT rkBREPVertListCell *rkBREPVertListFind(rkBREPVertList *vlist, zVec3D *v);
+__ROKI_EXPORT rkBREPVertListCell *rkBREPVertListFind(rkBREPVertList *vlist, zVec3D *v);
 
 typedef struct{
   rkBREPVertListCell *v[2], *_v0[2];
@@ -62,7 +62,7 @@ zListClass( rkBREPEdgeList, rkBREPEdgeListCell, rkBREPEdge );
  * rkBREPEdgeListFind() returns a pointer to the found
  * cell. Otherwise, the null pointer is returned.
  */
-__EXPORT rkBREPEdgeListCell *rkBREPEdgeListFind(rkBREPEdgeList *elist, rkBREPVertListCell *v1, rkBREPVertListCell *v2);
+__ROKI_EXPORT rkBREPEdgeListCell *rkBREPEdgeListFind(rkBREPEdgeList *elist, rkBREPVertListCell *v1, rkBREPVertListCell *v2);
 
 typedef struct{
   rkBREPVertListCell *v[3], *_v0[3];
@@ -84,7 +84,7 @@ typedef struct{
   int discard;
 } rkBREP;
 
-__EXPORT void rkBREPInit(rkBREP *brep);
+__ROKI_EXPORT void rkBREPInit(rkBREP *brep);
 
 /*! \brief convert a polyhedron to a B-Rep solid.
  *
@@ -98,7 +98,7 @@ __EXPORT void rkBREPInit(rkBREP *brep);
  * \retval
  * zPH3D2BREP() returns a pointer \a brep.
  */
-__EXPORT rkBREP *rkPH3D2BREP(zPH3D *ph, rkBREP *brep);
+__ROKI_EXPORT rkBREP *rkPH3D2BREP(zPH3D *ph, rkBREP *brep);
 
 /*! \brief convert polyhedron restricted in a box to B-Rep solid.
  *
@@ -109,7 +109,7 @@ __EXPORT rkBREP *rkPH3D2BREP(zPH3D *ph, rkBREP *brep);
  * \retval
  * zPH3D2BREPInBox() returns a pointer \a brep.
  */
-__EXPORT rkBREP *rkPH3D2BREPInBox(zPH3D *ph, zAABox3D *box, rkBREP *brep);
+__ROKI_EXPORT rkBREP *rkPH3D2BREPInBox(zPH3D *ph, zAABox3D *box, rkBREP *brep);
 
 /*! \brief convert a B-Rep solid to a polyhedron.
  *
@@ -120,7 +120,7 @@ __EXPORT rkBREP *rkPH3D2BREPInBox(zPH3D *ph, zAABox3D *box, rkBREP *brep);
  * \retval
  * rkBREP2PH3D() returns a pointer \a ph.
  */
-__EXPORT zPH3D *rkBREP2PH3D(rkBREP *brep, zPH3D *ph);
+__ROKI_EXPORT zPH3D *rkBREP2PH3D(rkBREP *brep, zPH3D *ph);
 
 /*! \brief destroy a B-Rep solid.
  *
@@ -129,9 +129,9 @@ __EXPORT zPH3D *rkBREP2PH3D(rkBREP *brep, zPH3D *ph);
  * \retval
  * rkBREPDestroy() returns no value.
  */
-__EXPORT void rkBREPDestroy(rkBREP *brep);
+__ROKI_EXPORT void rkBREPDestroy(rkBREP *brep);
 
-__EXPORT void rkBREPReset(rkBREP *brep);
+__ROKI_EXPORT void rkBREPReset(rkBREP *brep);
 
 __END_DECLS
 

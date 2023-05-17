@@ -10,7 +10,6 @@
 #define __RK_CD_H__
 
 #include <roki/rk_chain.h>
-#include <zeo/zeo_brep.h>
 
 __BEGIN_DECLS
 
@@ -42,19 +41,19 @@ zListClass( rkCDCellList, rkCDCell, rkCDCellDat );
 
 /*! \brief register collision detection cell
  */
-__EXPORT rkCDCell *rkCDCellReg(rkCDCellList *clist, rkChain *chain, rkLink *link, zShape3D *shape, rkCDCellType type);
+__ROKI_EXPORT rkCDCell *rkCDCellReg(rkCDCellList *clist, rkChain *chain, rkLink *link, zShape3D *shape, rkCDCellType type);
 
 /*! \brief update the bounding box of a collision detection cell
  */
-__EXPORT void rkCDCellUpdateBB(rkCDCell *cell);
+__ROKI_EXPORT void rkCDCellUpdateBB(rkCDCell *cell);
 
 /*! \brief update the polyhedron of a collision detection cell
  */
-__EXPORT void rkCDCellUpdatePH(rkCDCell *cell);
+__ROKI_EXPORT void rkCDCellUpdatePH(rkCDCell *cell);
 
 /*! \brief update a collision detection cell
  */
-__EXPORT void rkCDCellUpdate(rkCDCell *cell);
+__ROKI_EXPORT void rkCDCellUpdate(rkCDCell *cell);
 
 /* ********************************************************** */
 /*! \brief collision detection vertex class
@@ -116,37 +115,37 @@ typedef struct{
   rkContactFricType def_type; /*!< default friction type */
 } rkCD;
 
-__EXPORT rkCD *rkCDCreate(rkCD *cd);
-__EXPORT void rkCDDestroy(rkCD *cd);
-__EXPORT void rkCDReset(rkCD *cd);
-__EXPORT void rkCDSetDefaultFricType(rkCD *cd, rkContactFricType type);
+__ROKI_EXPORT rkCD *rkCDCreate(rkCD *cd);
+__ROKI_EXPORT void rkCDDestroy(rkCD *cd);
+__ROKI_EXPORT void rkCDReset(rkCD *cd);
+__ROKI_EXPORT void rkCDSetDefaultFricType(rkCD *cd, rkContactFricType type);
 
-__EXPORT rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type);
-__EXPORT void rkCDChainUnreg(rkCD *cd, rkChain *chain);
+__ROKI_EXPORT rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type);
+__ROKI_EXPORT void rkCDChainUnreg(rkCD *cd, rkChain *chain);
 
-__EXPORT rkCD *rkCDPairReg(rkCD *cd, rkLink *link1, rkLink *link2);
-__EXPORT void rkCDPairUnreg(rkCD *cd, rkLink *link1, rkLink *link2);
-__EXPORT void rkCDPairChainUnreg(rkCD *cd, rkChain *chain);
+__ROKI_EXPORT rkCD *rkCDPairReg(rkCD *cd, rkLink *link1, rkLink *link2);
+__ROKI_EXPORT void rkCDPairUnreg(rkCD *cd, rkLink *link1, rkLink *link2);
+__ROKI_EXPORT void rkCDPairChainUnreg(rkCD *cd, rkChain *chain);
 
-__EXPORT void rkCDPairPrint(rkCD *cd);
-__EXPORT void rkCDPairVertPrint(rkCD *cd);
+__ROKI_EXPORT void rkCDPairPrint(rkCD *cd);
+__ROKI_EXPORT void rkCDPairVertPrint(rkCD *cd);
 
-__EXPORT void rkCDColChkAABB(rkCD *cd);    /* AABB */
-__EXPORT void rkCDColChkOBB(rkCD *cd);     /* AABB->OBB */
-__EXPORT void rkCDColChkGJK(rkCD *cd);     /* AABB->OBB->GJK */
-__EXPORT void rkCDColChkVert(rkCD *cd);    /* AABB->OBB->Vert(PH) */
-__EXPORT void rkCDColChkOBBVert(rkCD *cd); /* AABB->OBB->Vert(OBB) */
+__ROKI_EXPORT void rkCDColChkAABB(rkCD *cd);    /* AABB */
+__ROKI_EXPORT void rkCDColChkOBB(rkCD *cd);     /* AABB->OBB */
+__ROKI_EXPORT void rkCDColChkGJK(rkCD *cd);     /* AABB->OBB->GJK */
+__ROKI_EXPORT void rkCDColChkVert(rkCD *cd);    /* AABB->OBB->Vert(PH) */
+__ROKI_EXPORT void rkCDColChkOBBVert(rkCD *cd); /* AABB->OBB->Vert(OBB) */
 
-__EXPORT void rkCDColChkGJKOnly(rkCD *cd); /* GJK */
+__ROKI_EXPORT void rkCDColChkGJKOnly(rkCD *cd); /* GJK */
 
-__EXPORT void rkCDColVol(rkCD *cd);        /* AABB->OBB->GJK->MP */
-__EXPORT void rkCDColVolBREP(rkCD *cd);    /* AABB->OBB->BREP->CH */
-__EXPORT void rkCDColVolBREPFast(rkCD *cd);/* AABB->OBB->BREP->CH(Fast) */
+__ROKI_EXPORT void rkCDColVol(rkCD *cd);        /* AABB->OBB->GJK->MP */
+__ROKI_EXPORT void rkCDColVolBREP(rkCD *cd);    /* AABB->OBB->BREP->CH */
+__ROKI_EXPORT void rkCDColVolBREPFast(rkCD *cd);/* AABB->OBB->BREP->CH(Fast) */
 
-__EXPORT void rkCDColVolBREPVert(rkCD *cd);    /* AABB->OBB->BREP->CH, Vert */
+__ROKI_EXPORT void rkCDColVolBREPVert(rkCD *cd);    /* AABB->OBB->BREP->CH, Vert */
 
 /* for fd */
-__EXPORT rkCDPlaneList *rkCDPlaneListQuickSort(rkCDPlaneList *list, int (*cmp)(void*,void*,void*), void *priv);
+__ROKI_EXPORT rkCDPlaneList *rkCDPlaneListQuickSort(rkCDPlaneList *list, int (*cmp)(void*,void*,void*), void *priv);
 
 __END_DECLS
 

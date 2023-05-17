@@ -33,10 +33,10 @@ __BEGIN_DECLS
  * rkChainLinkToLinkAngJacobi() and
  * rkChainLinkToLinkLinJacobi()' return a pointer \a jacobi.
  */
-__EXPORT zMat rkChainLinkWldAngJacobi(rkChain *c, int id, zMat jacobi);
-__EXPORT zMat rkChainLinkWldLinJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi);
-__EXPORT zMat rkChainLinkToLinkAngJacobi(rkChain *c, int from, int to, zMat jacobi);
-__EXPORT zMat rkChainLinkToLinkLinJacobi(rkChain *c, int from, int to, zVec3D *p, zMat jacobi);
+__ROKI_EXPORT zMat rkChainLinkWldAngJacobi(rkChain *c, int id, zMat jacobi);
+__ROKI_EXPORT zMat rkChainLinkWldLinJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi);
+__ROKI_EXPORT zMat rkChainLinkToLinkAngJacobi(rkChain *c, int from, int to, zMat jacobi);
+__ROKI_EXPORT zMat rkChainLinkToLinkLinJacobi(rkChain *c, int from, int to, zVec3D *p, zMat jacobi);
 
 /*! \brief COM Jacobian matrix
  *
@@ -48,7 +48,7 @@ __EXPORT zMat rkChainLinkToLinkLinJacobi(rkChain *c, int from, int to, zVec3D *p
  * \sa
  * rkChainLinkWldLinJacobi
  */
-__EXPORT zMat rkChainCOMJacobi(rkChain *c, zMat jacobi);
+__ROKI_EXPORT zMat rkChainCOMJacobi(rkChain *c, zMat jacobi);
 
 /*! \brief angular momentum matrix.
  *
@@ -76,9 +76,9 @@ __EXPORT zMat rkChainCOMJacobi(rkChain *c, zMat jacobi);
  * rkChainLinkAMMat(), rkChainAMMat() and rkChainAMCOMMat() return a pointer
  * \a m.
  */
-__EXPORT zMat rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat m);
-__EXPORT zMat rkChainAMMat(rkChain *c, zVec3D *p, zMat m);
-__EXPORT zMat rkChainAMCOMMat(rkChain *c, zMat m);
+__ROKI_EXPORT zMat rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat m);
+__ROKI_EXPORT zMat rkChainAMMat(rkChain *c, zVec3D *p, zMat m);
+__ROKI_EXPORT zMat rkChainAMCOMMat(rkChain *c, zMat m);
 
 /*! \brief measure of manipulability.
  *
@@ -92,7 +92,7 @@ __EXPORT zMat rkChainAMCOMMat(rkChain *c, zMat m);
  * \return
  * rkJacobiManip() returns a value calculated.
  */
-__EXPORT double rkJacobiManip(zMat jacobi);
+__ROKI_EXPORT double rkJacobiManip(zMat jacobi);
 
 __END_DECLS
 

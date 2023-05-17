@@ -7,8 +7,7 @@
 #ifndef __RK_FORCE_H__
 #define __RK_FORCE_H__
 
-#include <zm/zm.h>
-#include <zeo/zeo.h>
+#include <roki/rk_misc.h>
 
 __BEGIN_DECLS
 
@@ -59,7 +58,7 @@ zListClass( rkWrenchList, rkWrench, rkWrenchData );
  * rkWrenchListDestroy() returns no value.
  */
 #define rkWrenchListPush(l,w)  zListInsertTail( l, w )
-__EXPORT rkWrench *rkWrenchListPop(rkWrenchList *wl);
+__ROKI_EXPORT rkWrench *rkWrenchListPop(rkWrenchList *wl);
 #define rkWrenchListDestroy(l) zListDestroy( rkWrench, l )
 
 /*! \brief shift and add wrench.
@@ -72,8 +71,8 @@ __EXPORT rkWrench *rkWrenchListPop(rkWrenchList *wl);
  * \retval
  * rkWrenchShift() and rkWrenchListNet() return a pointer \a force.
  */
-__EXPORT zVec6D *rkWrenchShift(rkWrench *cell, zVec6D *w);
-__EXPORT zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w);
+__ROKI_EXPORT zVec6D *rkWrenchShift(rkWrench *cell, zVec6D *w);
+__ROKI_EXPORT zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w);
 
 /*! \brief print out a wrench.
  *
@@ -90,7 +89,7 @@ __EXPORT zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w);
  * \retval
  * Neither rkWrenchFPrint() nor rkWrenchPrint() return any values.
  */
-__EXPORT void rkWrenchFPrint(FILE *fp, rkWrench *cell);
+__ROKI_EXPORT void rkWrenchFPrint(FILE *fp, rkWrench *cell);
 #define rkWrenchPrint(c) rkWrenchFPrint( stdout, (c) )
 
 __END_DECLS

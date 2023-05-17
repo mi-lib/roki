@@ -7,9 +7,7 @@
 #ifndef __RK_G3D_H__
 #define __RK_G3D_H__
 
-#include <zm/zm.h>
-#include <zeo/zeo.h>
-
+#include <roki/rk_misc.h>
 #include <roki/rk_g.h>
 
 __BEGIN_DECLS
@@ -18,7 +16,7 @@ __BEGIN_DECLS
  * RK_GRAVITY3D, RK_GRAVITY6D
  * acceleration vector of gravity.
  */
-__EXPORT zVec6D rk_gravity6D;
+__ROKI_EXPORT zVec6D rk_gravity6D;
 #define RK_GRAVITY6D ( &rk_gravity6D )
 #define RK_GRAVITY3D zVec6DLin( RK_GRAVITY6D )
 

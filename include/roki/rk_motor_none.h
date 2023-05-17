@@ -12,7 +12,7 @@
 
 __BEGIN_DECLS
 
-__EXPORT rkMotorCom rk_motor_none;
+__ROKI_EXPORT rkMotorCom rk_motor_none;
 
 __END_DECLS
 

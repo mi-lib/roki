@@ -27,11 +27,11 @@ typedef struct{
 #define rkIKImpSetC(i,cx,cy,cz) zVec3DCreate( &(i)->c, cx, cy, cz )
 
 /* controller */
-__EXPORT zVec3D *rkIKImpTtlAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
-__EXPORT zVec3D *rkIKImpTtlPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
-__EXPORT zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
-__EXPORT zVec3D *rkIKImpWldPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
-__EXPORT zVec3D *rkIKImpWldCOM(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
+__ROKI_EXPORT zVec3D *rkIKImpTtlAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
+__ROKI_EXPORT zVec3D *rkIKImpTtlPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
+__ROKI_EXPORT zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
+__ROKI_EXPORT zVec3D *rkIKImpWldPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
+__ROKI_EXPORT zVec3D *rkIKImpWldCOM(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv);
 
 __END_DECLS
 

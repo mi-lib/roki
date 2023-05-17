@@ -20,7 +20,7 @@ typedef struct {
   double max; /*!< \brief maximum input torque */
 } rkMotorTrqPrp;
 
-__EXPORT rkMotorCom rk_motor_trq;
+__ROKI_EXPORT rkMotorCom rk_motor_trq;
 
 __END_DECLS
 

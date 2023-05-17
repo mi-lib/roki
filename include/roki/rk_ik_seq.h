@@ -33,7 +33,7 @@ typedef struct{
 } while(0)
 
 /*! \brief set IK cell to IK solver. */
-__EXPORT bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c);
+__ROKI_EXPORT bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c);
 
 /*! \brief IK sequence. */
 zListClass( rkIKSeq, rkIKSeqListCell, rkIKSeqCell);
@@ -47,23 +47,23 @@ zListClass( rkIKSeq, rkIKSeqListCell, rkIKSeqCell);
 } while(0)
 
 /*! \brief initialize IK sequence. */
-__EXPORT rkIKSeq *rkIKSeqInit(rkIKSeq *seq);
+__ROKI_EXPORT rkIKSeq *rkIKSeqInit(rkIKSeq *seq);
 /*! \brief destroy IK sequence. */
-__EXPORT void rkIKSeqFree(rkIKSeq *seq);
+__ROKI_EXPORT void rkIKSeqFree(rkIKSeq *seq);
 
 /*! \brief suffix to an IK sequence file. */
 #define RK_IKSEQ_SUFFIX "zen"
 
 /*! \brief scan an IK sequence from a file. */
-__EXPORT bool rkIKSeqScanFile(rkIKSeq *seq, char filename[]);
+__ROKI_EXPORT bool rkIKSeqScanFile(rkIKSeq *seq, char filename[]);
 /*! \brief scan an IK sequence from the current position of a file. */
-__EXPORT rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq);
+__ROKI_EXPORT rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq);
 #define rkIKSeqScan(seq) rkIKSeqFScan( stdin, seq )
 
 /*! \brief print an IK sequence out to a file. */
-__EXPORT bool rkIKSeqPrintFile(rkIKSeq *seq, char filename[]);
+__ROKI_EXPORT bool rkIKSeqPrintFile(rkIKSeq *seq, char filename[]);
 /*! \brief print an IK sequence out to the current position of a file. */
-__EXPORT void rkIKSeqFPrint(FILE *fp, rkIKSeq *seq);
+__ROKI_EXPORT void rkIKSeqFPrint(FILE *fp, rkIKSeq *seq);
 #define rkIKSeqPrint(seq) rkIKSeqFPrint( stdout, seq )
 
 __END_DECLS

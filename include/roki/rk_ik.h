@@ -109,8 +109,8 @@ ZDEF_STRUCT( rkIK ){
  *
  * rkChainDestroyIK() returns no value.
  */
-__EXPORT rkChain *rkChainCreateIK(rkChain *chain);
-__EXPORT void rkChainDestroyIK(rkChain *chain);
+__ROKI_EXPORT rkChain *rkChainCreateIK(rkChain *chain);
+__ROKI_EXPORT void rkChainDestroyIK(rkChain *chain);
 
 /*! \brief register/unregister cooperating joints of the inverse kinematics.
  *
@@ -124,15 +124,15 @@ __EXPORT void rkChainDestroyIK(rkChain *chain);
  * If \a id is a valid link identifier, it returns the true value.
  * Otherwise, the false value is returned.
  */
-__EXPORT bool rkChainRegIKJointID(rkChain *chain, int id, double weight);
-__EXPORT bool rkChainUnregIKJointID(rkChain *chain, int id);
+__ROKI_EXPORT bool rkChainRegIKJointID(rkChain *chain, int id, double weight);
+__ROKI_EXPORT bool rkChainUnregIKJointID(rkChain *chain, int id);
 
 #define rkChainRegIKJoint(chain,name,weight) \
   rkChainRegIKJointID( chain, rkChainFindLinkID( chain, name ), weight )
 #define rkChainUnregIKJoint(chain,name) \
   rkChainUnregIKJointID( chain, rkChainFindLinkID( chain, name ) )
 
-__EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
+__ROKI_EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
 
 /*! \brief register/unregister a constraint cell of the inverse kinematics.
  *
@@ -158,17 +158,17 @@ __EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
  * internal memory for the inverse kinematics, the false value is returned.
  * Otherwise, the true value is returned.
  */
-__EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
-__EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
+__ROKI_EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
 
 /*! \brief register a constraint cell of the inverse kinematics. */
-__EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKCellAttr *attr, int mask);
-__EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKCellAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKCellAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKCellAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKCellAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKCellAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKCellAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKCellAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKCellAttr *attr, int mask);
 
 /*! \brief find a constraint cell.
  *
@@ -178,7 +178,7 @@ __EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKCellAttr *attr, int
  * rkChainFindIKCell() returns a pointer to the found cell, or the null pointer
  * if not found.
  */
-__EXPORT rkIKCell *rkChainFindIKCell(rkChain *chain, int id);
+__ROKI_EXPORT rkIKCell *rkChainFindIKCell(rkChain *chain, int id);
 
 /*! \brief deactivate and bind a constraint.
  *
@@ -192,9 +192,9 @@ __EXPORT rkIKCell *rkChainFindIKCell(rkChain *chain, int id);
  * \return
  * They return no values.
  */
-__EXPORT void rkChainDeactivateIK(rkChain *chain);
-__EXPORT void rkChainBindIK(rkChain *chain);
-__EXPORT void rkChainZeroIKAcm(rkChain *chain);
+__ROKI_EXPORT void rkChainDeactivateIK(rkChain *chain);
+__ROKI_EXPORT void rkChainBindIK(rkChain *chain);
+__ROKI_EXPORT void rkChainZeroIKAcm(rkChain *chain);
 
 /*! \brief solve inverse kinematics.
  *
@@ -217,19 +217,19 @@ __EXPORT void rkChainZeroIKAcm(rkChain *chain);
  * rkChainIKRate() returns a pointer to the joint rate vector.
  * rkChainIK() returns the actual number of iteration.
  */
-__EXPORT void rkChainCreateIKEq(rkChain *chain);
+__ROKI_EXPORT void rkChainCreateIKEq(rkChain *chain);
 
 /*! \brief solve the motion constraint. */
 #define rkIKSetEqSolver(ik,f) ( (ik)->_solve_eq = (f) )
-__EXPORT zVec rkIKSolveEqMP(rkIK *ik);
-__EXPORT zVec rkIKSolveEqSR(rkIK *ik);
-__EXPORT zVec rkIKSolveEqED(rkIK *ik);
+__ROKI_EXPORT zVec rkIKSolveEqMP(rkIK *ik);
+__ROKI_EXPORT zVec rkIKSolveEqSR(rkIK *ik);
+__ROKI_EXPORT zVec rkIKSolveEqED(rkIK *ik);
 
-__EXPORT zVec rkChainIKSolveEq(rkChain *chain);
-__EXPORT zVec rkChainIKOne(rkChain *chain, zVec dis, double dt);
-__EXPORT zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt);
-__EXPORT int rkChainIK(rkChain *chain, zVec dis, double tol, int iter);
-__EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
+__ROKI_EXPORT zVec rkChainIKSolveEq(rkChain *chain);
+__ROKI_EXPORT zVec rkChainIKOne(rkChain *chain, zVec dis, double dt);
+__ROKI_EXPORT zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt);
+__ROKI_EXPORT int rkChainIK(rkChain *chain, zVec dis, double tol, int iter);
+__ROKI_EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
 
 /* ********************************************************** */
 /* IK configuration file I/O
@@ -241,8 +241,8 @@ __EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
 
 #define ZTK_TAG_RKIK "ik"
 
-__EXPORT rkChain *rkChainIKConfFromZTK(rkChain *ik, ZTK *ztk);
-__EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, char filename[]);
+__ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *ik, ZTK *ztk);
+__ROKI_EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, char filename[]);
 
 __END_DECLS
 

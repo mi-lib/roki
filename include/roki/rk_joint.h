@@ -7,10 +7,7 @@
 #ifndef __RK_JOINT_H__
 #define __RK_JOINT_H__
 
-#include <zm/zm.h>
-#include <zeo/zeo_frame3d.h>
-#include <zeo/zeo_ep.h>
-#include <zeo/zeo_mat6d.h>
+#include <roki/rk_misc.h>
 
 #include <roki/rk_motor.h>
 #include <roki/rk_body.h>
@@ -121,12 +118,12 @@ typedef struct _rkJoint{
   (j)->com = NULL;\
 } while(0)
 
-__EXPORT rkJoint *rkJointAssign(rkJoint *j, rkJointCom *com);
-__EXPORT rkJoint *rkJointQueryAssign(rkJoint *j, char *str);
-__EXPORT void rkJointDestroy(rkJoint *j);
+__ROKI_EXPORT rkJoint *rkJointAssign(rkJoint *j, rkJointCom *com);
+__ROKI_EXPORT rkJoint *rkJointQueryAssign(rkJoint *j, char *str);
+__ROKI_EXPORT void rkJointDestroy(rkJoint *j);
 
-__EXPORT rkJoint *rkJointClone(rkJoint *org, rkJoint *cln);
-__EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
+__ROKI_EXPORT rkJoint *rkJointClone(rkJoint *org, rkJoint *cln);
+__ROKI_EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 
 /*! \brief set and get joint status.
  *
@@ -292,13 +289,13 @@ bool rkJointIsNeutral(rkJoint *j);
 #define rkJointIncVel(j,v)        (j)->com->_incvel( (j)->prp, v)
 #define rkJointIncAccOnVel(j,w,a) (j)->com->_incaccvel( (j)->prp, w, a )
 #define rkJointIncAcc(j,a)        (j)->com->_incacc( (j)->prp, a )
-__EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
+__ROKI_EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
 #define rkJointCalcTrq(j,f)       (j)->com->_trq( (j)->prp, f )
 
 #define rkJointTorsion(j,dev,t,d) (j)->com->_torsion( dev, t, d )
 
-__EXPORT double rkJointRevolTorsionDis(zFrame3D *dev, zVec6D *t);
-__EXPORT double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t);
+__ROKI_EXPORT double rkJointRevolTorsionDis(zFrame3D *dev, zVec6D *t);
+__ROKI_EXPORT double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t);
 
 /*! \brief joint axis vector.
  *
@@ -319,8 +316,8 @@ __EXPORT double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t);
 #define rkJointAngAxis(j,i,f,a) (j)->com->_angaxis[i]( (j)->prp, f, a )
 #define rkJointLinAxis(j,i,f,a) (j)->com->_linaxis[i]( (j)->prp, f, a )
 
-__EXPORT zVec3D *_rkJointAxisNull(void *prp, zFrame3D *f, zVec3D *a);
-__EXPORT zVec3D *_rkJointAxisZ(void *prp, zFrame3D *f, zVec3D *a);
+__ROKI_EXPORT zVec3D *_rkJointAxisNull(void *prp, zFrame3D *f, zVec3D *a);
+__ROKI_EXPORT zVec3D *_rkJointAxisZ(void *prp, zFrame3D *f, zVec3D *a);
 
 /* composite rigid body method */
 #define rkJointCRBWrench(j,m,w) (j)->com->_crb_wrench( (j)->prp, m, w )
@@ -331,8 +328,8 @@ __EXPORT zVec3D *_rkJointAxisZ(void *prp, zFrame3D *f, zVec3D *a);
 #define _rkJointRestTrq(s,v,c,dis,vel) ( -s*dis -v*vel -c*zSgn(vel) )
 
 /* for ABI */
-__EXPORT zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m);
-__EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc);
+__ROKI_EXPORT zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m);
+__ROKI_EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc);
 
 /*! \brief scan and print out joint displacement and properties.
  *
@@ -362,7 +359,7 @@ __EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc
 #define rkJointPrpFromZTK(prp,motorarray,ztk,ztkprp) \
   ( ZTKEvalKey( prp, motorarray, ztk, ztkprp ) ? prp : NULL )
 
-__EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk);
+__ROKI_EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk);
 
 #define rkJointFPrintZTK(f,j,n) ( (n) ? (j)->com->_fprintZTK( f, (j)->prp, n ) : (j)->com->_fprintZTK( f, (j)->prp, (char *)"dis" ) )
 
@@ -379,7 +376,7 @@ __END_DECLS
 
 __BEGIN_DECLS
 
-__EXPORT rkJointCom *rk_joint_com[];
+__ROKI_EXPORT rkJointCom *rk_joint_com[];
 
 /* add the handle to the following list when you create a new joint class. */
 #define RK_JOINT_COM_ARRAY \

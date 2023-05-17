@@ -8,8 +8,7 @@
 #ifndef __RK_MOTOR_H__
 #define __RK_MOTOR_H__
 
-#include <zm/zm.h>
-#include <roki/rk_errmsg.h>
+#include <roki/rk_misc.h>
 
 __BEGIN_DECLS
 
@@ -36,7 +35,7 @@ typedef struct{
 } rkMotorCom;
 
 typedef struct{
-  Z_NAMED_CLASS
+  Z_NAMED_CLASS;
   void *prp;
   rkMotorCom *com;
 } rkMotor;
@@ -49,11 +48,11 @@ typedef struct{
   (m)->prp = NULL;\
   (m)->com = NULL;\
 } while(0)
-__EXPORT rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com);
-__EXPORT rkMotor *rkMotorQueryAssign(rkMotor *m, const char *str);
-__EXPORT void rkMotorDestroy(rkMotor *m);
+__ROKI_EXPORT rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com);
+__ROKI_EXPORT rkMotor *rkMotorQueryAssign(rkMotor *m, const char *str);
+__ROKI_EXPORT void rkMotorDestroy(rkMotor *m);
 
-__EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
+__ROKI_EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
 
 /* method */
 
@@ -63,9 +62,9 @@ __EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
 #define rkMotorRegistance(m,d,v,r)     (m)->com->_regist( (m)->prp, (d), (v), (r) )
 #define rkMotorDrivingTrq(m,d,v,a,t)   (m)->com->_dtrq( (m)->prp, (d), (v), (a), (t) )
 
-__EXPORT rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk);
+__ROKI_EXPORT rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk);
 
-__EXPORT void rkMotorFPrintZTK(FILE *fp, rkMotor *m);
+__ROKI_EXPORT void rkMotorFPrintZTK(FILE *fp, rkMotor *m);
 
 /* ********************************************************** */
 /*! \struct rkMotorArray
@@ -75,11 +74,11 @@ __EXPORT void rkMotorFPrintZTK(FILE *fp, rkMotor *m);
 #define ZTK_TAG_RKMOTOR "motor"
 zArrayClass( rkMotorArray, rkMotor );
 
-__EXPORT rkMotorArray *rkMotorArrayClone(rkMotorArray *org);
+__ROKI_EXPORT rkMotorArray *rkMotorArrayClone(rkMotorArray *org);
 
-__EXPORT rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name);
+__ROKI_EXPORT rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name);
 
-__EXPORT void rkMotorArrayFPrintZTK(FILE *fp, rkMotorArray *m);
+__ROKI_EXPORT void rkMotorArrayFPrintZTK(FILE *fp, rkMotorArray *m);
 
 __END_DECLS
 

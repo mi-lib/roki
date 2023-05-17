@@ -25,7 +25,7 @@ typedef struct{
   double _u[3];
 } rkJointSpherPrp;
 
-__EXPORT rkJointCom rk_joint_spher;
+__ROKI_EXPORT rkJointCom rk_joint_spher;
 
 __END_DECLS
 

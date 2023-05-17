@@ -34,7 +34,7 @@ typedef struct{
   double _u;
 } rkJointRevolPrp;
 
-__EXPORT rkJointCom rk_joint_revol;
+__ROKI_EXPORT rkJointCom rk_joint_revol;
 
 __END_DECLS
 

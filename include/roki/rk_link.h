@@ -34,7 +34,7 @@ ZDEF_STRUCT( rkABIPrp ){
 };
 
 ZDEF_STRUCT( rkLink ){
-  Z_NAMED_CLASS
+  Z_NAMED_CLASS;
   rkJoint joint;       /*!< \brief joint */
   rkBody body;         /*!< \brief rigid body */
   rkMP crb;            /*!< \brief composite rigid body */
@@ -156,8 +156,8 @@ ZDEF_STRUCT( rkLink ){
  * \return
  * Neither rkLinkInit() nor rkLinkDestroy() returns any values.
  */
-__EXPORT void rkLinkInit(rkLink *l);
-__EXPORT void rkLinkDestroy(rkLink *l);
+__ROKI_EXPORT void rkLinkInit(rkLink *l);
+__ROKI_EXPORT void rkLinkDestroy(rkLink *l);
 
 /*! \brief clone a link.
  *
@@ -171,7 +171,7 @@ __EXPORT void rkLinkDestroy(rkLink *l);
  * of \a sc is supposed to be attached with \a cln.
  * \return cln
  */
-__EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc);
+__ROKI_EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc);
 
 /*! \brief zero velocity and acceleration of a link.
  *
@@ -187,7 +187,7 @@ __EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D 
  * net external wrench.
  * \return dst
  */
-__EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dst);
+__ROKI_EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dst);
 
 /*! \brief add link branch.
  *
@@ -203,8 +203,8 @@ __EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dst);
  * Each of rkLinkAddSibl() and rkLinkAddChild() returns a
  * pointer to the added link.
  */
-__EXPORT rkLink *rkLinkAddSibl(rkLink *l, rkLink *bl);
-__EXPORT rkLink *rkLinkAddChild(rkLink *l, rkLink *cl);
+__ROKI_EXPORT rkLink *rkLinkAddSibl(rkLink *l, rkLink *bl);
+__ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *l, rkLink *cl);
 
 /* \brief compute the inertial ellipsoid of a link.
  */
@@ -285,8 +285,8 @@ __EXPORT rkLink *rkLinkAddChild(rkLink *l, rkLink *cl);
  * \notes
  * \a p is with respect to the local frame of \a l.
  */
-__EXPORT zVec3D *rkLinkPointVel(rkLink *l, zVec3D *p, zVec3D *v);
-__EXPORT zVec3D *rkLinkPointAcc(rkLink *l, zVec3D *p, zVec3D *a);
+__ROKI_EXPORT zVec3D *rkLinkPointVel(rkLink *l, zVec3D *p, zVec3D *v);
+__ROKI_EXPORT zVec3D *rkLinkPointAcc(rkLink *l, zVec3D *p, zVec3D *a);
 
 /*! \brief compute inertia tensor of a link with respect to the inertial frame.
  *
@@ -295,7 +295,7 @@ __EXPORT zVec3D *rkLinkPointAcc(rkLink *l, zVec3D *p, zVec3D *a);
  * The result is put where \a i points.
  * \return \a i
  */
-__EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
+__ROKI_EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
 
 /*! \brief set and get joint displacement.
  *
@@ -361,18 +361,18 @@ __EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
  * Be careful when coding inverse dynamics. Use them in
  * correct ways, considering the purpose of the computation.
  */
-__EXPORT void rkLinkUpdateFrame(rkLink *l, zFrame3D *pwf);
-__EXPORT void rkLinkUpdateVel(rkLink *l, zVec6D *pvel);
-__EXPORT void rkLinkUpdateAcc(rkLink *l, zVec6D *pvel, zVec6D *pacc);
-__EXPORT void rkLinkUpdateRate(rkLink *l, zVec6D *pvel, zVec6D *pacc);
-__EXPORT void rkLinkUpdateWrench(rkLink *l);
+__ROKI_EXPORT void rkLinkUpdateFrame(rkLink *l, zFrame3D *pwf);
+__ROKI_EXPORT void rkLinkUpdateVel(rkLink *l, zVec6D *pvel);
+__ROKI_EXPORT void rkLinkUpdateAcc(rkLink *l, zVec6D *pvel, zVec6D *pacc);
+__ROKI_EXPORT void rkLinkUpdateRate(rkLink *l, zVec6D *pvel, zVec6D *pacc);
+__ROKI_EXPORT void rkLinkUpdateWrench(rkLink *l);
 
 /*! \brief update mass of the composite rigit body of a link. */
-__EXPORT double rkLinkUpdateCRBMass(rkLink *link);
+__ROKI_EXPORT double rkLinkUpdateCRBMass(rkLink *link);
 /*! \brief update the composite rigit body of a link. */
-__EXPORT rkMP *rkLinkUpdateCRB(rkLink *link);
+__ROKI_EXPORT rkMP *rkLinkUpdateCRB(rkLink *link);
 
-__EXPORT void rkLinkConfToJointDis(rkLink *l);
+__ROKI_EXPORT void rkLinkConfToJointDis(rkLink *l);
 
 /*! \brief angular momentum and kinematic energy of link.
  *
@@ -479,14 +479,14 @@ zArrayClass( rkLinkArray, rkLink );
  * rkLinkConnectionPrint(), rkLinkExtForceFPrint() and
  * rkLinkExtForcePrint() return no values.
  */
-__EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk);
-__EXPORT rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk);
+__ROKI_EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk);
+__ROKI_EXPORT rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk);
 
-__EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *l);
+__ROKI_EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *l);
 
-__EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *l);
-__EXPORT void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n);
-__EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l);
+__ROKI_EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *l);
+__ROKI_EXPORT void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n);
+__ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l);
 #define rkLinkPosturePrint(l)      rkLinkPostureFPrint( stdout, (l) )
 #define rkLinkConnectionPrint(l,n) rkLinkConnectionFPrint( stdout, (l), (n) )
 #define rkLinkExtWrenchPrint(l)     rkLinkExtWrenchFPrint( stdout, (l) )
