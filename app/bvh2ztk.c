@@ -9,7 +9,7 @@ int bvh2ztk_usage(char *argv, zOption *option)
   exit( EXIT_SUCCESS );
 }
 
-ZDEF_STRUCT( stream_t ){
+ZDEF_STRUCT( , stream_t ){
   FILE *fp;
   char buf[BUFSIZ];
   char *str;
@@ -47,7 +47,7 @@ bool bvh2ztk_cmp_token(stream_t *stream, const char *word)
   return strncmp( stream->token, word, strlen(word) ) == 0;
 }
 
-ZDEF_STRUCT( joint_t ){
+ZDEF_STRUCT( , joint_t ){
   Z_NAMED_CLASS;
   zFrame3D orgframe;
   zFrame3D adjframe;

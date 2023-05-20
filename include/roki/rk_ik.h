@@ -68,7 +68,7 @@ __BEGIN_DECLS
 
  * ***********************************************************/
 
-ZDEF_STRUCT( rkIK ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
   bool *joint_sw;       /*!< joint cooperation switch */
   double *joint_weight; /*!< joint cooperating weight */
   zVec joint_vec;       /*!< joint vector */

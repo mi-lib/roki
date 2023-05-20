@@ -16,7 +16,7 @@ __BEGIN_DECLS
  * link class
  * ********************************************************** */
 /* for ABI method */
-ZDEF_STRUCT( rkABIPrp ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkABIPrp ){
   zMat6D m; /* mass matrix */
   zMat6D i; /* ABI matrix */
   zVec6D f; /* bias force */
@@ -33,7 +33,7 @@ ZDEF_STRUCT( rkABIPrp ){
   zMat axi, iaxi;
 };
 
-ZDEF_STRUCT( rkLink ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
   Z_NAMED_CLASS;
   rkJoint joint;       /*!< \brief joint */
   rkBody body;         /*!< \brief rigid body */

@@ -22,7 +22,7 @@ struct rkIK;
 struct _rkIK;
 #endif /* __cplusplus */
 
-ZDEF_STRUCT( rkChain ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   Z_NAMED_CLASS;
   rkLinkArray link; /*!< array of links */
   zMShape3D *shape; /*!< multishape */

@@ -18,7 +18,7 @@ __BEGIN_DECLS
  * mass property class
  * ********************************************************** */
 
-ZDEF_STRUCT( rkMP ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   /* mass property */
   double mass;
   zVec3D com;
@@ -135,7 +135,7 @@ inline rkMP operator*(zFrame3D &f, rkMP &src){
  * rigid body class
  * ********************************************************** */
 
-ZDEF_STRUCT( rkBody ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
   rkMP mp;           /*!< \brief mass property */
   zFrame3D frame;    /*!< \brief absolute transformation frame */
   zVec6D vel;        /*!< \brief velocity */
