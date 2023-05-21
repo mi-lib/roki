@@ -9,7 +9,7 @@ void chain2mshapeUsage(char *cmd)
 bool chain2mshapeConvert(rkChain *chain, char basename[])
 {
   FILE *fp;
-  register int i;
+  int i;
   rkLink *l;
   zShapeListCell *sc;
   zShape3D s;

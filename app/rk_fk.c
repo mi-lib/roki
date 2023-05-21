@@ -115,7 +115,7 @@ void rk_fkOutput(FILE *fp, double t)
 
 int main(int argc, char *argv[])
 {
-  register int i = 0;
+  int i = 0;
   double t = 0;
   zSeqListCell *cp;
   FILE *fp;

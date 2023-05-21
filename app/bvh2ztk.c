@@ -393,8 +393,8 @@ enum{
   BVH2ZTK_INVALID,
 };
 zOption bvh2ztk_option[] = {
-  { "m", "model", "<.ztk file>", "chain model file", "hierarchy.ztk", false },
-  { "s", "seq", "<.zkcs file>", "configuration sequence file", "motion.zkcs", false },
+  { "m", "model", "<.ztk file>", "chain model file", (char *)"hierarchy.ztk", false },
+  { "s", "seq", "<.zkcs file>", "configuration sequence file", (char *)"motion.zkcs", false },
   { "h", "help", NULL, "show this message", NULL, false },
   { NULL, NULL, NULL, NULL, NULL, false },
 };
@@ -404,7 +404,7 @@ bool bvh2ztk_read_option(stream_t *stream, int argc, char *argv[])
   zStrAddrList arglist;
 
   zOptionRead( bvh2ztk_option, argv, &arglist );
-  if( bvh2ztk_option[BVH2ZTK_HELP].flag ) bvh2ztk_usage( "bvh2ztk", bvh2ztk_option );
+  if( bvh2ztk_option[BVH2ZTK_HELP].flag ) bvh2ztk_usage( (char *)"bvh2ztk", bvh2ztk_option );
   if( !bvh2ztk_stream_open( stream, zListTail(&arglist)->data ) ) return false;
   zStrAddrListDestroy( &arglist );
   return true;

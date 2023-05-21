@@ -15,8 +15,7 @@ void ikcell_merge_usage(void)
 
 int ikcell_merge_open(ikcell_file_t **file, int argc, char *argv[])
 {
-  register int i;
-  int num;
+  int i, num;
 
   num = argc - 1;
   if( !( *file = zAlloc( ikcell_file_t, num ) ) ){
@@ -33,7 +32,7 @@ int ikcell_merge_open(ikcell_file_t **file, int argc, char *argv[])
 
 void ikcell_merge_close(int num, ikcell_file_t *file)
 {
-  register int i;
+  int i;
 
   for( i=0; i<num; i++ ) fclose( file[i].fp );
   free( file );
@@ -41,8 +40,7 @@ void ikcell_merge_close(int num, ikcell_file_t *file)
 
 void ikcell_merge_exec(int fpnum, ikcell_file_t *file)
 {
-  register int i, j;
-  int num, entry;
+  int i, j, num, entry;
   double w, v[3];
 
   while( 1 ){

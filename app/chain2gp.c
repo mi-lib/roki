@@ -8,7 +8,7 @@ void usage(char *arg)
 
 void output_shape(zShape3D *s)
 {
-  register int i;
+  int i;
 
   for( i=0; i<zShape3DFaceNum(s); i++ ){
     zVec3DDataPrint( zShape3DFaceVert(s,i,0) );
@@ -22,7 +22,7 @@ void output_shape(zShape3D *s)
 
 void conv_chain(char *filename)
 {
-  register int i;
+  int i;
   rkChain chain;
   rkLink *l;
   zShapeListCell *sp;

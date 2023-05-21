@@ -113,6 +113,8 @@ __ROKI_EXPORT zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie);
 __ROKI_EXPORT void rkMPFPrint(FILE *fp, rkMP *mp);
 #define rkMPPrint(mp) rkMPFPrint( stdout, mp )
 
+__END_DECLS
+
 #ifdef __cplusplus
 inline rkMP::rkMP(){ rkMPZero( this ); }
 inline double rkMP::Mass() const { return rkMPMass( this ); }
@@ -134,6 +136,8 @@ inline rkMP operator*(zFrame3D &f, rkMP &src){
 /* CLASS: rkBody
  * rigid body class
  * ********************************************************** */
+
+__BEGIN_DECLS
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
   rkMP mp;           /*!< \brief mass property */

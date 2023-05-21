@@ -40,7 +40,7 @@ void rk_idUsage(void)
 
 bool rk_idOpenLogfile(void)
 {
-  register int i;
+  int i;
   char *seqfilebase;
   char filename[BUFSIZ];
   char *type[] = { "com", "comv", "coma", "zmp", "att", "am", "trq" };
@@ -107,7 +107,7 @@ bool rk_idCommandArgs(int argc, char *argv[])
 
 void rk_idCloseLogfile(void)
 {
-  register int i;
+  int i;
 
   for( i=0; i<RK_ID_PARAM_NUM; i++ )
     fclose( fp[i] );
@@ -136,7 +136,7 @@ void rk_idOutput(double t, zVec trq)
 
 int main(int argc, char *argv[])
 {
-  register int i = 0;
+  int i = 0;
   double t = 0;
   zSeqListCell *cp;
   zVec trq;

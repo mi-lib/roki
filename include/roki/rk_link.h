@@ -491,6 +491,8 @@ __ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l);
 #define rkLinkConnectionPrint(l,n) rkLinkConnectionFPrint( stdout, (l), (n) )
 #define rkLinkExtWrenchPrint(l)     rkLinkExtWrenchFPrint( stdout, (l) )
 
+__END_DECLS
+
 #ifdef __cplusplus
 inline rkJoint &rkLink::Joint(){ return joint; }
 inline rkBody &rkLink::Body(){ return body; }
@@ -501,7 +503,5 @@ inline rkLink *rkLink::Parent() const { return parent; }
 inline rkLink *rkLink::Child() const { return child; }
 inline rkLink *rkLink::Sibl() const { return sibl; }
 #endif /* __cplusplus */
-
-__END_DECLS
 
 #endif /* __ZDF_LINK_H__ */

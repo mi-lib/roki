@@ -9,7 +9,7 @@ void mshape2chainUsage(char *cmd)
 bool mshape2chainConvert(zMShape3D *ms, char basename[])
 {
   FILE *fp;
-  register int i;
+  int i;
 
   if( !( fp = zOpenZTKFile( basename, "w" ) ) ){
     ZOPENERROR( basename );
