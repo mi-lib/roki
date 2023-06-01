@@ -1,3 +1,4 @@
+2023. 6. 1. Reflected modification of zeda-makefile-gen to keep roki_export.h. [roki_export]
 2023. 5.21. Removed register keywords. [app]
 2023. 5.21. Corrected positions of __END_DECLS for C++ methods. [rk_body, rk_link]
 2023. 5.20. Reflected new specification of ZDEF_STRUCT and ZDEF_UNION. [rk_body, rk_link, rk_chain, rk_ik_cell, rk_ik, app]
