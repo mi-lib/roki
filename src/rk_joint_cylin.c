@@ -372,9 +372,6 @@ static void _rkJointCylinStaticFrictionFPrintZTK(FILE *fp, int i, void *prp){
     _rkc(prp)->sf[0],
     _rkc(prp)->sf[1] );
 }
-static void _rkJointCylinMotorFPrintZTK(FILE *fp, int i, void *prp){
-  fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
-}
 
 static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
   { "dis", 1, _rkJointCylinDisFromZTK, _rkJointCylinDisFPrintZTK },
@@ -384,7 +381,7 @@ static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
   { "viscosity", 1, _rkJointCylinViscosityFromZTK, _rkJointCylinViscosityFPrintZTK },
   { "coulomb", 1, _rkJointCylinCoulombFromZTK, _rkJointCylinCoulombFPrintZTK },
   { "staticfriction", 1, _rkJointCylinStaticFrictionFromZTK, _rkJointCylinStaticFrictionFPrintZTK },
-  { "motor", 1, _rkJointCylinMotorFromZTK, _rkJointCylinMotorFPrintZTK },
+  { "motor", 1, _rkJointCylinMotorFromZTK, NULL },
 };
 
 static void *_rkJointCylinFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
@@ -395,6 +392,8 @@ static void *_rkJointCylinFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 static void _rkJointCylinFPrintZTK(FILE *fp, void *prp, char *name)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_cylin );
+  if( rkMotorIsAssigned( &_rkc(prp)->m ) )
+    fprintf( fp, "motor: %s\n", zName(&_rkc(prp)->m) );
 }
 
 rkJointCom rk_joint_cylin = {

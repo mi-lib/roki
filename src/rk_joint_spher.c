@@ -270,13 +270,10 @@ static void *_rkJointSpherMotorFromZTK(void *prp, int i, void *arg, ZTK *ztk){
 static void _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *prp){
   zVec3DFPrint( fp, &_rkc(prp)->aa );
 }
-static void _rkJointSpherMotorFPrintZTK(FILE *fp, int i, void *prp){
-  fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
-}
 
 static ZTKPrp __ztk_prp_rkjoint_spher[] = {
   { "dis", 1, _rkJointSpherDisFromZTK, _rkJointSpherDisFPrintZTK },
-  { "motor", 1, _rkJointSpherMotorFromZTK, _rkJointSpherMotorFPrintZTK },
+  { "motor", 1, _rkJointSpherMotorFromZTK, NULL },
 };
 
 static void *_rkJointSpherFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
@@ -287,6 +284,8 @@ static void *_rkJointSpherFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 static void _rkJointSpherFPrintZTK(FILE *fp, void *prp, char *name)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_spher );
+  if( rkMotorIsAssigned( &_rkc(prp)->m ) )
+    fprintf( fp, "motor: %s\n", zName(&_rkc(prp)->m) );
 }
 
 rkJointCom rk_joint_spher = {

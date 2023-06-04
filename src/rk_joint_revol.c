@@ -319,9 +319,6 @@ static void _rkJointRevolCoulombFPrintZTK(FILE *fp, int i, void *prp){
 static void _rkJointRevolStaticFrictionFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->sf );
 }
-static void _rkJointRevolMotorFPrintZTK(FILE *fp, int i, void *prp){
-  fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
-}
 
 static ZTKPrp __ztk_prp_rkjoint_revol[] = {
   { "dis", 1, _rkJointRevolDisFromZTK, _rkJointRevolDisFPrintZTK },
@@ -331,7 +328,7 @@ static ZTKPrp __ztk_prp_rkjoint_revol[] = {
   { "viscosity", 1, _rkJointRevolViscosityFromZTK, _rkJointRevolViscosityFPrintZTK },
   { "coulomb", 1, _rkJointRevolCoulombFromZTK, _rkJointRevolCoulombFPrintZTK },
   { "staticfriction", 1, _rkJointRevolStaticFrictionFromZTK, _rkJointRevolStaticFrictionFPrintZTK },
-  { "motor", 1, _rkJointRevolMotorFromZTK, _rkJointRevolMotorFPrintZTK },
+  { "motor", 1, _rkJointRevolMotorFromZTK, NULL },
 };
 
 static void *_rkJointRevolFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
@@ -342,6 +339,8 @@ static void *_rkJointRevolFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 static void _rkJointRevolFPrintZTK(FILE *fp, void *prp, char *name)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_revol );
+  if( rkMotorIsAssigned( &_rkc(prp)->m ) )
+    fprintf( fp, "motor: %s\n", zName(&_rkc(prp)->m) );
 }
 
 rkJointCom rk_joint_revol = {

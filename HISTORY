@@ -1,3 +1,6 @@
+2023. 6. 4. Added rk_chain_convexify (originally implemented by Mr. Kenta Imanishi). [app]
+2023. 6. 4. Abolished _rkJoint*MotorFPrintZTK, and modified _rkJoint*FPrintZTK. [rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher]
+2023. 6. 4. Added rkMotorIsAssigned. [rk_motor]
 2023. 6. 1. Reflected modification of zeda-makefile-gen to keep roki_export.h. [roki_export]
 2023. 5.21. Removed register keywords. [app]
 2023. 5.21. Corrected positions of __END_DECLS for C++ methods. [rk_body, rk_link]

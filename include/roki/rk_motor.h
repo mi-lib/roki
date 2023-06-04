@@ -88,6 +88,8 @@ __END_DECLS
 
 __BEGIN_DECLS
 
+#define rkMotorIsAssigned(m) ( (m)->com && (m)->com != &rk_motor_none )
+
 /* add the handle to the following list when you create a new motor class. */
 #define RK_MOTOR_COM_ARRAY \
 rkMotorCom *_rk_motor_com[] = {\

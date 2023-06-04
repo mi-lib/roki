@@ -311,9 +311,6 @@ static void _rkJointPrismCoulombFPrintZTK(FILE *fp, int i, void *prp){
 static void _rkJointPrismStaticFrictionFPrintZTK(FILE *fp, int i, void *prp){
   fprintf( fp, "%.10g\n", _rkc(prp)->sf );
 }
-static void _rkJointPrismMotorFPrintZTK(FILE *fp, int i, void *prp){
-  fprintf( fp, "%s\n", zName(&_rkc(prp)->m) );
-}
 
 static ZTKPrp __ztk_prp_rkjoint_prism[] = {
   { "dis", 1, _rkJointPrismDisFromZTK, _rkJointPrismDisFPrintZTK },
@@ -323,7 +320,7 @@ static ZTKPrp __ztk_prp_rkjoint_prism[] = {
   { "viscosity", 1, _rkJointPrismViscosityFromZTK, _rkJointPrismViscosityFPrintZTK },
   { "coulomb", 1, _rkJointPrismCoulombFromZTK, _rkJointPrismCoulombFPrintZTK },
   { "staticfriction", 1, _rkJointPrismStaticFrictionFromZTK, _rkJointPrismStaticFrictionFPrintZTK },
-  { "motor", 1, _rkJointPrismMotorFromZTK, _rkJointPrismMotorFPrintZTK },
+  { "motor", 1, _rkJointPrismMotorFromZTK, NULL },
 };
 
 static void *_rkJointPrismFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
@@ -334,6 +331,8 @@ static void *_rkJointPrismFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
 static void _rkJointPrismFPrintZTK(FILE *fp, void *prp, char *name)
 {
   ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_prism );
+  if( rkMotorIsAssigned( &_rkc(prp)->m ) )
+    fprintf( fp, "motor: %s\n", zName(&_rkc(prp)->m) );
 }
 
 rkJointCom rk_joint_prism = {
