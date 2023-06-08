@@ -38,14 +38,14 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAcm ){
 };
 
 /*! \brief masks to specify attributes to be reflected */
-#define RK_IK_CELL_ATTR_NONE   0x00
-#define RK_IK_CELL_ATTR_ID     0x01
-#define RK_IK_CELL_ATTR_ID_SUB 0x02
-#define RK_IK_CELL_ATTR_AP     0x04
-#define RK_IK_CELL_ATTR_FORCE  0x08
-#define RK_IK_CELL_ATTR_WEIGHT 0x10
+#define RK_IK_ATTR_NONE   0x00
+#define RK_IK_ATTR_ID     0x01
+#define RK_IK_ATTR_ID_SUB 0x02
+#define RK_IK_ATTR_AP     0x04
+#define RK_IK_ATTR_FORCE  0x08
+#define RK_IK_ATTR_WEIGHT 0x10
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellAttr ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
   int id;     /*!< attented link IDs */
   int id_sub; /*!< attented subordinate link IDs */
   zVec3D ap;  /*!< attented point */
@@ -60,28 +60,28 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellAttr ){
 #define RK_IK_CELL_ON     ( RK_IK_CELL_XON | RK_IK_CELL_YON | RK_IK_CELL_ZON )
 
 /* set constraint mode */
-#define rkIKCellAttrSetLink(a,c,n)    ( (a)->id = rkChainFindLinkID( c, n ) )
-#define rkIKCellAttrSetSubLink(a,c,n) ( (a)->id_sub = rkChainFindLinkID( c, n ) )
-#define rkIKCellAttrSetMode(a,m)      ( (a)->mode |= (m) )
-#define rkIKCellAttrUnsetMode(a,m)    ( (a)->mode &= ~(m) )
-#define rkIKCellAttrEnable(a)         rkIKCellAttrSetMode( a, RK_IK_CELL_ON )
-#define rkIKCellAttrDisable(a)        rkIKCellAttrUnsetMode( a, RK_IK_CELL_ON )
-#define rkIKCellAttrForce(a)          rkIKCellAttrSetMode( a, RK_IK_CELL_ON | RK_IK_CELL_FORCE )
+#define rkIKAttrSetLinkID(a,c,n)  ( (a)->id = rkChainFindLinkID( c, n ) )
+#define rkIKAttrSetLinkID2(a,c,n) ( (a)->id_sub = rkChainFindLinkID( c, n ) )
+#define rkIKAttrSetMode(a,m)      ( (a)->mode |= (m) )
+#define rkIKAttrUnsetMode(a,m)    ( (a)->mode &= ~(m) )
+#define rkIKAttrEnable(a)         rkIKAttrSetMode( a, RK_IK_CELL_ON )
+#define rkIKAttrDisable(a)        rkIKAttrUnsetMode( a, RK_IK_CELL_ON )
+#define rkIKAttrForce(a)          rkIKAttrSetMode( a, RK_IK_CELL_ON | RK_IK_CELL_FORCE )
 
 /* set weight on constraint of IK cell */
-#define rkIKCellAttrSetWeight(a,w1,w2,w3) zVec3DCreate( &(a)->w, w1, w2, w3 )
+#define rkIKAttrSetWeight(a,w1,w2,w3) zVec3DCreate( &(a)->w, w1, w2, w3 )
 
 typedef void (* rkIKRef_fp)(rkIKRef *ref, double v1, double v2, double v3);
-typedef zMat (* rkIKCMat_fp)(rkChain*,rkIKCellAttr*,zMat);
-typedef zVec3D* (* rkIKCVec_fp)(rkChain*,rkIKCellAttr*,void*,rkIKRef*,zVec3D*);
-typedef void (* rkIKBind_fp)(rkChain*,rkIKCellAttr*,void*,rkIKRef*);
+typedef zMat (* rkIKCMat_fp)(rkChain*,rkIKAttr*,zMat);
+typedef zVec3D* (* rkIKCVec_fp)(rkChain*,rkIKAttr*,void*,rkIKRef*,zVec3D*);
+typedef void (* rkIKBind_fp)(rkChain*,rkIKAttr*,void*,rkIKRef*);
 typedef zVec3D* (* rkIKAcm_fp)(rkChain*,rkIKAcm*,void*,zVec3D*);
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
-  int id;            /*!< identifier */
-  rkIKCellAttr attr; /*!< attributes of attented quantity */
-  rkIKRef ref;       /*!< referential position or attitude */
-  rkIKAcm acm;       /*!< error accumulation correction */
+  int id;        /*!< identifier */
+  rkIKAttr attr; /*!< attributes of attented quantity */
+  rkIKRef ref;   /*!< referential position or attitude */
+  rkIKAcm acm;   /*!< error accumulation correction */
 
   rkIKRef_fp _ref_fp;
   rkIKCMat_fp _cmat_fp;
@@ -96,32 +96,47 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
 
 zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 
+#define rkIKCellID(c)        ( (c)->data.id )
+
+#define rkIKCellAttr(c)      ( &(c)->data.attr )
+#define rkIKCellLinkID(c)    rkIKCellAttr(c)->id
+#define rkIKCellLinkID2(c)   rkIKCellAttr(c)->id_sub
+#define rkIKCellAP(c)        ( &rkIKCellAttr(c)->ap )
+#define rkIKCellMode(c)      rkIKCellAttr(c)->mode
+#define rkIKCellWeight(c)    ( &rkIKCellAttr(c)->w )
+
+#define rkIKCellRef(c)       ( &(c)->data.ref )
+#define rkIKCellRefPos(c)    ( &rkIKCellRef(c)->pos )
+#define rkIKCellRefAtt(c)    ( &rkIKCellRef(c)->att )
+
+#define rkIKCellIndexOffset(c) (c)->data.index_offset
+
 /* intialize a cell */
-__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
+__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
 
 /* set constraint mode */
-#define rkIKCellSetMode(c,m)   rkIKCellAttrSetMode( &(c)->data.attr, m )
-#define rkIKCellUnsetMode(c,m) rkIKCellAttrUnsetMode( &(c)->data.attr, m )
-#define rkIKCellEnable(c)      rkIKCellAttrEnable( &(c)->data.attr )
-#define rkIKCellDisable(c)     rkIKCellAttrDisable( &(c)->data.attr )
-#define rkIKCellForce(c)       rkIKCellAttrForce( &(c)->data.attr )
-#define rkIKCellIsEnabled(c)   ( ( (c)->data.attr.mode & RK_IK_CELL_ON ) != 0 )
-#define rkIKCellIsDisabled(c)  ( ( (c)->data.attr.mode & RK_IK_CELL_ON ) == 0 )
-#define rkIKCellIsForced(c)    ( ( (c)->data.attr.mode & RK_IK_CELL_FORCE ) != 0 )
+#define rkIKCellSetMode(c,m)   rkIKAttrSetMode( rkIKCellAttr(c), m )
+#define rkIKCellUnsetMode(c,m) rkIKAttrUnsetMode( rkIKCellAttr(c), m )
+#define rkIKCellEnable(c)      rkIKAttrEnable( rkIKCellAttr(c) )
+#define rkIKCellDisable(c)     rkIKAttrDisable( rkIKCellAttr(c) )
+#define rkIKCellForce(c)       rkIKAttrForce( rkIKCellAttr(c) )
+#define rkIKCellIsEnabled(c)   ( ( rkIKCellMode(c) & RK_IK_CELL_ON ) != 0 )
+#define rkIKCellIsDisabled(c)  ( ( rkIKCellMode(c) & RK_IK_CELL_ON ) == 0 )
+#define rkIKCellIsForced(c)    ( ( rkIKCellMode(c) & RK_IK_CELL_FORCE ) != 0 )
 
 /* set weight on constraint of IK cell */
-#define rkIKCellSetWeight(c,w1,w2,w3) rkIKCellAttrSetWeight( &(c)->data.attr, w1, w2, w3 )
+#define rkIKCellSetWeight(c,w1,w2,w3) rkIKAttrSetWeight( rkIKCellAttr(c), w1, w2, w3 )
 
 #define rkIKCellSetRef(c,v1,v2,v3) do{\
   rkIKCellEnable( c );\
-  (c)->data._ref_fp( &(c)->data.ref, v1, v2, v3 );\
+  (c)->data._ref_fp( rkIKCellRef(c), v1, v2, v3 );\
 } while(0)
 #define rkIKCellSetRefVec(c,v) \
   rkIKCellSetRef(c,(v)->e[0],(v)->e[1],(v)->e[2])
 
 #define rkIKCellSetRefForce(c,v1,v2,v3) do{\
   rkIKCellForce( c );\
-  (c)->data._ref_fp( &(c)->data.ref, v1, v2, v3 );\
+  (c)->data._ref_fp( rkIKCellRef(c), v1, v2, v3 );\
 } while(0)
 #define rkIKCellSetRefVecForce(c,v) \
   rkIKCellSetRefForce(c,(v)->e[0],(v)->e[1],(v)->e[2])
@@ -130,12 +145,12 @@ __ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKCellAttr *attr, int mask, rk
 __ROKI_EXPORT void rkIKCellAcmZero(rkIKCell *cell);
 
 #define rkIKCellCMat(c,r,mat) \
-  (c)->data._cmat_fp( r, &(c)->data.attr, mat )
+  (c)->data._cmat_fp( r, rkIKCellAttr(c), mat )
 #define rkIKCellCVec(c,r,vec) \
-  (c)->data._cvec_fp( r, &(c)->data.attr, (c)->data._util, &(c)->data.ref, vec )
+  (c)->data._cvec_fp( r, rkIKCellAttr(c), (c)->data._util, rkIKCellRef(c), vec )
 #define rkIKCellBind(c,r) do{\
   rkIKCellEnable( c );\
-  (c)->data._bind_fp( r, &(c)->data.attr, (c)->data._util, &(c)->data.ref );\
+  (c)->data._bind_fp( r, rkIKCellAttr(c), (c)->data._util, rkIKCellRef(c) );\
 } while(0)
 #define rkIKCellAcm(c,r,v) \
   (c)->data._acm_fp( r, &(c)->data.acm, (c)->data._util, v )
@@ -147,31 +162,31 @@ __ROKI_EXPORT void rkIKRefSetZYZ(rkIKRef *ref, double heading, double pitch, dou
 __ROKI_EXPORT void rkIKRefSetAA(rkIKRef *ref, double x, double y, double z);
 
 /* Jacobian matrix */
-__ROKI_EXPORT zMat rkIKJacobiLinkWldLin(rkChain *chain, rkIKCellAttr *attr, zMat j);
-__ROKI_EXPORT zMat rkIKJacobiLinkWldAng(rkChain *chain, rkIKCellAttr *attr, zMat j);
-__ROKI_EXPORT zMat rkIKJacobiLinkL2LLin(rkChain *chain, rkIKCellAttr *attr, zMat j);
-__ROKI_EXPORT zMat rkIKJacobiLinkL2LAng(rkChain *chain, rkIKCellAttr *attr, zMat j);
-__ROKI_EXPORT zMat rkIKJacobiCOM(rkChain *chain, rkIKCellAttr *attr, zMat j);
-__ROKI_EXPORT zMat rkIKJacobiAM(rkChain *chain, rkIKCellAttr *attr, zMat j);
-__ROKI_EXPORT zMat rkIKJacobiAMCOM(rkChain *chain, rkIKCellAttr *attr, zMat j);
+__ROKI_EXPORT zMat rkIKJacobiLinkWldLin(rkChain *chain, rkIKAttr *attr, zMat j);
+__ROKI_EXPORT zMat rkIKJacobiLinkWldAng(rkChain *chain, rkIKAttr *attr, zMat j);
+__ROKI_EXPORT zMat rkIKJacobiLinkL2LLin(rkChain *chain, rkIKAttr *attr, zMat j);
+__ROKI_EXPORT zMat rkIKJacobiLinkL2LAng(rkChain *chain, rkIKAttr *attr, zMat j);
+__ROKI_EXPORT zMat rkIKJacobiCOM(rkChain *chain, rkIKAttr *attr, zMat j);
+__ROKI_EXPORT zMat rkIKJacobiAM(rkChain *chain, rkIKAttr *attr, zMat j);
+__ROKI_EXPORT zMat rkIKJacobiAMCOM(rkChain *chain, rkIKAttr *attr, zMat j);
 
 /* displacement error */
-__ROKI_EXPORT zVec3D *rkIKLinkWldPosErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
-__ROKI_EXPORT zVec3D *rkIKLinkWldAttErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
-__ROKI_EXPORT zVec3D *rkIKLinkL2LPosErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
-__ROKI_EXPORT zVec3D *rkIKLinkL2LAttErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
-__ROKI_EXPORT zVec3D *rkIKCOMErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
-__ROKI_EXPORT zVec3D *rkIKAMErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
-__ROKI_EXPORT zVec3D *rkIKAMCOMErr(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
+__ROKI_EXPORT zVec3D *rkIKLinkWldPosErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
+__ROKI_EXPORT zVec3D *rkIKLinkWldAttErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
+__ROKI_EXPORT zVec3D *rkIKLinkL2LPosErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
+__ROKI_EXPORT zVec3D *rkIKLinkL2LAttErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
+__ROKI_EXPORT zVec3D *rkIKCOMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
+__ROKI_EXPORT zVec3D *rkIKAMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
+__ROKI_EXPORT zVec3D *rkIKAMCOMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err);
 
 /* bind current position/attitude */
-__ROKI_EXPORT void rkIKBindLinkWldPos(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref);
-__ROKI_EXPORT void rkIKBindLinkWldAtt(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref);
-__ROKI_EXPORT void rkIKBindLinkL2LPos(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref);
-__ROKI_EXPORT void rkIKBindLinkL2LAtt(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref);
-__ROKI_EXPORT void rkIKBindCOM(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref);
-__ROKI_EXPORT void rkIKBindAM(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref);
-__ROKI_EXPORT void rkIKBindAMCOM(rkChain *chain, rkIKCellAttr *attr, void *util, rkIKRef *ref);
+__ROKI_EXPORT void rkIKBindLinkWldPos(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref);
+__ROKI_EXPORT void rkIKBindLinkWldAtt(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref);
+__ROKI_EXPORT void rkIKBindLinkL2LPos(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref);
+__ROKI_EXPORT void rkIKBindLinkL2LAtt(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref);
+__ROKI_EXPORT void rkIKBindCOM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref);
+__ROKI_EXPORT void rkIKBindAM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref);
+__ROKI_EXPORT void rkIKBindAMCOM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref);
 
 /* error accumulation correction */
 

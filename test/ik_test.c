@@ -118,7 +118,7 @@ bool assert_cell_reg_one(void)
   int cellcount;
   register int i;
   bool result = true;
-  rkIKCell *(*reg_ik_cell[])(rkChain*,rkIKCellAttr*,int) = {
+  rkIKCell *(*reg_ik_cell[])(rkChain*,rkIKAttr*,int) = {
     rkChainRegIKCellWldPos,
     rkChainRegIKCellWldAtt,
     rkChainRegIKCellL2LPos,
@@ -133,7 +133,7 @@ bool assert_cell_reg_one(void)
   for( cellcount=0; reg_ik_cell[cellcount]; cellcount++ );
   rkChainRegIKJointAll( &chain, 1 );
   for( i=0; i<NC; i++ )
-    cell[i] = reg_ik_cell[zRandI(0,cellcount-1)]( &chain, NULL, RK_IK_CELL_ATTR_NONE );
+    cell[i] = reg_ik_cell[zRandI(0,cellcount-1)]( &chain, NULL, RK_IK_ATTR_NONE );
 
   cellcount = NC;
   for( i=0; i<NC; i++ ){
@@ -176,7 +176,7 @@ void assert_ik_revol(void)
   register int i;
   rkChain chain;
   rkIKCell *cell;
-  rkIKCellAttr attr;
+  rkIKAttr attr;
   zVec dis;
   zVec3D err;
   bool result = true;
@@ -202,7 +202,7 @@ void assert_ik_revol(void)
 
   attr.id = rkChainLinkNum(&chain)-1;
   zVec3DZero( &attr.ap );
-  cell = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_CELL_ATTR_ID );
+  cell = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID );
 
   for( i=0; i<N;i ++ ){
     rkChainDeactivateIK( &chain );
@@ -229,7 +229,7 @@ void assert_ik_revol(void)
 void assert_ik_spher(void)
 {
   rkChain chain;
-  rkIKCellAttr attr;
+  rkIKAttr attr;
   zVec dis;
   zVec3D err1, err2;
   rkIKCell *ca0, *ca1;
@@ -264,9 +264,9 @@ void assert_ik_spher(void)
   rkChainRegIKJointID( &chain, 2, 0.00001 );
 
   attr.id = 1;
-  ca0 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID );
+  ca0 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID );
   attr.id = 2;
-  ca1 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID );
+  ca1 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID );
 
   for( i=0; i<N; i++ ){
     rkChainDeactivateIK( &chain );
@@ -293,7 +293,7 @@ void assert_ik_spher(void)
 void assert_ik_float(void)
 {
   rkChain chain;
-  rkIKCellAttr attr;
+  rkIKAttr attr;
   zVec dis;
   zVec6D err1, err2;
   rkIKCell *cl0, *ca0, *cl1, *ca1;
@@ -328,11 +328,11 @@ void assert_ik_float(void)
   rkChainRegIKJointID( &chain, 2, 0.001 );
 
   attr.id = 1;
-  cl0 = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_CELL_ATTR_ID );
-  ca0 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID );
+  cl0 = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID );
+  ca0 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID );
   attr.id = 2;
-  cl1 = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_CELL_ATTR_ID );
-  ca1 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID );
+  cl1 = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID );
+  ca1 = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID );
 
   for( i=0; i<N;i ++ ){
     rkChainDeactivateIK( &chain );
@@ -363,7 +363,7 @@ void assert_ik_float(void)
 void assert_ik_l2l(void)
 {
   rkChain chain;
-  rkIKCellAttr attr;
+  rkIKAttr attr;
   zVec dis;
   zVec3D err;
   zMat3D rl;
@@ -396,12 +396,12 @@ void assert_ik_l2l(void)
   rkChainRegIKJointAll( &chain, 0.001 );
 
   attr.id = NL;
-  cell[0] = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_CELL_ATTR_ID );
-  cell[1] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID );
+  cell[0] = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID );
+  cell[1] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID );
   attr.id = NL*2;
   attr.id_sub = NL;
-  cell[2] = rkChainRegIKCellL2LPos( &chain, &attr, RK_IK_CELL_ATTR_ID|RK_IK_CELL_ATTR_ID_SUB );
-  cell[3] = rkChainRegIKCellL2LAtt( &chain, &attr, RK_IK_CELL_ATTR_ID|RK_IK_CELL_ATTR_ID_SUB );
+  cell[2] = rkChainRegIKCellL2LPos( &chain, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_ID_SUB );
+  cell[3] = rkChainRegIKCellL2LAtt( &chain, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_ID_SUB );
 
   for( i=0; i<N; i++ ){
     rkChainDeactivateIK( &chain );

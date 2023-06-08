@@ -19,7 +19,7 @@ static zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv)
 }
 
 /* attitude control with respect to the world frame. */
-zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
+zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
 {
   zVec3D v, err;
 
@@ -32,7 +32,7 @@ zVec3D *rkIKImpWldAtt(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
 }
 
 /* position control with respect to the world frame. */
-zVec3D *rkIKImpWldPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
+zVec3D *rkIKImpWldPos(rkChain *chain, rkIKAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
 {
   zVec3D v, err;
 
@@ -46,7 +46,7 @@ zVec3D *rkIKImpWldPos(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *r
 }
 
 /* COM position control with respect to the world frame. */
-zVec3D *rkIKImpWldCOM(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
+zVec3D *rkIKImpWldCOM(rkChain *chain, rkIKAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
 {
   zVec3D err;
 

@@ -2,20 +2,20 @@
 
 static zVec3D des_vel;
 
-zVec3D *pos_srv(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
+zVec3D *pos_srv(rkChain *chain, rkIKAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
 {
   zVec3DCopy( &des_vel, srv );
   return srv;
 }
 
-zVec3D *att_srv(rkChain *chain, rkIKCellAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
+zVec3D *att_srv(rkChain *chain, rkIKAttr *attr, void *priv, rkIKRef *ref, zVec3D *srv)
 {
   return ZVEC3DZERO;
 }
 
-void init(rkChain *puma, rkChain *puma_v, rkIKSRV_fp srv_fp, zVec *dis, rkIKCell *cell[])
+void init(rkChain *puma, rkChain *puma_v, rkIKCVec_fp srv_fp, zVec *dis, rkIKCell *cell[])
 {
-  rkIKCellAttr attr;
+  rkIKAttr attr;
 
   if( !rkChainReadZTK( puma, "../model/puma.ztk" ) ) exit( 1 );
   rkChainClone( puma, puma_v );
@@ -23,10 +23,10 @@ void init(rkChain *puma, rkChain *puma_v, rkIKSRV_fp srv_fp, zVec *dis, rkIKCell
   rkChainRegIKJointAll( puma_v, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCell( puma_v, &attr, RK_IK_CELL_ATTR_ID, rkIKRefSetAA,  rkIKJacobiLinkWldAng, att_srv, rkIKBindLinkWldAtt, NULL, NULL );
-  cell[1] = rkChainRegIKCell( puma_v, &attr, RK_IK_CELL_ATTR_ID, rkIKRefSetPos, rkIKJacobiLinkWldLin, srv_fp, rkIKBindLinkWldPos, NULL, NULL );
+  cell[0] = rkChainRegIKCell( puma_v, &attr, RK_IK_ATTR_ID, rkIKRefSetAA,  rkIKJacobiLinkWldAng, att_srv, rkIKBindLinkWldAtt, NULL, NULL );
+  cell[1] = rkChainRegIKCell( puma_v, &attr, RK_IK_ATTR_ID, rkIKRefSetPos, rkIKJacobiLinkWldLin, srv_fp, rkIKBindLinkWldPos, NULL, NULL );
 
-  rkIKSetJointVelMethod( puma_v->_ik, rkIKJointVelSR );
+  rkIKSetEqSolver( puma_v->_ik, rkIKSolveEqSR );
   rkChainDeactivateIK( puma_v );
   rkChainBindIK( puma_v );
 

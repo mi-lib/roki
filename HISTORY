@@ -1,3 +1,7 @@
+2023. 6. 6. Defined rkIKCellLinkID, rkIKCellLinkID2, rkIKCellAP, rkIKCellMode, rkIKCellWeight, rkIKCellRefPos, rkIKCellRefAtt, and rkIKCellIndexOffset. [rk_ik_cell, rk_ik]
+2023. 6. 4. Added rkIKCellID, rkIKCellAttr and rkIKCellRef. [rk_ik_cell, rk_ik, rk_ik_imp]
+2023. 6. 4. Renamed RK_IK_CELL_ATTR_* to RK_IK_ATTR_*. [rk_ik_cell]
+2023. 6. 4. Renamed rkIKCellAttr to rkIKAttr. [rk_ik_cell]
 2023. 6. 4. Added rk_chain_convexify (originally implemented by Mr. Kenta Imanishi). [app]
 2023. 6. 4. Abolished _rkJoint*MotorFPrintZTK, and modified _rkJoint*FPrintZTK. [rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher]
 2023. 6. 4. Added rkMotorIsAssigned. [rk_motor]

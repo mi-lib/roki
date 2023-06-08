@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
   zFrame3D goal;
   zVec6D err;
   rkIKCell *cell[2];
-  rkIKCellAttr attr;
+  rkIKAttr attr;
 
   zRandInit();
   if( !rkChainReadZTK( &chain, "../model/puma.ztk" ) )
@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
   rkChainRegIKJointAll( &chain, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID );
-  cell[1] = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_CELL_ATTR_ID );
+  cell[0] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID );
+  cell[1] = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID );
 
   rkChainDeactivateIK( &chain );
   rkChainBindIK( &chain );

@@ -76,8 +76,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
 
   /*! \cond */
   rkIKCellList clist;       /* list of constraint cells */
-  zMat _c_mat_cell;         /* constraint matrix cell */
-  zVec3D _c_vec_cell;       /* constraint vector cell */
+  zMat _c_mat_cell;         /* cellular workspace for constraint matrix */
+  zVec3D _c_vec_cell;       /* cellular workspace for constraint vector */
 
   zIndex _j_idx;            /* cooperative joint index */
   zIndex _j_ofs;            /* reverse index */
@@ -158,17 +158,17 @@ __ROKI_EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
  * internal memory for the inverse kinematics, the false value is returned.
  * Otherwise, the true value is returned.
  */
-__ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
 __ROKI_EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
 
 /*! \brief register a constraint cell of the inverse kinematics. */
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKCellAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKCellAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKCellAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKCellAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKCellAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKCellAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKCellAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKAttr *attr, int mask);
 
 /*! \brief find a constraint cell.
  *

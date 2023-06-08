@@ -44,7 +44,7 @@ void chain_init(rkChain *chain)
 int main(int argc, char *argv[])
 {
   rkChain chain;
-  rkIKCellAttr attr;
+  rkIKAttr attr;
   zVec dis;
   zVec6D err;
   rkIKCell *cell[6];
@@ -60,8 +60,8 @@ int main(int argc, char *argv[])
   for( i=0; i<3; i++ ){
     attr.id = i*3+3;
     attr.mode = RK_IK_CELL_FORCE;
-    cell[i*2]   = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_CELL_ATTR_ID | RK_IK_CELL_ATTR_FORCE );
-    cell[i*2+1] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_CELL_ATTR_ID | RK_IK_CELL_ATTR_FORCE );
+    cell[i*2]   = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_FORCE );
+    cell[i*2+1] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_FORCE );
   }
   rkChainDeactivateIK( &chain );
   rkChainBindIK( &chain );

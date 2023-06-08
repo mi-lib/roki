@@ -170,7 +170,7 @@ static bool _rkIKAllocCVec(rkIK *ik)
   ik->__c = zVecAlloc( zListSize(&ik->clist)*3 );
   return ( !ik->_c_vec || !ik->_c_we || !ik->__c ) ? false : _rkIKAllocCMat( ik );
 }
-static rkIKCell *_rkIKRegCell(rkIK *ik, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
+static rkIKCell *_rkIKRegCell(rkIK *ik, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
 {
   rkIKCell *cell, *cp;
 
@@ -200,7 +200,7 @@ static bool _rkIKUnregCell(rkIK *ik, rkIKCell *cell)
   return _rkIKAllocCVec( ik );
 }
 
-rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKCellAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
+rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
 {
   return _rkIKRegCell( chain->_ik, attr, mask, rf, mf, vf, bf, af, util );
 }
@@ -211,37 +211,37 @@ bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell)
 }
 
 /* register constraint cell for world position to the inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKCellAttr *attr, int mask){
+rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKAttr *attr, int mask){
   return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiLinkWldLin, rkIKLinkWldPosErr, rkIKBindLinkWldPos, rkIKAcmPos, NULL );
 }
 
 /* register constraint cell for world attitude to the inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKCellAttr *attr, int mask){
+rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKAttr *attr, int mask){
   return rkChainRegIKCell( chain, attr, mask, rkIKRefSetZYX, rkIKJacobiLinkWldAng, rkIKLinkWldAttErr, rkIKBindLinkWldAtt, rkIKAcmAtt, NULL );
 }
 
 /* register constraint cell for link-to-link position to the inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKCellAttr *attr, int mask){
+rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKAttr *attr, int mask){
   return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiLinkL2LLin, rkIKLinkL2LPosErr, rkIKBindLinkL2LPos, rkIKAcmPos, NULL );
 }
 
 /* register constraint cell for link-to-link attitude to the inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKCellAttr *attr, int mask){
+rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKAttr *attr, int mask){
   return rkChainRegIKCell( chain, attr, mask, rkIKRefSetZYX, rkIKJacobiLinkL2LAng, rkIKLinkL2LAttErr, rkIKBindLinkL2LAtt, rkIKAcmAtt, NULL );
 }
 
 /* register constraint cell for center of mass to the inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKCellAttr *attr, int mask){
+rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKAttr *attr, int mask){
   return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiCOM, rkIKCOMErr, rkIKBindCOM, rkIKAcmPos, NULL );
 }
 
 /* register constraint cell for angular momentum to the inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKCellAttr *attr, int mask){
+rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKAttr *attr, int mask){
   return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiAM, rkIKAMErr, rkIKBindAM, rkIKAcmAtt, NULL );
 }
 
 /* register constraint cell for angular momentum about center of mass to the inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKCellAttr *attr, int mask){
+rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKAttr *attr, int mask){
   return rkChainRegIKCell( chain, attr, mask, rkIKRefSetPos, rkIKJacobiAMCOM, rkIKAMCOMErr, rkIKBindAMCOM, rkIKAcmAtt, NULL );
 }
 
@@ -299,9 +299,9 @@ static int _rkIKCellEq(rkIK *ik, rkChain *chain, rkIKCell *cell, int s, int row)
 {
   int i, j;
 
-  if( !( ( RK_IK_CELL_XON << s ) & cell->data.attr.mode ) ) return 0;
+  if( !( ( RK_IK_CELL_XON << s ) & rkIKCellMode(cell) ) ) return 0;
   zVecSetElemNC( ik->_c_vec, row, ik->_c_vec_cell.e[s] );
-  zVecSetElemNC( ik->_c_we, row, cell->data.attr.w.e[s] );
+  zVecSetElemNC( ik->_c_we, row, rkIKCellWeight(cell)->e[s] );
   for( i=0; i<rkChainLinkNum(chain); i++ )
     if( ik->joint_sw[i] ){
       for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
@@ -327,7 +327,7 @@ static void _rkIKEq(rkIK *ik, rkChain *chain)
     if( rkIKCellIsDisabled( cell ) ) continue;
     rkIKCellCMat( cell, chain, ik->_c_mat_cell );
     rkIKCellCVec( cell, chain, &ik->_c_vec_cell );
-    cell->data._eval = zVec3DWSqrNorm( &ik->_c_vec_cell, &cell->data.attr.w );
+    cell->data._eval = zVec3DWSqrNorm( &ik->_c_vec_cell, rkIKCellWeight(cell) );
     ik->eval += cell->data._eval;
     cell->data._eval = sqrt( cell->data._eval );
     if( rkIKCellIsForced( cell ) )
@@ -466,7 +466,7 @@ int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter){
 /* IK item lookup table */
 static struct _rkIKLookup{
   const char *str;
-  rkIKCell *(*reg_ik_cell)(rkChain*,rkIKCellAttr*,int);
+  rkIKCell *(*reg_ik_cell)(rkChain*,rkIKAttr*,int);
 } __rk_ik_lookup[] = {
   { "world_pos", rkChainRegIKCellWldPos },
   { "world_att", rkChainRegIKCellWldAtt },
@@ -512,8 +512,8 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
 }
 static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   struct _rkIKLookup *lookup;
-  rkIKCellAttr attr;
-  int mask = RK_IK_CELL_ATTR_NONE;
+  rkIKAttr attr;
+  int mask = RK_IK_ATTR_NONE;
   rkLink *link;
   int linknum = 0;
 
@@ -523,16 +523,16 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     if( ZTKValCmp( ztk, "at" ) ){
       ZTKValNext( ztk );
       zVec3DFromZTK( &attr.ap, ztk );
-      mask |= RK_IK_CELL_ATTR_AP;
+      mask |= RK_IK_ATTR_AP;
     } else
     if( ZTKValCmp( ztk, "w" ) ){
       ZTKValNext( ztk );
       zVec3DFromZTK( &attr.w, ztk );
-      mask |= RK_IK_CELL_ATTR_WEIGHT;
+      mask |= RK_IK_ATTR_WEIGHT;
     } else
     if( ZTKValCmp( ztk, "f" ) ){
       ZTKValNext( ztk );
-      mask |= RK_IK_CELL_ATTR_FORCE;
+      mask |= RK_IK_ATTR_FORCE;
     } else{
       if( !( link = rkChainFindLink( (rkChain*)obj, ZTKVal(ztk) ) ) ){
         ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
@@ -540,10 +540,10 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){
       }
       if( linknum++ == 0 ){
         attr.id = link - rkChainRoot((rkChain*)obj);
-        mask |= RK_IK_CELL_ATTR_ID;
+        mask |= RK_IK_ATTR_ID;
       } else{
         attr.id_sub = link - rkChainRoot((rkChain*)obj);
-        mask |= RK_IK_CELL_ATTR_ID_SUB;
+        mask |= RK_IK_ATTR_ID_SUB;
       }
       ZTKValNext( ztk );
     }
