@@ -51,6 +51,7 @@ rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc)
     ZALLOCERROR();
     return NULL;
   }
+  rkMPCopy( rkLinkCRB(org), rkLinkCRB(cln) );
   rkLinkSetJointIDOffset( cln, rkLinkJointIDOffset(org) );
   rkLinkSetOrgFrame( cln, rkLinkOrgFrame(org) );
 
@@ -213,11 +214,10 @@ double rkLinkUpdateCRBMass(rkLink *link)
 {
   rkLink *l;
 
-  if( !rkLinkChild(link) ) return rkMPMass( rkLinkCRB(link) );
   rkMPSetMass( rkLinkCRB(link), rkLinkMass(link) );
   for( l=rkLinkChild(link); l; l=rkLinkSibl(l) )
-    rkMPMass( rkLinkCRB(link) ) += rkLinkUpdateCRBMass( l );
-  return rkMPMass(rkLinkCRB(link));
+    rkLinkCRBMass(link) += rkLinkUpdateCRBMass( l );
+  return rkLinkCRBMass(link);
 }
 
 /* update the composite rigit body of a link. */
@@ -229,22 +229,22 @@ rkMP *rkLinkUpdateCRB(rkLink *link)
 
   if( !rkLinkChild(link) ) return rkLinkCRB(link);
   /* composite COM */
-  _zVec3DMul( rkLinkCOM(link), rkLinkMass(link), rkMPCOM(rkLinkCRB(link)) );
+  _zVec3DMul( rkLinkCOM(link), rkLinkMass(link), rkLinkCRBCOM(link) );
   for( l=rkLinkChild(link); l; l=rkLinkSibl(l) ){
     rkLinkUpdateCRB( l );
-    _zXform3D( rkLinkAdjFrame(l), rkMPCOM(rkLinkCRB(l)), &tmpr );
-    _zVec3DCatDRC( rkMPCOM(rkLinkCRB(link)), rkMPMass(rkLinkCRB(l)), &tmpr );
+    _zXform3D( rkLinkAdjFrame(l), rkLinkCRBCOM(l), &tmpr );
+    _zVec3DCatDRC( rkLinkCRBCOM(link), rkLinkCRBMass(l), &tmpr );
   }
-  zVec3DDivDRC( rkMPCOM(rkLinkCRB(link)), rkMPMass(rkLinkCRB(link)) );
+  zVec3DDivDRC( rkLinkCRBCOM(link), rkLinkCRBMass(link) );
   /* composite inertia */
-  _zVec3DSub( rkLinkCOM(link), rkMPCOM(rkLinkCRB(link)), &tmpr );
-  rkMPShiftInertia( rkLinkMP(link), &tmpr, rkMPInertia(rkLinkCRB(link)) );
+  _zVec3DSub( rkLinkCOM(link), rkLinkCRBCOM(link), &tmpr );
+  rkMPShiftInertia( rkLinkMP(link), &tmpr, rkLinkCRBInertia(link) );
   for( l=rkLinkChild(link); l; l=rkLinkSibl(l) ){
-    zRotMat3D( rkLinkAdjAtt(l), rkMPInertia(rkLinkCRB(l)), &tmpi );
-    _zXform3D( rkLinkAdjFrame(l), rkMPCOM(rkLinkCRB(l)), &tmpr );
-    _zVec3DSubDRC( &tmpr, rkMPCOM(rkLinkCRB(link)) );
-    zMat3DCatVec3DDoubleOuterProdDRC( &tmpi, -rkMPMass(rkLinkCRB(l)), &tmpr );
-    zMat3DAddDRC( rkMPInertia(rkLinkCRB(link)), &tmpi );
+    zRotMat3D( rkLinkAdjAtt(l), rkLinkCRBInertia(l), &tmpi );
+    _zXform3D( rkLinkAdjFrame(l), rkLinkCRBCOM(l), &tmpr );
+    _zVec3DSubDRC( &tmpr, rkLinkCRBCOM(link) );
+    zMat3DCatVec3DDoubleOuterProdDRC( &tmpi, -rkLinkCRBMass(l), &tmpr );
+    zMat3DAddDRC( rkLinkCRBInertia(link), &tmpi );
   }
   return rkLinkCRB(link);
 }

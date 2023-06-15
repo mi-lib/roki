@@ -81,7 +81,6 @@ int chain_init(rkChain *chain)
     sprintf( name, "link#%02d", i );
     rkLinkInit( rkChainLink(chain,i) );
     link_mp_rand( rkChainLink(chain,i) );
-    rkChainMass( chain ) += rkChainLinkMass( chain, i );
     zVec3DCreate( &aa, zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
     zVec3DCreate( rkChainLinkOrgPos(chain,i), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
     zMat3DFromAA( rkChainLinkOrgAtt(chain,i), &aa );

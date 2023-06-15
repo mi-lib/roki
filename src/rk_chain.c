@@ -18,7 +18,6 @@ void rkChainInit(rkChain *c)
   zArrayInit( &c->link );
   rkChainSetShape( c, NULL );
   rkChainSetMotor( c, NULL );
-  rkChainSetMass( c, 0 );
   rkChainSetWldCOM( c, ZVEC3DZERO );
   rkChainSetCOMVel( c, ZVEC3DZERO );
   rkChainSetCOMAcc( c, ZVEC3DZERO );
@@ -72,7 +71,6 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
   for( i=0; i<rkChainLinkNum(cln); i++ )
     if( !rkLinkClone( rkChainLink(org,i), rkChainLink(cln,i), rkChainShape(org), rkChainShape(cln) ) )
       return NULL;
-  rkChainSetMass( cln, rkChainMass(org) );
   rkChainCopyState( org, cln );
   /* TODO: clone IK */
   return cln;
@@ -481,17 +479,6 @@ zVec6D *rkChainLinkZeroAccG(rkChain *c, int id, zVec3D *p, zVec6D *g, zVec6D *a0
   return a0;
 }
 
-/* total mass of a kinematic chain. */
-double rkChainCalcMass(rkChain *chain)
-{
-  int i;
-
-  rkChainSetMass( chain, 0.0 );
-  for( i=0; i<rkChainLinkNum(chain); i++ )
-    rkChainMass(chain) += rkChainLinkMass(chain,i);
-  return rkChainMass(chain);
-}
-
 /* the center of mass of a kinematic chain with respect to the total/world frame. */
 zVec3D *rkChainUpdateCOM(rkChain *c)
 {
@@ -499,8 +486,7 @@ zVec3D *rkChainUpdateCOM(rkChain *c)
 
   rkChainSetWldCOM( c, ZVEC3DZERO );
   for( i=0; i<rkChainLinkNum(c); i++ )
-    zVec3DCatDRC( rkChainWldCOM(c),
-      rkChainLinkMass(c,i), rkChainLinkWldCOM(c,i) );
+    zVec3DCatDRC( rkChainWldCOM(c), rkChainLinkMass(c,i), rkChainLinkWldCOM(c,i) );
   return zVec3DDivDRC( rkChainWldCOM(c), rkChainMass(c) );
 }
 
@@ -982,10 +968,10 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
   ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_link );
   ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_connection );
   ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain );
-  if( rkChainCalcMass(chain) == 0 )
-    rkChainSetMass( chain, 1.0 ); /* dummy weight */
   rkChainSetJointIDOffset( chain ); /* joint identifier offset value */
   rkChainUpdateCRBMass( chain );
+  if( rkChainMass(chain) == 0 )
+    rkChainSetMass( chain, 1.0 ); /* dummy weight */
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
   return chain;

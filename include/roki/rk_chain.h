@@ -28,7 +28,6 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   zMShape3D *shape; /*!< multishape */
   rkMotorArray *motor; /*!< array of motors (may not need to be a pointer) */
 
-  double mass; /*!< total mass */
   zVec3D wldcom;    /*!< position of COM in the world frame */
   zVec3D wldcomvel; /*!< velocity of COM in the world frame */
   zVec3D wldcomacc; /*!< acceleration of COM in the world frame */
@@ -49,10 +48,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainLinkNum(c)             zArraySize( &(c)->link )
 #define rkChainShape(c)               (c)->shape
 #define rkChainMotor(c)               (c)->motor
-#define rkChainMass(c)                (c)->mass
 #define rkChainWldCOM(c)              ( &(c)->wldcom )
 #define rkChainCOMVel(c)              ( &(c)->wldcomvel )
 #define rkChainCOMAcc(c)              ( &(c)->wldcomacc )
+#define rkChainMass(c)                rkLinkCRBMass( rkChainRoot(c) )
 
 #define rkChainSetShape(c,s)          ( rkChainShape(c) = (s) )
 #define rkChainSetMotor(c,m)          ( rkChainMotor(c) = (m) )
@@ -69,6 +68,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainLinkMass(c,i)          rkLinkMass(rkChainLink(c,i))
 #define rkChainLinkCOM(c,i)           rkLinkCOM(rkChainLink(c,i))
 #define rkChainLinkInertia(c,i)       rkLinkInertia(rkChainLink(c,i))
+#define rkChainLinkCRB(c,i)           rkLinkCRB(rkChainLink(c,i))
+#define rkChainLinkCRBMass(c,i)       rkLinkCRBMass(rkChainLink(c,i))
+#define rkChainLinkCRBCOM(c,i)        rkLinkCRBCOM(rkChainLink(c,i))
+#define rkChainLinkCRBInertia(c,i)    rkLinkCRBInertia(rkChainLink(c,i))
 #define rkChainLinkExtWrench(c,i)     rkLinkExtWrench(rkChainLink(c,i))
 #define rkChainLinkShapeList(c,i)     rkLinkShapeList(rkChainLink(c,i))
 #define rkChainLinkShapeNum(c,i)      rkLinkShapeNum(rkChainLink(c,i))
@@ -416,17 +419,6 @@ __ROKI_EXPORT void rkChainFKCNT(rkChain *c, zVec dis, double dt);
 __ROKI_EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *c, int id, zVec3D *p, zVec6D *g, zVec6D *a0);
 #define rkChainLinkZeroAcc(c,i,p,a0)   rkChainLinkZeroAccG( (c), (i), (p), RK_GRAVITY6D, (a0) )
 #define rkChainLinkZeroAcc0G(c,i,p,a0) rkChainLinkZeroAccG( (c), (i), (p), ZVEC6DZERO, (a0) )
-
-/*! \brief total mass of a kinematic chain.
- *
- * rkChainCalcMass() computes the total mass of a kinematic chain
- * \a chain by summing up mass of all links.
- * \return
- * rkChainCalcMass() returns the computed total mass of \a chain.
- * \sa
- * rkChainUpdateCOM()
- */
-__ROKI_EXPORT double rkChainCalcMass(rkChain *chain);
 
 /*! \brief calculate the center of mass of kinematic chain.
  *

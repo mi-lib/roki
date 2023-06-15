@@ -70,11 +70,14 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #define rkLinkJointSize(l)     rkJointSize( rkLinkJoint(l) )
 #define rkLinkJointTypeStr(l)  rkJointTypeStr( rkLinkJoint(l) )
 #define rkLinkBody(l)          ( &(l)->body )
-#define rkLinkCRB(l)           ( &(l)->crb )
 #define rkLinkMP(l)            ( &rkLinkBody(l)->mp )
 #define rkLinkMass(l)          rkBodyMass( rkLinkBody(l) )
 #define rkLinkCOM(l)           rkBodyCOM( rkLinkBody(l) )
 #define rkLinkInertia(l)       rkBodyInertia( rkLinkBody(l) )
+#define rkLinkCRB(l)           ( &(l)->crb )
+#define rkLinkCRBMass(l)       rkMPMass( rkLinkCRB(l) )
+#define rkLinkCRBCOM(l)        rkMPCOM( rkLinkCRB(l) )
+#define rkLinkCRBInertia(l)    rkMPInertia( rkLinkCRB(l) )
 #define rkLinkVel(l)           rkBodyVel( rkLinkBody(l) )
 #define rkLinkAcc(l)           rkBodyAcc( rkLinkBody(l) )
 #define rkLinkLinVel(l)        rkBodyLinVel( rkLinkBody(l) )
@@ -372,6 +375,7 @@ __ROKI_EXPORT double rkLinkUpdateCRBMass(rkLink *link);
 /*! \brief update the composite rigit body of a link. */
 __ROKI_EXPORT rkMP *rkLinkUpdateCRB(rkLink *link);
 
+/*! \brief convert 6D configuration of a link to joint displacement. */
 __ROKI_EXPORT void rkLinkConfToJointDis(rkLink *l);
 
 /*! \brief angular momentum and kinematic energy of link.
