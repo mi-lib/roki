@@ -2,7 +2,7 @@
 
 void init_shape(zMShape3D *ms)
 {
-  zMShape3DScanFile( ms, "../model/cube.ztk" );
+  zMShape3DReadZTK( ms, "../model/cube.ztk" );
 }
 
 void init_mp(rkBody *body, zMShape3D *ms)

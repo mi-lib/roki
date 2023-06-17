@@ -5,11 +5,11 @@ int main(int argc, char *argv[])
   rkChain chain, chain2;
   rkCD cd;
 
-  if( !rkChainScanFile( &chain, argv[1] ) ){
+  if( !rkChainReadZTK( &chain, argv[1] ) ){
     ZOPENERROR( argv[1] );
     return EXIT_FAILURE;
   }
-  if( !rkChainScanFile( &chain2, argv[2] ) ){
+  if( !rkChainReadZTK( &chain2, argv[2] ) ){
     ZOPENERROR( argv[2] );
     return EXIT_FAILURE;
   }

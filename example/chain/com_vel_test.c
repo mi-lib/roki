@@ -47,7 +47,7 @@ int main(void)
 {
   register int i;
 
-  rkChainScanFile( &chain, CHAIN_FILE );
+  rkChainReadZTK( &chain, CHAIN_FILE );
   rkChainUpdateID( &chain );
   zVec3DCopy( rkChainWldCOM(&chain), &com );
   zVec3DCopy( rkChainCOMVel(&chain), &vel );

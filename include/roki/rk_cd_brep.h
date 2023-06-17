@@ -9,6 +9,7 @@
 
 #include <zeo/zeo_ph.h>
 #include <zeo/zeo_col.h>
+#include <roki/rk_misc.h>
 
 __BEGIN_DECLS
 

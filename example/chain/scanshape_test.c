@@ -9,9 +9,9 @@ int main(int argc, char *argv[])
     eprintf( ".ztk file unspecified.\n" );
     return 1;
   }
-  rkChainMShape3DScanFile( &chain, argv[1] );
+  rkChainReadZTK( &chain, argv[1] );
   zReplaceSuffix( argv[1], ZEDA_ZTK_SUFFIX, filename, BUFSIZ );
-  rkChainPrintFile( &chain, filename );
+  rkChainWriteZTK( &chain, filename );
   rkChainDestroy( &chain );
   return 0;
 }

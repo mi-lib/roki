@@ -6,11 +6,11 @@ int main(void)
   zVec orgdis, orgconf, dis, conf;
 
   zRandInit();
-  rkChainScanFile( &chain, "../model/arm.zkc" );
+  rkChainReadZTK( &chain, "../model/arm.zkc" );
   orgdis = zVecAlloc( rkChainJointSize( &chain ) );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
-  orgconf = zVecAlloc( rkChainNum( &chain ) * 6 );
-  conf = zVecAlloc( rkChainNum( &chain ) * 6 );
+  orgconf = zVecAlloc( rkChainLinkNum( &chain ) * 6 );
+  conf = zVecAlloc( rkChainLinkNum( &chain ) * 6 );
 
   /* displacement -> configuration -> displacement */
   zVecRandUniform( orgdis, -1.0, 1.0 );

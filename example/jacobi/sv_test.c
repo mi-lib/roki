@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
   name = argc > 1 ? argv[1] : "../model/arm.zkc";
   /* initialization */
   zRandInit();
-  rkChainReadFile( &chain, name );
+  rkChainReadZTK( &chain, name );
   dis = zVecAlloc( rkChainJointSize(&chain) );
   jl = zMatAlloc( 3, rkChainJointSize(&chain) );
   ja = zMatAlloc( 3, rkChainJointSize(&chain) );
@@ -22,8 +22,9 @@ int main(int argc, char *argv[])
   for( i=0; i<N; i++ ){
     zVecRandUniform( dis, -10.0, 10.0 );
     rkChainFK( &chain, dis );
-    rkChainLinkWldAngJacobi( &chain, rkChainNum(&chain)-1, ja );
-    rkChainLinkWldLinJacobi( &chain, rkChainNum(&chain)-1, Z_ZEROVEC3D, jl );
+    rkChainLinkWldAngJacobi( &chain, rkChainLinkNum(&chain)-1, ja );
+    zVec3D zeroVec3D;
+    rkChainLinkWldLinJacobi( &chain, rkChainLinkNum(&chain)-1, &zeroVec3D, jl );
     zMatPut( jacobi, 0, 0, ja );
     zMatPut( jacobi, 3, 0, jl );
     zMatPut( jacobi, 6, 0, ja );
