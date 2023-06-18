@@ -1,7 +1,5 @@
 #include <roki/rk_chain.h>
 
-#define CHAIN_FILE "../model/humanoid.zkc"
-
 #define DT 0.001
 #define DTHETA zDeg2Rad(20.0)
 #define STEP 100
@@ -47,7 +45,7 @@ int main(void)
 {
   register int i;
 
-  rkChainScanFile( &chain, CHAIN_FILE );
+  rkChainReadZTK( &chain, "../model/H5.ztk" );
   rkChainUpdateID( &chain );
   zVec3DCopy( rkChainWldCOM(&chain), &com );
   zVec3DCopy( rkChainCOMVel(&chain), &vel );

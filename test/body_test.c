@@ -1,5 +1,8 @@
 #include <roki/rk_body.h>
 
+#define N 1000
+#define TOL (1.0e-7)
+
 typedef struct{
   double m;
   zVec3D p;
@@ -47,9 +50,7 @@ void create_mp(point_array_t *pa, rkMP mp[])
   }
 }
 
-#define N 1000
-
-void combine_test(void)
+void assert_combine(void)
 {
   point_array_t pa;
   rkMP mp[3], mpc;
@@ -67,9 +68,43 @@ void combine_test(void)
   zAssert( rkMPCombine, zVec3DIsTiny( &ec ) && zMat3DIsTiny( &ei ) );
 }
 
+bool assert_inertialellipsoid_axis(zVec3D *axis, zMat3D *r)
+{
+  zVec3D tmp;
+
+  return zVec3DIsTol( zVec3DOuterProd( axis, &r->v[0], &tmp ), TOL ) ||
+         zVec3DIsTol( zVec3DOuterProd( axis, &r->v[1], &tmp ), TOL ) ||
+         zVec3DIsTol( zVec3DOuterProd( axis, &r->v[2], &tmp ), TOL );
+}
+
+void assert_inertialellipsoid(void)
+{
+  zEllips3D e, ie;
+  zMat3D r;
+  zVec3D c;
+  rkMP mp;
+  int i;
+  bool result = true;
+
+  for( i=0; i<N; i++ ){
+    zMat3DFromZYX( &r, zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
+    zVec3DCreate( &c, zRandF(-10,10), zRandF(-10,10), zRandF(-10,10) );
+    zEllips3DCreate( &e, &c, &r.v[0], &r.v[1], &r.v[2], 2, 8, 17, 0 );
+    rkMPSetMass( &mp, zEllips3DVolume(&e) );
+    rkMPSetCOM( &mp, zEllips3DCenter(&e) );
+    zEllips3DBaryInertia( &e, 1.0, rkMPInertia(&mp) );
+    rkMPInertiaEllips( &mp, &ie );
+    if( !assert_inertialellipsoid_axis( zEllips3DAxis(&ie,0), &r ) ||
+        !assert_inertialellipsoid_axis( zEllips3DAxis(&ie,1), &r ) ||
+        !assert_inertialellipsoid_axis( zEllips3DAxis(&ie,2), &r ) ) result = false;
+  }
+  zAssert( rkMPInertiaEllips, result );
+}
+
 int main(int argc, char *argv[])
 {
   zRandInit();
-  combine_test();
+  assert_combine();
+  assert_inertialellipsoid();
   return 0;
 }

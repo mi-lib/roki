@@ -58,7 +58,8 @@ void chain_init(rkChain *chain)
   zNameSet( rkChainLink(chain,0), name );
   sprintf( name, "tip" );
   rkLinkInit( rkChainLink(chain,1) );
-  rkChainSetMass( chain, rkLinkSetMass( rkChainLink(chain,1), 1.0 ) );
+  rkLinkSetMass( rkChainLink(chain,1), 1.0 );
+  rkChainSetMass( chain, rkChainLinkMass(chain,1) );
   zNameSet( rkChainLink(chain,1), name );
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,1) );
 
