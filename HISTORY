@@ -1,3 +1,4 @@
+2023. 6.18. Debugged some example programs, and moved some of them to tests. [example, test]
 2023. 6.15. Added rkChainLinkCRB, rkChainLinkCRBMass, rkChainLinkCRBCOM, and rkChainLinkCRBInertia. [rk_chain]
 2023. 6.15. Modified rkChainInit, rkChainClone, and rkChainFromZTK. [rk_chain]
 2023. 6.15. Abolished rkChainCalcCOM. [rk_chain]

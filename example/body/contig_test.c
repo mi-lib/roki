@@ -2,7 +2,7 @@
 
 void init_shape(zMShape3D *ms)
 {
-  zMShape3DScanFile( ms, "../model/cube.ztk" );
+  zMShape3DReadZTK( ms, "../model/cube.ztk" );
 }
 
 void init_mp(rkBody *body, zMShape3D *ms)
@@ -10,15 +10,6 @@ void init_mp(rkBody *body, zMShape3D *ms)
   int i;
 
   rkBodyInit( body );
-  /* 0.1x0.2x0.4[m^3] recutangular solid block
-     with 1000[kg/m^3] density */
-  rkBodySetMass( body, 0.1*0.2*0.4*1000 );
-  zMat3DCreate( rkBodyInertia(body),
-    (zSqr(0.2)+zSqr(0.4))*rkBodyMass(body)/12, 0, 0,
-    0, (zSqr(0.4)+zSqr(0.1))*rkBodyMass(body)/12, 0,
-    0, 0, (zSqr(0.1)+zSqr(0.2))*rkBodyMass(body)/12 );
-  zVec3DCreate( rkBodyCOM(body), 0.05, 0.1, 0.2 );
-  /* shape list */
   for( i=0; i<zMShape3DShapeNum(ms); i++ )
     rkBodyShapePush( body, zMShape3DShape(ms,i) );
 }
@@ -52,10 +43,10 @@ int main(int argc, char *argv[])
     cv2 = zShape3DContigVert( &sc, &p, &d2 );
     dp = (zVec3D*)( (long)zShape3DVertBuf(zMShape3DShape(&ms,0)) + (long)cv2 - (long)zShape3DVertBuf(&sc) );
     if( cv1 != dp ) ZRUNERROR( "might be false" );
-    zVec3DDataFPrint( fp1, &p );
-    zVec3DDataFPrint( fp1, cv2 );
+    zVec3DDataNLFPrint( fp1, &p );
+    zVec3DDataNLFPrint( fp1, cv2 );
     fprintf( fp1, "\n\n" );
-    zVec3DDataFPrint( fp2, cv2 );
+    zVec3DDataNLFPrint( fp2, cv2 );
   }
   fclose( fp1 );
   fclose( fp2 );

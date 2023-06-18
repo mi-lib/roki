@@ -1,13 +1,12 @@
 #include <roki/rk_chain.h>
 
-#define CHAIN_FILE "../model/humanoid.zkc"
-
-int main(void)
+int main(int argc, char *argv[])
 {
   rkChain chain;
   zIndex index;
 
-  rkChainScanFile( &chain, CHAIN_FILE );
+  if( !rkChainReadZTK( &chain, argc > 1 ? argv[1] : "../model/H5.ztk" ) )
+    return 1;
   index = rkChainCreateDefaultJointIndex( &chain );
   rkChainConnectionPrint( &chain );
   printf( "total joint size = %d\n", rkChainJointSize( &chain ) );

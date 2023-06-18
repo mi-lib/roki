@@ -4,8 +4,8 @@ int main(void)
 {
   rkContactInfoArray carray;
 
-  rkContactInfoArrayScanZTK( &carray, "contact.ztk" );
-  rkContactInfoArrayFPrint( stdout, &carray );
+  rkContactInfoArrayReadZTK( &carray, "contact.ztk" );
+  rkContactInfoArrayFPrintZTK( stdout, &carray );
   rkContactInfoArrayDestroy( &carray );
   return 0;
 }

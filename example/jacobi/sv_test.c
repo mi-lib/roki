@@ -1,6 +1,6 @@
 #include <roki/rk_jacobi.h>
 
-#define N 1000
+#define N 1
 
 int main(int argc, char *argv[])
 {
@@ -8,30 +8,23 @@ int main(int argc, char *argv[])
   zVec dis;
   zMat jl, ja, jacobi;
   int i;
-  char *name;
 
-  name = argc > 1 ? argv[1] : "../model/arm.zkc";
   /* initialization */
   zRandInit();
-  rkChainReadFile( &chain, name );
+  rkChainReadZTK( &chain, argc > 1 ? argv[1] : "../model/arm.ztk" );
   dis = zVecAlloc( rkChainJointSize(&chain) );
   jl = zMatAlloc( 3, rkChainJointSize(&chain) );
   ja = zMatAlloc( 3, rkChainJointSize(&chain) );
-  jacobi = zMatAlloc( 12, rkChainJointSize(&chain) );
+  jacobi = zMatAlloc( 6, rkChainJointSize(&chain) );
 
   for( i=0; i<N; i++ ){
     zVecRandUniform( dis, -10.0, 10.0 );
     rkChainFK( &chain, dis );
-    rkChainLinkWldAngJacobi( &chain, rkChainNum(&chain)-1, ja );
-    rkChainLinkWldLinJacobi( &chain, rkChainNum(&chain)-1, Z_ZEROVEC3D, jl );
+    rkChainLinkWldAngJacobi( &chain, rkChainLinkNum(&chain)-1, ja );
+    rkChainLinkWldLinJacobi( &chain, rkChainLinkNum(&chain)-1, ZVEC3DZERO, jl );
     zMatPut( jacobi, 0, 0, ja );
     zMatPut( jacobi, 3, 0, jl );
-    zMatPut( jacobi, 6, 0, ja );
-    zMatPut( jacobi, 9, 0, jl );
-    printf( "%.10f %.10f %.10f %.10f %.10f %.10f %.10f %.10f %.10f\n",
-      rkJacobiManip(jacobi), zSVMax(jacobi), zSVMin(jacobi),
-      rkJacobiManip(ja), zSVMax(ja), zSVMin(ja),
-      rkJacobiManip(jl), zSVMax(jl), zSVMin(jl) );
+    printf( "%.10f %.10f %.10f\n", rkJacobiManip(jacobi), zSVMax(jacobi), zSVMin(jacobi) );
   }
 
   /* termination */

@@ -112,6 +112,46 @@ int chain_init(rkChain *chain)
 #define N 1000
 #define TOL (1.0e-10)
 
+void assert_getsetconf(rkChain *chain)
+{
+  zVec orgdis, orgconf, dis, conf;
+  int i;
+  bool result1 = true, result2 = true;
+
+  orgdis = zVecAlloc( rkChainJointSize( chain ) );
+  dis = zVecAlloc( rkChainJointSize( chain ) );
+  orgconf = zVecAlloc( rkChainLinkNum( chain ) * 6 );
+  conf = zVecAlloc( rkChainLinkNum( chain ) * 6 );
+  for( i=0; i<N; i++ ){
+    /* displacement -> configuration -> displacement */
+    zVecRandUniform( orgdis, -1.0, 1.0 );
+    rkChainFK( chain, orgdis );
+    rkChainGetConf( chain, conf );
+    rkChainSetConf( chain, conf );
+    rkChainGetJointDisAll( chain, dis );
+    zVecSubDRC( dis, orgdis );
+    if( !zVecIsTol( dis, TOL ) ) result1 = false;
+    /* configuration -> displacement -> configuration */
+    zVecRandUniform( orgconf, -1.0, 1.0 );
+    rkChainSetConf( chain, orgconf );
+    rkChainGetJointDisAll( chain, orgdis );
+    rkChainFK( chain, orgdis );
+    rkChainGetConf( chain, orgconf );
+    rkChainSetConf( chain, orgconf );
+    rkChainGetJointDisAll( chain, dis );
+    rkChainGetConf( chain, conf );
+    zVecSubDRC( conf, orgconf );
+    if( !zVecIsTol( conf, TOL ) ) result2 = false;
+  }
+  zAssert( rkChainFK + rkChainGetConf + rkChainSetConf + rkChainGetJointDisAll, result1 );
+  zAssert( rkChainSetConf + rkChainGetJointDisAll + rkChainFK + rkChainGetConf, result2 );
+
+  zVecFree( orgconf );
+  zVecFree( conf );
+  zVecFree( orgdis );
+  zVecFree( dis );
+}
+
 bool check_chain_net_inertia(rkChain *chain, zMat3D *inertia_net)
 {
   zMat3D inertia;
@@ -198,6 +238,7 @@ int main(int argc, char *argv[])
   /* initialization */
   zRandInit();
   n = chain_init( &chain );
+  assert_getsetconf( &chain );
   assert_crb( &chain, n );
   assert_inertia_mat( &chain, n );
   /* termination */
