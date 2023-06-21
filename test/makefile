@@ -1,5 +1,3 @@
-include ../config
-
 INCLUDE=`roki-config -I`
 LIB=`roki-config -L`
 LINK=`roki-config -l`
