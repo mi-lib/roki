@@ -89,9 +89,15 @@ __ROKI_EXPORT zMat rkChainAMCOMMat(rkChain *c, zMat m);
  * \a jacobi could be COM Jacobian matrix, angular momentum matrix, etc.
  * In any case, the value calculated represents the manipulability in a certain
  * sense.
+ *
+ * rkJacobiManip() internally calls rkJacobiManipDST() with \a index and \a k,
+ * which are used as workspaces. \a index and \a k have to have sizes of r x 1
+ * and r x r, respectively, where r is the row size of \a jacobi.
  * \return
- * rkJacobiManip() returns a value calculated.
+ * rkJacobiManip() and rkJacobiManipDST() return the calculated measure of
+ * manipulability.
  */
+__ROKI_EXPORT double rkJacobiManipDST(zMat jacobi, zIndex index, zMat k);
 __ROKI_EXPORT double rkJacobiManip(zMat jacobi);
 
 __END_DECLS

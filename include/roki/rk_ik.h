@@ -219,11 +219,18 @@ __ROKI_EXPORT void rkChainZeroIKAcm(rkChain *chain);
  */
 __ROKI_EXPORT void rkChainCreateIKEq(rkChain *chain);
 
-/*! \brief solve the motion constraint. */
-#define rkIKSetEqSolver(ik,f) ( (ik)->_solve_eq = (f) )
 __ROKI_EXPORT zVec rkIKSolveEqMP(rkIK *ik);
 __ROKI_EXPORT zVec rkIKSolveEqSR(rkIK *ik);
 __ROKI_EXPORT zVec rkIKSolveEqED(rkIK *ik);
+__ROKI_EXPORT zVec rkIKSolveEqSRED(rkIK *ik);
+
+/*! \brief solve the motion constraint. */
+#define rkIKSetEqSolver(ik,f)       ( (ik)->_solve_eq = (f) )
+#define rkChainIKSetEqSolver(c,f)   rkIKSetEqSolver( (c)->_ik, f )
+#define rkChainIKSetEqSolverMP(c)   rkChainIKSetEqSolver( c, rkIKSolveEqMP )
+#define rkChainIKSetEqSolverSR(c)   rkChainIKSetEqSolver( c, rkIKSolveEqSR )
+#define rkChainIKSetEqSolverED(c)   rkChainIKSetEqSolver( c, rkIKSolveEqED )
+#define rkChainIKSetEqSolverSRED(c) rkChainIKSetEqSolver( c, rkIKSolveEqSRED )
 
 __ROKI_EXPORT zVec rkChainIKSolveEq(rkChain *chain);
 __ROKI_EXPORT zVec rkChainIKOne(rkChain *chain, zVec dis, double dt);

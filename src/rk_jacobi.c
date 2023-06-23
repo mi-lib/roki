@@ -198,19 +198,26 @@ zMat rkChainAMCOMMat(rkChain *c, zMat m)
   return rkChainAMMat( c, rkChainWldCOM(c), m );
 }
 
+/* measure of manipulability (direct computation). */
+double rkJacobiManipDST(zMat jacobi, zIndex index, zMat k)
+{
+  zMulMatMatT( jacobi, jacobi, k );
+  return sqrt( zMatDetDST( k, index ) );
+}
+
 /* measure of manipulability. */
 double rkJacobiManip(zMat jacobi)
 {
   zMat k;
-  double result;
+  zIndex index;
+  double result = 0;
 
-  if( !( k = zMatAllocSqr( zMatRowSizeNC(jacobi) ) ) ){
-    ZALLOCERROR();
-    return 0;
-  }
-  zMulMatMatT( jacobi, jacobi, k );
-  result = sqrt( zMatDet( k ) );
+  k = zMatAllocSqr( zMatRowSizeNC(jacobi) );
+  index = zIndexCreate( zMatRowSizeNC(jacobi) );
+  if( k && index )
+    result = rkJacobiManipDST( jacobi, index, k );
   zMatFree( k );
+  zIndexFree( index );
   return result;
 }
 

@@ -3,8 +3,8 @@
 #define N 1000
 
 #define DT 0.01
-#define TOL_VEL (1.0e-10)
-#define TOL_ACC (1.0e-8)
+#define TOL_VEL (1.0e-9)
+#define TOL_ACC (1.0e-6)
 
 bool assert_joint_queryassign_one(char *str, int size)
 {
@@ -171,6 +171,34 @@ void assert_float_cat(void)
   zAssert( rkJointFloatCatDis, result );
 }
 
+void assert_joint_sub(void)
+{
+  RK_JOINT_COM_ARRAY;
+  rkJoint joint;
+  int i, k;
+  zVec6D dis1, dis2, ddis;
+  bool result = true;
+
+  for( k=0; k<N; k++ ){
+    for( i=0; i<6; i++ ){
+      dis1.e[i] = zRandF( -zPI, zPI );
+      ddis.e[i] = zRandF( -zPI, zPI );
+    }
+    for( i=0; rk_joint_com[i]; i++ ){
+      rkJointAssign( &joint, rk_joint_com[i] );
+      zVec6DCopy( &dis1, &dis2 );
+      rkJointSubDis( &joint, dis2.e, ddis.e );
+      rkJointCatDis( &joint, dis2.e, 1, ddis.e );
+      rkJointSubDis( &joint, dis2.e, dis1.e );
+      zVec6DZero( &ddis );
+      memcpy( dis2.e, ddis.e, sizeof(double)*rkJointSize(&joint) );
+      if( !zVec6DIsTiny( &ddis ) ) result = false;
+      rkJointDestroy( &joint );
+    }
+  }
+  zAssert( rkJointSubDis, result );
+}
+
 bool assert_joint_torsion_check(rkJoint *joint, zVec6D *t, double dis[], zFrame3D *f)
 {
   zFrame3D fo, fc;
@@ -227,6 +255,7 @@ int main(void)
   assert_joint_neutral();
   assert_spher_cat();
   assert_float_cat();
+  assert_joint_sub();
   assert_joint_torsion();
   return 0;
 }

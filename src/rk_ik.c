@@ -246,30 +246,22 @@ rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKAttr *attr, int mask){
 }
 
 /* find a constraint cell of inverse kinematics solver from identifier. */
-static rkIKCell *_rkIKFindCell(rkIK *ik, int id)
+rkIKCell *rkChainFindIKCell(rkChain *chain, int id)
 {
   rkIKCell *cp;
 
-  zListForEach( &ik->clist, cp )
+  zListForEach( &chain->_ik->clist, cp )
     if( cp->data.id == id ) return cp;
   return NULL;
 }
-rkIKCell *rkChainFindIKCell(rkChain *chain, int id)
-{
-  return _rkIKFindCell( chain->_ik, id );
-}
 
 /* deactivate all constraint cells of inverse kinematics solver. */
-static void _rkIKDeactivate(rkIK *ik)
+void rkChainDeactivateIK(rkChain *chain)
 {
   rkIKCell *cp;
 
-  zListForEach( &ik->clist, cp )
+  zListForEach( &chain->_ik->clist, cp )
     rkIKCellDisable( cp );
-}
-void rkChainDeactivateIK(rkChain *chain)
-{
-  _rkIKDeactivate( chain->_ik );
 }
 
 /* bind current state of properties to be constrained in inverse kinematics to references. */
@@ -364,16 +356,18 @@ zVec rkIKSolveEqSR(rkIK *ik)
 /* solve the motion constraint equation with error-damped inverse matrix. */
 zVec rkIKSolveEqED(rkIK *ik)
 {
-  int i;
-  double e;
+  zVecCopy( ik->_c_vec, ik->__c );
+  zLESolveSRBiasDST( ik->_c_mat, ik->__c, ik->_j_wn, ik->_c_we, zVecInnerProd( ik->_c_vec, ik->__c ), ik->_j_vec, &ik->__le );
+  return ik->_j_vec;
+}
 
-  zVecAmpNC( ik->_c_vec, ik->_c_we, ik->__c );
-  zMulMatTVecNC( ik->_c_mat, ik->__c, ik->__le.v1 );
-  zMatTQuadNC( ik->_c_mat, ik->_c_we, ik->__le.m );
-  e = zVecInnerProd( ik->_c_vec, ik->__c );
-  for( i=0; i<zMatRowSizeNC(ik->__le.m); i++ )
-    zMatElemNC(ik->__le.m,i,i) += zVecElemNC(ik->_j_wn,i) + e;
-  zLESolveGaussDST( ik->__le.m, ik->__le.v1, ik->_j_vec, ik->__le.idx1, ik->__le.s );
+/* solve the motion constraint equation with error-and-manipulability-damped inverse matrix. */
+zVec rkIKSolveEqSRED(rkIK *ik)
+{
+  zVecCopy( ik->_c_vec, ik->__c );
+  zLESolveSRBiasDST( ik->_c_mat, ik->__c, ik->_j_wn, ik->_c_we,
+    zVecInnerProd( ik->_c_vec, ik->__c ) + 1.0e1 * _zVecMean(ik->_j_wn) * zMax( 1 - rkJacobiManip( ik->_c_mat ), 0 ),
+    ik->_j_vec, &ik->__le );
   return ik->_j_vec;
 }
 
@@ -420,9 +414,6 @@ zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
   double *dp, *vp;
 
   _rkChainIKSolveEq( chain );
-#if 0
-  rkChainGetJointDis( chain, chain->_ik->_j_idx, dis );
-#endif
   for( dp=zVecBuf(dis), vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
     k = zIndexElemNC(chain->_ik->_j_idx,i);
     rkJointCatDis( rkChainLinkJoint(chain,k), dp, dt, vp );

@@ -442,6 +442,16 @@ void rkChainFK(rkChain *c, zVec dis)
   rkChainUpdateFK( c );
 }
 
+/* neutralize all joints of a kinematic chain. */
+void rkChainNeutral(rkChain *chain)
+{
+  int i;
+
+  for( i=0; i<rkChainLinkNum(chain); i++ )
+    rkChainLinkJointNeutral( chain, i );
+  rkChainUpdateFK( chain );
+}
+
 /* update link states and joint torques of a kinematic chain via inverse dynamics. */
 void rkChainUpdateID_G(rkChain *c, zVec6D *g)
 {

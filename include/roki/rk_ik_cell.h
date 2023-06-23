@@ -62,6 +62,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
 /* set constraint mode */
 #define rkIKAttrSetLinkID(a,c,n)  ( (a)->id = rkChainFindLinkID( c, n ) )
 #define rkIKAttrSetLinkID2(a,c,n) ( (a)->id_sub = rkChainFindLinkID( c, n ) )
+#define rkIKAttrSetAP(a,x,y,z)    zVec3DCreate( &(a)->ap, (x), (y), (z) )
+#define rkIKAttrCopyAP(a,p)       zVec3DCopy( p, &(a)->ap )
 #define rkIKAttrSetMode(a,m)      ( (a)->mode |= (m) )
 #define rkIKAttrUnsetMode(a,m)    ( (a)->mode &= ~(m) )
 #define rkIKAttrEnable(a)         rkIKAttrSetMode( a, RK_IK_CELL_ON )
@@ -133,6 +135,10 @@ __ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRe
 } while(0)
 #define rkIKCellSetRefVec(c,v) \
   rkIKCellSetRef(c,(v)->e[0],(v)->e[1],(v)->e[2])
+#define rkIKCellSetRefAtt(c,r) do{\
+  rkIKCellEnable( c );\
+  zMat3DCopy( r, rkIKCellRefAtt(c) );\
+} while(0)
 
 #define rkIKCellSetRefForce(c,v1,v2,v3) do{\
   rkIKCellForce( c );\

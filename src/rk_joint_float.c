@@ -74,11 +74,9 @@ static void _rkJointFloatCatDis(void *prp, double *dis, double k, double *val){
 
 static void _rkJointFloatSubDis(void *prp, double *dis, double *sdis){
   zMat3D m, ms;
-  zVec3D aa;
 
   zVec3DSubDRC( zVec6DLin((zVec6D*)dis), zVec6DLin((zVec6D*)sdis) );
-  zVec3DCopy( zVec6DAng((zVec6D*)dis), &aa );
-  zMat3DFromAA( &m, &aa );
+  zMat3DFromAA( &m, zVec6DAng((zVec6D*)dis) );
   zMat3DFromAA( &ms, zVec6DAng((zVec6D*)sdis) );
   zMat3DError( &m, &ms, zVec6DAng((zVec6D*)dis) );
 }

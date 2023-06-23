@@ -100,6 +100,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainLinkChild(c,i)         rkLinkChild(rkChainLink(c,i))
 #define rkChainLinkSibl(c,i)          rkLinkSibl(rkChainLink(c,i))
 
+#define rkChainLinkJointNeutral(c,i)  rkLinkJointNeutral( rkChainLink(c,i) )
+
 #define rkChainOrgFrame(c)            rkLinkOrgFrame(rkChainRoot(c))
 #define rkChainOrgPos(c)              rkLinkOrgPos(rkChainRoot(c))
 #define rkChainOrgAtt(c)              rkLinkOrgAtt(rkChainRoot(c))
@@ -357,6 +359,9 @@ __ROKI_EXPORT void rkChainSetMotorInputAll(rkChain *c, zVec input);
  */
 __ROKI_EXPORT void rkChainUpdateFK(rkChain *c);
 __ROKI_EXPORT void rkChainFK(rkChain *c, zVec dis);
+
+/*! \brief neutralize all joints of a kinematic chain. */
+__ROKI_EXPORT void rkChainNeutral(rkChain *chain);
 
 /*! \brief inverse dynamics of kinematic chain.
  *

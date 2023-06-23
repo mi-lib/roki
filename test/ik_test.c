@@ -437,6 +437,75 @@ void assert_ik_l2l(void)
   zAssert( rkChainIK (link-to-link), result );
 }
 
+void assert_ik_arm(void)
+{
+  rkChain chain;
+  zVec dis;
+  zVec3D err;
+  rkIKCell *cell;
+  rkIKAttr attr;
+  int i;
+  bool result = true;
+
+  rkChainReadZTK( &chain, "../example/model/arm.ztk" );
+  rkChainCreateIK( &chain );
+  rkChainRegIKJointAll( &chain, 0.001 );
+  attr.id = 5;
+  cell = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID );
+
+  dis = zVecAlloc( rkChainJointSize( &chain ) );
+  for( i=0; i<N; i++ ){
+    zVecRandUniform( dis, -zPI, zPI );
+    rkChainFK( &chain, dis );
+    rkIKCellSetRefVec( cell, rkChainLinkWldPos(&chain,attr.id) );
+    rkChainFK( &chain, zVecZero(dis) );
+    rkChainIK( &chain, dis, zTOL, 0 );
+    zVec3DSub( rkIKCellRefPos(cell), rkChainLinkWldPos(&chain,attr.id), &err );
+    if( !zVec3DIsTiny( &err ) ) result = false;
+  }
+  rkChainDestroy( &chain );
+  zVecFree( dis );
+  zAssert( rkChainIK (5-link arm), result );
+}
+
+void assert_puma_arm(void)
+{
+  rkChain chain;
+  zVec dis;
+  zVec6D err;
+  rkIKCell *cell[2];
+  rkIKAttr attr;
+  int i;
+  bool result = true;
+  const double tol = 1.0e-3;
+
+  rkChainReadZTK( &chain, "../example/model/puma.ztk" );
+  rkChainCreateIK( &chain );
+  rkChainRegIKJointAll( &chain, 0.001 );
+  attr.id = 6;
+  cell[0] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID );
+  cell[1] = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID );
+
+  dis = zVecAlloc( rkChainJointSize( &chain ) );
+  for( i=0; i<N; i++ ){
+    zVecRandUniform( dis, -zPI, zPI );
+    rkChainFK( &chain, dis );
+    rkIKCellSetRefAtt( cell[0], rkChainLinkWldAtt(&chain,attr.id) );
+    rkIKCellSetRefVec( cell[1], rkChainLinkWldPos(&chain,attr.id) );
+    rkChainFK( &chain, zVecZero(dis) );
+    rkChainIK( &chain, dis, zTOL, 0 );
+    zMat3DError( rkIKCellRefAtt(cell[0]), rkChainLinkWldAtt(&chain,attr.id), zVec6DAng(&err) );
+    zVec3DSub( rkIKCellRefPos(cell[1]), rkChainLinkWldPos(&chain,attr.id), zVec6DLin(&err) );
+    if( !zVec6DIsTol( &err, tol ) ){
+      zVec6DPrint( &err );
+      result = false;
+    }
+  }
+  rkChainDestroy( &chain );
+  zVecFree( dis );
+  zAssert( rkChainIK (PUMA), result );
+}
+
 int main(void)
 {
   zRandInit();
@@ -446,5 +515,7 @@ int main(void)
   assert_ik_spher();
   assert_ik_float();
   assert_ik_l2l();
+  assert_ik_arm();
+  assert_puma_arm();
   return 0;
 }

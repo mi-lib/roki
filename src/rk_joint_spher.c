@@ -76,10 +76,8 @@ static void _rkJointSpherCatDis(void *prp, double *dis, double k, double *val)
 static void _rkJointSpherSubDis(void *prp, double *dis, double *sdis)
 {
   zMat3D m, ms;
-  zVec3D aa;
 
-  zVec3DCopy( (zVec3D*)dis, &aa );
-  zMat3DFromAA( &m, &aa );
+  zMat3DFromAA( &m, (zVec3D*)dis );
   zMat3DFromAA( &ms, (zVec3D*)sdis );
   zMat3DError( &m, &ms, (zVec3D*)dis );
 }
