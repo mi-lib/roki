@@ -1007,12 +1007,12 @@ void rkChainFPrintZTK(FILE *fp, rkChain *chain)
 }
 
 /* read a ZTK file and create a new kinematic chain. */
-rkChain *rkChainReadZTK(rkChain *chain, char filename[])
+rkChain *rkChainReadZTK(rkChain *chain, const char *filename)
 {
   ZTK ztk;
 
   ZTKInit( &ztk );
-  if( ZTKParse( &ztk, filename ) ){
+  if( ZTKParse( &ztk, (char *)filename ) ){
     /* read optical infos and shapes */
     rkChainInit( chain );
     if( ZTKCountTag( &ztk, ZTK_TAG_SHAPE ) > 0 ){
@@ -1031,11 +1031,11 @@ rkChain *rkChainReadZTK(rkChain *chain, char filename[])
 }
 
 /* write information of a kinematic chain to a file in ZTK format. */
-bool rkChainWriteZTK(rkChain *c, char filename[])
+bool rkChainWriteZTK(rkChain *c, const char *filename)
 {
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( filename, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( (char *)filename, "w" ) ) ) return false;
   rkChainFPrintZTK( fp, c );
   fclose(fp);
   return true;
@@ -1059,22 +1059,22 @@ void rkChainInitFPrintZTK(FILE *fp, rkChain *chain)
   fprintf( fp, "\n" );
 }
 
-rkChain *rkChainInitReadZTK(rkChain *chain, char filename[])
+rkChain *rkChainInitReadZTK(rkChain *chain, const char *filename)
 {
   ZTK ztk;
 
   ZTKInit( &ztk );
-  ZTKParse( &ztk, filename );
+  ZTKParse( &ztk, (char *)filename );
   chain = rkChainInitFromZTK( chain, &ztk );
   ZTKDestroy( &ztk );
   return chain;
 }
 
-bool rkChainInitWriteZTK(rkChain *chain, char filename[])
+bool rkChainInitWriteZTK(rkChain *chain, const char *filename)
 {
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( filename, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( (char *)filename, "w" ) ) ) return false;
   rkChainInitFPrintZTK( fp, chain );
   fclose( fp );
   return true;

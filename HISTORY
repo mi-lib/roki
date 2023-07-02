@@ -1,3 +1,4 @@
+2023. 7. 2. Modified specifications of rkChainReadZTK, rkChainWriteZTK, rkChainInitReadZTK, rkChainInitWriteZTK, and rkChainIKConfReadZTK. [rk_chain, rk_ik]
 2023. 6.23. Added rkIKSolveEqSRED, and defined rkChainIKSetEqSolverMP, rkChainIKSetEqSolverSR, rkChainIKSetEqSolverED, and rkChainIKSetEqSolverSRED. [rk_ik]
 2023. 6.23. Added rkJacobiManipDST, and reimplemented rkJacobiManip. [rk_jacobi]
 2023. 6.23. Added rkChainLinkJointNeutral and rkChainNeutral. [rk_chain]

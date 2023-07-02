@@ -563,13 +563,13 @@ rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk)
   return chain;
 }
 
-rkChain *rkChainIKConfReadZTK(rkChain *chain, char filename[])
+rkChain *rkChainIKConfReadZTK(rkChain *chain, const char *filename)
 {
   ZTK ztk;
 
   if( !rkChainCreateIK( chain ) ) return NULL;
   ZTKInit( &ztk );
-  if( ZTKParse( &ztk, filename ) )
+  if( ZTKParse( &ztk, (char *)filename ) )
     chain = rkChainIKConfFromZTK( chain, &ztk );
   ZTKDestroy( &ztk );
   return chain;

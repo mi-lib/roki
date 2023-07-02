@@ -249,7 +249,7 @@ __ROKI_EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
 #define ZTK_TAG_RKIK "ik"
 
 __ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *ik, ZTK *ztk);
-__ROKI_EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, char filename[]);
+__ROKI_EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, const char *filename);
 
 __END_DECLS
 

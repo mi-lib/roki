@@ -611,14 +611,14 @@ __ROKI_EXPORT zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb);
 __ROKI_EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
 __ROKI_EXPORT void rkChainFPrintZTK(FILE *fp, rkChain *chain);
 
-__ROKI_EXPORT rkChain *rkChainReadZTK(rkChain *chain, char filename[]);
-__ROKI_EXPORT bool rkChainWriteZTK(rkChain *c, char filename[]);
+__ROKI_EXPORT rkChain *rkChainReadZTK(rkChain *chain, const char *filename);
+__ROKI_EXPORT bool rkChainWriteZTK(rkChain *c, const char *filename);
 
 __ROKI_EXPORT rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk);
 __ROKI_EXPORT void rkChainInitFPrintZTK(FILE *fp, rkChain *chain);
 
-__ROKI_EXPORT rkChain *rkChainInitReadZTK(rkChain *chain, char filename[]);
-__ROKI_EXPORT bool rkChainInitWriteZTK(rkChain *chain, char filename[]);
+__ROKI_EXPORT rkChain *rkChainInitReadZTK(rkChain *chain, const char *filename);
+__ROKI_EXPORT bool rkChainInitWriteZTK(rkChain *chain, const char *filename);
 
 __ROKI_EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *c);
 __ROKI_EXPORT void rkChainConnectionFPrint(FILE *fp, rkChain *c);
