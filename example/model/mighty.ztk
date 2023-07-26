@@ -1724,19 +1724,18 @@ vert: 4 { 0.0564,-0.036, 0.0092 }
 vert: 5 {-0.0426,-0.036, 0.0092 }
 vert: 6 {-0.0426, 0.036, 0.0092 }
 vert: 7 { 0.0564, 0.036, 0.0092 }
-face: 0 2 1
-face: 0 3 2
-face: 0 1 5
-face: 0 5 4
-face: 1 2 6
-face: 1 6 5
-face: 2 3 7
-face: 2 7 6
-face: 3 0 4
-face: 3 4 7
-face: 4 5 6
-face: 4 6 7
-
+face: 0 1 2
+face: 0 2 3
+face: 0 5 1
+face: 0 4 5
+face: 1 6 2
+face: 1 5 6
+face: 2 7 3
+face: 2 6 7
+face: 3 4 0
+face: 3 7 4
+face: 4 6 5
+face: 4 7 6
 
 % 0: body (option)
 % 1: left_shoulder_flexion
