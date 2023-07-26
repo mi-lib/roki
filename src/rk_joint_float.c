@@ -228,7 +228,7 @@ static void _rkJointFloatMotorDrivingTrq(void *prp, double *val){ zVec6DZero( (z
 static void _rkJointFloatABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih){
   int i, j;
 
-  _rkJointFloatMotorInertia( prp, zMatBuf(h) );
+  _rkJointFloatMotorInertia( prp, zMatBufNC(h) );
   for( i=0; i<3; i++ )
     for( j=0; j<3; j++ ){
       zMatElemNC(h,i,  j)   += m->e[0][0].e[j][i];

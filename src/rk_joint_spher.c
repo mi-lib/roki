@@ -234,7 +234,7 @@ static void _rkJointSpherABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih)
      by R transpose from the right side in the mathematically strict
      way. A nice property is that they are cancelled in the following
      computation and thus are omitted from the beginning. */
-  _rkJointSpherMotorInertia( prp, zMatBuf(h) );
+  _rkJointSpherMotorInertia( prp, zMatBufNC(h) );
   zMat3DT( &m->e[1][1], (zMat3D *)&zMatElemNC(h,0,0) );
   zMatInv( h, ih );
 }

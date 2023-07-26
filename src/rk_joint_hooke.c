@@ -268,7 +268,7 @@ static void _rkJointHookeMotorDrivingTrq(void *prp, double *val){
 static void _rkJointHookeABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih){
   zMat3D *m22;
 
-  _rkJointHookeMotorInertia( prp, zMatBuf(h) );
+  _rkJointHookeMotorInertia( prp, zMatBufNC(h) );
   m22 = &m->e[1][1];
   zMatElemNC(h,0,0) += m22->e[0][0]*_rkc(prp)->_s[1]*_rkc(prp)->_s[1] - (m22->e[2][0] + m22->e[0][2])*_rkc(prp)->_s[1]*_rkc(prp)->_c[1] + m22->e[2][2]*_rkc(prp)->_c[1]*_rkc(prp)->_c[1];
   zMatElemNC(h,1,0) += m22->e[2][1]*_rkc(prp)->_c[1] - m22->e[0][1]*_rkc(prp)->_s[1];

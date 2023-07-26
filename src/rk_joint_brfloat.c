@@ -234,7 +234,7 @@ static void _rkJointBrFloatMotorDrivingTrq(void *prp, double *val){ zVec6DZero( 
 /* ABI for breakable joints */
 static void _rkJointBrFloatABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih){
   int i, j;
-  _rkJointBrFloatMotorInertia( prp, zMatBuf(h) );
+  _rkJointBrFloatMotorInertia( prp, zMatBufNC(h) );
   for( i=0; i<3; i++ )
     for( j=0; j<3; j++ ){
       zMatElemNC(h,i,  j)   += m->e[0][0].e[j][i];

@@ -204,7 +204,7 @@ static void _rkJointRevolMotorDrivingTrq(void *prp, double *val){
 /* ABI */
 static void _rkJointRevolABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih)
 {
-  _rkJointRevolMotorInertia( prp, zMatBuf(h) );
+  _rkJointRevolMotorInertia( prp, zMatBufNC(h) );
   zMatElemNC(h,0,0) += m->e[1][1].e[2][2];
   if( !zIsTiny( zMatElemNC(h,0,0) ) )
     zMatElemNC(ih,0,0) = 1.0 / zMatElemNC(h,0,0);

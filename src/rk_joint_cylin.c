@@ -219,7 +219,7 @@ static void _rkJointCylinMotorDrivingTrq(void *prp, double *val){
 
 /* ABI */
 static void _rkJointCylinABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih){
-  _rkJointCylinMotorInertia( prp, zMatBuf(h) );
+  _rkJointCylinMotorInertia( prp, zMatBufNC(h) );
   zMatElemNC(h,0,0) += m->e[0][0].e[2][2];
   zMatElemNC(h,1,0) += m->e[0][1].e[2][2];
   zMatElemNC(h,0,1) += m->e[1][0].e[2][2];
