@@ -25,11 +25,11 @@ __BEGIN_DECLS
      rkChainCreateIK( &chain );
 
  2. Register cooperating joints by
-     rkChainRegIKJoint( &chain, id, weight );
+     rkChainRegIKJoint( &chain, name, weight );
      ...
-     \a id : identifier of a link which the joint is associated with.
+     \a name : name of a link which the joint is associated with.
     rkChainRegIKJoint() is also available for changing the weight
-    on the joint displacement. rkChainRegIKJoint( &ik, id, weight2 )
+    on the joint displacement. rkChainRegIKJoint( &ik, name, weight2 )
     changes the weight from \a weight to \a weight2.
 
  3. Register constraint cell of inverse kinematics, using
@@ -63,8 +63,10 @@ __BEGIN_DECLS
      \a tol : tolerance of error
      \a iter : the maximum number of iteration (if 0, Z_MAX_ITER_NUM is applied).
 
- 9. Destroy the inverse kinematics solver when terminating the program by
+ 9. Destroy the inverse kinematics solver if necessary after the computation by
      rkChainDestroyIK( &chain );
+    Note that rkChainDestroyIK() is internally called by rkChainDestroy(). So,
+    it is not necessary to call it explicitly in many cases.
 
  * ***********************************************************/
 

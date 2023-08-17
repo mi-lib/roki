@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
   rkChain chain;
   zSeq seq;
-  zSeqListCell *cp;
+  zSeqCell *cp;
 
   if( argc < 3 ) usage( argv[0] );
   rkChainReadZTK( &chain, argv[1] );

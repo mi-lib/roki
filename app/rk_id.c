@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 {
   int i = 0;
   double t = 0;
-  zSeqListCell *cp;
+  zSeqCell *cp;
   zVec trq;
 
   if( !rk_idCommandArgs( argc, argv+1 ) ) return 1;

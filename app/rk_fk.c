@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 {
   int i = 0;
   double t = 0;
-  zSeqListCell *cp;
+  zSeqCell *cp;
   FILE *fp;
 
   if( !( fp = rk_fkCommandArgs( argc, argv+1 ) ) ) return 1;

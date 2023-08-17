@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
   rkChain chain;
   zSeq seq;
-  zSeqListCell *cp;
+  zSeqCell *cp;
   zVec conf;
   FILE *fp;
 
@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     rkChainGetConf( &chain, conf );
     fprintf( fp, "%g ", cp->data.dt );
     zVecFPrint( fp, conf );
-    zSeqListCellFree( cp );
+    zSeqCellFree( cp );
   }
   if( fp != stdout ) fclose( fp );
   zVecFree( conf );
