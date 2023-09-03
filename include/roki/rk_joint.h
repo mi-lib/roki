@@ -31,6 +31,7 @@ typedef struct{
   byte size; /* number of joint components */
   void (*_init)(void*);
   void *(*_alloc)(void);
+  void (*_copyprp)(void*,void*);
 
   /* joint value manipulation function */
   void (*_limdis)(void*,double*,double*); /* limit displacements */
@@ -124,6 +125,7 @@ __ROKI_EXPORT void rkJointDestroy(rkJoint *j);
 
 __ROKI_EXPORT rkJoint *rkJointClone(rkJoint *org, rkJoint *cln);
 __ROKI_EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
+__ROKI_EXPORT rkJoint *rkJointCopyPrp(rkJoint *src, rkJoint *dst);
 
 /*! \brief set and get joint status.
  *

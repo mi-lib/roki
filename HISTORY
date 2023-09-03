@@ -1,3 +1,4 @@
+2023. 9. 3. Added rkJointCopyPrp and joint_clone_test, and modified rkJointClone. [rk_join, test]
 2023. 8.18. Reflected renamed zSeqCell. [app]
 2023. 7.26. Corrected right_sole of example/model/mighty.ztk (thanks to Naoki Wakisaka). [example]
 2023. 7.26. Debugged _rkJoint*ABIAxisInertia (thanks to Kenta Imanishi). [rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher, rk_joint_float, rk_joint_brfloat]

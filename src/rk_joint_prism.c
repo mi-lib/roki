@@ -16,6 +16,15 @@ static void _rkJointPrismInit(void *prp){
 
 static void *_rkJointPrismAlloc(void){ return zAlloc( rkJointPrismPrp, 1 ); }
 
+static void _rkJointPrismCopyPrp(void *prp1, void *prp2){
+  _rkc(prp2)->min = _rkc(prp1)->min;
+  _rkc(prp2)->max = _rkc(prp1)->max;
+  _rkc(prp2)->stiffness = _rkc(prp1)->stiffness;
+  _rkc(prp2)->viscosity = _rkc(prp1)->viscosity;
+  _rkc(prp2)->coulomb = _rkc(prp1)->coulomb;
+  _rkc(prp2)->sf = _rkc(prp1)->sf;
+}
+
 /* limit joint displacement */
 static void _rkJointPrismLimDis(void *prp, double *testval, double *limval){
   *limval = zLimit( *testval, _rkc(prp)->min, _rkc(prp)->max );
@@ -340,6 +349,7 @@ rkJointCom rk_joint_prism = {
   1,
   _rkJointPrismInit,
   _rkJointPrismAlloc,
+  _rkJointPrismCopyPrp,
   _rkJointPrismLimDis,
   _rkJointPrismSetDis,
   _rkJointPrismSetMin,

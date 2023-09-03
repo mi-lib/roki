@@ -65,6 +65,7 @@ rkJoint *rkJointClone(rkJoint *org, rkJoint *cln)
 
   if( !rkJointAssign( cln, org->com ) ) return NULL;
   rkJointCopyState( org, cln );
+  rkJointCopyPrp( org, cln );
   if( ( morg = rkJointGetMotor( org ) ) && ( mcln = rkJointGetMotor( cln ) ) )
     rkMotorClone( morg, mcln );
   return cln;
@@ -79,6 +80,15 @@ rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst)
   rkJointGetVel( src, val ); rkJointSetVel( dst, val );
   rkJointGetAcc( src, val ); rkJointSetAcc( dst, val );
   rkJointGetTrq( src, val ); rkJointSetTrq( dst, val );
+  return dst;
+}
+
+/* copy joint propety */
+rkJoint *rkJointCopyPrp(rkJoint *src, rkJoint *dst)
+{
+  if( strcmp( rkJointTypeStr(src), rkJointTypeStr(dst) ) != 0 )
+    return NULL;
+  src->com->_copyprp( src->prp, dst->prp );
   return dst;
 }
 

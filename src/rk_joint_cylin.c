@@ -18,6 +18,21 @@ static void _rkJointCylinInit(void *prp){
 
 static void *_rkJointCylinAlloc(void){ return zAlloc( rkJointCylinPrp, 1 ); }
 
+static void _rkJointCylinCopyPrp(void *prp1, void *prp2){
+  _rkc(prp2)->min[0] = _rkc(prp1)->min[0];
+  _rkc(prp2)->min[1] = _rkc(prp1)->min[1];
+  _rkc(prp2)->max[0] = _rkc(prp1)->max[0];
+  _rkc(prp2)->max[1] = _rkc(prp1)->max[1];
+  _rkc(prp2)->stiffness[0] = _rkc(prp1)->stiffness[0];
+  _rkc(prp2)->stiffness[1] = _rkc(prp1)->stiffness[1];
+  _rkc(prp2)->viscosity[0] = _rkc(prp1)->viscosity[0];
+  _rkc(prp2)->viscosity[1] = _rkc(prp1)->viscosity[1];
+  _rkc(prp2)->coulomb[0] = _rkc(prp1)->coulomb[0];
+  _rkc(prp2)->coulomb[1] = _rkc(prp1)->coulomb[1];
+  _rkc(prp2)->sf[0] = _rkc(prp1)->sf[0];
+  _rkc(prp2)->sf[1] = _rkc(prp1)->sf[1];
+}
+
 /* limit joint displacement */
 static void _rkJointCylinLimDis(void *prp, double *testval, double *limval){
   double angle;
@@ -401,6 +416,7 @@ rkJointCom rk_joint_cylin = {
   2,
   _rkJointCylinInit,
   _rkJointCylinAlloc,
+  _rkJointCylinCopyPrp,
   _rkJointCylinLimDis,
   _rkJointCylinSetDis,
   _rkJointCylinSetMin,

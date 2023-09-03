@@ -18,6 +18,21 @@ static void _rkJointHookeInit(void *prp){
 
 static void *_rkJointHookeAlloc(void){ return zAlloc( rkJointHookePrp, 1 ); }
 
+static void _rkJointHookeCopyPrp(void *prp1, void *prp2){
+  _rkc(prp2)->min[0] = _rkc(prp1)->min[0];
+  _rkc(prp2)->min[1] = _rkc(prp1)->min[1];
+  _rkc(prp2)->max[0] = _rkc(prp1)->max[0];
+  _rkc(prp2)->max[1] = _rkc(prp1)->max[1];
+  _rkc(prp2)->stiffness[0] = _rkc(prp1)->stiffness[0];
+  _rkc(prp2)->stiffness[1] = _rkc(prp1)->stiffness[1];
+  _rkc(prp2)->viscosity[0] = _rkc(prp1)->viscosity[0];
+  _rkc(prp2)->viscosity[1] = _rkc(prp1)->viscosity[1];
+  _rkc(prp2)->coulomb[0] = _rkc(prp1)->coulomb[0];
+  _rkc(prp2)->coulomb[1] = _rkc(prp1)->coulomb[1];
+  _rkc(prp2)->sf[0] = _rkc(prp1)->sf[0];
+  _rkc(prp2)->sf[1] = _rkc(prp1)->sf[1];
+}
+
 /* limit joint displacement */
 static double _rkJointHookeLimDis1(void *prp, int i, double testval){
   testval = zPhaseNormalize( testval );
@@ -382,6 +397,7 @@ rkJointCom rk_joint_hooke = {
   2,
   _rkJointHookeInit,
   _rkJointHookeAlloc,
+  _rkJointHookeCopyPrp,
   _rkJointHookeLimDis,
   _rkJointHookeSetDis,
   _rkJointHookeSetMin,

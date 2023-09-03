@@ -10,6 +10,8 @@ static void _rkJointFixedInit(void *prp){}
 
 static void *_rkJointFixedAlloc(void){ return NULL; }
 
+static void _rkJoinFixedCopyPrp(void *prp1, void* prp2){}
+
 /* limit joint displacement (dummy) */
 static void _rkJointFixedLimVal(void *prp, double *testval, double *limval){}
 
@@ -99,6 +101,7 @@ rkJointCom rk_joint_fixed = {
   0,
   _rkJointFixedInit,
   _rkJointFixedAlloc,
+  _rkJoinFixedCopyPrp,
   _rkJointFixedLimVal,
   _rkJointFixedVal,
   _rkJointFixedVal,

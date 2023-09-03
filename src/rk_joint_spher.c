@@ -14,6 +14,8 @@ static void _rkJointSpherInit(void *prp){
 
 static void *_rkJointSpherAlloc(void){ return zAlloc( rkJointSpherPrp, 1 ); }
 
+static void _rkJointSpherCopyPrp(void *prp1, void *prp2){}
+
 /* limit joint displacement */
 static void _rkJointSpherLimDis(void *prp, double *testval, double *limval){
   zVec3DCopy( (zVec3D*)testval, (zVec3D*)limval );
@@ -291,6 +293,7 @@ rkJointCom rk_joint_spher = {
   3,
   _rkJointSpherInit,
   _rkJointSpherAlloc,
+  _rkJointSpherCopyPrp,
   _rkJointSpherLimDis,
   _rkJointSpherSetDis,
   _rkJointSpherSetMinMax,

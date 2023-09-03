@@ -16,6 +16,15 @@ static void _rkJointRevolInit(void *prp){
 
 static void *_rkJointRevolAlloc(void){ return zAlloc( rkJointRevolPrp, 1 ); }
 
+static void _rkJointRevolCopyPrp(void *prp1, void *prp2){
+  _rkc(prp2)->min = _rkc(prp1)->min;
+  _rkc(prp2)->max = _rkc(prp1)->max;
+  _rkc(prp2)->stiffness = _rkc(prp1)->stiffness;
+  _rkc(prp2)->viscosity = _rkc(prp1)->viscosity;
+  _rkc(prp2)->coulomb = _rkc(prp1)->coulomb;
+  _rkc(prp2)->sf = _rkc(prp1)->sf;
+}
+
 /* limit joint displacement */
 static void _rkJointRevolLimDis(void *prp, double *testval, double *limval){
   double angle;
@@ -348,6 +357,7 @@ rkJointCom rk_joint_revol = {
   1,
   _rkJointRevolInit,
   _rkJointRevolAlloc,
+  _rkJointRevolCopyPrp,
   _rkJointRevolLimDis,
   _rkJointRevolSetDis,
   _rkJointRevolSetMin,

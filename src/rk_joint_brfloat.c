@@ -21,6 +21,11 @@ static void *_rkJointBrFloatAlloc(void){
   return zAlloc( rkJointBrFloatPrp, 1 );
 }
 
+static void _rkJointBrFloatCopyPrp(void *prp1, void *prp2){
+  _rkc(prp2)->ep_f = _rkc(prp1)->ep_f;
+  _rkc(prp2)->ep_t = _rkc(prp1)->ep_t;
+}
+
 /* limit joint displacement */
 static void _rkJointBrFloatLimDis(void *prp, double *testval, double *limval){
   zVec6DCopy( (zVec6D*)testval, (zVec6D*)limval );
@@ -337,6 +342,7 @@ rkJointCom rk_joint_brfloat = {
   6,
   _rkJointBrFloatInit,
   _rkJointBrFloatAlloc,
+  _rkJointBrFloatCopyPrp,
   _rkJointBrFloatLimDis,
   _rkJointBrFloatSetDis,
   _rkJointBrFloatSetMinMax,
