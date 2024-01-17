@@ -6,92 +6,94 @@
 
 #include <roki/rk_joint.h>
 
-#define _rkc(joint) ((rkJointCylinPrp *)((rkJoint *)(joint))->prp)
+#define _rks(joint) ((rkJointCylinState *)((rkJoint *)(joint))->state)
+#define _rkp(joint) ((rkJointCylinPrp   *)((rkJoint *)(joint))->prp)
 
 static void _rkJointCylinInit(rkJoint *joint){
-  _rkc(joint)->max[0] = HUGE_VAL;
-  _rkc(joint)->min[0] =-HUGE_VAL;
-  _rkc(joint)->max[1] = HUGE_VAL;
-  _rkc(joint)->min[1] =-HUGE_VAL;
-  rkMotorAssign( &_rkc(joint)->m, &rk_motor_none );
+  _rkp(joint)->max[0] = HUGE_VAL;
+  _rkp(joint)->min[0] =-HUGE_VAL;
+  _rkp(joint)->max[1] = HUGE_VAL;
+  _rkp(joint)->min[1] =-HUGE_VAL;
+  rkMotorAssign( &_rkp(joint)->m, &rk_motor_none );
 }
 
+static void *_rkJointCylinAllocState(void){ return zAlloc( rkJointCylinState, 1 ); }
 static void *_rkJointCylinAllocPrp(void){ return zAlloc( rkJointCylinPrp, 1 ); }
 
 static void _rkJointCylinCopyPrp(rkJoint *src, rkJoint *dst){
-  _rkc(dst)->min[0] = _rkc(src)->min[0];
-  _rkc(dst)->min[1] = _rkc(src)->min[1];
-  _rkc(dst)->max[0] = _rkc(src)->max[0];
-  _rkc(dst)->max[1] = _rkc(src)->max[1];
-  _rkc(dst)->stiffness[0] = _rkc(src)->stiffness[0];
-  _rkc(dst)->stiffness[1] = _rkc(src)->stiffness[1];
-  _rkc(dst)->viscosity[0] = _rkc(src)->viscosity[0];
-  _rkc(dst)->viscosity[1] = _rkc(src)->viscosity[1];
-  _rkc(dst)->coulomb[0] = _rkc(src)->coulomb[0];
-  _rkc(dst)->coulomb[1] = _rkc(src)->coulomb[1];
-  _rkc(dst)->sf[0] = _rkc(src)->sf[0];
-  _rkc(dst)->sf[1] = _rkc(src)->sf[1];
+  _rkp(dst)->min[0] = _rkp(src)->min[0];
+  _rkp(dst)->min[1] = _rkp(src)->min[1];
+  _rkp(dst)->max[0] = _rkp(src)->max[0];
+  _rkp(dst)->max[1] = _rkp(src)->max[1];
+  _rkp(dst)->stiffness[0] = _rkp(src)->stiffness[0];
+  _rkp(dst)->stiffness[1] = _rkp(src)->stiffness[1];
+  _rkp(dst)->viscosity[0] = _rkp(src)->viscosity[0];
+  _rkp(dst)->viscosity[1] = _rkp(src)->viscosity[1];
+  _rkp(dst)->coulomb[0] = _rkp(src)->coulomb[0];
+  _rkp(dst)->coulomb[1] = _rkp(src)->coulomb[1];
+  _rkp(dst)->sf[0] = _rkp(src)->sf[0];
+  _rkp(dst)->sf[1] = _rkp(src)->sf[1];
 }
 
 /* limit joint displacement */
 static void _rkJointCylinLimDis(rkJoint *joint, double *testval, double *limval){
   double angle;
   /* 0: prismatic */
-  limval[0] = zLimit( testval[0], _rkc(joint)->min[0], _rkc(joint)->max[0] );
+  limval[0] = zLimit( testval[0], _rkp(joint)->min[0], _rkp(joint)->max[0] );
   /* 1: revolutional */
   angle = zPhaseNormalize( testval[1] );
-  limval[1] = zLimit( angle, _rkc(joint)->min[1], _rkc(joint)->max[1] );
+  limval[1] = zLimit( angle, _rkp(joint)->min[1], _rkp(joint)->max[1] );
 }
 
 /* set joint displacement */
 static void _rkJointCylinSetDis(rkJoint *joint, double *val){
-  _rkJointCylinLimDis( joint, val, _rkc(joint)->dis );
-  zSinCos( _rkc(joint)->dis[1], &_rkc(joint)->_s, &_rkc(joint)->_c );
+  _rkJointCylinLimDis( joint, val, _rks(joint)->dis );
+  zSinCos( _rks(joint)->dis[1], &_rks(joint)->_s, &_rks(joint)->_c );
 }
 
 static void _rkJointCylinSetMin(rkJoint *joint, double *val){
-  memcpy( _rkc(joint)->min, val, sizeof(double)*2 );
+  memcpy( _rkp(joint)->min, val, sizeof(double)*2 );
 }
 
 static void _rkJointCylinSetMax(rkJoint *joint, double *val){
-  memcpy( _rkc(joint)->max, val, sizeof(double)*2 );
+  memcpy( _rkp(joint)->max, val, sizeof(double)*2 );
 }
 
 static void _rkJointCylinSetVel(rkJoint *joint, double *val){
-  memcpy( _rkc(joint)->vel, val, sizeof(double)*2 );
+  memcpy( _rks(joint)->vel, val, sizeof(double)*2 );
 }
 
 static void _rkJointCylinSetAcc(rkJoint *joint, double *val){
-  memcpy( _rkc(joint)->acc, val, sizeof(double)*2 );
+  memcpy( _rks(joint)->acc, val, sizeof(double)*2 );
 }
 
 static void _rkJointCylinSetTrq(rkJoint *joint, double *val){
-  memcpy( _rkc(joint)->trq, val, sizeof(double)*2 );
+  memcpy( _rks(joint)->trq, val, sizeof(double)*2 );
 }
 
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointCylinGetDis(rkJoint *joint, double *val){
-  memcpy( val, _rkc(joint)->dis, sizeof(double)*2 );
+  memcpy( val, _rks(joint)->dis, sizeof(double)*2 );
 }
 
 static void _rkJointCylinGetMin(rkJoint *joint, double *val){
-  memcpy( val, _rkc(joint)->min, sizeof(double)*2 );
+  memcpy( val, _rkp(joint)->min, sizeof(double)*2 );
 }
 
 static void _rkJointCylinGetMax(rkJoint *joint, double *val){
-  memcpy( val, _rkc(joint)->max, sizeof(double)*2 );
+  memcpy( val, _rkp(joint)->max, sizeof(double)*2 );
 }
 
 static void _rkJointCylinGetVel(rkJoint *joint, double *val){
-  memcpy( val, _rkc(joint)->vel, sizeof(double)*2 );
+  memcpy( val, _rks(joint)->vel, sizeof(double)*2 );
 }
 
 static void _rkJointCylinGetAcc(rkJoint *joint, double *val){
-  memcpy( val, _rkc(joint)->acc, sizeof(double)*2 );
+  memcpy( val, _rks(joint)->acc, sizeof(double)*2 );
 }
 
 static void _rkJointCylinGetTrq(rkJoint *joint, double *val){
-  memcpy( val, _rkc(joint)->trq, sizeof(double)*2 );
+  memcpy( val, _rks(joint)->trq, sizeof(double)*2 );
 }
 
 static void _rkJointCylinCatDis(rkJoint *joint, double *dis, double k, double *val){
@@ -111,49 +113,49 @@ static void _rkJointCylinSetDisCNT(rkJoint *joint, double *val, double dt){
   _rkJointCylinGetDis( joint, olddis );
   _rkJointCylinGetVel( joint, oldvel );
   _rkJointCylinSetDis( joint, val );
-  _rkc(joint)->vel[0] = ( val[0] - olddis[0] ) / dt;
-  _rkc(joint)->vel[1] = ( val[1] - olddis[1] ) / dt;
-  _rkc(joint)->acc[0] = ( _rkc(joint)->vel[0] - oldvel[0] ) / dt;
-  _rkc(joint)->acc[1] = ( _rkc(joint)->vel[1] - oldvel[1] ) / dt;
+  _rks(joint)->vel[0] = ( val[0] - olddis[0] ) / dt;
+  _rks(joint)->vel[1] = ( val[1] - olddis[1] ) / dt;
+  _rks(joint)->acc[0] = ( _rks(joint)->vel[0] - oldvel[0] ) / dt;
+  _rks(joint)->acc[1] = ( _rks(joint)->vel[1] - oldvel[1] ) / dt;
 }
 
 /* joint frame transformation */
 static zFrame3D *_rkJointCylinXform(rkJoint *joint, zFrame3D *fo, zFrame3D *f){
   /* rotation */
-  zVec3DMul( &zFrame3DAtt(fo)->v[0], _rkc(joint)->_c, &zFrame3DAtt(f)->v[0] );
-  zVec3DCatDRC( &zFrame3DAtt(f)->v[0], _rkc(joint)->_s, &zFrame3DAtt(fo)->v[1] );
-  zVec3DMul( &zFrame3DAtt(fo)->v[0],-_rkc(joint)->_s, &zFrame3DAtt(f)->v[1] );
-  zVec3DCatDRC( &zFrame3DAtt(f)->v[1], _rkc(joint)->_c, &zFrame3DAtt(fo)->v[1] );
+  zVec3DMul( &zFrame3DAtt(fo)->v[0], _rks(joint)->_c, &zFrame3DAtt(f)->v[0] );
+  zVec3DCatDRC( &zFrame3DAtt(f)->v[0], _rks(joint)->_s, &zFrame3DAtt(fo)->v[1] );
+  zVec3DMul( &zFrame3DAtt(fo)->v[0],-_rks(joint)->_s, &zFrame3DAtt(f)->v[1] );
+  zVec3DCatDRC( &zFrame3DAtt(f)->v[1], _rks(joint)->_c, &zFrame3DAtt(fo)->v[1] );
   zVec3DCopy( &zFrame3DAtt(fo)->v[2], &zFrame3DAtt(f)->v[2] );
   /* slide */
   zVec3DCat( zFrame3DPos(fo),
-    _rkc(joint)->dis[0], &zFrame3DAtt(fo)->v[2], zFrame3DPos(f) );
+    _rks(joint)->dis[0], &zFrame3DAtt(fo)->v[2], zFrame3DPos(f) );
   return f;
 }
 
 /* joint velocity transformation */
 static void _rkJointCylinIncVel(rkJoint *joint, zVec6D *vel){
-  vel->e[zZ ] += _rkc(joint)->vel[0];
-  vel->e[zZA] += _rkc(joint)->vel[1];
+  vel->e[zZ ] += _rks(joint)->vel[0];
+  vel->e[zZA] += _rks(joint)->vel[1];
 }
 
 static void _rkJointCylinIncAccOnVel(rkJoint *joint, zVec3D *w, zVec6D *acc){
-  acc->e[zX ] += 2 * _rkc(joint)->vel[0] * w->e[zY];
-  acc->e[zY ] -= 2 * _rkc(joint)->vel[0] * w->e[zX];
-  acc->e[zXA] += _rkc(joint)->vel[1] * w->e[zY];
-  acc->e[zYA] -= _rkc(joint)->vel[1] * w->e[zX];
+  acc->e[zX ] += 2 * _rks(joint)->vel[0] * w->e[zY];
+  acc->e[zY ] -= 2 * _rks(joint)->vel[0] * w->e[zX];
+  acc->e[zXA] += _rks(joint)->vel[1] * w->e[zY];
+  acc->e[zYA] -= _rks(joint)->vel[1] * w->e[zX];
 }
 
 /* joint acceleration transformation */
 static void _rkJointCylinIncAcc(rkJoint *joint, zVec6D *acc){
-  acc->e[zZ ] += _rkc(joint)->acc[0];
-  acc->e[zZA] += _rkc(joint)->acc[1];
+  acc->e[zZ ] += _rks(joint)->acc[0];
+  acc->e[zZA] += _rks(joint)->acc[1];
 }
 
 /* joint torque transformation */
 static void _rkJointCylinCalcTrq(rkJoint *joint, zVec6D *f){
-  _rkc(joint)->trq[0] = f->e[zZ];
-  _rkc(joint)->trq[1] = f->e[zZA];
+  _rks(joint)->trq[0] = f->e[zZ];
+  _rks(joint)->trq[1] = f->e[zZA];
 }
 
 /* inverse computation of joint torsion and displacement */
@@ -184,54 +186,54 @@ static void _rkJointCylinCRBXform(rkJoint *joint, zFrame3D *f, zVec6D si[]){
 }
 
 static void _rkJointCylinSetFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp){
-  fp[0] = _rkc(joint)->_fp[0];
-  fp[1] = _rkc(joint)->_fp[1];
+  fp[0] = _rks(joint)->_fp[0];
+  fp[1] = _rks(joint)->_fp[1];
 }
 
 static void _rkJointCylinGetFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp){
-  _rkc(joint)->_fp[0] = fp[0];
-  _rkc(joint)->_fp[1] = fp[1];
+  _rks(joint)->_fp[0] = fp[0];
+  _rks(joint)->_fp[1] = fp[1];
 }
 
 static void _rkJointCylinSetFriction(rkJoint *joint, double *val)
 {
-  _rkc(joint)->tf[0] = val[0];
-  _rkc(joint)->tf[1] = val[1];
+  _rkp(joint)->tf[0] = val[0];
+  _rkp(joint)->tf[1] = val[1];
 }
 static void _rkJointCylinGetFriction(rkJoint *joint, double *val){
-  val[0] = _rkc(joint)->tf[0];
-  val[1] = _rkc(joint)->tf[1];
+  val[0] = _rkp(joint)->tf[0];
+  val[1] = _rkp(joint)->tf[1];
 }
 static void _rkJointCylinGetSFriction(rkJoint *joint, double *val){
-  val[0] = _rkc(joint)->sf[0];
-  val[1] = _rkc(joint)->sf[1];
+  val[0] = _rkp(joint)->sf[0];
+  val[1] = _rkp(joint)->sf[1];
 }
 static void _rkJointCylinGetKFriction(rkJoint *joint, double *val){
-  val[0] = _rkJointRestTrq( _rkc(joint)->stiffness[0], _rkc(joint)->viscosity[0], _rkc(joint)->coulomb[0], _rkc(joint)->dis[0], _rkc(joint)->vel[0] );
-  val[1] = _rkJointRestTrq( _rkc(joint)->stiffness[1], _rkc(joint)->viscosity[1], _rkc(joint)->coulomb[1], _rkc(joint)->dis[1], _rkc(joint)->vel[1] );
+  val[0] = _rkJointRestTrq( _rkp(joint)->stiffness[0], _rkp(joint)->viscosity[0], _rkp(joint)->coulomb[0], _rks(joint)->dis[0], _rks(joint)->vel[0] );
+  val[1] = _rkJointRestTrq( _rkp(joint)->stiffness[1], _rkp(joint)->viscosity[1], _rkp(joint)->coulomb[1], _rks(joint)->dis[1], _rks(joint)->vel[1] );
 }
 
 /* motor */
 
-static rkMotor *_rkJointCylinGetMotor(rkJoint *joint){ return &_rkc(joint)->m; }
+static rkMotor *_rkJointCylinGetMotor(rkJoint *joint){ return &_rkp(joint)->m; }
 static void _rkJointCylinMotorSetInput(rkJoint *joint, double *val){
-  rkMotorSetInput( &_rkc(joint)->m, val );
+  rkMotorSetInput( &_rkp(joint)->m, val );
 }
 static void _rkJointCylinMotorInertia(rkJoint *joint, double *val){
   zRawVecZero( val, 4 );
-  rkMotorInertia( &_rkc(joint)->m, val );
+  rkMotorInertia( &_rkp(joint)->m, val );
 }
 static void _rkJointCylinMotorInputTrq(rkJoint *joint, double *val){
   zRawVecZero( val, 2 );
-  rkMotorInputTrq( &_rkc(joint)->m, val );
+  rkMotorInputTrq( &_rkp(joint)->m, val );
 }
 static void _rkJointCylinMotorResistance(rkJoint *joint, double *val){
   zRawVecZero( val, 2 );
-  rkMotorRegistance( &_rkc(joint)->m, _rkc(joint)->dis, _rkc(joint)->vel, val );
+  rkMotorRegistance( &_rkp(joint)->m, _rks(joint)->dis, _rks(joint)->vel, val );
 }
 static void _rkJointCylinMotorDrivingTrq(rkJoint *joint, double *val){
   zRawVecZero( val, 2 );
-  rkMotorDrivingTrq( &_rkc(joint)->m, _rkc(joint)->dis, _rkc(joint)->vel, _rkc(joint)->acc, val );
+  rkMotorDrivingTrq( &_rkp(joint)->m, _rks(joint)->dis, _rks(joint)->vel, _rks(joint)->acc, val );
 }
 
 /* ABI */
@@ -276,8 +278,8 @@ static void _rkJointCylinABIAddBias(rkJoint *joint, zMat6D *m, zVec6D *b, zFrame
 
   zMat6DCol( m, zZ,  &v13 );
   zMat6DCol( m, zZA, &v16 );
-  zVec6DCat(b,        (_rkc(joint)->_u[0] - b->e[zZ])*zMatElemNC(h,0,0) + (_rkc(joint)->_u[1] - b->e[zZA])*zMatElemNC(h,0,1), &v13, &tmpv );
-  zVec6DCatDRC(&tmpv, (_rkc(joint)->_u[0] - b->e[zZ])*zMatElemNC(h,1,0) + (_rkc(joint)->_u[1] - b->e[zZA])*zMatElemNC(h,1,1), &v16 );
+  zVec6DCat(b,        (_rks(joint)->_u[0] - b->e[zZ])*zMatElemNC(h,0,0) + (_rks(joint)->_u[1] - b->e[zZA])*zMatElemNC(h,0,1), &v13, &tmpv );
+  zVec6DCatDRC(&tmpv, (_rks(joint)->_u[0] - b->e[zZ])*zMatElemNC(h,1,0) + (_rks(joint)->_u[1] - b->e[zZA])*zMatElemNC(h,1,1), &v16 );
 
   zMulMat3DVec6D( zFrame3DAtt(f), &tmpv, &v13 );
   zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
@@ -287,12 +289,12 @@ static void _rkJointCylinABIAddBias(rkJoint *joint, zMat6D *m, zVec6D *b, zFrame
 
 static void _rkJointCylinABIDrivingTorque(rkJoint *joint){
   double val[2];
-  _rkJointCylinMotorInputTrq( joint, _rkc(joint)->_u );
+  _rkJointCylinMotorInputTrq( joint, _rks(joint)->_u );
   _rkJointCylinMotorResistance( joint, val );
-  _rkc(joint)->_u[0] -= val[0];
-  _rkc(joint)->_u[1] -= val[1];
-  _rkc(joint)->_u[0] += _rkc(joint)->tf[0];
-  _rkc(joint)->_u[1] += _rkc(joint)->tf[1];
+  _rks(joint)->_u[0] -= val[0];
+  _rks(joint)->_u[1] -= val[1];
+  _rks(joint)->_u[0] += _rkp(joint)->tf[0];
+  _rks(joint)->_u[1] += _rkp(joint)->tf[1];
 }
 
 static void _rkJointCylinABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
@@ -301,15 +303,15 @@ static void _rkJointCylinABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 
   zMat6DRow( m, zZ, &v31 );
   zMat6DRow( m, zZA, &v61 );
-  u[0] = _rkc(joint)->_u[0] - zVec6DInnerProd( &v31, jac ) + b->e[zZ];
-  u[1] = _rkc(joint)->_u[1] - zVec6DInnerProd( &v61, jac ) + b->e[zZA];
+  u[0] = _rks(joint)->_u[0] - zVec6DInnerProd( &v31, jac ) + b->e[zZ];
+  u[1] = _rks(joint)->_u[1] - zVec6DInnerProd( &v61, jac ) + b->e[zZA];
   /* q */
-  _rkc(joint)->acc[0] = u[0]*zMatElemNC(h,0,0) + u[1]*zMatElemNC(h,0,1);
-  _rkc(joint)->acc[1] = u[0]*zMatElemNC(h,1,0) + u[1]*zMatElemNC(h,1,1);
+  _rks(joint)->acc[0] = u[0]*zMatElemNC(h,0,0) + u[1]*zMatElemNC(h,0,1);
+  _rks(joint)->acc[1] = u[0]*zMatElemNC(h,1,0) + u[1]*zMatElemNC(h,1,1);
   /* acc */
   zVec6DCopy( jac, acc );
-  acc->e[zZ ] += _rkc(joint)->acc[0];
-  acc->e[zZA] += _rkc(joint)->acc[1];
+  acc->e[zZ ] += _rks(joint)->acc[0];
+  acc->e[zZA] += _rks(joint)->acc[1];
 }
 
 /* ZTK */
@@ -322,75 +324,75 @@ static void *_rkJointCylinDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return joint;
 }
 static void *_rkJointCylinMinFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  _rkc(joint)->min[0] = ZTKDouble(ztk);
-  _rkc(joint)->min[1] = zDeg2Rad(ZTKDouble(ztk));
+  _rkp(joint)->min[0] = ZTKDouble(ztk);
+  _rkp(joint)->min[1] = zDeg2Rad(ZTKDouble(ztk));
   return joint;
 }
 static void *_rkJointCylinMaxFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  _rkc(joint)->max[0] = ZTKDouble(ztk);
-  _rkc(joint)->max[1] = zDeg2Rad(ZTKDouble(ztk));
+  _rkp(joint)->max[0] = ZTKDouble(ztk);
+  _rkp(joint)->max[1] = zDeg2Rad(ZTKDouble(ztk));
   return joint;
 }
 static void *_rkJointCylinStiffnessFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  _rkc(joint)->stiffness[0] = ZTKDouble(ztk);
-  _rkc(joint)->stiffness[1] = ZTKDouble(ztk);
+  _rkp(joint)->stiffness[0] = ZTKDouble(ztk);
+  _rkp(joint)->stiffness[1] = ZTKDouble(ztk);
   return joint;
 }
 static void *_rkJointCylinViscosityFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  _rkc(joint)->viscosity[0] = ZTKDouble(ztk);
-  _rkc(joint)->viscosity[1] = ZTKDouble(ztk);
+  _rkp(joint)->viscosity[0] = ZTKDouble(ztk);
+  _rkp(joint)->viscosity[1] = ZTKDouble(ztk);
   return joint;
 }
 static void *_rkJointCylinCoulombFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  _rkc(joint)->coulomb[0] = ZTKDouble(ztk);
-  _rkc(joint)->coulomb[1] = ZTKDouble(ztk);
+  _rkp(joint)->coulomb[0] = ZTKDouble(ztk);
+  _rkp(joint)->coulomb[1] = ZTKDouble(ztk);
   return joint;
 }
 static void *_rkJointCylinStaticFrictionFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  _rkc(joint)->sf[0] = ZTKDouble(ztk);
-  _rkc(joint)->sf[1] = ZTKDouble(ztk);
+  _rkp(joint)->sf[0] = ZTKDouble(ztk);
+  _rkp(joint)->sf[1] = ZTKDouble(ztk);
   return joint;
 }
 static void *_rkJointCylinMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   rkMotor *mp;
   if( !( mp = rkMotorArrayFind( (rkMotorArray *)arg, ZTKVal(ztk) ) ) ) return NULL;
-  return rkMotorClone( mp, &_rkc(joint)->m ) ? joint : NULL;
+  return rkMotorClone( mp, &_rkp(joint)->m ) ? joint : NULL;
 }
 
 static void _rkJointCylinDisFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n",
-    _rkc(joint)->dis[0],
-    zRad2Deg(_rkc(joint)->dis[1]) );
+    _rks(joint)->dis[0],
+    zRad2Deg(_rks(joint)->dis[1]) );
 }
 static void _rkJointCylinMinFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n",
-    _rkc(joint)->min[0],
-    zRad2Deg(_rkc(joint)->min[1]) );
+    _rkp(joint)->min[0],
+    zRad2Deg(_rkp(joint)->min[1]) );
 }
 static void _rkJointCylinMaxFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n",
-    _rkc(joint)->max[0],
-    zRad2Deg(_rkc(joint)->max[1]) );
+    _rkp(joint)->max[0],
+    zRad2Deg(_rkp(joint)->max[1]) );
 }
 static void _rkJointCylinStiffnessFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n",
-    _rkc(joint)->stiffness[0],
-    _rkc(joint)->stiffness[1] );
+    _rkp(joint)->stiffness[0],
+    _rkp(joint)->stiffness[1] );
 }
 static void _rkJointCylinViscosityFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n",
-    _rkc(joint)->viscosity[0],
-    _rkc(joint)->viscosity[1] );
+    _rkp(joint)->viscosity[0],
+    _rkp(joint)->viscosity[1] );
 }
 static void _rkJointCylinCoulombFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n",
-    _rkc(joint)->coulomb[0],
-    _rkc(joint)->coulomb[1] );
+    _rkp(joint)->coulomb[0],
+    _rkp(joint)->coulomb[1] );
 }
 static void _rkJointCylinStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n",
-    _rkc(joint)->sf[0],
-    _rkc(joint)->sf[1] );
+    _rkp(joint)->sf[0],
+    _rkp(joint)->sf[1] );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
@@ -412,14 +414,15 @@ static rkJoint *_rkJointCylinFromZTK(rkJoint *joint, rkMotorArray *motorarray, Z
 static void _rkJointCylinFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_cylin );
-  if( rkMotorIsAssigned( &_rkc(joint)->m ) )
-    fprintf( fp, "motor: %s\n", zName(&_rkc(joint)->m) );
+  if( rkMotorIsAssigned( &_rkp(joint)->m ) )
+    fprintf( fp, "motor: %s\n", zName(&_rkp(joint)->m) );
 }
 
 rkJointCom rk_joint_cylin = {
   "cylindrical",
   2,
   _rkJointCylinInit,
+  _rkJointCylinAllocState,
   _rkJointCylinAllocPrp,
   _rkJointCylinCopyPrp,
   _rkJointCylinLimDis,
@@ -477,4 +480,5 @@ rkJointCom rk_joint_cylin = {
   _rkJointCylinFPrintZTK,
 };
 
-#undef _rkc
+#undef _rks
+#undef _rkp

@@ -22,6 +22,7 @@ struct _rkJointCom;
 typedef struct _rkJointCom rkJointCom;
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJoint ){
+  void *state; /* joint state */
   void *prp;   /* joint properties */
  /* void *state;*/ /* joint state */
   zVec6D wrench; /* joint wrench */
@@ -38,6 +39,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   const char *typestr; /*!< \brief a string to identify the type of joint */
   byte size; /* number of joint components */
   void (*_init)(rkJoint*);
+  void *(*_alloc_state)(void);
   void *(*_alloc_prp)(void);
   void (*_copy_prp)(rkJoint*,rkJoint*);
 

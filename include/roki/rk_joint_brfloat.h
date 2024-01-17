@@ -11,17 +11,16 @@
 
 __BEGIN_DECLS
 
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointBrFloatState ){
+  zVec6D dis; /* joint displacement (translational vector + angle-axis vector) */
+  zVec6D vel; /* velocity (translational vector + angular vector) */
+  zVec6D acc; /* acceleration (translational vector + angular vector) */
+  zVec6D trq; /* torque (translational vector + angular vector) */
+  /* internal matrix */
+  zMat3D _att;
+};
+
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointBrFloatPrp ){
-  /* joint displacement
-     0-2: translational displacement
-     3-5: rotational displacement by angle-axis vector */
-  /* velocity, acceleration and torque
-     0-2: translational vector
-     3-5: rotational vector */
-  zVec6D dis, vel, acc, trq;
-
-  zMat3D _att; /* internal matrix */
-
   double ep_f, ep_t; /* threshold to break joint */
 };
 

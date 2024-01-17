@@ -11,25 +11,26 @@
 
 __BEGIN_DECLS
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointPrismPrp ){
-  /* joint displacement, velocity, acceleration and torque */
-  double dis, vel, acc, trq;
-  double min, max; /* limiter */
-  /* joint stiffness, viscosity and coulomb friction */
-  double stiffness;
-  double viscosity;
-  double coulomb;
-  /* friction */
-  double tf;
-  /* static friction */
-  double sf;
-
-  /* motor */
-  rkMotor m;
-
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointPrismState ){
+  double dis; /* joint displacement */
+  double vel; /* joint velocity */
+  double acc; /* joint acceleration */
+  double trq; /* joint torque */
   /* for forward dynamics */
   rkJointFrictionPivot _fp;
   double _u;
+};
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointPrismPrp ){
+  double min, max;  /* joint displacement limiter */
+  double stiffness; /* joint stiffness */
+  double viscosity; /* joint viscosity */
+  double coulomb;   /* joint coulomb friction */
+  double tf;  /* friction */
+  double sf;  /* static friction */
+
+  /* motor */
+  rkMotor m;
 };
 
 __ROKI_EXPORT rkJointCom rk_joint_prism;

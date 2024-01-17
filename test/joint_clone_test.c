@@ -1,15 +1,15 @@
 #include <roki/rk_joint.h>
 
-void assert_fixed_set_prp(rkJoint *joint)
+void assert_fixed_set(rkJoint *joint)
 {
 }
 
-bool assert_fixed_comp_prp(rkJoint *joint1, rkJoint *joint2)
+bool assert_fixed_comp(rkJoint *joint1, rkJoint *joint2)
 {
   return true;
 }
 
-void assert_revol_set_prp(rkJoint *joint)
+void assert_revol_set(rkJoint *joint)
 {
   rkJointRevolPrp *prp;
   double dis[1];
@@ -26,14 +26,17 @@ void assert_revol_set_prp(rkJoint *joint)
   rkJointSetDis( joint, dis );
 }
 
-bool assert_revol_comp_prp(rkJoint *joint1, rkJoint *joint2)
+bool assert_revol_comp(rkJoint *joint1, rkJoint *joint2)
 {
+  rkJointRevolState *stat1, *stat2;
   rkJointRevolPrp *prp1, *prp2;
 
+  stat1 = (rkJointRevolState *)joint1->state;
+  stat2 = (rkJointRevolState *)joint2->state;
   prp1 = (rkJointRevolPrp *)joint1->prp;
   prp2 = (rkJointRevolPrp *)joint2->prp;
   return 
-    zIsEqual( prp1->dis, prp2->dis, zTOL ) &&
+    zIsEqual( stat1->dis, stat2->dis, zTOL ) &&
     zIsEqual( prp1->min, prp2->min, zTOL ) &&
     zIsEqual( prp1->max, prp2->max, zTOL ) &&
     zIsEqual( prp1->stiffness, prp2->stiffness, zTOL ) &&
@@ -42,7 +45,7 @@ bool assert_revol_comp_prp(rkJoint *joint1, rkJoint *joint2)
     zIsEqual( prp1->sf, prp2->sf, zTOL );
 }
 
-void assert_prism_set_prp(rkJoint *joint)
+void assert_prism_set(rkJoint *joint)
 {
   rkJointPrismPrp *prp;
   double dis[1];
@@ -59,14 +62,17 @@ void assert_prism_set_prp(rkJoint *joint)
   rkJointSetDis( joint, dis );
 }
 
-bool assert_prism_comp_prp(rkJoint *joint1, rkJoint *joint2)
+bool assert_prism_comp(rkJoint *joint1, rkJoint *joint2)
 {
+  rkJointPrismState *stat1, *stat2;
   rkJointPrismPrp *prp1, *prp2;
 
+  stat1 = (rkJointPrismState *)joint1->state;
+  stat2 = (rkJointPrismState *)joint2->state;
   prp1 = (rkJointPrismPrp *)joint1->prp;
   prp2 = (rkJointPrismPrp *)joint2->prp;
   return 
-    zIsEqual( prp1->dis, prp2->dis, zTOL ) &&
+    zIsEqual( stat1->dis, stat2->dis, zTOL ) &&
     zIsEqual( prp1->min, prp2->min, zTOL ) &&
     zIsEqual( prp1->max, prp2->max, zTOL ) &&
     zIsEqual( prp1->stiffness, prp2->stiffness, zTOL ) &&
@@ -75,7 +81,7 @@ bool assert_prism_comp_prp(rkJoint *joint1, rkJoint *joint2)
     zIsEqual( prp1->sf, prp2->sf, zTOL );
 }
 
-void assert_cylin_set_prp(rkJoint *joint)
+void assert_cylin_set(rkJoint *joint)
 {
   rkJointCylinPrp *prp;
   double dis[2];
@@ -101,21 +107,24 @@ void assert_cylin_set_prp(rkJoint *joint)
   rkJointSetDis( joint, dis );
 }
 
-bool assert_cylin_comp_prp(rkJoint *joint1, rkJoint *joint2)
+bool assert_cylin_comp(rkJoint *joint1, rkJoint *joint2)
 {
+  rkJointCylinState *stat1, *stat2;
   rkJointCylinPrp *prp1, *prp2;
 
+  stat1 = (rkJointCylinState *)joint1->state;
+  stat2 = (rkJointCylinState *)joint2->state;
   prp1 = (rkJointCylinPrp *)joint1->prp;
   prp2 = (rkJointCylinPrp *)joint2->prp;
   return
-    zIsEqual( prp1->dis[0], prp2->dis[0], zTOL ) &&
+    zIsEqual( stat1->dis[0], stat2->dis[0], zTOL ) &&
     zIsEqual( prp1->min[0], prp2->min[0], zTOL ) &&
     zIsEqual( prp1->max[0], prp2->max[0], zTOL ) &&
     zIsEqual( prp1->stiffness[0], prp2->stiffness[0], zTOL ) &&
     zIsEqual( prp1->viscosity[0], prp2->viscosity[0], zTOL ) &&
     zIsEqual( prp1->coulomb[0], prp2->coulomb[0], zTOL ) &&
     zIsEqual( prp1->sf[0], prp2->sf[0], zTOL ) &&
-    zIsEqual( prp1->dis[1], prp2->dis[1], zTOL ) &&
+    zIsEqual( stat1->dis[1], stat2->dis[1], zTOL ) &&
     zIsEqual( prp1->min[1], prp2->min[1], zTOL ) &&
     zIsEqual( prp1->max[1], prp2->max[1], zTOL ) &&
     zIsEqual( prp1->stiffness[1], prp2->stiffness[1], zTOL ) &&
@@ -124,7 +133,7 @@ bool assert_cylin_comp_prp(rkJoint *joint1, rkJoint *joint2)
     zIsEqual( prp1->sf[1], prp2->sf[1], zTOL );
 }
 
-void assert_hooke_set_prp(rkJoint *joint)
+void assert_hooke_set(rkJoint *joint)
 {
   rkJointHookePrp *prp;
   double dis[2];
@@ -150,21 +159,24 @@ void assert_hooke_set_prp(rkJoint *joint)
   rkJointSetDis( joint, dis );
 }
 
-bool assert_hooke_comp_prp(rkJoint *joint1, rkJoint *joint2)
+bool assert_hooke_comp(rkJoint *joint1, rkJoint *joint2)
 {
+  rkJointHookeState *stat1, *stat2;
   rkJointHookePrp *prp1, *prp2;
 
+  stat1 = (rkJointHookeState *)joint1->state;
+  stat2 = (rkJointHookeState *)joint2->state;
   prp1 = (rkJointHookePrp *)joint1->prp;
   prp2 = (rkJointHookePrp *)joint2->prp;
   return
-    zIsEqual( prp1->dis[0], prp2->dis[0], zTOL ) &&
+    zIsEqual( stat1->dis[0], stat2->dis[0], zTOL ) &&
     zIsEqual( prp1->min[0], prp2->min[0], zTOL ) &&
     zIsEqual( prp1->max[0], prp2->max[0], zTOL ) &&
     zIsEqual( prp1->stiffness[0], prp2->stiffness[0], zTOL ) &&
     zIsEqual( prp1->viscosity[0], prp2->viscosity[0], zTOL ) &&
     zIsEqual( prp1->coulomb[0], prp2->coulomb[0], zTOL ) &&
     zIsEqual( prp1->sf[0], prp2->sf[0], zTOL ) &&
-    zIsEqual( prp1->dis[1], prp2->dis[1], zTOL ) &&
+    zIsEqual( stat1->dis[1], stat2->dis[1], zTOL ) &&
     zIsEqual( prp1->min[1], prp2->min[1], zTOL ) &&
     zIsEqual( prp1->max[1], prp2->max[1], zTOL ) &&
     zIsEqual( prp1->stiffness[1], prp2->stiffness[1], zTOL ) &&
@@ -173,7 +185,7 @@ bool assert_hooke_comp_prp(rkJoint *joint1, rkJoint *joint2)
     zIsEqual( prp1->sf[1], prp2->sf[1], zTOL );
 }
 
-void assert_spher_set_prp(rkJoint *joint)
+void assert_spher_set(rkJoint *joint)
 {
   zVec3D axis;
 
@@ -182,16 +194,16 @@ void assert_spher_set_prp(rkJoint *joint)
   rkJointSetDis( joint, axis.e );
 }
 
-bool assert_spher_comp_prp(rkJoint *joint1, rkJoint *joint2)
+bool assert_spher_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointSpherPrp *prp1, *prp2;
+  rkJointSpherState *stat1, *stat2;
 
-  prp1 = (rkJointSpherPrp *)joint1->prp;
-  prp2 = (rkJointSpherPrp *)joint2->prp;
-  return zVec3DEqual( &prp1->aa, &prp2->aa );
+  stat1 = (rkJointSpherState *)joint1->state;
+  stat2 = (rkJointSpherState *)joint2->state;
+  return zVec3DEqual( &stat1->aa, &stat2->aa );
 }
 
-void assert_float_set_prp(rkJoint *joint)
+void assert_float_set(rkJoint *joint)
 {
   zVec6D dis;
 
@@ -201,16 +213,16 @@ void assert_float_set_prp(rkJoint *joint)
   rkJointSetDis( joint, dis.e );
 }
 
-bool assert_float_comp_prp(rkJoint *joint1, rkJoint *joint2)
+bool assert_float_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointFloatPrp *prp1, *prp2;
+  rkJointFloatState *stat1, *stat2;
 
-  prp1 = (rkJointFloatPrp *)joint1->prp;
-  prp2 = (rkJointFloatPrp *)joint2->prp;
-  return zVec6DEqual( &prp1->dis, &prp2->dis );
+  stat1 = (rkJointFloatState *)joint1->state;
+  stat2 = (rkJointFloatState *)joint2->state;
+  return zVec6DEqual( &stat1->dis, &stat2->dis );
 }
 
-void assert_brfloat_set_prp(rkJoint *joint)
+void assert_brfloat_set(rkJoint *joint)
 {
   rkJointBrFloatPrp *prp;
   zVec6D dis;
@@ -225,38 +237,49 @@ void assert_brfloat_set_prp(rkJoint *joint)
   rkJointSetDis( joint, dis.e );
 }
 
-bool assert_brfloat_comp_prp(rkJoint *joint1, rkJoint *joint2)
+bool assert_brfloat_comp(rkJoint *joint1, rkJoint *joint2)
 {
+  rkJointBrFloatState *stat1, *stat2;
   rkJointBrFloatPrp *prp1, *prp2;
 
+  stat1 = (rkJointBrFloatState *)joint1->state;
+  stat2 = (rkJointBrFloatState *)joint2->state;
   prp1 = (rkJointBrFloatPrp *)joint1->prp;
   prp2 = (rkJointBrFloatPrp *)joint2->prp;
   return 
     zIsEqual( prp1->ep_f, prp2->ep_f, zTOL ) &&
     zIsEqual( prp1->ep_t, prp2->ep_t, zTOL ) &&
-    zVec6DEqual( &prp1->dis, &prp2->dis );
+    zVec6DEqual( &stat1->dis, &stat2->dis );
 }
 
-bool assert_clone_one(char *str, void (*set_prp)(rkJoint*), bool (*comp_prp)(rkJoint*,rkJoint*))
+bool assert_clone_one(char *str, void (*set_func)(rkJoint*), bool (*comp_func)(rkJoint*,rkJoint*))
 {
   rkJoint jorg, jcln;
 
   if( rkJointQueryAssign( &jorg, str ) == NULL ) return false;
-  set_prp( &jorg );
+  set_func( &jorg );
   if( rkJointClone( &jorg, &jcln ) == NULL ) return false;
-  return comp_prp( &jorg, &jcln );
+  return comp_func( &jorg, &jcln );
 }
 
 void assert_clone(void)
 {
-  zAssert( rkJointClone, assert_clone_one("fixed", assert_fixed_set_prp, assert_fixed_comp_prp) );
-  zAssert( rkJointClone, assert_clone_one("revolute", assert_revol_set_prp, assert_revol_comp_prp) );
-  zAssert( rkJointClone, assert_clone_one("prismatic", assert_prism_set_prp, assert_prism_comp_prp) );
-  zAssert( rkJointClone, assert_clone_one("cylindrical", assert_cylin_set_prp, assert_cylin_comp_prp) );
-  zAssert( rkJointClone, assert_clone_one("hooke", assert_hooke_set_prp, assert_hooke_comp_prp) );
-  zAssert( rkJointClone, assert_clone_one("spherical", assert_spher_set_prp, assert_spher_comp_prp) );
-  zAssert( rkJointClone, assert_clone_one("float", assert_float_set_prp, assert_float_comp_prp) );
-  zAssert( rkJointClone, assert_clone_one("breakablefloat", assert_brfloat_set_prp, assert_brfloat_comp_prp) );
+  zAssert( rkJointClone (fixed joint),
+    assert_clone_one( "fixed", assert_fixed_set, assert_fixed_comp ) );
+  zAssert( rkJointClone (revolute joint),
+    assert_clone_one( "revolute", assert_revol_set, assert_revol_comp ) );
+  zAssert( rkJointClone (prismatic joint),
+    assert_clone_one( "prismatic", assert_prism_set, assert_prism_comp ) );
+  zAssert( rkJointClone (cylindrical joint),
+    assert_clone_one( "cylindrical", assert_cylin_set, assert_cylin_comp ) );
+  zAssert( rkJointClone (universal joint),
+    assert_clone_one( "hooke", assert_hooke_set, assert_hooke_comp ) );
+  zAssert( rkJointClone (spherical joint),
+    assert_clone_one( "spherical", assert_spher_set, assert_spher_comp ) );
+  zAssert( rkJointClone (floating joint),
+    assert_clone_one( "float", assert_float_set, assert_float_comp ) );
+  zAssert( rkJointClone (breakable floating joint),
+    assert_clone_one( "breakablefloat", assert_brfloat_set, assert_brfloat_comp ) );
 }
 
 int main(void)

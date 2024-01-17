@@ -6,12 +6,14 @@
 
 #include <roki/rk_joint.h>
 
-#define _rkc(joint) ((rkJointSpherPrp *)((rkJoint *)(joint))->prp)
+#define _rks(joint) ((rkJointSpherState *)((rkJoint *)(joint))->state)
+#define _rkp(joint) ((rkJointSpherPrp   *)((rkJoint *)(joint))->prp)
 
 static void _rkJointSpherInit(rkJoint *joint){
-  rkMotorAssign( &_rkc(joint)->m, &rk_motor_none );
+  rkMotorAssign( &_rkp(joint)->m, &rk_motor_none );
 }
 
+static void *_rkJointSpherAllocState(void){ return zAlloc( rkJointSpherState, 1 ); }
 static void *_rkJointSpherAllocPrp(void){ return zAlloc( rkJointSpherPrp, 1 ); }
 
 static void _rkJointSpherCopyPrp(rkJoint *src, rkJoint *dst){}
@@ -23,27 +25,27 @@ static void _rkJointSpherLimDis(rkJoint *joint, double *testval, double *limval)
 
 /* set joint displacement */
 static void _rkJointSpherSetDis(rkJoint *joint, double *val){
-  _rkJointSpherLimDis( joint, val, _rkc(joint)->aa.e );
-  zMat3DFromAA( &_rkc(joint)->_att, &_rkc(joint)->aa );
+  _rkJointSpherLimDis( joint, val, _rks(joint)->aa.e );
+  zMat3DFromAA( &_rks(joint)->_att, &_rks(joint)->aa );
 }
 
 static void _rkJointSpherSetMinMax(rkJoint *joint, double *val){}
 
 static void _rkJointSpherSetVel(rkJoint *joint, double *val){
-  zVec3DCopy( (zVec3D*)val, &_rkc(joint)->vel );
+  zVec3DCopy( (zVec3D*)val, &_rks(joint)->vel );
 }
 
 static void _rkJointSpherSetAcc(rkJoint *joint, double *val){
-  zVec3DCopy( (zVec3D*)val, &_rkc(joint)->acc );
+  zVec3DCopy( (zVec3D*)val, &_rks(joint)->acc );
 }
 
 static void _rkJointSpherSetTrq(rkJoint *joint, double *val){
-  zVec3DCopy( (zVec3D*)val, &_rkc(joint)->trq );
+  zVec3DCopy( (zVec3D*)val, &_rks(joint)->trq );
 }
 
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointSpherGetDis(rkJoint *joint, double *val){
-  zVec3DCopy( &_rkc(joint)->aa, (zVec3D*)val );
+  zVec3DCopy( &_rks(joint)->aa, (zVec3D*)val );
 }
 
 static void _rkJointSpherGetMin(rkJoint *joint, double *val){
@@ -55,15 +57,15 @@ static void _rkJointSpherGetMax(rkJoint *joint, double *val){
 }
 
 static void _rkJointSpherGetVel(rkJoint *joint, double *val){
-  zVec3DCopy( &_rkc(joint)->vel, (zVec3D*)val );
+  zVec3DCopy( &_rks(joint)->vel, (zVec3D*)val );
 }
 
 static void _rkJointSpherGetAcc(rkJoint *joint, double *val){
-  zVec3DCopy( &_rkc(joint)->acc, (zVec3D*)val );
+  zVec3DCopy( &_rks(joint)->acc, (zVec3D*)val );
 }
 
 static void _rkJointSpherGetTrq(rkJoint *joint, double *val){
-  zVec3DCopy( &_rkc(joint)->trq, (zVec3D*)val );
+  zVec3DCopy( &_rks(joint)->trq, (zVec3D*)val );
 }
 
 static void _rkJointSpherCatDis(rkJoint *joint, double *dis, double k, double *val)
@@ -91,33 +93,33 @@ static void _rkJointSpherSetDisCNT(rkJoint *joint, double *val, double dt)
   zVec3D v_old;
 
   /* previous state */
-  zMat3DCopy( &_rkc(joint)->_att, &m_old );
+  zMat3DCopy( &_rks(joint)->_att, &m_old );
   _rkJointSpherGetVel( joint, (double *)&v_old );
   /* update displacement */
   _rkJointSpherSetDis( joint, val );
   /* numerical differentiation */
-  zMat3DError( &_rkc(joint)->_att, &m_old, &_rkc(joint)->vel );
-  zVec3DDivDRC( &_rkc(joint)->vel, dt );
-  zVec3DDif( &v_old, &_rkc(joint)->vel, dt, &_rkc(joint)->acc );
+  zMat3DError( &_rks(joint)->_att, &m_old, &_rks(joint)->vel );
+  zVec3DDivDRC( &_rks(joint)->vel, dt );
+  zVec3DDif( &v_old, &_rks(joint)->vel, dt, &_rks(joint)->acc );
 }
 
 /* joint frame transformation */
 static zFrame3D *_rkJointSpherXform(rkJoint *joint, zFrame3D *fo, zFrame3D *f){
   zVec3DCopy( zFrame3DPos(fo), zFrame3DPos(f) );
-  zMulMat3DMat3D( zFrame3DAtt(fo), &_rkc(joint)->_att, zFrame3DAtt(f) );
+  zMulMat3DMat3D( zFrame3DAtt(fo), &_rks(joint)->_att, zFrame3DAtt(f) );
   return f;
 }
 
 /* joint velocity transformation */
 static void _rkJointSpherIncVel(rkJoint *joint, zVec6D *vel){
   zVec3D cw;
-  zMulMat3DTVec3D( &_rkc(joint)->_att, &_rkc(joint)->vel, &cw );
+  zMulMat3DTVec3D( &_rks(joint)->_att, &_rks(joint)->vel, &cw );
   zVec3DAddDRC( zVec6DAng(vel), &cw );
 }
 
 static void _rkJointSpherIncAccOnVel(rkJoint *joint, zVec3D *w, zVec6D *acc){
   zVec3D cw;
-  zMulMat3DTVec3D( &_rkc(joint)->_att, &_rkc(joint)->vel, &cw );
+  zMulMat3DTVec3D( &_rks(joint)->_att, &_rks(joint)->vel, &cw );
   zVec3DOuterProd( w, &cw, &cw );
   zVec3DAddDRC( zVec6DAng(acc), &cw );
 }
@@ -125,13 +127,13 @@ static void _rkJointSpherIncAccOnVel(rkJoint *joint, zVec3D *w, zVec6D *acc){
 /* joint acceleration transformation */
 static void _rkJointSpherIncAcc(rkJoint *joint, zVec6D *acc){
   zVec3D cw;
-  zMulMat3DTVec3D( &_rkc(joint)->_att, &_rkc(joint)->acc, &cw );
+  zMulMat3DTVec3D( &_rks(joint)->_att, &_rks(joint)->acc, &cw );
   zVec3DAddDRC( zVec6DAng(acc), &cw );
 }
 
 /* joint torque transformation */
 static void _rkJointSpherCalcTrq(rkJoint *joint, zVec6D *f){
-  zMulMat3DVec3D( &_rkc(joint)->_att, zVec6DAng(f), &_rkc(joint)->trq );
+  zMulMat3DVec3D( &_rks(joint)->_att, zVec6DAng(f), &_rks(joint)->trq );
 }
 
 /* inverse computation of joint torsion and displacement */
@@ -145,7 +147,7 @@ static void _rkJointSpherTorsion(zFrame3D *dev, zVec6D *t, double dis[]){
 
 static zVec3D *_rkJointSpherAxis(rkJoint *joint, zFrame3D *f, zDir dir, zVec3D *a){
   zVec3D al;
-  zMat3DRow( &_rkc(joint)->_att, dir, &al );
+  zMat3DRow( &_rks(joint)->_att, dir, &al );
   return zMulMat3DVec3D( zFrame3DAtt(f), &al, a );
 }
 
@@ -181,7 +183,7 @@ static void _rkJointSpherCRBWrench(rkJoint *joint, rkMP *crb, zVec6D wi[]){
 
   rkMPOrgInertia( crb, &icrb );
   for( i=0; i<3; i++ ){
-    _zMat3DRow( &_rkc(joint)->_att, i, &a );
+    _zMat3DRow( &_rks(joint)->_att, i, &a );
     _zVec3DOuterProd( rkMPCOM(crb), &a, zVec6DLin(&wi[i]) );
     _zVec3DMulDRC( zVec6DLin(&wi[i]), -rkMPMass(crb) );
     _zMulMat3DVec3D( &icrb, &a, zVec6DAng(&wi[i]) );
@@ -191,7 +193,7 @@ static void _rkJointSpherCRBXform(rkJoint *joint, zFrame3D *f, zVec6D si[]){
   zMat3D r;
   int i;
 
-  zMulMat3DMat3DT( zFrame3DAtt(f), &_rkc(joint)->_att, &r );
+  zMulMat3DMat3DT( zFrame3DAtt(f), &_rks(joint)->_att, &r );
   for( i=0; i<3; i++ ){
     _zVec3DOuterProd( zFrame3DPos(f), &r.v[i], zVec6DLin(&si[i]) );
     zVec3DCopy( &r.v[i], zVec6DAng(&si[i]) );
@@ -206,30 +208,30 @@ static void _rkJointSpherVal(rkJoint *joint, double *val){}
 
 /* motor */
 
-static rkMotor *_rkJointSpherGetMotor(rkJoint *joint){ return &_rkc(joint)->m; }
+static rkMotor *_rkJointSpherGetMotor(rkJoint *joint){ return &_rkp(joint)->m; }
 
 static void _rkJointSpherMotorSetInput(rkJoint *joint, double *val){
-  rkMotorSetInput( &_rkc(joint)->m, val );
+  rkMotorSetInput( &_rkp(joint)->m, val );
 }
 
 static void _rkJointSpherMotorInertia(rkJoint *joint, double *val){
   zMat3DZero( (zMat3D *)val );
-  rkMotorInertia( &_rkc(joint)->m, val );
+  rkMotorInertia( &_rkp(joint)->m, val );
 }
 
 static void _rkJointSpherMotorInputTrq(rkJoint *joint, double *val){
   zVec3DZero( (zVec3D *)val );
-  rkMotorInputTrq( &_rkc(joint)->m, val );
+  rkMotorInputTrq( &_rkp(joint)->m, val );
 }
 
 static void _rkJointSpherMotorResistance(rkJoint *joint, double *val){
   zVec3DZero( (zVec3D *)val );
-  rkMotorRegistance( &_rkc(joint)->m, &_rkc(joint)->aa.e[zX], &_rkc(joint)->vel.e[zX], val );
+  rkMotorRegistance( &_rkp(joint)->m, &_rks(joint)->aa.e[zX], &_rks(joint)->vel.e[zX], val );
 }
 
 static void _rkJointSpherMotorDrivingTrq(rkJoint *joint, double *val){
   zVec3DZero( (zVec3D *)val );
-  rkMotorDrivingTrq( &_rkc(joint)->m, &_rkc(joint)->aa.e[zX], &_rkc(joint)->vel.e[zX], &_rkc(joint)->acc.e[zX], val );
+  rkMotorDrivingTrq( &_rkp(joint)->m, &_rks(joint)->aa.e[zX], &_rks(joint)->vel.e[zX], &_rks(joint)->acc.e[zX], val );
 }
 
 /* ABI */
@@ -270,11 +272,11 @@ static void *_rkJointSpherDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
 static void *_rkJointSpherMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   rkMotor *mp;
   if( !( mp = rkMotorArrayFind( (rkMotorArray *)arg, ZTKVal(ztk) ) ) ) return NULL;
-  return rkMotorClone( mp, &_rkc(joint)->m ) ? joint : NULL;
+  return rkMotorClone( mp, &_rkp(joint)->m ) ? joint : NULL;
 }
 
 static void _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
-  zVec3DFPrint( fp, &_rkc(joint)->aa );
+  zVec3DFPrint( fp, &_rks(joint)->aa );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_spher[] = {
@@ -290,14 +292,15 @@ static rkJoint *_rkJointSpherFromZTK(rkJoint *joint, rkMotorArray *motorarray, Z
 static void _rkJointSpherFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_spher );
-  if( rkMotorIsAssigned( &_rkc(joint)->m ) )
-    fprintf( fp, "motor: %s\n", zName(&_rkc(joint)->m) );
+  if( rkMotorIsAssigned( &_rkp(joint)->m ) )
+    fprintf( fp, "motor: %s\n", zName(&_rkp(joint)->m) );
 }
 
 rkJointCom rk_joint_spher = {
   "spherical",
   3,
   _rkJointSpherInit,
+  _rkJointSpherAllocState,
   _rkJointSpherAllocPrp,
   _rkJointSpherCopyPrp,
   _rkJointSpherLimDis,
@@ -355,4 +358,5 @@ rkJointCom rk_joint_spher = {
   _rkJointSpherFPrintZTK,
 };
 
-#undef _rkc
+#undef _rks
+#undef _rkp

@@ -11,12 +11,19 @@
 
 __BEGIN_DECLS
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointRevolPrp ){
-  /* joint displacement, velocity, acceleration and torque */
-  double dis, vel, acc, trq;
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointRevolState ){
+  double dis; /* joint displacement */
+  double vel; /* joint velocity */
+  double acc; /* joint acceleration */
+  double trq; /* joint torque */
   /* trigonometric values */
   double _s, _c;
+  /* for forward dynamics */
+  rkJointFrictionPivot _fp;
+  double _u;
+};
 
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointRevolPrp ){
   double min, max;  /* joint displacement limiter */
   double stiffness; /* joint stiffness */
   double viscosity; /* joint viscosity */
@@ -26,10 +33,6 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointRevolPrp ){
 
   /* motor */
   rkMotor m;
-
-  /* for forward dynamics */
-  rkJointFrictionPivot _fp;
-  double _u;
 };
 
 __ROKI_EXPORT rkJointCom rk_joint_revol;

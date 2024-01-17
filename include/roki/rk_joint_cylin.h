@@ -11,27 +11,31 @@
 
 __BEGIN_DECLS
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCylinPrp ){
-  /* 0: prismatic, 1: revolutional */
-  /* joint displacement, velocity, acceleration and torque */
-  double dis[2], vel[2], acc[2], trq[2];
-  double min[2], max[2]; /* limiter */
-  /* joint stiffness, viscosity and coulomb friction */
-  double stiffness[2];
-  double viscosity[2];
-  double coulomb[2];
+/* 0: prismatic translation, 1: rotation */
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCylinState ){
+  double dis[2]; /* joint displacement */
+  double vel[2]; /* joint velocity */
+  double acc[2]; /* joint acceleration */
+  double trq[2]; /* joint torque */
   /* trigonometric values */
   double _s, _c;
+  /* forward dynamics */
+  rkJointFrictionPivot _fp[2];
+  double _u[2];
+};
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCylinPrp ){
+  double min[2], max[2]; /* joint displacement limiter */
+  double stiffness[2];   /* joint stiffness */
+  double viscosity[2];   /* joint viscosity */
+  double coulomb[2];     /* joint coulomb friction */
   /* friction */
   double sf[2];
   double tf[2];
 
   /* motor */
   rkMotor m;
-
-  /* forward dynamics */
-  rkJointFrictionPivot _fp[2];
-  double _u[2];
 };
 
 __ROKI_EXPORT rkJointCom rk_joint_cylin;

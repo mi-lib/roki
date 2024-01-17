@@ -16,7 +16,8 @@ RK_JOINT_COM_ARRAY;
 rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com)
 {
   rkJointInit( joint );
-  if( ( joint->prp = ( joint->com = com )->_alloc_prp() ) )
+  if( ( joint->state = ( joint->com = com )->_alloc_state() ) &&
+      ( joint->prp   = ( joint->com = com )->_alloc_prp() ) )
     joint->com->_init( joint );
   rkJointNeutral( joint );
   return joint;
@@ -35,6 +36,7 @@ rkJoint *rkJointQueryAssign(rkJoint *joint, char *str)
 /* destroy a joint object. */
 void rkJointDestroy(rkJoint *joint)
 {
+  zFree( joint->state );
   zFree( joint->prp );
   rkJointInit( joint );
 }

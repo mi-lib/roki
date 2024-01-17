@@ -11,18 +11,20 @@
 
 __BEGIN_DECLS
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointSpherPrp ){
-  /* joint displacement: angle-axis vector */
-  /* velocity, acceleration and torque: angular vector */
-  zVec3D aa, vel, acc, trq;
-
-  zMat3D _att; /* internal matrix */
-
-  /* motor */
-  rkMotor m;
-
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointSpherState ){
+  zVec3D aa;  /* joint displacement (angle-axis vector) */
+  zVec3D vel; /* velocity (angular vector) */
+  zVec3D acc; /* acceleration (angular vector) */
+  zVec3D trq; /* torque (angular vector) */
+  /* internal matrix */
+  zMat3D _att;
   /* for forward dynamics */
   double _u[3];
+};
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointSpherPrp ){
+  /* motor */
+  rkMotor m;
 };
 
 __ROKI_EXPORT rkJointCom rk_joint_spher;
