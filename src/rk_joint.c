@@ -13,47 +13,47 @@
 
 RK_JOINT_COM_ARRAY;
 
-rkJoint *rkJointAssign(rkJoint *j, rkJointCom *com)
+rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com)
 {
-  rkJointInit( j );
-  if( ( j->prp = ( j->com = com )->_alloc() ) )
-    j->com->_init( j->prp );
-  rkJointNeutral( j );
-  return j;
+  rkJointInit( joint );
+  if( ( joint->prp = ( joint->com = com )->_alloc() ) )
+    joint->com->_init( joint );
+  rkJointNeutral( joint );
+  return joint;
 }
 
-rkJoint *rkJointQueryAssign(rkJoint *j, char *str)
+rkJoint *rkJointQueryAssign(rkJoint *joint, char *str)
 {
   int i;
 
   for( i=0; rk_joint_com[i]; i++ )
     if( strcmp( rk_joint_com[i]->typestr, str ) == 0 )
-      return rkJointAssign( j, rk_joint_com[i] );
+      return rkJointAssign( joint, rk_joint_com[i] );
   return NULL;
 }
 
 /* destroy a joint object. */
-void rkJointDestroy(rkJoint *j)
+void rkJointDestroy(rkJoint *joint)
 {
-  zFree( j->prp );
-  rkJointInit( j );
+  zFree( joint->prp );
+  rkJointInit( joint );
 }
 
 /* neutralize joint displacement. */
-void rkJointNeutral(rkJoint *j)
+void rkJointNeutral(rkJoint *joint)
 {
   double dis[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-  rkJointSetDis( j, dis );
+  rkJointSetDis( joint, dis );
 }
 
 /* check if joint displacement is neutral. */
-bool rkJointIsNeutral(rkJoint *j)
+bool rkJointIsNeutral(rkJoint *joint)
 {
   double dis[6];
   int i;
 
-  rkJointGetDis( j, dis );
-  for( i=0; i<rkJointSize(j); i++ )
+  rkJointGetDis( joint, dis );
+  for( i=0; i<rkJointSize(joint); i++ )
     if( !zIsTiny( dis[i] ) ) return false;
   return true;
 }
@@ -88,25 +88,25 @@ rkJoint *rkJointCopyPrp(rkJoint *src, rkJoint *dst)
 {
   if( strcmp( rkJointTypeStr(src), rkJointTypeStr(dst) ) != 0 )
     return NULL;
-  src->com->_copyprp( src->prp, dst->prp );
+  src->com->_copyprp( src, dst );
   return dst;
 }
 
 /* increment motion rate due to joint rate. */
-void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc)
+void rkJointIncRate(rkJoint *joint, zVec3D *w, zVec6D *vel, zVec6D *acc)
 {
-  rkJointIncVel( j, vel );
-  rkJointIncAccOnVel( j, w, acc );
-  rkJointIncAcc( j, acc );
+  rkJointIncVel( joint, vel );
+  rkJointIncAccOnVel( joint, w, acc );
+  rkJointIncAcc( joint, acc );
 }
 
 /* NOTE: The following macros and functions are for sharing
  * some operation codes. Do not use them in users programs. */
-zVec3D *_rkJointAxisNull(void *prp, zFrame3D *f, zVec3D *a){
+zVec3D *_rkJointAxisNull(rkJoint *joint, zFrame3D *f, zVec3D *a){
   return NULL;
 }
 
-zVec3D *_rkJointAxisZ(void *prp, zFrame3D *f, zVec3D *a){
+zVec3D *_rkJointAxisZ(rkJoint *joint, zFrame3D *f, zVec3D *a){
   zVec3DCopy( &zFrame3DAtt(f)->e[zZ], a );
   return a;
 }
@@ -165,13 +165,13 @@ zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m)
   return m;
 }
 
-void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc)
+void _rkJointUpdateWrench(rkJoint *joint, zMat6D *i, zVec6D *b, zVec6D *acc)
 {
-  zMulMat6DVec6D( i, acc, rkJointWrench(j) );
-  zVec6DAddDRC( rkJointWrench(j), b );
+  zMulMat6DVec6D( i, acc, rkJointWrench(joint) );
+  zVec6DAddDRC( rkJointWrench(joint), b );
 }
 
 rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
 {
-  return joint->com->_fromZTK( joint->prp, motorarray, ztk ) ? joint : NULL;
+  return joint->com->_fromZTK( joint, motorarray, ztk );
 }

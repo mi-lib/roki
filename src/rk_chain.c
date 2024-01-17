@@ -890,7 +890,7 @@ static void *_rkChainInitJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     return NULL;
   }
   ZTKValNext( ztk );
-  rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link)->prp, 0, NULL, ztk );
+  rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link), 0, NULL, ztk );
   return obj;
 }
 
@@ -924,7 +924,7 @@ static void _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
     link = rkChainLink((rkChain*)obj,k);
     if( rkLinkJointSize(link) == 0 || rkJointIsNeutral( rkLinkJoint(link) ) ) continue;
     fprintf( fp, "joint: %s ", zName(link) );
-    rkLinkJoint(link)->com->_dis_fprintZTK( fp, 0, rkLinkJoint(link)->prp );
+    rkLinkJoint(link)->com->_dis_fprintZTK( fp, 0, rkLinkJoint(link) );
   }
 }
 

@@ -11,7 +11,7 @@
 
 __BEGIN_DECLS
 
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointSpherPrp ){
   /* joint displacement: angle-axis vector */
   /* velocity, acceleration and torque: angular vector */
   zVec3D aa, vel, acc, trq;
@@ -23,7 +23,7 @@ typedef struct{
 
   /* for forward dynamics */
   double _u[3];
-} rkJointSpherPrp;
+};
 
 __ROKI_EXPORT rkJointCom rk_joint_spher;
 

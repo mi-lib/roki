@@ -495,7 +495,7 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     return NULL;
   }
   if( w == 0 ){
-    rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link)->prp, 0, NULL, ztk );
+    rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link), 0, NULL, ztk );
     return obj;
   }
   if( rkLinkJointSize(link) == 0 ) return NULL;

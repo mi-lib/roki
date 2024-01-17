@@ -11,7 +11,7 @@
 
 __BEGIN_DECLS
 
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointFloatPrp ){
   /* joint displacement
      0-2: translational displacement
      3-5: rotational displacement by angle-axis vector */
@@ -21,7 +21,7 @@ typedef struct{
   zVec6D dis, vel, acc, trq;
 
   zMat3D _att; /* internal matrix */
-} rkJointFloatPrp;
+};
 
 __ROKI_EXPORT rkJointCom rk_joint_float;
 

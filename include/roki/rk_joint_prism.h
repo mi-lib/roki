@@ -11,7 +11,7 @@
 
 __BEGIN_DECLS
 
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointPrismPrp ){
   /* joint displacement, velocity, acceleration and torque */
   double dis, vel, acc, trq;
   double min, max; /* limiter */
@@ -30,7 +30,7 @@ typedef struct{
   /* for forward dynamics */
   rkJointFrictionPivot _fp;
   double _u;
-} rkJointPrismPrp;
+};
 
 __ROKI_EXPORT rkJointCom rk_joint_prism;
 

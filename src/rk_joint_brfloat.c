@@ -6,77 +6,77 @@
 
 #include <roki/rk_joint.h>
 
-#define _rkc(p) ((rkJointBrFloatPrp *)p)
+#define _rkc(joint) ((rkJointBrFloatPrp *)((rkJoint *)(joint))->prp)
 
 /* ********************************************************** */
 /* broken float
  * ********************************************************** */
 
-static void _rkJointBrFloatInit(void *prp){
-  _rkc(prp)->ep_f = HUGE_VAL;
-  _rkc(prp)->ep_t = HUGE_VAL;
+static void _rkJointBrFloatInit(rkJoint *joint){
+  _rkc(joint)->ep_f = HUGE_VAL;
+  _rkc(joint)->ep_t = HUGE_VAL;
 }
 
 static void *_rkJointBrFloatAlloc(void){
   return zAlloc( rkJointBrFloatPrp, 1 );
 }
 
-static void _rkJointBrFloatCopyPrp(void *prp1, void *prp2){
-  _rkc(prp2)->ep_f = _rkc(prp1)->ep_f;
-  _rkc(prp2)->ep_t = _rkc(prp1)->ep_t;
+static void _rkJointBrFloatCopyPrp(rkJoint *src, rkJoint *dst){
+  _rkc(dst)->ep_f = _rkc(src)->ep_f;
+  _rkc(dst)->ep_t = _rkc(src)->ep_t;
 }
 
 /* limit joint displacement */
-static void _rkJointBrFloatLimDis(void *prp, double *testval, double *limval){
+static void _rkJointBrFloatLimDis(rkJoint *joint, double *testval, double *limval){
   zVec6DCopy( (zVec6D*)testval, (zVec6D*)limval );
 }
 
 /* set joint displacement */
-static void _rkJointBrFloatSetDis(void *prp, double *val){
-  _rkJointBrFloatLimDis( prp, val, _rkc(prp)->dis.e );
-  zMat3DFromAA( &_rkc(prp)->_att, zVec6DAng(&_rkc(prp)->dis) );
+static void _rkJointBrFloatSetDis(rkJoint *joint, double *val){
+  _rkJointBrFloatLimDis( joint, val, _rkc(joint)->dis.e );
+  zMat3DFromAA( &_rkc(joint)->_att, zVec6DAng(&_rkc(joint)->dis) );
 }
 
-static void _rkJointBrFloatSetMinMax(void *prp, double *val){}
+static void _rkJointBrFloatSetMinMax(rkJoint *joint, double *val){}
 
-static void _rkJointBrFloatSetVel(void *prp, double *val){
-  zVec6DCopy( (zVec6D*)val, &_rkc(prp)->vel );
+static void _rkJointBrFloatSetVel(rkJoint *joint, double *val){
+  zVec6DCopy( (zVec6D*)val, &_rkc(joint)->vel );
 }
 
-static void _rkJointBrFloatSetAcc(void *prp, double *val){
-  zVec6DCopy( (zVec6D*)val, &_rkc(prp)->acc );
+static void _rkJointBrFloatSetAcc(rkJoint *joint, double *val){
+  zVec6DCopy( (zVec6D*)val, &_rkc(joint)->acc );
 }
 
-static void _rkJointBrFloatSetTrq(void *prp, double *val){
-  zVec6DCopy( (zVec6D*)val, &_rkc(prp)->trq );
+static void _rkJointBrFloatSetTrq(rkJoint *joint, double *val){
+  zVec6DCopy( (zVec6D*)val, &_rkc(joint)->trq );
 }
 
 /* get joint displacement, velocity, acceleration and torque */
-static void _rkJointBrFloatGetDis(void *prp, double *val){
-  zVec6DCopy( &_rkc(prp)->dis, (zVec6D*)val );
+static void _rkJointBrFloatGetDis(rkJoint *joint, double *val){
+  zVec6DCopy( &_rkc(joint)->dis, (zVec6D*)val );
 }
 
-static void _rkJointBrFloatGetMin(void *prp, double *val){
+static void _rkJointBrFloatGetMin(rkJoint *joint, double *val){
   val[0] = val[1] = val[2] = val[3] = val[4] = val[5] = -HUGE_VAL;
 }
 
-static void _rkJointBrFloatGetMax(void *prp, double *val){
+static void _rkJointBrFloatGetMax(rkJoint *joint, double *val){
   val[0] = val[1] = val[2] = val[3] = val[4] = val[5] = HUGE_VAL;
 }
 
-static void _rkJointBrFloatGetVel(void *prp, double *val){
-  zVec6DCopy( &_rkc(prp)->vel, (zVec6D*)val );
+static void _rkJointBrFloatGetVel(rkJoint *joint, double *val){
+  zVec6DCopy( &_rkc(joint)->vel, (zVec6D*)val );
 }
 
-static void _rkJointBrFloatGetAcc(void *prp, double *val){
-  zVec6DCopy( &_rkc(prp)->acc, (zVec6D*)val );
+static void _rkJointBrFloatGetAcc(rkJoint *joint, double *val){
+  zVec6DCopy( &_rkc(joint)->acc, (zVec6D*)val );
 }
 
-static void _rkJointBrFloatGetTrq(void *prp, double *val){
-  zVec6DCopy( &_rkc(prp)->trq, (zVec6D*)val );
+static void _rkJointBrFloatGetTrq(rkJoint *joint, double *val){
+  zVec6DCopy( &_rkc(joint)->trq, (zVec6D*)val );
 }
 
-static void _rkJointBrFloatCatDis(void *prp, double *dis, double k, double *val){
+static void _rkJointBrFloatCatDis(rkJoint *joint, double *dis, double k, double *val){
   zVec3D d, aa;
   /* concatenate position */
   zVec3DCatDRC( (zVec3D*)&dis[0], k, (zVec3D*)&val[0] );
@@ -86,7 +86,7 @@ static void _rkJointBrFloatCatDis(void *prp, double *dis, double k, double *val)
   zAACascade( &aa, &d, (zVec3D*)&dis[3] );
 }
 
-static void _rkJointBrFloatSubDis(void *prp, double *dis, double *sdis){
+static void _rkJointBrFloatSubDis(rkJoint *joint, double *dis, double *sdis){
   zMat3D m, ms;
   zVec3D aa;
 
@@ -98,46 +98,46 @@ static void _rkJointBrFloatSubDis(void *prp, double *dis, double *sdis){
 }
 
 /* continuously update joint displacement over delta time */
-static void _rkJointBrFloatSetDisCNT(void *prp, double *val, double dt){
+static void _rkJointBrFloatSetDisCNT(rkJoint *joint, double *val, double dt){
   zMat3D m_old;
   zVec3D p_old;
   zVec6D v_old;
 
   /* previous state */
-  zVec3DCopy( zVec6DLin(&_rkc(prp)->dis), &p_old );
-  zMat3DCopy( &_rkc(prp)->_att, &m_old );
-  _rkJointBrFloatGetVel( prp, v_old.e );
+  zVec3DCopy( zVec6DLin(&_rkc(joint)->dis), &p_old );
+  zMat3DCopy( &_rkc(joint)->_att, &m_old );
+  _rkJointBrFloatGetVel( joint, v_old.e );
   /* update displacement */
-  _rkJointBrFloatSetDis( prp, val );
+  _rkJointBrFloatSetDis( joint, val );
   /* numerical differentiation */
-  zVec3DDif( &p_old, zVec6DLin(&_rkc(prp)->dis), dt, zVec6DLin(&_rkc(prp)->vel) );
-  zMat3DError( &_rkc(prp)->_att, &m_old, zVec6DAng(&_rkc(prp)->vel) );
-  zVec3DDivDRC( zVec6DAng(&_rkc(prp)->vel), dt );
-  zVec6DDif( &v_old, &_rkc(prp)->vel, dt, &_rkc(prp)->acc );
+  zVec3DDif( &p_old, zVec6DLin(&_rkc(joint)->dis), dt, zVec6DLin(&_rkc(joint)->vel) );
+  zMat3DError( &_rkc(joint)->_att, &m_old, zVec6DAng(&_rkc(joint)->vel) );
+  zVec3DDivDRC( zVec6DAng(&_rkc(joint)->vel), dt );
+  zVec6DDif( &v_old, &_rkc(joint)->vel, dt, &_rkc(joint)->acc );
 }
 
 /* joint frame transfer function */
-static zFrame3D *_rkJointBrFloatXform(void *prp, zFrame3D *fo, zFrame3D *f){
+static zFrame3D *_rkJointBrFloatXform(rkJoint *joint, zFrame3D *fo, zFrame3D *f){
   /* position */
-  zXform3D( fo, zVec6DLin(&_rkc(prp)->dis), zFrame3DPos(f) );
+  zXform3D( fo, zVec6DLin(&_rkc(joint)->dis), zFrame3DPos(f) );
   /* attitude */
-  zMulMat3DMat3D( zFrame3DAtt(fo), &_rkc(prp)->_att, zFrame3DAtt(f) );
+  zMulMat3DMat3D( zFrame3DAtt(fo), &_rkc(joint)->_att, zFrame3DAtt(f) );
   return f;
 }
 
 /* joint velocity transfer function */
-static void _rkJointBrFloatIncVel(void *prp, zVec6D *vel){
+static void _rkJointBrFloatIncVel(rkJoint *joint, zVec6D *vel){
   zVec6D vl;
-  zMulMat3DTVec6D( &_rkc(prp)->_att, &_rkc(prp)->vel, &vl );
+  zMulMat3DTVec6D( &_rkc(joint)->_att, &_rkc(joint)->vel, &vl );
   zVec6DAddDRC( vel, &vl );
 }
 
-static void _rkJointBrFloatIncAccOnVel(void *prp, zVec3D *w, zVec6D *acc){
+static void _rkJointBrFloatIncAccOnVel(rkJoint *joint, zVec3D *w, zVec6D *acc){
   zVec6D vl;
   zVec3D tmp;
 
   /* FIXME: _att -> ^pR_j */
-  zMulMat3DTVec6D( &_rkc(prp)->_att, &_rkc(prp)->vel, &vl );
+  zMulMat3DTVec6D( &_rkc(joint)->_att, &_rkc(joint)->vel, &vl );
   zVec3DOuterProd( w, zVec6DLin(&vl), &tmp );
   zVec3DCatDRC( zVec6DLin(acc), 2, &tmp );
   zVec3DOuterProd( w, zVec6DAng(&vl), &tmp );
@@ -145,15 +145,15 @@ static void _rkJointBrFloatIncAccOnVel(void *prp, zVec3D *w, zVec6D *acc){
 }
 
 /* joint acceleration transfer function */
-static void _rkJointBrFloatIncAcc(void *prp, zVec6D *acc){
+static void _rkJointBrFloatIncAcc(rkJoint *joint, zVec6D *acc){
   zVec6D al;
-  zMulMat3DTVec6D( &_rkc(prp)->_att, &_rkc(prp)->acc, &al );
+  zMulMat3DTVec6D( &_rkc(joint)->_att, &_rkc(joint)->acc, &al );
   zVec6DAddDRC( acc, &al );
 }
 
 /* joint torque transfer function */
-static void _rkJointBrFloatCalcTrq(void *prp, zVec6D *f){
-  zMulMat3DVec6D( &_rkc(prp)->_att, f, &_rkc(prp)->trq );
+static void _rkJointBrFloatCalcTrq(rkJoint *joint, zVec6D *f){
+  zMulMat3DVec6D( &_rkc(joint)->_att, f, &_rkc(joint)->trq );
 }
 
 /* inverse computation of joint torsion and displacement */
@@ -163,21 +163,22 @@ static void _rkJointBrFloatTorsion(zFrame3D *dev, zVec6D *t, double dis[]){
 }
 
 /* joint axis function */
-static zVec3D *_rkJointBrFloatAxis(void *prp, zFrame3D *f, zDir dir, zVec3D *a){
+
+static zVec3D *_rkJointBrFloatAxis(rkJoint *joint, zFrame3D *f, zDir dir, zVec3D *a){
   zVec3D al;
-  zMat3DRow( &_rkc(prp)->_att, dir, &al );
+  zMat3DRow( &_rkc(joint)->_att, dir, &al );
   return zMulMat3DVec3D( zFrame3DAtt(f), &al, a );
 }
-static zVec3D *_rkJointBrFloatAxisX(void *prp, zFrame3D *f, zVec3D *a){
-  return _rkJointBrFloatAxis( prp, f, zX, a );
+static zVec3D *_rkJointBrFloatAxisX(rkJoint *joint, zFrame3D *f, zVec3D *a){
+  return _rkJointBrFloatAxis( joint, f, zX, a );
 }
-static zVec3D *_rkJointBrFloatAxisY(void *prp, zFrame3D *f, zVec3D *a){
-  return _rkJointBrFloatAxis( prp, f, zY, a );
+static zVec3D *_rkJointBrFloatAxisY(rkJoint *joint, zFrame3D *f, zVec3D *a){
+  return _rkJointBrFloatAxis( joint, f, zY, a );
 }
-static zVec3D *_rkJointBrFloatAxisZ(void *prp, zFrame3D *f, zVec3D *a){
-  return _rkJointBrFloatAxis( prp, f, zZ, a );
+static zVec3D *_rkJointBrFloatAxisZ(rkJoint *joint, zFrame3D *f, zVec3D *a){
+  return _rkJointBrFloatAxis( joint, f, zZ, a );
 }
-static zVec3D* (*_rk_joint_float_axis_ang[])(void*,zFrame3D*,zVec3D*) = {
+static zVec3D* (*_rk_joint_float_axis_ang[])(rkJoint*,zFrame3D*,zVec3D*) = {
   _rkJointAxisNull,
   _rkJointAxisNull,
   _rkJointAxisNull,
@@ -185,7 +186,7 @@ static zVec3D* (*_rk_joint_float_axis_ang[])(void*,zFrame3D*,zVec3D*) = {
   _rkJointBrFloatAxisY,
   _rkJointBrFloatAxisZ,
 };
-static zVec3D* (*_rk_joint_float_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
+static zVec3D* (*_rk_joint_float_axis_lin[])(rkJoint*,zFrame3D*,zVec3D*) = {
   _rkJointBrFloatAxisX,
   _rkJointBrFloatAxisY,
   _rkJointBrFloatAxisZ,
@@ -195,14 +196,15 @@ static zVec3D* (*_rk_joint_float_axis_lin[])(void*,zFrame3D*,zVec3D*) = {
 };
 
 /* CRB method */
-static void _rkJointBrFloatCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){
+
+static void _rkJointBrFloatCRBWrench(rkJoint *joint, rkMP *crb, zVec6D wi[]){
   zMat3D icrb;
   zVec3D a;
   int i;
 
   rkMPOrgInertia( crb, &icrb );
   for( i=0; i<3; i++ ){
-    _zMat3DRow( &_rkc(prp)->_att, i, &a );
+    _zMat3DRow( &_rkc(joint)->_att, i, &a );
     _zVec3DMul( &a, rkMPMass(crb), zVec6DLin(&wi[i]) );
     _zVec3DOuterProd( rkMPCOM(crb), &a, zVec6DAng(&wi[i]) );
     _zVec3DMulDRC( zVec6DAng(&wi[i]), rkMPMass(crb) );
@@ -210,11 +212,11 @@ static void _rkJointBrFloatCRBWrench(void *prp, rkMP *crb, zVec6D wi[]){
     _zMulMat3DVec3D( &icrb, &a, zVec6DAng(&wi[i+3]) );
   }
 }
-static void _rkJointBrFloatCRBXform(void *prp, zFrame3D *f, zVec6D si[]){
+static void _rkJointBrFloatCRBXform(rkJoint *joint, zFrame3D *f, zVec6D si[]){
   zMat3D r;
   int i;
 
-  zMulMat3DMat3DT( zFrame3DAtt(f), &_rkc(prp)->_att, &r );
+  zMulMat3DMat3DT( zFrame3DAtt(f), &_rkc(joint)->_att, &r );
   for( i=0; i<3; i++ ){
     zVec3DCopy( &r.v[i], zVec6DLin(&si[i]) );
     _zVec3DZero( zVec6DAng(&si[i]) );
@@ -223,23 +225,25 @@ static void _rkJointBrFloatCRBXform(void *prp, zFrame3D *f, zVec6D si[]){
   }
 }
 
-static void _rkJointBrFloatFrictionPivot(void *prp, rkJointFrictionPivot *fp){}
-static void _rkJointBrFloatVal(void *prp, double *val){}
-
-/* any actuator cannot be mounted on the free-floating joint. */
-static rkMotor *_rkJointBrFloatGetMotor(void *prp){ return NULL; }
+static void _rkJointBrFloatFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp){}
+static void _rkJointBrFloatVal(rkJoint *joint, double *val){}
 
 /* motor */
-static void _rkJointBrFloatMotorSetInput(void *prp, double *val){}
-static void _rkJointBrFloatMotorInertia(void *prp, double *val){ zMat6DZero( (zMat6D *)val ); }
-static void _rkJointBrFloatMotorInputTrq(void *prp, double *val){ zVec6DZero( (zVec6D *)val ); }
-static void _rkJointBrFloatMotorResistance(void *prp, double *val){ zVec6DZero( (zVec6D *)val ); }
-static void _rkJointBrFloatMotorDrivingTrq(void *prp, double *val){ zVec6DZero( (zVec6D *)val ); }
 
-/* ABI for breakable joints */
-static void _rkJointBrFloatABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih){
+/* any actuator cannot be mounted on the free-floating joint. */
+static rkMotor *_rkJointBrFloatGetMotor(rkJoint *joint){ return NULL; }
+
+static void _rkJointBrFloatMotorSetInput(rkJoint *joint, double *val){}
+static void _rkJointBrFloatMotorInertia(rkJoint *joint, double *val){ zMat6DZero( (zMat6D *)val ); }
+static void _rkJointBrFloatMotorInputTrq(rkJoint *joint, double *val){ zVec6DZero( (zVec6D *)val ); }
+static void _rkJointBrFloatMotorResistance(rkJoint *joint, double *val){ zVec6DZero( (zVec6D *)val ); }
+static void _rkJointBrFloatMotorDrivingTrq(rkJoint *joint, double *val){ zVec6DZero( (zVec6D *)val ); }
+
+/* ABI (for breakable joints) */
+
+static void _rkJointBrFloatABIAxisInertia(rkJoint *joint, zMat6D *m, zMat h, zMat ih){
   int i, j;
-  _rkJointBrFloatMotorInertia( prp, zMatBufNC(h) );
+  _rkJointBrFloatMotorInertia( joint, zMatBufNC(h) );
   for( i=0; i<3; i++ )
     for( j=0; j<3; j++ ){
       zMatElemNC(h,i,  j)   += m->e[0][0].e[j][i];
@@ -250,10 +254,10 @@ static void _rkJointBrFloatABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih)
   zMatInv( h, ih );
 }
 
-static void _rkJointBrFloatABIAddABI(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm){}
-static void _rkJointBrFloatABIAddBias(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb){}
-static void _rkJointBrFloatABIDrivingTorque(void *prp){}
-static void _rkJointBrFloatABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
+static void _rkJointBrFloatABIAddABI(rkJoint *joint, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm){}
+static void _rkJointBrFloatABIAddBias(rkJoint *joint, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb){}
+static void _rkJointBrFloatABIDrivingTorque(rkJoint *joint){}
+static void _rkJointBrFloatABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   zVec6D tmpv, tmpv2;
   int i;
   /* acc */
@@ -263,62 +267,64 @@ static void _rkJointBrFloatABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac,
   zVec6DCopy( &tmpv, acc );
   /* q */
   zVec6DSubDRC( &tmpv, jac );
-  zMulMat3DVec6D( &_rkc(prp)->_att, &tmpv, &_rkc(prp)->acc );
+  zMulMat3DVec6D( &_rkc(joint)->_att, &tmpv, &_rkc(joint)->acc );
 }
 
-/* ABI for unbreakable joints */
+/* ABI (for unbreakable joints) */
 
-static void _rkJointBrFloatFixedABIAxisInertia(void *prp, zMat6D *m, zMat h, zMat ih){}
-static void _rkJointBrFloatFixedABIAddABI(void *prp, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm){
+static void _rkJointBrFloatFixedABIAxisInertia(rkJoint *joint, zMat6D *m, zMat h, zMat ih){}
+static void _rkJointBrFloatFixedABIAddABI(rkJoint *joint, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm){
   zMat6D tmpm;
   rkJointXformMat6D( f, m, &tmpm );
   zMat6DAddDRC( pm, &tmpm );
 }
-static void _rkJointBrFloatFixedABIAddBias(void *prp, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb){
+static void _rkJointBrFloatFixedABIAddBias(rkJoint *joint, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb){
   zVec6D tmpv;
   zMulMat3DVec6D( zFrame3DAtt(f), b, &tmpv );
   zVec6DAngShiftDRC( &tmpv, zFrame3DPos(f) );
   zVec6DAddDRC( pb, &tmpv );
 }
-static void _rkJointBrFloatFixedABIDrivingTorque(void *prp){}
-static void _rkJointBrFloatFixedABIQAcc(void *prp, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
+static void _rkJointBrFloatFixedABIDrivingTorque(rkJoint *joint){}
+static void _rkJointBrFloatFixedABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
   zVec6DCopy( jac, acc );
 }
-static void _rkJointBrFloatFixedUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc){
-  _rkJointUpdateWrench( j, i, b, acc );
-  if( ( zVec3DNorm( zVec6DLin(rkJointWrench(j)) ) > _rkc(j->prp)->ep_f ) ||
-      ( zVec3DNorm( zVec6DAng(rkJointWrench(j)) ) > _rkc(j->prp)->ep_t ) ){
-    j->com->_axinertia = _rkJointBrFloatFixedABIAxisInertia;
-    j->com->_addabi = _rkJointBrFloatFixedABIAddABI;
-    j->com->_addbias = _rkJointBrFloatFixedABIAddBias;
-    j->com->_dtrq = _rkJointBrFloatFixedABIDrivingTorque;
-    j->com->_qacc = _rkJointBrFloatFixedABIQAcc;
+static void _rkJointBrFloatFixedUpdateWrench(rkJoint *joint, zMat6D *i, zVec6D *b, zVec6D *acc){
+  _rkJointUpdateWrench( joint, i, b, acc );
+  if( ( zVec3DNorm( zVec6DLin(rkJointWrench(joint)) ) > _rkc(joint)->ep_f ) ||
+      ( zVec3DNorm( zVec6DAng(rkJointWrench(joint)) ) > _rkc(joint)->ep_t ) ){
+    joint->com->_axinertia = _rkJointBrFloatFixedABIAxisInertia;
+    joint->com->_addabi = _rkJointBrFloatFixedABIAddABI;
+    joint->com->_addbias = _rkJointBrFloatFixedABIAddBias;
+    joint->com->_dtrq = _rkJointBrFloatFixedABIDrivingTorque;
+    joint->com->_qacc = _rkJointBrFloatFixedABIQAcc;
   }
 }
 
-static void *_rkJointBrFloatDisFromZTK(void *prp, int i, void *arg, ZTK *ztk){
+/* ZTK */
+
+static void *_rkJointBrFloatDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   zVec6D dis;
   zVec6DFromZTK( &dis, ztk );
-  _rkJointBrFloatSetDis( prp, dis.e );
-  return prp;
+  _rkJointBrFloatSetDis( joint, dis.e );
+  return joint;
 }
-static void *_rkJointBrFloatForceThFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->ep_f = ZTKDouble(ztk);
-  return prp;
+static void *_rkJointBrFloatForceThFromZTK(void *joint, int i, void *arg, ZTK *ztk){
+  _rkc(joint)->ep_f = ZTKDouble(ztk);
+  return joint;
 }
-static void *_rkJointBrFloatTorqueThFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->ep_t = ZTKDouble(ztk);
-  return prp;
+static void *_rkJointBrFloatTorqueThFromZTK(void *joint, int i, void *arg, ZTK *ztk){
+  _rkc(joint)->ep_t = ZTKDouble(ztk);
+  return joint;
 }
 
-static void _rkJointBrFloatDisFPrintZTK(FILE *fp, int i, void *prp){
-  zVec6DDataNLFPrint( fp, &_rkc(prp)->dis );
+static void _rkJointBrFloatDisFPrintZTK(FILE *fp, int i, void *joint){
+  zVec6DDataNLFPrint( fp, &_rkc(joint)->dis );
 }
-static void _rkJointBrFloatForceThFPrintZTK(FILE *fp, int i, void *prp){
-  fprintf( fp, "%.10g\n", _rkc(prp)->ep_f );
+static void _rkJointBrFloatForceThFPrintZTK(FILE *fp, int i, void *joint){
+  fprintf( fp, "%.10g\n", _rkc(joint)->ep_f );
 }
-static void _rkJointBrFloatTorqueThFPrintZTK(FILE *fp, int i, void *prp){
-  fprintf( fp, "%.10g\n", _rkc(prp)->ep_t );
+static void _rkJointBrFloatTorqueThFPrintZTK(FILE *fp, int i, void *joint){
+  fprintf( fp, "%.10g\n", _rkc(joint)->ep_t );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_brfloat[] = {
@@ -327,14 +333,14 @@ static ZTKPrp __ztk_prp_rkjoint_brfloat[] = {
   { "torquethreshold", 1, _rkJointBrFloatTorqueThFromZTK, _rkJointBrFloatTorqueThFPrintZTK },
 };
 
-static void *_rkJointBrFloatFromZTK(void *prp, rkMotorArray *motorarray, ZTK *ztk)
+static rkJoint *_rkJointBrFloatFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
 {
-  return rkJointPrpFromZTK( prp, motorarray, ztk, __ztk_prp_rkjoint_brfloat );
+  return rkJointPrpFromZTK( joint, motorarray, ztk, __ztk_prp_rkjoint_brfloat );
 }
 
-static void _rkJointBrFloatFPrintZTK(FILE *fp, void *prp, char *name)
+static void _rkJointBrFloatFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
-  ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkjoint_brfloat );
+  ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_brfloat );
 }
 
 rkJointCom rk_joint_brfloat = {

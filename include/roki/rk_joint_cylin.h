@@ -11,7 +11,7 @@
 
 __BEGIN_DECLS
 
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCylinPrp ){
   /* 0: prismatic, 1: revolutional */
   /* joint displacement, velocity, acceleration and torque */
   double dis[2], vel[2], acc[2], trq[2];
@@ -32,7 +32,7 @@ typedef struct{
   /* forward dynamics */
   rkJointFrictionPivot _fp[2];
   double _u[2];
-} rkJointCylinPrp;
+};
 
 __ROKI_EXPORT rkJointCom rk_joint_cylin;
 

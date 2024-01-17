@@ -31,7 +31,10 @@ int main(int argc, char *argv[])
   rkChain chain;
   zSphere3D bball;
 
-  if( argc < 2 ) return 1;
+  if( argc < 2 ){
+    eprintf( "Usage %s [.ztk file]\n", argv[0] );
+    return 1;
+  }
   if( !rkChainReadZTK( &chain, argv[1] ) ) return 1;
   rkChainBBall( &chain, &bball );
   output( &chain, &bball );

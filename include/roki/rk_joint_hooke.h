@@ -11,7 +11,7 @@
 
 __BEGIN_DECLS
 
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointHookePrp ){
   /* 0: rotation about z-axis, 1: rotation about y-axis */
   /* joint displacement, velocity, acceleration and torque */
   double dis[2], vel[2], acc[2], trq[2];
@@ -32,7 +32,7 @@ typedef struct{
   /* for forward dynamics */
   rkJointFrictionPivot _fp[2];
   double _u[2];
-} rkJointHookePrp;
+};
 
 __ROKI_EXPORT rkJointCom rk_joint_hooke;
 
