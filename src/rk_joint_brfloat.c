@@ -292,9 +292,9 @@ static void _rkJointBrFloatFixedUpdateWrench(rkJoint *joint, zMat6D *i, zVec6D *
   _rkJointUpdateWrench( joint, i, b, acc );
   if( ( zVec3DNorm( zVec6DLin(rkJointWrench(joint)) ) > _rkp(joint)->ep_f ) ||
       ( zVec3DNorm( zVec6DAng(rkJointWrench(joint)) ) > _rkp(joint)->ep_t ) ){
-    joint->com->_axinertia = _rkJointBrFloatFixedABIAxisInertia;
-    joint->com->_addabi = _rkJointBrFloatFixedABIAddABI;
-    joint->com->_addbias = _rkJointBrFloatFixedABIAddBias;
+    joint->com->_axisinertia = _rkJointBrFloatFixedABIAxisInertia;
+    joint->com->_add_abi = _rkJointBrFloatFixedABIAddABI;
+    joint->com->_add_bias = _rkJointBrFloatFixedABIAddBias;
     joint->com->_dtrq = _rkJointBrFloatFixedABIDrivingTorque;
     joint->com->_qacc = _rkJointBrFloatFixedABIQAcc;
   }

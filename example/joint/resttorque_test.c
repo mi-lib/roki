@@ -5,29 +5,31 @@
 /* inertia */
 #define I  0.1
 
-void intg(rkJointRevolPrp *prp, double acc, double dt)
+void intg(rkJointRevolState *stat, double acc, double dt)
 {
-  prp->acc = acc;
-  prp->vel += prp->acc * dt;
-  prp->dis += prp->vel * dt;
+  stat->acc = acc;
+  stat->vel += stat->acc * dt;
+  stat->dis += stat->vel * dt;
 }
 
 int main(void)
 {
   rkJoint j;
-  register int i;
+  rkJointRevolState *stat;
   rkJointRevolPrp *prp;
+  int i;
 
   rkJointAssign( &j, &rk_joint_revol );
+  stat = j.state;
   prp = j.prp;
-  prp->dis = 0.2;
+  stat->dis = 0.2;
   prp->stiffness = 1.0;
   prp->viscosity = 0.5;
 
   for( i=0; i<=STEP; i++ ){
-    rkJointGetKFriction( &j, &prp->trq );
-    printf( "%g %.10g %.10g %.10g %.10g\n", DT*i, prp->dis, prp->vel, prp->acc, prp->trq );
-    intg( prp, prp->trq / I, DT );
+    rkJointGetKFriction( &j, &stat->trq );
+    printf( "%g %.10g %.10g %.10g %.10g\n", DT*i, stat->dis, stat->vel, stat->acc, stat->trq );
+    intg( stat, stat->trq / I, DT );
   }
   rkJointDestroy( &j );
   return 0;

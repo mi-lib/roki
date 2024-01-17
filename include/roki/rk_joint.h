@@ -44,27 +44,27 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   void (*_copy_prp)(rkJoint*,rkJoint*);
 
   /* joint value manipulation function */
-  void (*_limdis)(rkJoint*,double*,double*); /* limit displacements */
-  void (*_setdis)(rkJoint*,double*);     /* set displacements */
-  void (*_setmin)(rkJoint*,double*);     /* set minimum displacements */
-  void (*_setmax)(rkJoint*,double*);     /* set maximum displacements */
-  void (*_setvel)(rkJoint*,double*);     /* set velocity */
-  void (*_setacc)(rkJoint*,double*);     /* set acceleration */
-  void (*_settrq)(rkJoint*,double*);     /* set torque */
-  void (*_getdis)(rkJoint*,double*);     /* get displacements */
-  void (*_getmin)(rkJoint*,double*);     /* get minimum displacements */
-  void (*_getmax)(rkJoint*,double*);     /* get maximum displacements */
-  void (*_getvel)(rkJoint*,double*);     /* get velocity */
-  void (*_getacc)(rkJoint*,double*);     /* get acceleration */
-  void (*_gettrq)(rkJoint*,double*);     /* get torques */
-  void (*_catdis)(rkJoint*,double*,double,double*); /* concatenate displacements */
-  void (*_subdis)(rkJoint*,double*,double*); /* subtract displacements */
-  void (*_cntdis)(rkJoint*,double*,double); /* continuous update */
+  void (*_lim_dis)(rkJoint*,double*,double*); /* limit displacements */
+  void (*_set_dis)(rkJoint*,double*);     /* set displacements */
+  void (*_set_min)(rkJoint*,double*);     /* set minimum displacements */
+  void (*_set_max)(rkJoint*,double*);     /* set maximum displacements */
+  void (*_set_vel)(rkJoint*,double*);     /* set velocity */
+  void (*_set_acc)(rkJoint*,double*);     /* set acceleration */
+  void (*_set_trq)(rkJoint*,double*);     /* set torque */
+  void (*_get_dis)(rkJoint*,double*);     /* get displacements */
+  void (*_get_min)(rkJoint*,double*);     /* get minimum displacements */
+  void (*_get_max)(rkJoint*,double*);     /* get maximum displacements */
+  void (*_get_vel)(rkJoint*,double*);     /* get velocity */
+  void (*_get_acc)(rkJoint*,double*);     /* get acceleration */
+  void (*_get_trq)(rkJoint*,double*);     /* get torques */
+  void (*_cat_dis)(rkJoint*,double*,double,double*); /* concatenate displacements */
+  void (*_sub_dis)(rkJoint*,double*,double*); /* subtract displacements */
+  void (*_cnt_dis)(rkJoint*,double*,double); /* continuous update */
 
   zFrame3D *(*_xform)(rkJoint*,zFrame3D*,zFrame3D*); /* frame transformation */
-  void (*_incvel)(rkJoint*,zVec6D*); /* motion rate transformation */
-  void (*_incaccvel)(rkJoint*,zVec3D*,zVec6D*);
-  void (*_incacc)(rkJoint*,zVec6D*);
+  void (*_inc_vel)(rkJoint*,zVec6D*); /* motion rate transformation */
+  void (*_inc_acc_vel)(rkJoint*,zVec3D*,zVec6D*);
+  void (*_inc_acc)(rkJoint*,zVec6D*);
   void (*_trq)(rkJoint*,zVec6D*);        /* joint torque transformation */
   void (*_torsion)(zFrame3D*,zVec6D*,double*); /* inverse computation of torsion and displacement */
 
@@ -77,23 +77,23 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   void (*_crb_xform)(rkJoint*,zFrame3D*,zVec6D[]);
 
   /* for forward dynamics */
-  void (*_setfrictionpivot)(rkJoint*,rkJointFrictionPivot*); /* set referential displacement of friction */
-  void (*_getfrictionpivot)(rkJoint*,rkJointFrictionPivot*); /* get referential displacement of friction */
-  void (*_setfriction)(rkJoint*,double*);  /* set joint friction force/torque */
-  void (*_getfriction)(rkJoint*,double*);  /* get joint friction force/torque */
-  void (*_getsfriction)(rkJoint*,double*); /* set static friction force/torque */
-  void (*_getkfriction)(rkJoint*,double*); /* get kinetic friction force/torque */
+  void (*_set_frictionpivot)(rkJoint*,rkJointFrictionPivot*); /* set referential displacement of friction */
+  void (*_get_frictionpivot)(rkJoint*,rkJointFrictionPivot*); /* get referential displacement of friction */
+  void (*_set_friction)(rkJoint*,double*);  /* set joint friction force/torque */
+  void (*_get_friction)(rkJoint*,double*);  /* get joint friction force/torque */
+  void (*_get_sfriction)(rkJoint*,double*); /* set static friction force/torque */
+  void (*_get_kfriction)(rkJoint*,double*); /* get kinetic friction force/torque */
 
-  rkMotor *(*_getmotor)(rkJoint*);
-  void (*_setmotorinput)(rkJoint*,double*);
-  void (*_motorinertia)(rkJoint*,double*);
-  void (*_motorinputtrq)(rkJoint*,double*);
-  void (*_motorregist)(rkJoint*,double*);
-  void (*_motordestrq)(rkJoint*,double*);
+  rkMotor *(*_get_motor)(rkJoint*);
+  void (*_set_motor_input)(rkJoint*,double*);
+  void (*_motor_inertia)(rkJoint*,double*);
+  void (*_motor_inputtrq)(rkJoint*,double*);
+  void (*_motor_regist)(rkJoint*,double*);
+  void (*_motor_destrq)(rkJoint*,double*);
 
-  void (*_axinertia)(rkJoint*,zMat6D*,zMat,zMat);
-  void (*_addabi)(rkJoint*,zMat6D*,zFrame3D*,zMat,zMat6D*);
-  void (*_addbias)(rkJoint*,zMat6D*,zVec6D*,zFrame3D*,zMat,zVec6D*);
+  void (*_axisinertia)(rkJoint*,zMat6D*,zMat,zMat);
+  void (*_add_abi)(rkJoint*,zMat6D*,zFrame3D*,zMat,zMat6D*);
+  void (*_add_bias)(rkJoint*,zMat6D*,zVec6D*,zFrame3D*,zMat,zVec6D*);
   void (*_dtrq)(rkJoint*);
   void (*_qacc)(rkJoint*,zMat6D*,zVec6D*,zVec6D*,zMat,zVec6D*);
   void (*_wrench)(struct _rkJoint*,zMat6D*,zVec6D*,zVec6D*);
@@ -156,38 +156,38 @@ __ROKI_EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
  * \return
  * None of those functions return any value.
  */
-#define rkJointLimDis(j,t,v)        (j)->com->_limdis( (j), t, v )
-#define rkJointSetDis(j,v)          (j)->com->_setdis( (j), v )
-#define rkJointSetMin(j,v)          (j)->com->_setmin( (j), v )
-#define rkJointSetMax(j,v)          (j)->com->_setmax( (j), v )
-#define rkJointSetVel(j,v)          (j)->com->_setvel( (j), v )
-#define rkJointSetAcc(j,v)          (j)->com->_setacc( (j), v )
-#define rkJointSetTrq(j,v)          (j)->com->_settrq( (j), v )
-#define rkJointGetDis(j,v)          (j)->com->_getdis( (j), v )
-#define rkJointGetMin(j,v)          (j)->com->_getmin( (j), v )
-#define rkJointGetMax(j,v)          (j)->com->_getmax( (j), v )
-#define rkJointGetVel(j,v)          (j)->com->_getvel( (j), v )
-#define rkJointGetAcc(j,v)          (j)->com->_getacc( (j), v )
-#define rkJointGetTrq(j,v)          (j)->com->_gettrq( (j), v )
+#define rkJointLimDis(j,t,v)        (j)->com->_lim_dis( (j), t, v )
+#define rkJointSetDis(j,v)          (j)->com->_set_dis( (j), v )
+#define rkJointSetMin(j,v)          (j)->com->_set_min( (j), v )
+#define rkJointSetMax(j,v)          (j)->com->_set_max( (j), v )
+#define rkJointSetVel(j,v)          (j)->com->_set_vel( (j), v )
+#define rkJointSetAcc(j,v)          (j)->com->_set_acc( (j), v )
+#define rkJointSetTrq(j,v)          (j)->com->_set_trq( (j), v )
+#define rkJointGetDis(j,v)          (j)->com->_get_dis( (j), v )
+#define rkJointGetMin(j,v)          (j)->com->_get_min( (j), v )
+#define rkJointGetMax(j,v)          (j)->com->_get_max( (j), v )
+#define rkJointGetVel(j,v)          (j)->com->_get_vel( (j), v )
+#define rkJointGetAcc(j,v)          (j)->com->_get_acc( (j), v )
+#define rkJointGetTrq(j,v)          (j)->com->_get_trq( (j), v )
 
-#define rkJointCatDis(j,d,k,v)      (j)->com->_catdis( (j), d, k, v )
-#define rkJointSubDis(j,d,sd)       (j)->com->_subdis( (j), d, sd )
-#define rkJointSetDisCNT(j,v,t)     (j)->com->_cntdis( (j), v, t )
+#define rkJointCatDis(j,d,k,v)      (j)->com->_cat_dis( (j), d, k, v )
+#define rkJointSubDis(j,d,sd)       (j)->com->_sub_dis( (j), d, sd )
+#define rkJointSetDisCNT(j,v,t)     (j)->com->_cnt_dis( (j), v, t )
 
-#define rkJointSetFrictionPivot(j,r) (j)->com->_setfrictionpivot( (j), r )
-#define rkJointGetFrictionPivot(j,r) (j)->com->_getfrictionpivot( (j), r )
-#define rkJointSetFriction(j,f)      (j)->com->_setfriction( (j), f )
-#define rkJointGetFriction(j,f)      (j)->com->_getfriction( (j), f )
-#define rkJointGetSFriction(j,f)     (j)->com->_getsfriction( (j), f )
-#define rkJointGetKFriction(j,f)     (j)->com->_getkfriction( (j), f )
+#define rkJointSetFrictionPivot(j,r) (j)->com->_set_frictionpivot( (j), r )
+#define rkJointGetFrictionPivot(j,r) (j)->com->_get_frictionpivot( (j), r )
+#define rkJointSetFriction(j,f)      (j)->com->_set_friction( (j), f )
+#define rkJointGetFriction(j,f)      (j)->com->_get_friction( (j), f )
+#define rkJointGetSFriction(j,f)     (j)->com->_get_sfriction( (j), f )
+#define rkJointGetKFriction(j,f)     (j)->com->_get_kfriction( (j), f )
 
 /* motor */
-#define rkJointGetMotor(j)          (j)->com->_getmotor( (j) )
-#define rkJointMotorSetInput(j,i)   (j)->com->_setmotorinput( (j), i )
-#define rkJointMotorInertia(j,i)    (j)->com->_motorinertia( (j), i )
-#define rkJointMotorInputTrq(j,t)   (j)->com->_motorinputtrq( (j), t )
-#define rkJointMotorRegistance(j,r) (j)->com->_motorregist( (j), r )
-#define rkJointMotorDrivingTrq(j,t) (j)->com->_motordestrq( (j), t )
+#define rkJointGetMotor(j)          (j)->com->_get_motor( (j) )
+#define rkJointMotorSetInput(j,i)   (j)->com->_set_motor_input( (j), i )
+#define rkJointMotorInertia(j,i)    (j)->com->_motor_inertia( (j), i )
+#define rkJointMotorInputTrq(j,t)   (j)->com->_motor_inputtrq( (j), t )
+#define rkJointMotorRegistance(j,r) (j)->com->_motor_regist( (j), r )
+#define rkJointMotorDrivingTrq(j,t) (j)->com->_motor_destrq( (j), t )
 
 /* Composite Rigid Body */
 /* The following macros are supposed to be used only in internal methods for
@@ -230,9 +230,9 @@ __ROKI_EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 } while(0)
 
 /* Articulated Body Inertia */
-#define rkJointABIAxisInertia(j,m,h,ih) (j)->com->_axinertia( (j), m, h, ih )
-#define rkJointABIAddABI(j,i,f,h,pi)    (j)->com->_addabi( (j), i, f, h, pi )
-#define rkJointABIAddBias(j,i,b,f,h,pb) (j)->com->_addbias( (j), i, b, f, h, pb )
+#define rkJointABIAxisInertia(j,m,h,ih) (j)->com->_axisinertia( (j), m, h, ih )
+#define rkJointABIAddABI(j,i,f,h,pi)    (j)->com->_add_abi( (j), i, f, h, pi )
+#define rkJointABIAddBias(j,i,b,f,h,pb) (j)->com->_add_bias( (j), i, b, f, h, pb )
 #define rkJointABIDrivingTorque(j)      (j)->com->_dtrq( (j) )
 #define rkJointABIQAcc(j,i,b,c,h,a)     (j)->com->_qacc( (j), i, b, c, h, a )
 #define rkJointUpdateWrench(j,i,b,a)    (j)->com->_wrench( (j), i, b, a )
@@ -292,9 +292,9 @@ bool rkJointIsNeutral(rkJoint *j);
  * rkJointCreate
  */
 #define rkJointXform(j,fo,f)      (j)->com->_xform( (j), fo, f )
-#define rkJointIncVel(j,v)        (j)->com->_incvel( (j), v)
-#define rkJointIncAccOnVel(j,w,a) (j)->com->_incaccvel( (j), w, a )
-#define rkJointIncAcc(j,a)        (j)->com->_incacc( (j), a )
+#define rkJointIncVel(j,v)        (j)->com->_inc_vel( (j), v)
+#define rkJointIncAccOnVel(j,w,a) (j)->com->_inc_acc_vel( (j), w, a )
+#define rkJointIncAcc(j,a)        (j)->com->_inc_acc( (j), a )
 __ROKI_EXPORT void rkJointIncRate(rkJoint *j, zVec3D *w, zVec6D *vel, zVec6D *acc);
 #define rkJointCalcTrq(j,f)       (j)->com->_trq( (j), f )
 
