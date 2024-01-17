@@ -10,7 +10,7 @@
 
 static void _rkJointFloatInit(rkJoint *joint){}
 
-static void *_rkJointFloatAlloc(void){ return zAlloc( rkJointFloatPrp, 1 ); }
+static void *_rkJointFloatAllocPrp(void){ return zAlloc( rkJointFloatPrp, 1 ); }
 
 static void _rkJointFloatCopyPrp(rkJoint *src, rkJoint *dst){}
 
@@ -294,7 +294,7 @@ rkJointCom rk_joint_float = {
   "float",
   6,
   _rkJointFloatInit,
-  _rkJointFloatAlloc,
+  _rkJointFloatAllocPrp,
   _rkJointFloatCopyPrp,
   _rkJointFloatLimDis,
   _rkJointFloatSetDis,

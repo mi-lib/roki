@@ -16,7 +16,7 @@ static void _rkJointCylinInit(rkJoint *joint){
   rkMotorAssign( &_rkc(joint)->m, &rk_motor_none );
 }
 
-static void *_rkJointCylinAlloc(void){ return zAlloc( rkJointCylinPrp, 1 ); }
+static void *_rkJointCylinAllocPrp(void){ return zAlloc( rkJointCylinPrp, 1 ); }
 
 static void _rkJointCylinCopyPrp(rkJoint *src, rkJoint *dst){
   _rkc(dst)->min[0] = _rkc(src)->min[0];
@@ -420,7 +420,7 @@ rkJointCom rk_joint_cylin = {
   "cylindrical",
   2,
   _rkJointCylinInit,
-  _rkJointCylinAlloc,
+  _rkJointCylinAllocPrp,
   _rkJointCylinCopyPrp,
   _rkJointCylinLimDis,
   _rkJointCylinSetDis,

@@ -12,7 +12,7 @@ static void _rkJointSpherInit(rkJoint *joint){
   rkMotorAssign( &_rkc(joint)->m, &rk_motor_none );
 }
 
-static void *_rkJointSpherAlloc(void){ return zAlloc( rkJointSpherPrp, 1 ); }
+static void *_rkJointSpherAllocPrp(void){ return zAlloc( rkJointSpherPrp, 1 ); }
 
 static void _rkJointSpherCopyPrp(rkJoint *src, rkJoint *dst){}
 
@@ -298,7 +298,7 @@ rkJointCom rk_joint_spher = {
   "spherical",
   3,
   _rkJointSpherInit,
-  _rkJointSpherAlloc,
+  _rkJointSpherAllocPrp,
   _rkJointSpherCopyPrp,
   _rkJointSpherLimDis,
   _rkJointSpherSetDis,

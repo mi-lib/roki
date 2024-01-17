@@ -14,7 +14,7 @@ static void _rkJointPrismInit(rkJoint *joint){
   rkMotorAssign( &_rkc(joint)->m, &rk_motor_none );
 }
 
-static void *_rkJointPrismAlloc(void){ return zAlloc( rkJointPrismPrp, 1 ); }
+static void *_rkJointPrismAllocPrp(void){ return zAlloc( rkJointPrismPrp, 1 ); }
 
 static void _rkJointPrismCopyPrp(rkJoint *src, rkJoint *dst){
   _rkc(dst)->min = _rkc(src)->min;
@@ -354,7 +354,7 @@ rkJointCom rk_joint_prism = {
   "prismatic",
   1,
   _rkJointPrismInit,
-  _rkJointPrismAlloc,
+  _rkJointPrismAllocPrp,
   _rkJointPrismCopyPrp,
   _rkJointPrismLimDis,
   _rkJointPrismSetDis,

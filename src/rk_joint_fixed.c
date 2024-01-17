@@ -8,7 +8,7 @@
 
 static void _rkJointFixedInit(rkJoint *joint){}
 
-static void *_rkJointFixedAlloc(void){ return NULL; }
+static void *_rkJointFixedAllocPrp(void){ return NULL; }
 
 static void _rkJoinFixedCopyPrp(rkJoint *src, rkJoint *dst){}
 
@@ -114,7 +114,7 @@ rkJointCom rk_joint_fixed = {
   "fixed",
   0,
   _rkJointFixedInit,
-  _rkJointFixedAlloc,
+  _rkJointFixedAllocPrp,
   _rkJoinFixedCopyPrp,
   _rkJointFixedLimVal,
   _rkJointFixedVal,

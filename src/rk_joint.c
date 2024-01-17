@@ -16,7 +16,7 @@ RK_JOINT_COM_ARRAY;
 rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com)
 {
   rkJointInit( joint );
-  if( ( joint->prp = ( joint->com = com )->_alloc() ) )
+  if( ( joint->prp = ( joint->com = com )->_alloc_prp() ) )
     joint->com->_init( joint );
   rkJointNeutral( joint );
   return joint;
@@ -88,7 +88,7 @@ rkJoint *rkJointCopyPrp(rkJoint *src, rkJoint *dst)
 {
   if( strcmp( rkJointTypeStr(src), rkJointTypeStr(dst) ) != 0 )
     return NULL;
-  src->com->_copyprp( src, dst );
+  src->com->_copy_prp( src, dst );
   return dst;
 }
 

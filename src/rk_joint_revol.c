@@ -14,7 +14,7 @@ static void _rkJointRevolInit(rkJoint *joint){
   rkMotorAssign( &_rkc(joint)->m, &rk_motor_none );
 }
 
-static void *_rkJointRevolAlloc(void){ return zAlloc( rkJointRevolPrp, 1 ); }
+static void *_rkJointRevolAllocPrp(void){ return zAlloc( rkJointRevolPrp, 1 ); }
 
 static void _rkJointRevolCopyPrp(rkJoint *src, rkJoint *dst){
   _rkc(dst)->min = _rkc(src)->min;
@@ -362,7 +362,7 @@ rkJointCom rk_joint_revol = {
   "revolute",
   1,
   _rkJointRevolInit,
-  _rkJointRevolAlloc,
+  _rkJointRevolAllocPrp,
   _rkJointRevolCopyPrp,
   _rkJointRevolLimDis,
   _rkJointRevolSetDis,

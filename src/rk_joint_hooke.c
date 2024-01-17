@@ -16,7 +16,7 @@ static void _rkJointHookeInit(rkJoint *joint){
   rkMotorAssign( &_rkc(joint)->m, &rk_motor_none );
 }
 
-static void *_rkJointHookeAlloc(void){ return zAlloc( rkJointHookePrp, 1 ); }
+static void *_rkJointHookeAllocPrp(void){ return zAlloc( rkJointHookePrp, 1 ); }
 
 static void _rkJointHookeCopyPrp(rkJoint *src, rkJoint *dst){
   _rkc(dst)->min[0] = _rkc(src)->min[0];
@@ -402,7 +402,7 @@ rkJointCom rk_joint_hooke = {
   "hooke",
   2,
   _rkJointHookeInit,
-  _rkJointHookeAlloc,
+  _rkJointHookeAllocPrp,
   _rkJointHookeCopyPrp,
   _rkJointHookeLimDis,
   _rkJointHookeSetDis,

@@ -1,3 +1,6 @@
+2024. 1.18. Renamed rkJoint*Alloc to rkJoint*AllocPrp. [rk_joint_fixed, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher, rk_joint_float, rk_joint_brfloat]
+2024. 1.18. Renamed _copyprp member of rkJointCom to _copy_prp. [rk_joint]
+2024. 1.18. Renamed _alloc member of rkJointCom to _alloc_prp. [rk_joint]
 2024. 1.18. Debugged _rkChainInitJointFromZTK, _rkChainInitFPrintZTK, and _rkIKJointFromZTK to conform to the new specifications of rkJointCom. [rk_chain, rk_ik]
 2024. 1.18. Modified specification of rkJointCom to accept a pointer to the instance of rkJoint rather than a pointer to it properties. [rk_joint*]
 2023. 9. 3. Added rkJointCopyPrp and joint_clone_test, and modified rkJointClone. [rk_joint, test]

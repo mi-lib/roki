@@ -38,8 +38,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   const char *typestr; /*!< \brief a string to identify the type of joint */
   byte size; /* number of joint components */
   void (*_init)(rkJoint*);
-  void *(*_alloc)(void);
-  void (*_copyprp)(rkJoint*,rkJoint*);
+  void *(*_alloc_prp)(void);
+  void (*_copy_prp)(rkJoint*,rkJoint*);
 
   /* joint value manipulation function */
   void (*_limdis)(rkJoint*,double*,double*); /* limit displacements */

@@ -17,9 +17,7 @@ static void _rkJointBrFloatInit(rkJoint *joint){
   _rkc(joint)->ep_t = HUGE_VAL;
 }
 
-static void *_rkJointBrFloatAlloc(void){
-  return zAlloc( rkJointBrFloatPrp, 1 );
-}
+static void *_rkJointBrFloatAllocPrp(void){ return zAlloc( rkJointBrFloatPrp, 1 ); }
 
 static void _rkJointBrFloatCopyPrp(rkJoint *src, rkJoint *dst){
   _rkc(dst)->ep_f = _rkc(src)->ep_f;
@@ -347,7 +345,7 @@ rkJointCom rk_joint_brfloat = {
   "breakablefloat",
   6,
   _rkJointBrFloatInit,
-  _rkJointBrFloatAlloc,
+  _rkJointBrFloatAllocPrp,
   _rkJointBrFloatCopyPrp,
   _rkJointBrFloatLimDis,
   _rkJointBrFloatSetDis,
