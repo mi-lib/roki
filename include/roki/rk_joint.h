@@ -24,7 +24,6 @@ typedef struct _rkJointCom rkJointCom;
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJoint ){
   void *state; /* joint state */
   void *prp;   /* joint properties */
- /* void *state;*/ /* joint state */
   zVec6D wrench; /* joint wrench */
   rkJointCom *com;
 };

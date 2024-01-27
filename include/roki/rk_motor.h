@@ -16,8 +16,16 @@ __BEGIN_DECLS
 /*! \struct rkMotor
  * \brief a class of motor model
  * ********************************************************** */
+struct _rkMotorCom;
+typedef struct _rkMotorCom rkMotorCom;
 
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotor ){
+  Z_NAMED_CLASS;
+  void *prp;
+  rkMotorCom *com;
+};
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorCom ){
   const char *typestr; /*!< \brief a string for type identification */
   byte size; /*!< \brief size of motor input signals */
   void (* _init)(void*);
@@ -32,13 +40,7 @@ typedef struct{
 
   void *(* _fromZTK)(void*,ZTK*);
   void (* _fprintZTK)(FILE*,void*);
-} rkMotorCom;
-
-typedef struct{
-  Z_NAMED_CLASS;
-  void *prp;
-  rkMotorCom *com;
-} rkMotor;
+};
 
 #define rkMotorTypeStr(m) (m)->com->typestr
 #define rkMotorSize(m)    (m)->com->size
