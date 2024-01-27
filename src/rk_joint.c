@@ -146,6 +146,12 @@ double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t)
   return q;
 }
 
+/* motor */
+
+rkMotor *rkJointGetNullMotor(rkJoint *joint){ return NULL; }
+void rkJointMotorSetValDummy(rkJoint *joint, double *val){}
+void rkJointMotorGetValDummy(rkJoint *joint, double *val){}
+
 /* for ABI */
 zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m)
 {

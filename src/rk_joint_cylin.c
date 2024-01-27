@@ -14,7 +14,6 @@ static void _rkJointCylinInit(rkJoint *joint){
   _rkp(joint)->min[0] =-HUGE_VAL;
   _rkp(joint)->max[1] = HUGE_VAL;
   _rkp(joint)->min[1] =-HUGE_VAL;
-  rkMotorAssign( &_rkp(joint)->m, &rk_motor_none );
 }
 
 static void *_rkJointCylinAllocState(void){ return zAlloc( rkJointCylinState, 1 ); }
@@ -215,35 +214,18 @@ static void _rkJointCylinGetKFriction(rkJoint *joint, double *val){
 
 /* motor */
 
-static rkMotor *_rkJointCylinGetMotor(rkJoint *joint){ return &_rkp(joint)->m; }
-static void _rkJointCylinMotorSetInput(rkJoint *joint, double *val){
-  rkMotorSetInput( &_rkp(joint)->m, val );
-}
-static void _rkJointCylinMotorInertia(rkJoint *joint, double *val){
-  zRawVecZero( val, 4 );
-  rkMotorInertia( &_rkp(joint)->m, val );
-}
-static void _rkJointCylinMotorInputTrq(rkJoint *joint, double *val){
-  zRawVecZero( val, 2 );
-  rkMotorInputTrq( &_rkp(joint)->m, val );
-}
-static void _rkJointCylinMotorResistance(rkJoint *joint, double *val){
-  zRawVecZero( val, 2 );
-  rkMotorRegistance( &_rkp(joint)->m, _rks(joint)->dis, _rks(joint)->vel, val );
-}
-static void _rkJointCylinMotorDrivingTrq(rkJoint *joint, double *val){
-  zRawVecZero( val, 2 );
-  rkMotorDrivingTrq( &_rkp(joint)->m, _rks(joint)->dis, _rks(joint)->vel, _rks(joint)->acc, val );
-}
+static void _rkJointCylinMotorInertia(rkJoint *joint, double *val){ val[0] = val[1] = val[2] = val[3] = 0; }
+static void _rkJointCylinMotorInputTrq(rkJoint *joint, double *val){ val[0] = val[1] = 0; }
+static void _rkJointCylinMotorResistance(rkJoint *joint, double *val){ val[0] = val[1] = 0; }
+static void _rkJointCylinMotorDrivingTrq(rkJoint *joint, double *val){ val[0] = val[1] = 0; }
 
 /* ABI */
 
 static void _rkJointCylinABIAxisInertia(rkJoint *joint, zMat6D *m, zMat h, zMat ih){
-  _rkJointCylinMotorInertia( joint, zMatBufNC(h) );
-  zMatElemNC(h,0,0) += m->e[0][0].e[2][2];
-  zMatElemNC(h,1,0) += m->e[0][1].e[2][2];
-  zMatElemNC(h,0,1) += m->e[1][0].e[2][2];
-  zMatElemNC(h,1,1) += m->e[1][1].e[2][2];
+  zMatElemNC(h,0,0) = m->e[0][0].e[2][2];
+  zMatElemNC(h,1,0) = m->e[0][1].e[2][2];
+  zMatElemNC(h,0,1) = m->e[1][0].e[2][2];
+  zMatElemNC(h,1,1) = m->e[1][1].e[2][2];
   zMatInv( h, ih );
 }
 
@@ -288,13 +270,8 @@ static void _rkJointCylinABIAddBias(rkJoint *joint, zMat6D *m, zVec6D *b, zFrame
 }
 
 static void _rkJointCylinABIDrivingTorque(rkJoint *joint){
-  double val[2];
-  _rkJointCylinMotorInputTrq( joint, _rks(joint)->_u );
-  _rkJointCylinMotorResistance( joint, val );
-  _rks(joint)->_u[0] -= val[0];
-  _rks(joint)->_u[1] -= val[1];
-  _rks(joint)->_u[0] += _rkp(joint)->tf[0];
-  _rks(joint)->_u[1] += _rkp(joint)->tf[1];
+  _rks(joint)->_u[0] = _rkp(joint)->tf[0];
+  _rks(joint)->_u[1] = _rkp(joint)->tf[1];
 }
 
 static void _rkJointCylinABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){
@@ -353,11 +330,6 @@ static void *_rkJointCylinStaticFrictionFromZTK(void *joint, int i, void *arg, Z
   _rkp(joint)->sf[1] = ZTKDouble(ztk);
   return joint;
 }
-static void *_rkJointCylinMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  rkMotor *mp;
-  if( !( mp = rkMotorArrayFind( (rkMotorArray *)arg, ZTKVal(ztk) ) ) ) return NULL;
-  return rkMotorClone( mp, &_rkp(joint)->m ) ? joint : NULL;
-}
 
 static void _rkJointCylinDisFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n",
@@ -403,7 +375,6 @@ static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
   { "viscosity", 1, _rkJointCylinViscosityFromZTK, _rkJointCylinViscosityFPrintZTK },
   { "coulomb", 1, _rkJointCylinCoulombFromZTK, _rkJointCylinCoulombFPrintZTK },
   { "staticfriction", 1, _rkJointCylinStaticFrictionFromZTK, _rkJointCylinStaticFrictionFPrintZTK },
-  { "motor", 1, _rkJointCylinMotorFromZTK, NULL },
 };
 
 static rkJoint *_rkJointCylinFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
@@ -414,8 +385,6 @@ static rkJoint *_rkJointCylinFromZTK(rkJoint *joint, rkMotorArray *motorarray, Z
 static void _rkJointCylinFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_cylin );
-  if( rkMotorIsAssigned( &_rkp(joint)->m ) )
-    fprintf( fp, "motor: %s\n", zName(&_rkp(joint)->m) );
 }
 
 rkJointCom rk_joint_cylin = {
@@ -460,8 +429,8 @@ rkJointCom rk_joint_cylin = {
   _rkJointCylinGetSFriction,
   _rkJointCylinGetKFriction,
 
-  _rkJointCylinGetMotor,
-  _rkJointCylinMotorSetInput,
+  rkJointGetNullMotor,
+  rkJointMotorSetValDummy,
   _rkJointCylinMotorInertia,
   _rkJointCylinMotorInputTrq,
   _rkJointCylinMotorResistance,

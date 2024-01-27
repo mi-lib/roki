@@ -33,9 +33,6 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCylinPrp ){
   /* friction */
   double sf[2];
   double tf[2];
-
-  /* motor */
-  rkMotor m;
 };
 
 __ROKI_EXPORT rkJointCom rk_joint_cylin;

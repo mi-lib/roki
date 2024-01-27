@@ -230,10 +230,6 @@ static void _rkJointBrFloatVal(rkJoint *joint, double *val){}
 
 /* motor */
 
-/* any actuator cannot be mounted on the free-floating joint. */
-static rkMotor *_rkJointBrFloatGetMotor(rkJoint *joint){ return NULL; }
-
-static void _rkJointBrFloatMotorSetInput(rkJoint *joint, double *val){}
 static void _rkJointBrFloatMotorInertia(rkJoint *joint, double *val){ zMat6DZero( (zMat6D *)val ); }
 static void _rkJointBrFloatMotorInputTrq(rkJoint *joint, double *val){ zVec6DZero( (zVec6D *)val ); }
 static void _rkJointBrFloatMotorResistance(rkJoint *joint, double *val){ zVec6DZero( (zVec6D *)val ); }
@@ -385,8 +381,8 @@ rkJointCom rk_joint_brfloat = {
   _rkJointBrFloatVal,
   _rkJointBrFloatVal,
 
-  _rkJointBrFloatGetMotor,
-  _rkJointBrFloatMotorSetInput,
+  rkJointGetNullMotor,
+  rkJointMotorSetValDummy,
   _rkJointBrFloatMotorInertia,
   _rkJointBrFloatMotorInputTrq,
   _rkJointBrFloatMotorResistance,

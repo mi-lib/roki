@@ -333,6 +333,11 @@ __ROKI_EXPORT zVec3D *_rkJointAxisZ(rkJoint *j, zFrame3D *f, zVec3D *a);
  * some operation codes. Do not use them in users programs. */
 #define _rkJointRestTrq(s,v,c,dis,vel) ( -s*dis -v*vel -c*zSgn(vel) )
 
+/* dummy functions for motorless joints */
+__ROKI_EXPORT rkMotor *rkJointGetNullMotor(rkJoint *joint);
+__ROKI_EXPORT void rkJointMotorSetValDummy(rkJoint *joint, double *val);
+__ROKI_EXPORT void rkJointMotorGetValDummy(rkJoint *joint, double *val);
+
 /* for ABI */
 __ROKI_EXPORT zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m);
 __ROKI_EXPORT void _rkJointUpdateWrench(rkJoint *j, zMat6D *i, zVec6D *b, zVec6D *acc);

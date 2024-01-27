@@ -70,16 +70,6 @@ static void _rkJointFixedCRBXform(rkJoint *joint, zFrame3D *f, zVec6D si[]){}
 
 static void _rkJointFixedFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp){}
 
-/* motor */
-
-static rkMotor *_rkJointFixedGetMotor(rkJoint *joint){ return NULL; }
-
-static void _rkJointFixedMotorSetInput(rkJoint *joint, double *val){}
-static void _rkJointFixedMotorInertia(rkJoint *joint, double *val){}
-static void _rkJointFixedMotorInputTrq(rkJoint *joint, double *val){}
-static void _rkJointFixedMotorResistance(rkJoint *joint, double *val){}
-static void _rkJointFixedMotorDrivingTrq(rkJoint *joint, double *val){}
-
 /* ABI */
 
 static void _rkJointFixedABIAxisInertia(rkJoint *joint, zMat6D *m, zMat h, zMat ih){}
@@ -152,12 +142,12 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedVal,
   _rkJointFixedVal,
 
-  _rkJointFixedGetMotor,
-  _rkJointFixedMotorSetInput,
-  _rkJointFixedMotorInertia,
-  _rkJointFixedMotorInputTrq,
-  _rkJointFixedMotorResistance,
-  _rkJointFixedMotorDrivingTrq,
+  rkJointGetNullMotor,
+  rkJointMotorSetValDummy,
+  rkJointMotorGetValDummy,
+  rkJointMotorGetValDummy,
+  rkJointMotorGetValDummy,
+  rkJointMotorGetValDummy,
 
   _rkJointFixedABIAxisInertia,
   _rkJointFixedABIAddABI,

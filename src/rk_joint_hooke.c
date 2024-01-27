@@ -14,7 +14,6 @@ static void _rkJointHookeInit(rkJoint *joint){
   _rkp(joint)->min[0] =-HUGE_VAL;
   _rkp(joint)->max[1] = HUGE_VAL;
   _rkp(joint)->min[1] =-HUGE_VAL;
-  rkMotorAssign( &_rkp(joint)->m, &rk_motor_none );
 }
 
 static void *_rkJointHookeAllocState(void){ return zAlloc( rkJointHookeState, 1 ); }
@@ -258,43 +257,21 @@ static void _rkJointHookeGetKFriction(rkJoint *joint, double *val){
 
 /* motor */
 
-static rkMotor *_rkJointHookeGetMotor(rkJoint *joint){ return &_rkp(joint)->m; }
-
-static void _rkJointHookeMotorSetInput(rkJoint *joint, double *val){
-  rkMotorSetInput( &_rkp(joint)->m, val );
-}
-
-static void _rkJointHookeMotorInertia(rkJoint *joint, double *val){
-  zRawVecZero( val, 4 );
-  rkMotorInertia( &_rkp(joint)->m, val );
-}
-
-static void _rkJointHookeMotorInputTrq(rkJoint *joint, double *val){
-  zRawVecZero( val, 2 );
-  rkMotorInputTrq( &_rkp(joint)->m, val );
-}
-
-static void _rkJointHookeMotorResistance(rkJoint *joint, double *val){
-  zRawVecZero( val, 2 );
-  rkMotorRegistance( &_rkp(joint)->m, _rks(joint)->dis, _rks(joint)->vel, val );
-}
-
-static void _rkJointHookeMotorDrivingTrq(rkJoint *joint, double *val){
-  zRawVecZero( val, 2 );
-  rkMotorDrivingTrq( &_rkp(joint)->m, _rks(joint)->dis, _rks(joint)->vel, _rks(joint)->acc, val );
-}
+static void _rkJointHookeMotorInertia(rkJoint *joint, double *val){ val[0] = val[1] = val[2] = val[3] = 0; }
+static void _rkJointHookeMotorInputTrq(rkJoint *joint, double *val){ val[0] = val[1] = 0; }
+static void _rkJointHookeMotorResistance(rkJoint *joint, double *val){ val[0] = val[1] = 0; }
+static void _rkJointHookeMotorDrivingTrq(rkJoint *joint, double *val){ val[0] = val[1] = 0; }
 
 /* ABI */
 
 static void _rkJointHookeABIAxisInertia(rkJoint *joint, zMat6D *m, zMat h, zMat ih){
   zMat3D *m22;
 
-  _rkJointHookeMotorInertia( joint, zMatBufNC(h) );
   m22 = &m->e[1][1];
-  zMatElemNC(h,0,0) += m22->e[0][0]*_rks(joint)->_s[1]*_rks(joint)->_s[1] - (m22->e[2][0] + m22->e[0][2])*_rks(joint)->_s[1]*_rks(joint)->_c[1] + m22->e[2][2]*_rks(joint)->_c[1]*_rks(joint)->_c[1];
-  zMatElemNC(h,1,0) += m22->e[2][1]*_rks(joint)->_c[1] - m22->e[0][1]*_rks(joint)->_s[1];
-  zMatElemNC(h,0,1) += m22->e[1][2]*_rks(joint)->_c[1] - m22->e[1][0]*_rks(joint)->_s[1];
-  zMatElemNC(h,1,1) += m22->e[1][1];
+  zMatElemNC(h,0,0) = m22->e[0][0]*zSqr(_rks(joint)->_s[1]) - (m22->e[2][0] + m22->e[0][2])*_rks(joint)->_s[1]*_rks(joint)->_c[1] + m22->e[2][2]*zSqr(_rks(joint)->_c[1]);
+  zMatElemNC(h,1,0) = m22->e[2][1]*_rks(joint)->_c[1] - m22->e[0][1]*_rks(joint)->_s[1];
+  zMatElemNC(h,0,1) = m22->e[1][2]*_rks(joint)->_c[1] - m22->e[1][0]*_rks(joint)->_s[1];
+  zMatElemNC(h,1,1) = m22->e[1][1];
   zMatInv( h, ih );
 }
 
@@ -349,11 +326,6 @@ static void *_rkJointHookeStaticFrictionFromZTK(void *joint, int i, void *arg, Z
   _rkp(joint)->sf[1] = ZTKDouble(ztk);
   return joint;
 }
-static void *_rkJointHookeMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  rkMotor *mp;
-  if( !( mp = rkMotorArrayFind( (rkMotorArray *)arg, ZTKVal(ztk) ) ) ) return NULL;
-  return rkMotorClone( mp, &_rkp(joint)->m ) ? joint : NULL;
-}
 
 static void _rkJointHookeDisFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g %.10g\n", zRad2Deg(_rks(joint)->dis[0]), zRad2Deg(_rks(joint)->dis[1]) );
@@ -385,7 +357,6 @@ static ZTKPrp __ztk_prp_rkjoint_hooke[] = {
   { "viscosity", 1, _rkJointHookeViscosityFromZTK, _rkJointHookeViscosityFPrintZTK },
   { "coulomb", 1, _rkJointHookeCoulombFromZTK, _rkJointHookeCoulombFPrintZTK },
   { "staticfriction", 1, _rkJointHookeStaticFrictionFromZTK, _rkJointHookeStaticFrictionFPrintZTK },
-  { "motor", 1, _rkJointHookeMotorFromZTK, NULL },
 };
 
 static rkJoint *_rkJointHookeFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
@@ -396,8 +367,6 @@ static rkJoint *_rkJointHookeFromZTK(rkJoint *joint, rkMotorArray *motorarray, Z
 static void _rkJointHookeFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_hooke );
-  if( rkMotorIsAssigned( &_rkp(joint)->m ) )
-    fprintf( fp, "motor: %s\n", zName(&_rkp(joint)->m) );
 }
 
 rkJointCom rk_joint_hooke = {
@@ -442,8 +411,8 @@ rkJointCom rk_joint_hooke = {
   _rkJointHookeGetSFriction,
   _rkJointHookeGetKFriction,
 
-  _rkJointHookeGetMotor,
-  _rkJointHookeMotorSetInput,
+  rkJointGetNullMotor,
+  rkJointMotorSetValDummy,
   _rkJointHookeMotorInertia,
   _rkJointHookeMotorInputTrq,
   _rkJointHookeMotorResistance,
