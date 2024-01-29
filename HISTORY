@@ -1,3 +1,4 @@
+2024. 1.29. Modified rkChainCreateIK to skip allocation of internal workspace if the chain has no DOF. [rk_ik]
 2024. 1.28. Applied ZDEF_STRUCT to rkMotor and rkMotorCom. [rk_motor]
 2024. 1.27. Added rkJointGetNullMotor, rkJointMotorSetValDummy, and rkJointMotorGetValDummy. [rk_joint, rk_joint_fixed, rk_joint_cylin, rk_joint_hooke, rk_joint_float, rk_joint_brfloat]
 2024. 1.27. Abolished _rkJointFloatMotorSetInput and _rkJointBrFloatMotorSetInput. [rk_joint_float, rk_joint_brfloat]

@@ -38,7 +38,14 @@ static void _rkIKInit(rkIK *ik)
 /* create an inverse kinematics solver for a kinematic chain. */
 rkChain *rkChainCreateIK(rkChain *chain)
 {
-  if( !( chain->_ik = zAlloc( rkIK, 1 ) ) ) return NULL;
+  int joint_size;
+
+  if( ( joint_size = rkChainJointSize(chain) ) == 0 )
+    return chain; /* no need to create an inverse kinematics solver */
+  if( !( chain->_ik = zAlloc( rkIK, 1 ) ) ){
+    ZALLOCERROR();
+    return NULL;
+  }
   _rkIKInit( chain->_ik );
   chain->_ik->joint_sw = zAlloc( bool, rkChainLinkNum(chain) );
   chain->_ik->joint_weight = zAlloc( double, rkChainLinkNum(chain) );
