@@ -12,13 +12,14 @@
 
 __BEGIN_DECLS
 
-typedef struct {
-  /* value */
-  double input;
-  /* properties */
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorTrqPrp ){
   double min; /*!< \brief minimum input torque */
   double max; /*!< \brief maximum input torque */
-} rkMotorTrqPrp;
+};
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorTrqState ){
+  double input;
+};
 
 __ROKI_EXPORT rkMotorCom rk_motor_trq;
 

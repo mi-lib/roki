@@ -6,13 +6,12 @@
 
 #include <roki/rk_joint.h>
 
-#define _rks(joint) ((rkJointRevolState *)((rkJoint *)(joint))->state)
-#define _rkp(joint) ((rkJointRevolPrp   *)((rkJoint *)(joint))->prp)
+#define _rkp(joint) ((rkJointRevolPrp   *)((rkJoint*)(joint))->prp)
+#define _rks(joint) ((rkJointRevolState *)((rkJoint*)(joint))->state)
 
 static void _rkJointRevolInit(rkJoint *joint){
   _rkp(joint)->max = HUGE_VAL;
   _rkp(joint)->min =-HUGE_VAL;
-  rkMotorAssign( &_rkp(joint)->m, &rk_motor_none );
 }
 
 static void *_rkJointRevolAllocState(void){ return zAlloc( rkJointRevolState, 1 ); }
@@ -189,30 +188,28 @@ static void _rkJointRevolGetKFriction(rkJoint *joint, double *val){
 
 /* motor */
 
-static rkMotor *_rkJointRevolGetMotor(rkJoint *joint){ return &_rkp(joint)->m; }
-
 static void _rkJointRevolMotorSetInput(rkJoint *joint, double *val){
-  rkMotorSetInput( &_rkp(joint)->m, val );
+  rkMotorSetInput( rkJointMotor(joint), val );
 }
 
 static void _rkJointRevolMotorInertia(rkJoint *joint, double *val){
   *val = 0.0;
-  rkMotorInertia( &_rkp(joint)->m, val );
+  rkMotorInertia( rkJointMotor(joint), val );
 }
 
 static void _rkJointRevolMotorInputTrq(rkJoint *joint, double *val){
   *val = 0.0;
-  rkMotorInputTrq( &_rkp(joint)->m, val );
+  rkMotorInputTrq( rkJointMotor(joint), val );
 }
 
 static void _rkJointRevolMotorResistance(rkJoint *joint, double *val){
   *val = 0.0;
-  rkMotorRegistance( &_rkp(joint)->m, &_rks(joint)->dis, &_rks(joint)->vel, val );
+  rkMotorRegistance( rkJointMotor(joint), &_rks(joint)->dis, &_rks(joint)->vel, val );
 }
 
 static void _rkJointRevolMotorDrivingTrq(rkJoint *joint, double *val){
   *val = 0.0;
-  rkMotorDrivingTrq( &_rkp(joint)->m, &_rks(joint)->dis, &_rks(joint)->vel, &_rks(joint)->acc, val );
+  rkMotorDrivingTrq( rkJointMotor(joint), &_rks(joint)->dis, &_rks(joint)->vel, &_rks(joint)->acc, val );
 }
 
 /* ABI */
@@ -310,9 +307,7 @@ static void *_rkJointRevolStaticFrictionFromZTK(void *joint, int i, void *arg, Z
   return joint;
 }
 static void *_rkJointRevolMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  rkMotor *mp;
-  if( !( mp = rkMotorArrayFind( (rkMotorArray *)arg, ZTKVal(ztk) ) ) ) return NULL;
-  return rkMotorClone( mp, &_rkp(joint)->m ) ? joint : NULL;
+  return rkJointMotorQuery( joint, arg, ZTKVal(ztk) );
 }
 
 static void _rkJointRevolDisFPrintZTK(FILE *fp, int i, void *joint){
@@ -348,16 +343,16 @@ static ZTKPrp __ztk_prp_rkjoint_revol[] = {
   { "motor", 1, _rkJointRevolMotorFromZTK, NULL },
 };
 
-static rkJoint *_rkJointRevolFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
+static rkJoint *_rkJointRevolFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
 {
-  return rkJointPrpFromZTK( joint, motorarray, ztk, __ztk_prp_rkjoint_revol );
+  return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_revol );
 }
 
 static void _rkJointRevolFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_revol );
-  if( rkMotorIsAssigned( &_rkp(joint)->m ) )
-    fprintf( fp, "motor: %s\n", zName(&_rkp(joint)->m) );
+  if( rkJointMotor( joint ) )
+    fprintf( fp, "motor: %s\n", rkMotorName( rkJointMotor(joint) ) );
 }
 
 rkJointCom rk_joint_revol = {
@@ -402,7 +397,6 @@ rkJointCom rk_joint_revol = {
   _rkJointRevolGetSFriction,
   _rkJointRevolGetKFriction,
 
-  _rkJointRevolGetMotor,
   _rkJointRevolMotorSetInput,
   _rkJointRevolMotorInertia,
   _rkJointRevolMotorInputTrq,

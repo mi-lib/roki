@@ -39,7 +39,7 @@ void create_hooke1(rkChain *chain)
 {
   rkChainInit( chain );
   zNameSet( chain, "hooke1" );
-  zArrayAlloc( &chain->link, rkLink, 2 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 2 );
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link" );
@@ -63,7 +63,7 @@ void create_hooke2(rkChain *chain)
 {
   rkChainInit( chain );
   zNameSet( chain, "hooke2" );
-  zArrayAlloc( &chain->link, rkLink, 4 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 4 );
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );

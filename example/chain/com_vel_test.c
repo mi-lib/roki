@@ -11,7 +11,7 @@ zVec3D com, vel, acc;
 
 void update_dis(int st)
 {
-  register int i;
+  int i;
   double val;
   zMat3D r;
 
@@ -43,7 +43,7 @@ void world_com_test(void)
 
 int main(void)
 {
-  register int i;
+  int i;
 
   rkChainReadZTK( &chain, "../model/H5.ztk" );
   rkChainUpdateID( &chain );

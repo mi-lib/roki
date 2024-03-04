@@ -377,9 +377,9 @@ static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
   { "staticfriction", 1, _rkJointCylinStaticFrictionFromZTK, _rkJointCylinStaticFrictionFPrintZTK },
 };
 
-static rkJoint *_rkJointCylinFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
+static rkJoint *_rkJointCylinFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
 {
-  return rkJointPrpFromZTK( joint, motorarray, ztk, __ztk_prp_rkjoint_cylin );
+  return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_cylin );
 }
 
 static void _rkJointCylinFPrintZTK(FILE *fp, rkJoint *joint, char *name)
@@ -429,7 +429,6 @@ rkJointCom rk_joint_cylin = {
   _rkJointCylinGetSFriction,
   _rkJointCylinGetKFriction,
 
-  rkJointGetNullMotor,
   rkJointMotorSetValDummy,
   _rkJointCylinMotorInertia,
   _rkJointCylinMotorInputTrq,

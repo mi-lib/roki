@@ -97,9 +97,9 @@ void pattern4(rkBody *body, double t)
 
 void test(void (* pat)(rkBody*,double), rkBody *body)
 {
-  register int i;
   double dt;
   zVec6D w;
+  int i;
 
   dt = T / DIV;
   for( i=0; i<DIV; i++ ){

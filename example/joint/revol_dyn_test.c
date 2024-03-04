@@ -11,7 +11,7 @@ int main(void)
 {
   rkJoint joint;
   double t, dis, vel, acc;
-  register int i;
+  int i;
 
   rkJointAssign( &joint, &rk_joint_revol );
   for( i=0; i<=STEP; i++ ){

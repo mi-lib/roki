@@ -8,119 +8,170 @@
 #include <roki/rk_motor.h>
 
 /* ********************************************************** */
-/* a class of motor model
+/* motor specification class
  * ********************************************************** */
 
-rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com)
+/* assign a motor type to motor specification instance. */
+rkMotorSpec *rkMotorSpecAssign(rkMotorSpec *ms, rkMotorCom *com)
 {
-  if( ( m->prp = ( m->com = com )->_alloc() ) )
-    m->com->_init( m->prp );
-  return m;
+  if( ( ms->prp = ( ms->com = com )->_alloc_prp() ) )
+    ms->com->_init_prp( ms );
+  return ms;
 }
 
-rkMotor *rkMotorQueryAssign(rkMotor *m, const char *str)
+/* query motor specification by a string. */
+rkMotorSpec *rkMotorSpecQuery(rkMotorSpec *ms, const char *str)
 {
   RK_MOTOR_COM_ARRAY;
   int i;
 
   for( i=0; _rk_motor_com[i]; i++ )
     if( strcmp( str, _rk_motor_com[i]->typestr ) == 0 )
-      return rkMotorAssign( m, _rk_motor_com[i] );
+      return rkMotorSpecAssign( ms, _rk_motor_com[i] );
   ZRUNERROR( RK_ERR_MOTOR_UNKNOWNTYPE, str );
   return NULL;
 }
 
-void rkMotorDestroy(rkMotor *m)
+/* destroy a motor specification instance. */
+void rkMotorSpecDestroy(rkMotorSpec *ms)
 {
-  zNameFree( m );
-  zFree( m->prp );
-  rkMotorInit( m );
+  zNameFree( ms );
+  zFree( ms->prp );
+  rkMotorSpecInit( ms );
 }
 
-rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln)
+/* clone a motor specification instance. */
+rkMotorSpec *rkMotorSpecClone(rkMotorSpec *org, rkMotorSpec *cln)
 {
-  rkMotorAssign( cln, org->com );
+  rkMotorSpecAssign( cln, org->com );
   zNameSet( cln, zName(org) );
-  org->com->_copy( org->prp, cln->prp );
+  org->com->_copy_prp( org, cln );
   return cln;
 }
 
-static void *_rkMotorNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  zNameSet( (rkMotor*)obj, ZTKVal(ztk) );
-  return zNamePtr((rkMotor*)obj) ? obj : NULL;
+/* ZTK */
+
+static void *_rkMotorSpecNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  zNameSet( (rkMotorSpec*)obj, ZTKVal(ztk) );
+  return zNamePtr((rkMotorSpec*)obj) ? obj : NULL;
 }
-static void *_rkMotorTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  return rkMotorQueryAssign( (rkMotor *)obj, ZTKVal(ztk) );
+static void *_rkMotorSpecTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  return rkMotorSpecQuery( (rkMotorSpec *)obj, ZTKVal(ztk) );
 }
 
-static void _rkMotorNameFPrintZTK(FILE *fp, int i, void *obj){
-  fprintf( fp, "%s\n", zName( (rkMotor*)obj ) );
+static void _rkMotorSpecNameFPrintZTK(FILE *fp, int i, void *obj){
+  fprintf( fp, "%s\n", zName( (rkMotorSpec*)obj ) );
 }
-static void _rkMotorTypeFPrintZTK(FILE *fp, int i, void *obj){
-  fprintf( fp, "%s\n", rkMotorTypeStr( (rkMotor*)obj ) );
+static void _rkMotorSpecTypeFPrintZTK(FILE *fp, int i, void *obj){
+  fprintf( fp, "%s\n", rkMotorSpecTypeStr( (rkMotorSpec*)obj ) );
 }
 
-static ZTKPrp __ztk_prp_rkmotor[] = {
-  { "name", 1, _rkMotorNameFromZTK, _rkMotorNameFPrintZTK },
-  { "type", 1, _rkMotorTypeFromZTK, _rkMotorTypeFPrintZTK },
+static ZTKPrp __ztk_prp_rkmotorspec[] = {
+  { "name", 1, _rkMotorSpecNameFromZTK, _rkMotorSpecNameFPrintZTK },
+  { "type", 1, _rkMotorSpecTypeFromZTK, _rkMotorSpecTypeFPrintZTK },
 };
 
-rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk)
+rkMotorSpec *rkMotorSpecFromZTK(rkMotorSpec *ms, ZTK *ztk)
 {
-  rkMotorInit( motor );
-  if( !ZTKEvalKey( motor, NULL, ztk, __ztk_prp_rkmotor ) ) return NULL;
-  motor->com->_fromZTK( motor->prp, ztk );
-  return motor;
+  rkMotorSpecInit( ms );
+  if( !ZTKEvalKey( ms, NULL, ztk, __ztk_prp_rkmotorspec ) ) return NULL;
+  ms->com->_fromZTK( ms, ztk );
+  return ms;
 }
 
-void rkMotorFPrintZTK(FILE *fp, rkMotor *motor)
+void rkMotorSpecFPrintZTK(FILE *fp, rkMotorSpec *ms)
 {
-  if( !motor ) return;
-  ZTKPrpKeyFPrint( fp, motor, __ztk_prp_rkmotor );
-  motor->com->_fprintZTK( fp, motor->prp );
+  if( !ms ) return;
+  ZTKPrpKeyFPrint( fp, ms, __ztk_prp_rkmotorspec );
+  ms->com->_fprintZTK( fp, ms );
   fprintf( fp, "\n" );
 }
 
 /* ********************************************************** */
-/* array of motors
+/* array of motor specifications
  * ********************************************************** */
 
-rkMotorArray *rkMotorArrayClone(rkMotorArray *org)
+rkMotorSpecArray *rkMotorSpecArrayAlloc(rkMotorSpecArray *msarray, int size)
 {
-  rkMotorArray *cln;
+  zArrayAlloc( msarray, rkMotorSpec, size );
+  return zArraySize(msarray) == size ? msarray : NULL;
+}
+
+void rkMotorSpecArrayDestroy(rkMotorSpecArray *msarray)
+{
   int i;
 
-  if( !( cln = zAlloc( rkMotorArray, 1 ) ) ){
-    ZALLOCERROR();
-    return NULL;
-  }
-  zArrayAlloc( cln, rkMotor, zArraySize(org) );
-  if( zArraySize(cln) != zArraySize(org) ) return NULL;
-  for( i=0; i<zArraySize(cln); i++ ){
-    if( !rkMotorClone( zArrayElemNC(org,i), zArrayElemNC(cln,i) ) )
-      return NULL;
-  }
+  for( i=0; i<zArraySize(msarray); i++ )
+    rkMotorSpecDestroy( zArrayElem(msarray,i) );
+  zArrayFree( msarray );
+}
+
+rkMotorSpecArray *rkMotorSpecArrayClone(rkMotorSpecArray *org, rkMotorSpecArray *cln)
+{
+  int i;
+
+  if( zArraySize(org) > 0 ){
+    zArrayAlloc( cln, rkMotorSpec, zArraySize(org) );
+    if( zArraySize(cln) != zArraySize(org) ) return NULL;
+    for( i=0; i<zArraySize(cln); i++ ){
+      if( !rkMotorSpecClone( zArrayElemNC(org,i), zArrayElemNC(cln,i) ) )
+        return NULL;
+    }
+  } else
+    zArrayInit( cln );
   return cln;
 }
 
-rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name)
+rkMotorSpec *rkMotorSpecArrayFind(rkMotorSpecArray *msarray, const char *name)
 {
-  rkMotor *mp;
+  rkMotorSpec *ms;
 
-  zArrayFindName( marray, name, mp );
-  if( !mp ){
+  zArrayFindName( msarray, name, ms );
+  if( !ms ){
     ZRUNERROR( RK_ERR_MOTOR_UNKNOWN, name );
     return NULL;
   }
-  return mp;
+  return ms;
 }
 
-void rkMotorArrayFPrintZTK(FILE *fp, rkMotorArray *m)
+void rkMotorSpecArrayFPrintZTK(FILE *fp, rkMotorSpecArray *msarray)
 {
   int i;
 
-  for( i=0; i<zArraySize(m); i++ ){
+  for( i=0; i<zArraySize(msarray); i++ ){
     fprintf( fp, "[%s]\n", ZTK_TAG_RKMOTOR );
-    rkMotorFPrintZTK( fp, zArrayElemNC(m,i) );
+    rkMotorSpecFPrintZTK( fp, zArrayElemNC(msarray,i) );
   }
+}
+
+/* ********************************************************** */
+/* motor class
+ * ********************************************************** */
+
+rkMotor *rkMotorCreate(rkMotor *motor, rkMotorSpec *ms)
+{
+  if( !( motor->state = ms->com->_alloc_state() ) ){
+    ZALLOCERROR();
+    return NULL;
+  }
+  motor->spec = ms;
+  ms->com->_init_state( motor );
+  return motor;
+}
+
+void rkMotorDestroy(rkMotor *motor)
+{
+  motor->spec = NULL;
+  zFree( motor->state );
+}
+
+rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln)
+{
+  if( org->spec ){
+    cln->spec = org->spec - zArrayBuf(msarray_org) + zArrayBuf(msarray_cln);
+    if( !rkMotorCreate( cln, cln->spec ) ) return NULL;
+    cln->spec->com->_copy_state( org, cln );
+  } else
+    rkMotorInit( cln );
+  return cln;
 }

@@ -22,11 +22,6 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointSpherState ){
   double _u[3];
 };
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointSpherPrp ){
-  /* motor */
-  rkMotor m;
-};
-
 __ROKI_EXPORT rkJointCom rk_joint_spher;
 
 __END_DECLS

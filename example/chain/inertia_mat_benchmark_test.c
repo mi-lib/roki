@@ -28,7 +28,7 @@ int chain_init(rkChain *chain)
   zVec3D aa;
 
   rkChainInit( chain );
-  zArrayAlloc( &chain->link, rkLink, LINK_NUM );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), LINK_NUM );
   for( i=0; i<LINK_NUM; i++ ){
     sprintf( name, "link#%02d", i );
     rkLinkInit( rkChainLink(chain,i) );

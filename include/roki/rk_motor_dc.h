@@ -1,7 +1,7 @@
 /* RoKi - Robot Kinetics library
  * Copyright (C) 1998 Tomomichi Sugihara (Zhidao)
  *
- * rk_motor_dc - motor model: DC motor
+ * rk_motor_dc - motor model: geared DC motor
  * contributer: 2014-2015 Naoki Wakisaka
  */
 
@@ -12,18 +12,14 @@
 
 __BEGIN_DECLS
 
-typedef struct {
-  /* value */
-  double e;  /* applied voltage */
-  double tf; /* friction torque */
-
-  /* properties */
-  double k;              /* motor constant */
-  double admit;          /* inner admitance */
-  double maxvol, minvol; /* maximum & minimum input voltage */
-  double decratio;       /* deceleration ratio */
-  double inertia;        /* motor inertia */
-  double inertia_gear;   /* gear inertia */
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorDCPrp ){
+  double motorconst;   /*!< motor constant */
+  double admittance;   /*!< inner admittance */
+  double vol_max;      /*!< maximum input voltage */
+  double vol_min;      /*!< minimum input voltage */
+  double decratio;     /*!< deceleration ratio */
+  double inertia;      /*!< motor inertia */
+  double inertia_gear; /*!< gear inertia */
 
   /* friction model: TO BE ADDED */
   /*
@@ -35,7 +31,12 @@ typedef struct {
   /* for forward dynamics computation */
   double _comp_k;
   double _comp_l;
-} rkMotorDCPrp;
+};
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorDCState ){
+  double e;  /*!< applied voltage */
+  double tf; /*!< friction torque */
+};
 
 __ROKI_EXPORT rkMotorCom rk_motor_dc;
 

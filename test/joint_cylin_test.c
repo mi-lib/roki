@@ -4,7 +4,7 @@ void create_cylin1(rkChain *chain)
 {
   rkChainInit( chain );
   zNameSet( chain, "cylindric1" );
-  zArrayAlloc( &chain->link, rkLink, 2 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 2 );
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link" );
@@ -28,7 +28,7 @@ void create_cylin2(rkChain *chain)
 {
   rkChainInit( chain );
   zNameSet( chain, "cylindric2" );
-  zArrayAlloc( &chain->link, rkLink, 3 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 3 );
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );

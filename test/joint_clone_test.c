@@ -258,7 +258,7 @@ bool assert_clone_one(char *str, void (*set_func)(rkJoint*), bool (*comp_func)(r
 
   if( rkJointQueryAssign( &jorg, str ) == NULL ) return false;
   set_func( &jorg );
-  if( rkJointClone( &jorg, &jcln ) == NULL ) return false;
+  if( rkJointClone( &jorg, &jcln, NULL, NULL ) == NULL ) return false;
   return comp_func( &jorg, &jcln );
 }
 

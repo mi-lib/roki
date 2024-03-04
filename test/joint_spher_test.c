@@ -39,7 +39,7 @@ void create_sphere(rkChain *chain)
 {
   rkChainInit( chain );
   zNameSet( chain, "sphere1" );
-  zArrayAlloc( &chain->link, rkLink, 2 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 2 );
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );

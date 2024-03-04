@@ -5,11 +5,11 @@
 
 void chain_init(rkChain *chain)
 {
-  register int i;
+  int i;
   char name[BUFSIZ];
 
   rkChainInit( chain );
-  zArrayAlloc( &chain->link, rkLink, N );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), N );
   for( i=0; i<N; i++ ){
     sprintf( name, "link#%02d", i );
     rkLinkInit( rkChainLink(chain,i) );

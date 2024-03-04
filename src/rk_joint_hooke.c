@@ -359,9 +359,9 @@ static ZTKPrp __ztk_prp_rkjoint_hooke[] = {
   { "staticfriction", 1, _rkJointHookeStaticFrictionFromZTK, _rkJointHookeStaticFrictionFPrintZTK },
 };
 
-static rkJoint *_rkJointHookeFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
+static rkJoint *_rkJointHookeFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
 {
-  return rkJointPrpFromZTK( joint, motorarray, ztk, __ztk_prp_rkjoint_hooke );
+  return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_hooke );
 }
 
 static void _rkJointHookeFPrintZTK(FILE *fp, rkJoint *joint, char *name)
@@ -411,7 +411,6 @@ rkJointCom rk_joint_hooke = {
   _rkJointHookeGetSFriction,
   _rkJointHookeGetKFriction,
 
-  rkJointGetNullMotor,
   rkJointMotorSetValDummy,
   _rkJointHookeMotorInertia,
   _rkJointHookeMotorInputTrq,

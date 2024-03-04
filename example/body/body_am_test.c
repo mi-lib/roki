@@ -20,10 +20,10 @@ void init_mp(rkBody *body)
 int main(void)
 {
   rkBody body;
-  register int i;
   double theta;
   zMat3D ident;
   zVec3D am, am_com;
+  int i;
 
   rkBodyInit( &body );
   init_mp( &body );

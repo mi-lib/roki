@@ -13,7 +13,7 @@ bool assert_joint_queryassign_one(char *str, int size)
 
   ret = rkJointQueryAssign( &j, str ) != NULL;
   if( size >= 0 ){
-    ret = ret && strcmp( str, rkJointTypeStr(&j) ) == 0 && rkJointSize(&j) == size;
+    ret = ret && strcmp( str, rkJointTypeStr(&j) ) == 0 && rkJointDOF(&j) == size;
   } else{
     ret = ret == false;
   }
@@ -64,7 +64,7 @@ void assert_joint_neutral(void)
 
   for( i=0; rk_joint_com[i]; i++ ){
     rkJointAssign( &joint, rk_joint_com[i] );
-    for( j=0; j<rkJointSize(&joint); j++ )
+    for( j=0; j<rkJointDOF(&joint); j++ )
       dis[j] = zRandF(-1,1);
     rkJointSetDis( &joint, dis );
     rkJointGetDis( &joint, dis );
@@ -73,7 +73,7 @@ void assert_joint_neutral(void)
     rkJointGetDis( &joint, dis );
     if( !rkJointIsNeutral(&joint) ){
       eprintf( "joint type = %s, joint displacement =", rkJointTypeStr(&joint) );
-      for( j=0; j<rkJointSize(&joint); j++ )
+      for( j=0; j<rkJointDOF(&joint); j++ )
         eprintf( " %.10g", dis[j] );
       eprintf( "\n" );
       result = false;
@@ -191,7 +191,7 @@ void assert_joint_sub(void)
       rkJointCatDis( &joint, dis2.e, 1, ddis.e );
       rkJointSubDis( &joint, dis2.e, dis1.e );
       zVec6DZero( &ddis );
-      memcpy( dis2.e, ddis.e, sizeof(double)*rkJointSize(&joint) );
+      memcpy( dis2.e, ddis.e, sizeof(double)*rkJointDOF(&joint) );
       if( !zVec6DIsTiny( &ddis ) ) result = false;
       rkJointDestroy( &joint );
     }

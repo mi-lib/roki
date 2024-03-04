@@ -94,7 +94,7 @@ static void _rkJointFixedABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 
 /* ZTK */
 
-static rkJoint *_rkJointFixedFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk){
+static rkJoint *_rkJointFixedFromZTK(rkJoint *joint, rkMotorSpecArray *motorarray, ZTK *ztk){
   return joint;
 }
 
@@ -142,7 +142,6 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedVal,
   _rkJointFixedVal,
 
-  rkJointGetNullMotor,
   rkJointMotorSetValDummy,
   rkJointMotorGetValDummy,
   rkJointMotorGetValDummy,

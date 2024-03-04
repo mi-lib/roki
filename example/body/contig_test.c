@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
   zVec3D p, *cv1, *cv2, *dp;
   zShape3D sc;
   double d1, d2;
-  register int i;
+  int i;
   FILE *fp1, *fp2;
 
   zRandInit();

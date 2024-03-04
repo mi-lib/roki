@@ -44,7 +44,7 @@
 
 #define RK_ERR_JOINT_INVTYPE       "invalid joint type specified - %d"
 #define RK_ERR_JOINT_FAILED        "cannot create joint instance"
-#define RK_ERR_JOINT_SIZMISMATCH   "unmatched joint/motor size"
+#define RK_ERR_JOINT_DOFMISMATCH   "unmatched joint/motor DOFs %d/%d"
 
 #define RK_ERR_MAT_VEC_SIZMISMATCH "unmatched matrix/vector size with joint size"
 

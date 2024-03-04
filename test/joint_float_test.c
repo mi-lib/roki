@@ -14,28 +14,28 @@ void truth(zMat3D *morg, zVec3D *pos, zVec3D *aa, zVec6D *vin, zVec6D *ain, zFra
   zMulMat3DVec3D( zFrame3DAtt(fout), &p, &dp );
   zMulMat3DVec3D( morg, pos, zFrame3DPos(fout) );
   zVec3DAddDRC( zFrame3DPos(fout), &dp );
-  /* veloc. */
+  /* velocity */
   zMulMat3DVec3D( &m, &p, &dp );
   zVec3DOuterProd( zVec6DAng(vin), &dp, &wp );
   zVec3DAdd( zVec6DLin(vin), &wp, zVec6DLin(vout) );
   zVec3DCopy( zVec6DAng(vin), zVec6DAng(vout) );
   zMulMat3DTVec6DDRC( &m, vout );
-  /* accel. */
+  /* acceleration */
   zVec3DOuterProd( zVec6DAng(vin), &wp, zVec6DLin(aout) );
+  zVec3DOuterProd( zVec6DAng(vin), zVec6DLin(vin), &tmp );
+  zVec3DCatDRC( zVec6DLin(aout), 2, &tmp );
   zVec3DOuterProd( zVec6DAng(ain), &dp, &tmp );
   zVec3DAddDRC( zVec6DLin(aout), &tmp );
   zVec3DAddDRC( zVec6DLin(aout), zVec6DLin(ain) );
   zVec3DCopy( zVec6DAng(ain), zVec6DAng(aout) );
   zMulMat3DTVec6DDRC( &m, aout );
-  zMulMat3DTVec3D( zFrame3DAtt(fout), RK_GRAVITY3D, &tmp );
-  zVec3DAddDRC( zVec6DLin(aout), &tmp );
 }
 
 void create_float(rkChain *chain)
 {
   rkChainInit( chain );
   zNameSet( chain, "float1" );
-  zArrayAlloc( &chain->link, rkLink, 2 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 2 );
   /* link 1 */
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "link1" );
@@ -54,8 +54,6 @@ void create_float(rkChain *chain)
 
   rkChainSetMass( chain, 1.0 );
   rkChainSetJointIDOffset( chain );
-  rkChainUpdateFK( chain );
-  rkChainUpdateID( chain );
   le = rkChainLink(chain,1);
 }
 
@@ -66,14 +64,16 @@ int main(void)
   zVec3D pos, aa;
   zVec6D vin, ain, vout, aout, err;
   zFrame3D fout;
+  int n;
 
   /* create chain */
   create_float( &chain );
+  n = rkChainJointSize( &chain );
   /* create joint configuration */
   zRandInit();
-  dis = zVecAlloc( rkChainJointSize(&chain) );
-  vel = zVecAlloc( rkChainJointSize(&chain) );
-  acc = zVecAlloc( rkChainJointSize(&chain) );
+  dis = zVecAlloc( n );
+  vel = zVecAlloc( n );
+  acc = zVecAlloc( n );
   zVecRandUniform( dis, -0.5*zPI, 0.5*zPI );
   zVecRandUniform( vel, -10, 10 );
   zVecRandUniform( acc, -100, 100 );
@@ -89,39 +89,18 @@ int main(void)
 
   /* FK test */
   rkChainFK( &chain, dis );
-  rkChainID( &chain, vel, acc );
+  rkChainID0G( &chain, vel, acc );
   truth( rkChainLinkOrgAtt(&chain,0), &pos, &aa, &vin, &ain, &fout, &vout, &aout );
 
   /* output */
-  printf( ">> frame test\n" );
-  printf( " float joint ..." );
-  zFrame3DPrint( rkLinkWldFrame(le) );
-  printf( " answer ..." );
-  zFrame3DPrint( &fout );
-  printf( " (error) ...\n" );
-  zFrame3DError( &fout, rkLinkWldFrame(le), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
+  zFrame3DError( &fout, rkChainLinkWldFrame(&chain,1), &err );
+  zAssert( rkChainFK (float joint), zVec6DIsTiny(&err) );
 
-  printf( ">> velocity test\n" );
-  printf( " float joint ...\n" );
-  zVec6DPrint( rkLinkVel(le) );
-  printf( " answer ...\n" );
-  zVec6DPrint( &vout );
-  printf( " (error) ...\n" );
-  zVec6DSub( &vout, rkLinkVel(le), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
+  zVec6DSub( &vout, rkChainLinkVel(&chain,1), &err );
+  zAssert( rkChainID0G (float joint velocity), zVec6DIsTiny(&err) );
 
-  printf( ">> acceleration test\n" );
-  printf( " float joint ...\n" );
-  zVec6DPrint( rkLinkAcc(le) );
-  printf( " answer ...\n" );
-  zVec6DPrint( &aout );
-  printf( " (error) ...\n" );
   zVec6DSub( &aout, rkLinkAcc(le), &err );
-  zVec6DPrint( &err );
-  printf( " ...%s.\n\n", zVec6DIsTiny(&err) ? "OK" : "may be a bug" );
+  zAssert( rkChainID0G (float joint acceleration), zVec6DIsTiny(&err) );
 
   /* terminate */
   zVecFree( dis );

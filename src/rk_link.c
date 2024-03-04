@@ -12,42 +12,42 @@
  * ********************************************************** */
 
 /* initialize a link. */
-void rkLinkInit(rkLink *l)
+void rkLinkInit(rkLink *link)
 {
-  rkLinkSetJointIDOffset( l, -1 );
-  zNameSetPtr( l, NULL );
-  rkJointInit( rkLinkJoint(l) );
-  rkBodyInit( rkLinkBody(l) );
+  rkLinkSetJointIDOffset( link, -1 );
+  zNameSetPtr( link, NULL );
+  rkJointInit( rkLinkJoint(link) );
+  rkBodyInit( rkLinkBody(link) );
 
-  rkLinkSetOrgFrame( l, ZFRAME3DIDENT );
-  rkLinkSetAdjFrame( l, ZFRAME3DIDENT );
-  rkLinkSetWrench( l, ZVEC6DZERO );
+  rkLinkSetOrgFrame( link, ZFRAME3DIDENT );
+  rkLinkSetAdjFrame( link, ZFRAME3DIDENT );
+  rkLinkSetWrench( link, ZVEC6DZERO );
 
-  rkLinkSetParent( l, NULL );
-  rkLinkSetChild( l, NULL );
-  rkLinkSetSibl( l, NULL );
+  rkLinkSetParent( link, NULL );
+  rkLinkSetChild( link, NULL );
+  rkLinkSetSibl( link, NULL );
 }
 
 /* destroy a link. */
-void rkLinkDestroy(rkLink *l)
+void rkLinkDestroy(rkLink *link)
 {
-  zNameFree( l );
-  rkJointDestroy( rkLinkJoint(l) );
-  rkLinkExtWrenchDestroy( l );
-  rkLinkShapeDestroy( l );
-  rkLinkInit( l );
+  zNameFree( link );
+  rkJointDestroy( rkLinkJoint(link) );
+  rkLinkExtWrenchDestroy( link );
+  rkLinkShapeDestroy( link );
+  rkLinkInit( link );
 }
 
 /* clone a link. */
-rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc)
+rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln)
 {
   if( !org || !cln ){
     ZRUNERROR( RK_WARN_LINK_NULL );
     return NULL;
   }
   if( !zNameSet( cln, zName(org) ) ||
-      !rkJointClone( rkLinkJoint(org), rkLinkJoint(cln) ) ||
-      !rkBodyClone( rkLinkBody(org), rkLinkBody(cln), so, sc ) ){
+      !rkJointClone( rkLinkJoint(org), rkLinkJoint(cln), msarray_org, msarray_cln ) ||
+      !rkBodyClone( rkLinkBody(org), rkLinkBody(cln), shape_org, shape_cln ) ){
     ZALLOCERROR();
     return NULL;
   }
@@ -75,175 +75,175 @@ rkLink *rkLinkCopyState(rkLink *src, rkLink *dst)
 }
 
 /* add a sibling link. */
-rkLink *rkLinkAddSibl(rkLink *l, rkLink *bl)
+rkLink *rkLinkAddSibl(rkLink *link, rkLink *sibl)
 {
-  for( ; rkLinkSibl(l); l=rkLinkSibl(l) );
-  return rkLinkSetSibl( l, bl );
+  for( ; rkLinkSibl(link); link=rkLinkSibl(link) );
+  return rkLinkSetSibl( link, sibl );
 }
 
 /* add a child link. */
-rkLink *rkLinkAddChild(rkLink *l, rkLink *cl)
+rkLink *rkLinkAddChild(rkLink *link, rkLink *child)
 {
-  rkLinkSetParent( cl, l );
-  if( !rkLinkChild(l) ) return rkLinkSetChild( l, cl );
-  return rkLinkAddSibl( rkLinkChild(l), cl );
+  rkLinkSetParent( child, link );
+  if( !rkLinkChild(link) ) return rkLinkSetChild( link, child );
+  return rkLinkAddSibl( rkLinkChild(link), child );
 }
 
 /* calculate velocity of a point with respect to the inertial frame. */
-zVec3D *rkLinkPointVel(rkLink *l, zVec3D *p, zVec3D *v)
+zVec3D *rkLinkPointVel(rkLink *link, zVec3D *p, zVec3D *v)
 {
-  zVec3DOuterProd( rkLinkAngVel(l), p, v );
-  return zVec3DAddDRC( v, rkLinkLinVel(l) );
+  zVec3DOuterProd( rkLinkAngVel(link), p, v );
+  return zVec3DAddDRC( v, rkLinkLinVel(link) );
 }
 
 /* calculate accerelation of a point with respect to the inertial frame. */
-zVec3D *rkLinkPointAcc(rkLink *l, zVec3D *p, zVec3D *a)
+zVec3D *rkLinkPointAcc(rkLink *link, zVec3D *p, zVec3D *a)
 {
   zVec3D tmp;
 
-  zVec3DTripleProd( rkLinkAngVel(l), rkLinkAngVel(l), p, a );
-  zVec3DOuterProd( rkLinkAngAcc(l), p, &tmp );
+  zVec3DTripleProd( rkLinkAngVel(link), rkLinkAngVel(link), p, a );
+  zVec3DOuterProd( rkLinkAngAcc(link), p, &tmp );
   zVec3DAddDRC( a, &tmp );
-  return zVec3DAddDRC( a, rkLinkLinAcc(l) );
+  return zVec3DAddDRC( a, rkLinkLinAcc(link) );
 }
 
 /* compute inertia tensor of a link with respect to the inertial frame. */
-zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i)
+zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i)
 {
-  return zRotMat3D( rkLinkWldAtt(l), rkLinkInertia(l), i );
+  return zRotMat3D( rkLinkWldAtt(link), rkLinkInertia(link), i );
 }
 
 /* update link frame with respect to the world frame. */
-void rkLinkUpdateFrame(rkLink *l, zFrame3D *pwf)
+void rkLinkUpdateFrame(rkLink *link, zFrame3D *pwf)
 {
-  rkJointXform( rkLinkJoint(l), rkLinkOrgFrame(l), rkLinkAdjFrame(l) );
-  zFrame3DCascade( pwf, rkLinkAdjFrame(l), rkLinkWldFrame(l) );
-  rkBodyUpdateCOM( rkLinkBody(l) );
+  rkJointXform( rkLinkJoint(link), rkLinkOrgFrame(link), rkLinkAdjFrame(link) );
+  zFrame3DCascade( pwf, rkLinkAdjFrame(link), rkLinkWldFrame(link) );
+  rkBodyUpdateCOM( rkLinkBody(link) );
 
-  if( rkLinkChild(l) )
-    rkLinkUpdateFrame( rkLinkChild(l), rkLinkWldFrame(l) );
-  if( rkLinkSibl(l) )
-    rkLinkUpdateFrame( rkLinkSibl(l), rkLinkWldFrame(rkLinkParent(l)) );
+  if( rkLinkChild(link) )
+    rkLinkUpdateFrame( rkLinkChild(link), rkLinkWldFrame(link) );
+  if( rkLinkSibl(link) )
+    rkLinkUpdateFrame( rkLinkSibl(link), rkLinkWldFrame(rkLinkParent(link)) );
 }
 
-void _rkLinkUpdateVel(rkLink *l, zVec6D *pvel)
+void _rkLinkUpdateVel(rkLink *link, zVec6D *pvel)
 {
   /* velocity */
-  zXform6DLin( rkLinkAdjFrame(l), pvel, rkLinkVel(l) );
+  zXform6DLin( rkLinkAdjFrame(link), pvel, rkLinkVel(link) );
   /* joint motion rate */
-  rkJointIncVel( rkLinkJoint(l), rkLinkVel(l) );
+  rkJointIncVel( rkLinkJoint(link), rkLinkVel(link) );
   /* COM velocity and acceleration */
-  rkBodyUpdateCOMVel( rkLinkBody(l) );
+  rkBodyUpdateCOMVel( rkLinkBody(link) );
 }
 
-void rkLinkUpdateVel(rkLink *l, zVec6D *pvel)
+void rkLinkUpdateVel(rkLink *link, zVec6D *pvel)
 {
-  _rkLinkUpdateVel( l, pvel );
-  if( rkLinkChild(l) )
-    rkLinkUpdateVel( rkLinkChild(l), rkLinkVel(l) );
-  if( rkLinkSibl(l) )
-    rkLinkUpdateVel( rkLinkSibl(l), rkLinkVel(rkLinkParent(l)) );
+  _rkLinkUpdateVel( link, pvel );
+  if( rkLinkChild(link) )
+    rkLinkUpdateVel( rkLinkChild(link), rkLinkVel(link) );
+  if( rkLinkSibl(link) )
+    rkLinkUpdateVel( rkLinkSibl(link), rkLinkVel(rkLinkParent(link)) );
 }
 
-void _rkLinkUpdateAcc(rkLink *l, zVec6D *pvel, zVec6D *pacc)
+void _rkLinkUpdateAcc(rkLink *link, zVec6D *pvel, zVec6D *pacc)
 {
   zVec3D wp, tmp;
 
   /* acceleration */
-  zVec6DLinShift( pacc, rkLinkAdjPos(l), rkLinkAcc(l) );
-  zVec3DOuterProd( zVec6DAng(pvel), rkLinkAdjPos(l), &wp );
+  zVec6DLinShift( pacc, rkLinkAdjPos(link), rkLinkAcc(link) );
+  zVec3DOuterProd( zVec6DAng(pvel), rkLinkAdjPos(link), &wp );
   zVec3DOuterProd( zVec6DAng(pvel), &wp, &tmp );
-  zVec3DAddDRC( rkLinkLinAcc(l), &tmp );
-  zMulMat3DTVec6DDRC( rkLinkAdjAtt(l), rkLinkAcc(l) );
+  zVec3DAddDRC( rkLinkLinAcc(link), &tmp );
+  zMulMat3DTVec6DDRC( rkLinkAdjAtt(link), rkLinkAcc(link) );
   /* joint motion rate */
-  zVec3DCopy( rkLinkAngVel(l), &tmp );
-  rkJointIncAccOnVel( rkLinkJoint(l), &tmp, rkLinkAcc(l) );
-  rkJointIncAcc( rkLinkJoint(l), rkLinkAcc(l) );
+  zVec3DCopy( rkLinkAngVel(link), &tmp );
+  rkJointIncAccOnVel( rkLinkJoint(link), &tmp, rkLinkAcc(link) );
+  rkJointIncAcc( rkLinkJoint(link), rkLinkAcc(link) );
   /* COM velocity and acceleration */
-  rkBodyUpdateCOMAcc( rkLinkBody(l) );
+  rkBodyUpdateCOMAcc( rkLinkBody(link) );
 }
 
-void rkLinkUpdateAcc(rkLink *l, zVec6D *pvel, zVec6D *pacc)
+void rkLinkUpdateAcc(rkLink *link, zVec6D *pvel, zVec6D *pacc)
 {
-  _rkLinkUpdateAcc( l, pvel, pacc );
-  if( rkLinkChild(l) )
-    rkLinkUpdateAcc( rkLinkChild(l), rkLinkVel(l), rkLinkAcc(l) );
-  if( rkLinkSibl(l) )
-    rkLinkUpdateAcc( rkLinkSibl(l), rkLinkVel(rkLinkParent(l)), rkLinkAcc(rkLinkParent(l)) );
+  _rkLinkUpdateAcc( link, pvel, pacc );
+  if( rkLinkChild(link) )
+    rkLinkUpdateAcc( rkLinkChild(link), rkLinkVel(link), rkLinkAcc(link) );
+  if( rkLinkSibl(link) )
+    rkLinkUpdateAcc( rkLinkSibl(link), rkLinkVel(rkLinkParent(link)), rkLinkAcc(rkLinkParent(link)) );
 }
 
 /* update link motion rate with respect to the inertial frame. */
-void rkLinkUpdateRate(rkLink *l, zVec6D *pvel, zVec6D *pacc)
+void rkLinkUpdateRate(rkLink *link, zVec6D *pvel, zVec6D *pacc)
 {
-  _rkLinkUpdateVel( l, pvel );
-  _rkLinkUpdateAcc( l, pvel, pacc );
-  if( rkLinkChild(l) )
-    rkLinkUpdateRate( rkLinkChild(l), rkLinkVel(l), rkLinkAcc(l) );
-  if( rkLinkSibl(l) )
-    rkLinkUpdateRate( rkLinkSibl(l), rkLinkVel(rkLinkParent(l)), rkLinkAcc(rkLinkParent(l)) );
+  _rkLinkUpdateVel( link, pvel );
+  _rkLinkUpdateAcc( link, pvel, pacc );
+  if( rkLinkChild(link) )
+    rkLinkUpdateRate( rkLinkChild(link), rkLinkVel(link), rkLinkAcc(link) );
+  if( rkLinkSibl(link) )
+    rkLinkUpdateRate( rkLinkSibl(link), rkLinkVel(rkLinkParent(link)), rkLinkAcc(rkLinkParent(link)) );
 }
 
 /* update joint torque of link based on Neuton=Euler's equation. */
-void rkLinkUpdateWrench(rkLink *l)
+void rkLinkUpdateWrench(rkLink *link)
 {
   zVec6D w;
   rkLink *child;
 
   /* inertia force */
-  rkBodyNetWrench( rkLinkBody(l), rkLinkWrench(l) );
-  zVec6DAngShiftDRC( rkLinkWrench(l), rkLinkCOM(l) );
+  rkBodyNetWrench( rkLinkBody(link), rkLinkWrench(link) );
+  zVec6DAngShiftDRC( rkLinkWrench(link), rkLinkCOM(link) );
   /* reaction force propagation from children */
-  if( ( child = rkLinkChild(l) ) ){
+  if( ( child = rkLinkChild(link) ) ){
     rkLinkUpdateWrench( child );
     for( ; child; child=rkLinkSibl(child) ){
       zXform6DAng( rkLinkAdjFrame(child), rkLinkWrench(child), &w );
-      zVec6DAddDRC( rkLinkWrench(l), &w );
+      zVec6DAddDRC( rkLinkWrench(link), &w );
     }
   }
-  rkLinkNetExtWrench( l, &w ); /* external wrench */
-  zVec6DSubDRC( rkLinkWrench(l), &w );
+  rkLinkNetExtWrench( link, &w ); /* external wrench */
+  zVec6DSubDRC( rkLinkWrench(link), &w );
   /* joint torque resolution */
-  rkJointCalcTrq( rkLinkJoint(l), rkLinkWrench(l) );
+  rkJointCalcTrq( rkLinkJoint(link), rkLinkWrench(link) );
   /* branch */
-  if( rkLinkSibl(l) )
-    rkLinkUpdateWrench( rkLinkSibl(l) );
+  if( rkLinkSibl(link) )
+    rkLinkUpdateWrench( rkLinkSibl(link) );
 }
 
 /* update mass of the composite rigit body of a link. */
 double rkLinkUpdateCRBMass(rkLink *link)
 {
-  rkLink *l;
+  rkLink *lp;
 
   rkMPSetMass( rkLinkCRB(link), rkLinkMass(link) );
-  for( l=rkLinkChild(link); l; l=rkLinkSibl(l) )
-    rkLinkCRBMass(link) += rkLinkUpdateCRBMass( l );
+  for( lp=rkLinkChild(link); lp; lp=rkLinkSibl(lp) )
+    rkLinkCRBMass(link) += rkLinkUpdateCRBMass( lp );
   return rkLinkCRBMass(link);
 }
 
 /* update the composite rigit body of a link. */
 rkMP *rkLinkUpdateCRB(rkLink *link)
 {
-  rkLink *l;
+  rkLink *lp;
   zMat3D tmpi;
   zVec3D tmpr;
 
   if( !rkLinkChild(link) ) return rkLinkCRB(link);
   /* composite COM */
   _zVec3DMul( rkLinkCOM(link), rkLinkMass(link), rkLinkCRBCOM(link) );
-  for( l=rkLinkChild(link); l; l=rkLinkSibl(l) ){
-    rkLinkUpdateCRB( l );
-    _zXform3D( rkLinkAdjFrame(l), rkLinkCRBCOM(l), &tmpr );
-    _zVec3DCatDRC( rkLinkCRBCOM(link), rkLinkCRBMass(l), &tmpr );
+  for( lp=rkLinkChild(link); lp; lp=rkLinkSibl(lp) ){
+    rkLinkUpdateCRB( lp );
+    _zXform3D( rkLinkAdjFrame(lp), rkLinkCRBCOM(lp), &tmpr );
+    _zVec3DCatDRC( rkLinkCRBCOM(link), rkLinkCRBMass(lp), &tmpr );
   }
   zVec3DDivDRC( rkLinkCRBCOM(link), rkLinkCRBMass(link) );
   /* composite inertia */
   _zVec3DSub( rkLinkCOM(link), rkLinkCRBCOM(link), &tmpr );
   rkMPShiftInertia( rkLinkMP(link), &tmpr, rkLinkCRBInertia(link) );
-  for( l=rkLinkChild(link); l; l=rkLinkSibl(l) ){
-    zRotMat3D( rkLinkAdjAtt(l), rkLinkCRBInertia(l), &tmpi );
-    _zXform3D( rkLinkAdjFrame(l), rkLinkCRBCOM(l), &tmpr );
+  for( lp=rkLinkChild(link); lp; lp=rkLinkSibl(lp) ){
+    zRotMat3D( rkLinkAdjAtt(lp), rkLinkCRBInertia(lp), &tmpi );
+    _zXform3D( rkLinkAdjFrame(lp), rkLinkCRBCOM(lp), &tmpr );
     _zVec3DSubDRC( &tmpr, rkLinkCRBCOM(link) );
-    zMat3DCatVec3DDoubleOuterProdDRC( &tmpi, -rkLinkCRBMass(l), &tmpr );
+    zMat3DCatVec3DDoubleOuterProdDRC( &tmpi, -rkLinkCRBMass(lp), &tmpr );
     zMat3DAddDRC( rkLinkCRBInertia(link), &tmpi );
   }
   return rkLinkCRB(link);
@@ -269,6 +269,51 @@ void rkLinkConfToJointDis(rkLink *link)
     rkLinkConfToJointDis( rkLinkChild(link) );
   if( rkLinkSibl(link) )
     rkLinkConfToJointDis( rkLinkSibl(link) );
+}
+
+/* ********************************************************** */
+/* rkLinkArray
+ * array of links
+ * ********************************************************** */
+
+rkLinkArray *rkLinkArrayAlloc(rkLinkArray *linkarray, int size)
+{
+  zArrayAlloc( linkarray, rkLink, size );
+  return zArraySize(linkarray) == size ? linkarray : NULL;
+}
+
+void rkLinkArrayDestroy(rkLinkArray *linkarray)
+{
+  int i;
+
+  for( i=0; i<zArraySize(linkarray); i++ )
+    rkLinkDestroy( zArrayElemNC(linkarray,i) );
+  zArrayFree( linkarray );
+}
+
+rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln)
+{
+  int i;
+
+  if( zArraySize(org) > 0 ){
+    zArrayAlloc( cln, rkLink, zArraySize(org) );
+    if( zArraySize(cln) != zArraySize(org) ) return NULL;
+    for( i=0; i<zArraySize(cln); i++ )
+      if( !rkLinkClone( zArrayElemNC(org,i), zArrayElemNC(cln,i), shape_org, shape_cln, msarray_org, msarray_cln ) )
+        return NULL;
+  } else
+    zArrayInit( cln );
+  return cln;
+}
+
+void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray)
+{
+  int i;
+
+  for( i=0; i<zArraySize(linkarray); i++ ){
+    fprintf( fp, "[%s]\n", ZTK_TAG_RKLINK );
+    rkLinkFPrintZTK( fp, zArrayElemNC(linkarray,i) );
+  }
 }
 
 /* ZTK processing */
@@ -419,7 +464,7 @@ static ZTKPrp __ztk_prp_rklink_parent[] = {
   { "parent", 1, _rkLinkParentFromZTK, NULL },
 };
 
-rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk)
+rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorSpecArray *msarray, ZTK *ztk)
 {
   _rkLinkRefPrp prp;
   rkMP mp;
@@ -465,7 +510,7 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
   if( prp.auto_inertia ) rkLinkSetInertia( link, rkMPInertia(&mp) );
 
   if( !rkLinkJoint(link)->com ) rkJointAssign( rkLinkJoint(link), &rk_joint_fixed );
-  rkJointFromZTK( rkLinkJoint(link), motorarray, ztk );
+  rkJointFromZTK( rkLinkJoint(link), msarray, ztk );
   return link;
 }
 
@@ -493,33 +538,33 @@ void rkLinkFPrintZTK(FILE *fp, rkLink *link)
 }
 
 /* print link posture out to a file. */
-void rkLinkPostureFPrint(FILE *fp, rkLink *l)
+void rkLinkPostureFPrint(FILE *fp, rkLink *link)
 {
-  fprintf( fp, "Link(name:%s joint ID offset:%d)\n", zName(l), rkLinkJointIDOffset(l) );
+  fprintf( fp, "Link(name:%s joint ID offset:%d)\n", zName(link), rkLinkJointIDOffset(link) );
   fprintf( fp, " adjacent frame:\n" );
-  zFrame3DFPrint( fp, rkLinkAdjFrame( l ) );
+  zFrame3DFPrint( fp, rkLinkAdjFrame( link ) );
   fprintf( fp, " world frame:\n" );
-  zFrame3DFPrint( fp, rkLinkWldFrame( l ) );
+  zFrame3DFPrint( fp, rkLinkWldFrame( link ) );
 }
 
 /* print link connectivity out to a file. */
 #define RK_LINK_CONNECTION_INDENT 2
-void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n)
+void rkLinkConnectionFPrint(FILE *fp, rkLink *link, int n)
 {
   zFIndent( fp, n );
-  fprintf( fp, "|-%s (%s:%d)\n", zName(l), rkJointTypeStr(rkLinkJoint(l)), rkLinkJointIDOffset(l) );
+  fprintf( fp, "|-%s (%s:%d)\n", zName(link), rkJointTypeStr(rkLinkJoint(link)), rkLinkJointIDOffset(link) );
 
-  if( rkLinkChild( l ) )
-    rkLinkConnectionFPrint( fp, rkLinkChild(l), n+RK_LINK_CONNECTION_INDENT );
-  if( rkLinkSibl( l ) )
-    rkLinkConnectionFPrint( fp, rkLinkSibl(l), n );
+  if( rkLinkChild( link ) )
+    rkLinkConnectionFPrint( fp, rkLinkChild(link), n+RK_LINK_CONNECTION_INDENT );
+  if( rkLinkSibl( link ) )
+    rkLinkConnectionFPrint( fp, rkLinkSibl(link), n );
 }
 
 /* print external wrenches applied to a link out to a file. */
-void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l)
+void rkLinkExtWrenchFPrint(FILE *fp, rkLink *link)
 {
   rkWrench *c;
 
-  zListForEach( rkLinkExtWrench(l), c )
+  zListForEach( rkLinkExtWrench(link), c )
     rkWrenchFPrint( fp, c );
 }

@@ -1,4 +1,29 @@
-#include <roki/rk_jacobi.h>
+#include <roki/rk_chain.h>
+#include <roki/rk_abi.h>
+
+#ifndef __WINDOWS__
+#include <unistd.h>
+void assert_chain_clone(void)
+{
+#define FILE_ORG "org.ztk"
+#define FILE_CLN "cln.ztk"
+  rkChain chain_org, chain_cln;
+  long ret;
+
+  rkChainReadZTK( &chain_org, "../example/model/mighty.ztk" );
+  rkChainClone( &chain_org, &chain_cln );
+  zNameFree( &chain_cln );
+  zNameSet( &chain_cln, zNamePtr(&chain_org) );
+  rkChainWriteZTK( &chain_org, FILE_ORG );
+  rkChainWriteZTK( &chain_cln, FILE_CLN );
+  ret = zFileCompare( FILE_ORG, FILE_CLN );
+  rkChainDestroy( &chain_org );
+  rkChainDestroy( &chain_cln );
+  zAssert( rkChainClone, ret == 0 );
+  unlink( FILE_ORG );
+  unlink( FILE_CLN );
+}
+#endif
 
 bool check_inertia_matrix(rkChain *chain, zMat inertia, double tol)
 {
@@ -76,7 +101,7 @@ int chain_init(rkChain *chain)
   zVec3D aa;
 
   rkChainInit( chain );
-  zArrayAlloc( &chain->link, rkLink, LINK_NUM );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), LINK_NUM );
   for( i=0; i<LINK_NUM; i++ ){
     sprintf( name, "link#%02d", i );
     rkLinkInit( rkChainLink(chain,i) );
@@ -230,18 +255,58 @@ void assert_inertia_mat(rkChain *chain, int n)
   zVecFreeAO( 3, b, dis, vel );
 }
 
+/* only works with torque-controlled robot models. */
+void assert_fd_id(void)
+{
+  rkChain chain;
+  zVec dis, vel, acc, expected, actual, err;
+  int n, i, count_success = 0;
+
+  rkChainReadZTK( &chain, "../example/model/arm_2DoF_trq.ztk" ); /* torque-controlled robot */
+  rkChainAllocABI( &chain );
+  n = rkChainJointSize( &chain );
+  dis = zVecAlloc( n );
+  vel = zVecAlloc( n );
+  acc = zVecAlloc( n );
+  expected = zVecAlloc( n );
+  actual = zVecAlloc( n );
+  err = zVecAlloc( n );
+  for( i=0; i<N; i++ ){
+    zVecRandUniform( dis, 10, -10 );
+    zVecRandUniform( vel, 10, -10 );
+    zVecRandUniform( expected, 10, -10 );
+
+    rkChainSetMotorInputAll( &chain, expected );
+    rkChainFD_ABI( &chain, dis, vel, acc ); /* forward dynamics (ABI method) */
+    rkChainID( &chain, vel, acc ); /* inverse dynamics (Newton-Euler method) */
+    rkChainGetJointTrqAll( &chain, actual );
+    if( zVecIsEqual( actual, expected, zTOL ) ){
+      count_success++;
+    } else{
+      eprintf( "Failure case : RMSE = %.10g\n", zVecDist( expected, actual ) );
+      eprintf( " (error) = " ); zVecPrint( zVecSub( expected, actual, err ) );
+    }
+  }
+  eprintf( "Success rate = %d / %d\n", count_success, N );
+  rkChainDestroyABI( &chain );
+  rkChainDestroy( &chain );
+  zAssert( rkChainFD_ABI + rkChainID, count_success == N );
+}
+
 int main(int argc, char *argv[])
 {
   rkChain chain;
   int n;
 
-  /* initialization */
   zRandInit();
+  assert_chain_clone();
+  /* initialization */
   n = chain_init( &chain );
   assert_getsetconf( &chain );
   assert_crb( &chain, n );
   assert_inertia_mat( &chain, n );
   /* termination */
   rkChainDestroy( &chain );
+  assert_fd_id();
   return EXIT_SUCCESS;
 }

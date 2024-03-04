@@ -38,38 +38,33 @@ void rkJointDestroy(rkJoint *joint)
 {
   zFree( joint->state );
   zFree( joint->prp );
+  if( rkJointMotor(joint) ){
+    rkMotorDestroy( rkJointMotor(joint) );
+    zFree( rkJointMotor(joint) );
+  }
   rkJointInit( joint );
 }
 
-/* neutralize joint displacement. */
-void rkJointNeutral(rkJoint *joint)
-{
-  double dis[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-  rkJointSetDis( joint, dis );
-}
-
-/* check if joint displacement is neutral. */
-bool rkJointIsNeutral(rkJoint *joint)
-{
-  double dis[6];
-  int i;
-
-  rkJointGetDis( joint, dis );
-  for( i=0; i<rkJointSize(joint); i++ )
-    if( !zIsTiny( dis[i] ) ) return false;
-  return true;
-}
-
 /* clone a joint. */
-rkJoint *rkJointClone(rkJoint *org, rkJoint *cln)
+rkJoint *rkJointClone(rkJoint *org, rkJoint *cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln)
 {
-  rkMotor *morg, *mcln;
+  rkMotor *motor_cln;
 
   if( !rkJointAssign( cln, org->com ) ) return NULL;
   rkJointCopyState( org, cln );
   rkJointCopyPrp( org, cln );
-  if( ( morg = rkJointGetMotor( org ) ) && ( mcln = rkJointGetMotor( cln ) ) )
-    rkMotorClone( morg, mcln );
+  if( rkJointMotor(org) ){
+    if( !( motor_cln = zAlloc( rkMotor, 1 ) ) ){
+      ZALLOCERROR();
+      return NULL;
+    }
+    if( !rkMotorClone( rkJointMotor(org), motor_cln, msarray_org, msarray_cln ) ){
+      free( motor_cln );
+      rkJointDestroy( cln );
+      return NULL;
+    }
+    rkJointSetMotor( cln, motor_cln );
+  }
   return cln;
 }
 
@@ -100,6 +95,25 @@ void rkJointIncRate(rkJoint *joint, zVec3D *w, zVec6D *vel, zVec6D *acc)
   rkJointIncVel( joint, vel );
   rkJointIncAccOnVel( joint, w, acc );
   rkJointIncAcc( joint, acc );
+}
+
+/* neutralize joint displacement. */
+void rkJointNeutral(rkJoint *joint)
+{
+  double dis[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  rkJointSetDis( joint, dis );
+}
+
+/* check if joint displacement is neutral. */
+bool rkJointIsNeutral(rkJoint *joint)
+{
+  double dis[6];
+  int i;
+
+  rkJointGetDis( joint, dis );
+  for( i=0; i<rkJointDOF(joint); i++ )
+    if( !zIsTiny( dis[i] ) ) return false;
+  return true;
 }
 
 /* NOTE: The following macros and functions are for sharing
@@ -146,12 +160,6 @@ double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t)
   return q;
 }
 
-/* motor */
-
-rkMotor *rkJointGetNullMotor(rkJoint *joint){ return NULL; }
-void rkJointMotorSetValDummy(rkJoint *joint, double *val){}
-void rkJointMotorGetValDummy(rkJoint *joint, double *val){}
-
 /* for ABI */
 zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m)
 {
@@ -179,7 +187,33 @@ void _rkJointUpdateWrench(rkJoint *joint, zMat6D *i, zVec6D *b, zVec6D *acc)
   zVec6DAddDRC( rkJointWrench(joint), b );
 }
 
-rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
+/* motor */
+
+void rkJointMotorSetValDummy(rkJoint *joint, double *val){}
+void rkJointMotorGetValDummy(rkJoint *joint, double *val){}
+
+rkJoint *rkJointMotorQuery(rkJoint *joint, rkMotorSpecArray *msarray, const char *str)
 {
-  return joint->com->_fromZTK( joint, motorarray, ztk );
+  rkMotorSpec *ms;
+
+  if( !( ms = rkMotorSpecArrayFind( msarray, str ) ) ){
+    ZRUNERROR( RK_ERR_MOTOR_UNKNOWN, str );
+    return NULL;
+  }
+  if( rkJointDOF(joint) != rkMotorSpecDOF(ms) ){
+    ZRUNERROR( RK_ERR_JOINT_DOFMISMATCH, rkJointDOF(joint), rkMotorSpecDOF(ms) );
+    return NULL;
+  }
+  if( !( rkJointMotor(joint) = zAlloc( rkMotor, 1 ) ) ){
+    ZALLOCERROR();
+    return NULL;
+  }
+  return rkMotorCreate( rkJointMotor(joint), ms ) ? joint : NULL;
+}
+
+/* ZTK */
+
+rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
+{
+  return joint->com->_fromZTK( joint, motorspecarray, ztk );
 }

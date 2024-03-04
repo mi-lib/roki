@@ -9,11 +9,11 @@ base(float)
 
 void chain_init(rkChain *chain)
 {
-  register int i;
+  int i;
   char name[BUFSIZ];
 
   rkChainInit( chain );
-  zArrayAlloc( &chain->link, rkLink, 10 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 10 );
   for( i=0; i<10; i++ ){
     sprintf( name, "link#%02d", i );
     rkLinkInit( rkChainLink(chain,i) );

@@ -119,7 +119,7 @@ void rkBodyDestroy(rkBody *body)
 }
 
 /* clone a body. */
-rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *so, zMShape3D *sc)
+rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *shape_org, zMShape3D *shape_cln)
 {
   rkWrench *wp, *wpc;
   zShapeListCell *sp;
@@ -135,8 +135,8 @@ rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *so, zMShape3D *sc)
   }
   /* shape list */
   zListInit( rkBodyShapeList(cln) );
-  zListForEach( rkBodyShapeList(org), sp )
-    if( !rkBodyShapePush( cln, sp->data - zMShape3DShapeBuf(so) + zMShape3DShapeBuf(sc) ) ) return NULL;
+  zListForEachRew( rkBodyShapeList(org), sp )
+    if( !rkBodyShapePush( cln, sp->data - zMShape3DShapeBuf(shape_org) + zMShape3DShapeBuf(shape_cln) ) ) return NULL;
   /* stuff */
   if( rkBodyStuff(org) && !rkBodySetStuff( cln, rkBodyStuff(org) ) ){
     ZALLOCERROR();

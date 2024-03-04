@@ -4,7 +4,7 @@ void create_chain(rkChain *chain)
 {
   rkChainInit( chain );
   zNameSet( chain, "floatbody" );
-  zArrayAlloc( &chain->link, rkLink, 1 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 1 );
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), "body" );
   rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
@@ -23,7 +23,7 @@ int main(void)
   double angle;
   zVec dis;
   zVec3D a;
-  register int i;
+  int i;
 
   create_chain( &chain );
   dis = zVecAlloc( rkChainJointSize(&chain) );

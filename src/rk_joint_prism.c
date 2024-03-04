@@ -12,7 +12,6 @@
 static void _rkJointPrismInit(rkJoint *joint){
   _rkp(joint)->max = HUGE_VAL;
   _rkp(joint)->min =-HUGE_VAL;
-  rkMotorAssign( &_rkp(joint)->m, &rk_motor_none );
 }
 
 static void *_rkJointPrismAllocState(void){ return zAlloc( rkJointPrismState, 1 ); }
@@ -182,30 +181,28 @@ static void _rkJointPrismGetKFriction(rkJoint *joint, double *val){
 
 /* motor */
 
-static rkMotor *_rkJointPrismGetMotor(rkJoint *joint){ return &_rkp(joint)->m; }
-
 static void _rkJointPrismMotorSetInput(rkJoint *joint, double *val){
-  rkMotorSetInput( &_rkp(joint)->m, val );
+  rkMotorSetInput( rkJointMotor(joint), val );
 }
 
 static void _rkJointPrismMotorInertia(rkJoint *joint, double *val){
   *val = 0.0;
-  rkMotorInertia( &_rkp(joint)->m, val );
+  rkMotorInertia( rkJointMotor(joint), val );
 }
 
 static void _rkJointPrismMotorInputTrq(rkJoint *joint, double *val){
   *val = 0.0;
-  rkMotorInputTrq( &_rkp(joint)->m, val );
+  rkMotorInputTrq( rkJointMotor(joint), val );
 }
 
 static void _rkJointPrismMotorResistance(rkJoint *joint, double *val){
   *val = 0.0;
-  rkMotorRegistance( &_rkp(joint)->m, &_rks(joint)->dis, &_rks(joint)->vel, val );
+  rkMotorRegistance( rkJointMotor(joint), &_rks(joint)->dis, &_rks(joint)->vel, val );
 }
 
 static void _rkJointPrismMotorDrivingTrq(rkJoint *joint, double *val){
   *val = 0.0;
-  rkMotorDrivingTrq( &_rkp(joint)->m, &_rks(joint)->dis, &_rks(joint)->vel, &_rks(joint)->acc, val );
+  rkMotorDrivingTrq( rkJointMotor(joint), &_rks(joint)->dis, &_rks(joint)->vel, &_rks(joint)->acc, val );
 }
 
 /* ABI */
@@ -302,9 +299,7 @@ static void *_rkJointPrismStaticFrictionFromZTK(void *joint, int i, void *arg, Z
   return joint;
 }
 static void *_rkJointPrismMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  rkMotor *mp;
-  if( !( mp = rkMotorArrayFind( (rkMotorArray *)arg, ZTKVal(ztk) ) ) ) return NULL;
-  return rkMotorClone( mp, &_rkp(joint)->m ) ? joint : NULL;
+  return rkJointMotorQuery( joint, arg, ZTKVal(ztk) );
 }
 
 static void _rkJointPrismDisFPrintZTK(FILE *fp, int i, void *joint){
@@ -340,16 +335,16 @@ static ZTKPrp __ztk_prp_rkjoint_prism[] = {
   { "motor", 1, _rkJointPrismMotorFromZTK, NULL },
 };
 
-static rkJoint *_rkJointPrismFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
+static rkJoint *_rkJointPrismFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
 {
-  return rkJointPrpFromZTK( joint, motorarray, ztk, __ztk_prp_rkjoint_prism );
+  return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_prism );
 }
 
 static void _rkJointPrismFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_prism );
-  if( rkMotorIsAssigned( &_rkp(joint)->m ) )
-    fprintf( fp, "motor: %s\n", zName(&_rkp(joint)->m) );
+  if( rkJointMotor( joint ) )
+    fprintf( fp, "motor: %s\n", rkMotorName( rkJointMotor(joint) ) );
 }
 
 rkJointCom rk_joint_prism = {
@@ -394,7 +389,6 @@ rkJointCom rk_joint_prism = {
   _rkJointPrismGetSFriction,
   _rkJointPrismGetKFriction,
 
-  _rkJointPrismGetMotor,
   _rkJointPrismMotorSetInput,
   _rkJointPrismMotorInertia,
   _rkJointPrismMotorInputTrq,

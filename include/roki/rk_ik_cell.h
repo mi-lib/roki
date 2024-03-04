@@ -46,9 +46,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAcm ){
 #define RK_IK_ATTR_WEIGHT 0x10
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
-  int id;     /*!< attented link IDs */
-  int id_sub; /*!< attented subordinate link IDs */
-  zVec3D ap;  /*!< attented point */
+  int id;     /*!< attention link IDs */
+  int id_sub; /*!< attention subordinate link IDs */
+  zVec3D ap;  /*!< attention point */
   byte mode;  /*!< constraint mode */
   zVec3D w;   /*!< weight on constraint */
 };

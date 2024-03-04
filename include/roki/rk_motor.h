@@ -13,74 +13,81 @@
 __BEGIN_DECLS
 
 /* ********************************************************** */
-/*! \struct rkMotor
- * \brief a class of motor model
+/*! \struct rkMotorSpec
+ * \brief motor specification class
  * ********************************************************** */
-struct _rkMotorCom;
-typedef struct _rkMotorCom rkMotorCom;
+struct _rkMotor;
+typedef struct _rkMotor rkMotor;
+struct _rkMotorSpec;
+typedef struct _rkMotorSpec rkMotorSpec;
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotor ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorCom ){
+  const char *typestr; /*!< \brief a string for type identification */
+  byte dof;            /*!< \brief degree-of-freedom of motor motion */
+  /* methods for motor specification */
+  void (* _init_prp)(rkMotorSpec*);
+  void *(* _alloc_prp)(void);
+  void (* _copy_prp)(rkMotorSpec*,rkMotorSpec*);
+  rkMotorSpec *(* _fromZTK)(rkMotorSpec*,ZTK*);
+  void (* _fprintZTK)(FILE*,rkMotorSpec*);
+  /* methods for motor instance */
+  void (* _init_state)(rkMotor*);
+  void *(* _alloc_state)(void);
+  void (* _copy_state)(rkMotor*,rkMotor*);
+  void (* _set_input)(rkMotor*,double*); /*!< \brief set feasible motor input */
+  void (* _inertia)(rkMotor*,double*); /*!< \brief rotor inertia of motor + gear */
+  void (* _inputtrq)(rkMotor*,double*); /*!< \brief actuation torque from motor input signal */
+  void (* _regist)(rkMotor*,double*,double*,double*); /*!< \brief registance torque (e.g. counter electromotive) */
+  void (* _dtrq)(rkMotor*,double*,double*,double*,double*); /*!< \brief driving torque */
+};
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorSpec ){
   Z_NAMED_CLASS;
   void *prp;
   rkMotorCom *com;
 };
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorCom ){
-  const char *typestr; /*!< \brief a string for type identification */
-  byte size; /*!< \brief size of motor input signals */
-  void (* _init)(void*);
-  void *(* _alloc)(void);
-  void (* _copy)(void*,void*);
+#define rkMotorSpecTypeStr(ms) (ms)->com->typestr
+#define rkMotorSpecDOF(ms)     (ms)->com->dof
 
-  void (* _setinput)(void*,double*); /*!< \brief set feasible motor input */
-  void (* _inertia)(void*,double*); /*!< \brief rotor inertia of motor + gear */
-  void (* _inputtrq)(void*,double*); /*!< \brief actuation torque from motor input signal */
-  void (* _regist)(void*,double*,double*,double*); /*!< \brief registance torque (e.g. counter electromotive) */
-  void (* _dtrq)(void*,double*,double*,double*,double*); /*!< \brief driving torque */
-
-  void *(* _fromZTK)(void*,ZTK*);
-  void (* _fprintZTK)(FILE*,void*);
-};
-
-#define rkMotorTypeStr(m) (m)->com->typestr
-#define rkMotorSize(m)    (m)->com->size
-
-#define rkMotorInit(m) do{\
-  zNameSetPtr( m, NULL );\
-  (m)->prp = NULL;\
-  (m)->com = NULL;\
+#define rkMotorSpecInit(ms) do{\
+  zNameSetPtr( ms, NULL );\
+  (ms)->prp = NULL;\
+  (ms)->com = NULL;\
 } while(0)
-__ROKI_EXPORT rkMotor *rkMotorAssign(rkMotor *m, rkMotorCom *com);
-__ROKI_EXPORT rkMotor *rkMotorQueryAssign(rkMotor *m, const char *str);
-__ROKI_EXPORT void rkMotorDestroy(rkMotor *m);
 
-__ROKI_EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln);
+/*! \brief assign a motor type to motor specification instance. */
+__ROKI_EXPORT rkMotorSpec *rkMotorSpecAssign(rkMotorSpec *ms, rkMotorCom *com);
+/*! \brief query motor specification by a string. */
+__ROKI_EXPORT rkMotorSpec *rkMotorSpecQuery(rkMotorSpec *ms, const char *str);
+/*! \brief destroy a motor specification instance. */
+__ROKI_EXPORT void rkMotorSpecDestroy(rkMotorSpec *ms);
 
-/* method */
+/*! \brief clone a motor specification instance. */
+__ROKI_EXPORT rkMotorSpec *rkMotorSpecClone(rkMotorSpec *org, rkMotorSpec *cln);
 
-#define rkMotorSetInput(m,i)           (m)->com->_setinput( (m)->prp, (i) )
-#define rkMotorInertia(m,i)            (m)->com->_inertia( (m)->prp, (i) )
-#define rkMotorInputTrq(m,i)           (m)->com->_inputtrq( (m)->prp, (i) )
-#define rkMotorRegistance(m,d,v,r)     (m)->com->_regist( (m)->prp, (d), (v), (r) )
-#define rkMotorDrivingTrq(m,d,v,a,t)   (m)->com->_dtrq( (m)->prp, (d), (v), (a), (t) )
+/* ZTK */
 
-__ROKI_EXPORT rkMotor *rkMotorFromZTK(rkMotor *motor, ZTK *ztk);
-
-__ROKI_EXPORT void rkMotorFPrintZTK(FILE *fp, rkMotor *m);
+__ROKI_EXPORT rkMotorSpec *rkMotorSpecFromZTK(rkMotorSpec *ms, ZTK *ztk);
+__ROKI_EXPORT void rkMotorSpecFPrintZTK(FILE *fp, rkMotorSpec *ms);
 
 /* ********************************************************** */
-/*! \struct rkMotorArray
- * \brief array of motors.
+/*! \struct rkMotorSpecArray
+ * \brief array of motor specifications
  * ********************************************************** */
 
 #define ZTK_TAG_RKMOTOR "motor"
-zArrayClass( rkMotorArray, rkMotor );
+zArrayClass( rkMotorSpecArray, rkMotorSpec );
 
-__ROKI_EXPORT rkMotorArray *rkMotorArrayClone(rkMotorArray *org);
+__ROKI_EXPORT rkMotorSpecArray *rkMotorSpecArrayAlloc(rkMotorSpecArray *msarray, int size);
 
-__ROKI_EXPORT rkMotor *rkMotorArrayFind(rkMotorArray *marray, char *name);
+__ROKI_EXPORT void rkMotorSpecArrayDestroy(rkMotorSpecArray *msarray);
 
-__ROKI_EXPORT void rkMotorArrayFPrintZTK(FILE *fp, rkMotorArray *m);
+__ROKI_EXPORT rkMotorSpecArray *rkMotorSpecArrayClone(rkMotorSpecArray *org, rkMotorSpecArray *cln);
+
+__ROKI_EXPORT rkMotorSpec *rkMotorSpecArrayFind(rkMotorSpecArray *msarray, const char *name);
+
+__ROKI_EXPORT void rkMotorSpecArrayFPrintZTK(FILE *fp, rkMotorSpecArray *msarray);
 
 __END_DECLS
 
@@ -90,8 +97,6 @@ __END_DECLS
 
 __BEGIN_DECLS
 
-#define rkMotorIsAssigned(m) ( (m)->com && (m)->com != &rk_motor_none )
-
 /* add the handle to the following list when you create a new motor class. */
 #define RK_MOTOR_COM_ARRAY \
 rkMotorCom *_rk_motor_com[] = {\
@@ -100,6 +105,44 @@ rkMotorCom *_rk_motor_com[] = {\
   &rk_motor_trq,\
   NULL,\
 }
+
+/* ********************************************************** */
+/*! \struct rkMotor
+ * \brief motor class
+ * ********************************************************** */
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotor ){
+  rkMotorSpec *spec;
+  void *state;
+};
+
+#define RK_MOTOR_COM_DEF_ALLOC_COPY_FUNC( name ) \
+  static void *_rkMotorSpec##name##AllocPrp(void){ return zAlloc( rkMotor##name##Prp, 1 ); } \
+  static void _rkMotorSpec##name##CopyPrp(rkMotorSpec *src, rkMotorSpec *dst){ \
+    memcpy( dst->prp, src->prp, sizeof(rkMotor##name##Prp) ); } \
+  static void *_rkMotor##name##AllocState(void){ return zAlloc( rkMotor##name##State, 1 ); } \
+  static void _rkMotor##name##CopyState(rkMotor *src, rkMotor *dst){ \
+    memcpy( dst->state, src->state, sizeof(rkMotor##name##State) ); }
+
+#define rkMotorName(motor) zName( (motor)->spec )
+#define rkMotorDOF(motor)  rkMotorSpecDOF( (motor)->spec )
+
+#define rkMotorInit(m) do{\
+  rkMotorSpecInit( (m)->spec );\
+  (m)->state = NULL;\
+} while(0)
+
+__ROKI_EXPORT rkMotor *rkMotorCreate(rkMotor *motor, rkMotorSpec *ms);
+
+__ROKI_EXPORT void rkMotorDestroy(rkMotor *motor);
+
+__ROKI_EXPORT rkMotor *rkMotorClone(rkMotor *org, rkMotor *cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
+
+#define rkMotorSetInput(m,i)           (m)->spec->com->_set_input( (m), (i) )
+#define rkMotorInertia(m,i)            (m)->spec->com->_inertia( (m), (i) )
+#define rkMotorInputTrq(m,i)           (m)->spec->com->_inputtrq( (m), (i) )
+#define rkMotorRegistance(m,d,v,r)     (m)->spec->com->_regist( (m), (d), (v), (r) )
+#define rkMotorDrivingTrq(m,d,v,a,t)   (m)->spec->com->_dtrq( (m), (d), (v), (a), (t) )
 
 __END_DECLS
 

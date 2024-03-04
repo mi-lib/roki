@@ -110,7 +110,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
   double *wp;
 
   for( count=0, i=0; i<rkChainLinkNum(chain); i++ ){
-    if( rkChainLinkJointSize(chain,i) == 0 )
+    if( rkChainLinkJointDOF(chain,i) == 0 )
       ik->joint_sw[i] = false;
     if( ik->joint_sw[i] ) count++;
   }
@@ -121,7 +121,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
     if( ik->joint_sw[i] ){
       zIndexSetElemNC( ik->_j_idx, count++, i );
       zIndexSetElemNC( ik->_j_ofs, i, ofs );
-      ofs += rkChainLinkJointSize(chain,i);
+      ofs += rkChainLinkJointDOF(chain,i);
     } else
       zIndexSetElemNC( ik->_j_ofs, i, -1 );
   /* allocate joint vector */
@@ -133,7 +133,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
       !( ik->_j_wn = zVecAlloc(count) ) ||
       !zLEAlloc( &ik->__le, NULL, count ) ) return false;
   for( wp=zVecBuf(ik->_j_wn), i=0; i<zArraySize(ik->_j_idx); i++ )
-    for( j=0; j<rkChainLinkJointSize(chain,zIndexElemNC(ik->_j_idx,i)); j++ )
+    for( j=0; j<rkChainLinkJointDOF(chain,zIndexElemNC(ik->_j_idx,i)); j++ )
       *wp++ = ik->joint_weight[zIndexElemNC(ik->_j_idx,i)];
   return _rkIKAllocCMat( ik );
 }
@@ -161,7 +161,7 @@ bool rkChainRegIKJointAll(rkChain *chain, double weight)
   int i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
-    if( rkChainLinkJointSize(chain,i) > 0 )
+    if( rkChainLinkJointDOF(chain,i) > 0 )
       if( !rkChainRegIKJointID( chain, i, weight ) ) return false;
   return true;
 }
@@ -303,11 +303,11 @@ static int _rkIKCellEq(rkIK *ik, rkChain *chain, rkIKCell *cell, int s, int row)
   zVecSetElemNC( ik->_c_we, row, rkIKCellWeight(cell)->e[s] );
   for( i=0; i<rkChainLinkNum(chain); i++ )
     if( ik->joint_sw[i] ){
-      for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
+      for( j=0; j<rkChainLinkJointDOF(chain,i); j++ )
         zMatSetElemNC( ik->_c_mat, row, zIndexElemNC(ik->_j_ofs,i)+j,
           zMatElemNC(ik->_c_mat_cell,s,rkChainLinkJointIDOffset(chain,i)+j) );
     } else{
-      for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
+      for( j=0; j<rkChainLinkJointDOF(chain,i); j++ )
         zVecElemNC(ik->_c_vec,row) -=
           zMatElemNC(ik->_c_mat_cell,s,rkChainLinkJointIDOffset(chain,i)+j)
             * zVecElemNC(ik->joint_vec,rkChainLinkJointIDOffset(chain,i)+j);
@@ -392,7 +392,7 @@ zVec rkChainIKSolveEq(rkChain *chain)
   _rkChainIKSolveEq( chain );
   for( vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
     k = zIndexElemNC( chain->_ik->_j_idx, i );
-    for( j=0; j<rkChainLinkJointSize(chain,k); j++ )
+    for( j=0; j<rkChainLinkJointDOF(chain,k); j++ )
       zVecSetElemNC( chain->_ik->joint_vec, rkChainLinkJointIDOffset(chain,k)+j, *vp++ );
   }
   return chain->_ik->joint_vec;
@@ -426,8 +426,8 @@ zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
     rkJointCatDis( rkChainLinkJoint(chain,k), dp, dt, vp );
     rkJointSetDis( rkChainLinkJoint(chain,k), dp );
     rkJointGetDis( rkChainLinkJoint(chain,k), dp );
-    dp += rkChainLinkJointSize(chain,k);
-    vp += rkChainLinkJointSize(chain,k);
+    dp += rkChainLinkJointDOF(chain,k);
+    vp += rkChainLinkJointDOF(chain,k);
   }
   rkChainUpdateFK( chain );
   return dis;
@@ -505,7 +505,7 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link), 0, NULL, ztk );
     return obj;
   }
-  if( rkLinkJointSize(link) == 0 ) return NULL;
+  if( rkLinkJointDOF(link) == 0 ) return NULL;
   return rkChainRegIKJointID( (rkChain*)obj, link - rkChainRoot((rkChain*)obj), w ) ? obj : NULL;
 }
 static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){

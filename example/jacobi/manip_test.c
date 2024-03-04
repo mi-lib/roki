@@ -7,11 +7,11 @@
 
 void chain_init(rkChain *chain)
 {
-  register int i;
+  int i;
   char name[BUFSIZ];
 
   rkChainInit( chain );
-  zArrayAlloc( &chain->link, rkLink, N );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), N );
   for( i=0; i<N; i++ ){
     sprintf( name, "link#%02d", i );
     rkLinkInit( rkChainLink(chain,i) );
@@ -39,7 +39,7 @@ void chain_init(rkChain *chain)
 
 void set_dis(rkChain *chain, zVec dis, int st)
 {
-  register int i, j;
+  int i, j;
   double val;
   zMat3D r;
 
@@ -50,7 +50,7 @@ void set_dis(rkChain *chain, zVec dis, int st)
       zMat3DFromZYX( &r, val, val, val );
       zMat3DToEP( &r, (zEP*)&zVecElemNC(dis,rkChainLinkJointIDOffset(chain,i)) );
     } else
-      for( j=0; j<rkChainLinkJointSize(chain,i); j++ )
+      for( j=0; j<rkChainLinkJointDOF(chain,i); j++ )
         zVecSetElem( dis, rkChainLinkJointIDOffset(chain,i)+j, val );
   }
 }
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
   rkChain chain;
   zVec dis;
   zMat jacobi;
-  register int i;
+  int i;
 
   /* initialization */
   zRandInit();

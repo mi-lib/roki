@@ -8,11 +8,11 @@
 
 void chain_init(rkChain *chain)
 {
-  register int i;
+  int i;
   char name[BUFSIZ];
 
   rkChainInit( chain );
-  zArrayAlloc( &chain->link, rkLink, N );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), N );
   for( i=0; i<N; i++ ){
     sprintf( name, "link#%02d", i );
     rkLinkInit( rkChainLink(chain,i) );
@@ -45,7 +45,7 @@ void chain_init(rkChain *chain)
 
 void set_vel(zVec vel)
 {
-  register int i;
+  int i;
 
   for( i=0; i<zVecSizeNC(vel); i++ )
     zVecSetElem( vel, i, zRandF(-1.0,1.0) );
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
   rkChain chain, chain_copy;
   zVec dis, vel;
   zVec6D err;
-  register int i;
+  int i;
 
   zRandInit();
   chain_init( &chain );

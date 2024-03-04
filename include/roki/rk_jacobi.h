@@ -17,14 +17,15 @@ __BEGIN_DECLS
  *
  * rkChainLinkWldAngJacobi() and rkChainLinkWldLinJacobi() calculate Jacobian
  * matrices which map the whole joint velocity to the angular velocity of the
- * \a id'th link, and the linear velocity of \a p attached to the \a i'th link
- * of \a r, respectively, with respect to the world frame.
+ * \a id'th link of a kinematic chain \a chain, and the linear velocity of \a p
+ * attached to the \a i'th link of \a chain, respectively, with respect to the
+ * world frame.
  *
  * rkChainLinkToLinkAngJacobi() and rkChainLinkToLinkLinJacobi() calculate
  * Jacobian matrices which map the whole joint velocity to the relative angular
  * velocity of the \a to'th link and the relative linear velocity of \a p
  * attached to the \a to'th link, respectively, to those of the \a from'th link
- * of a kinematic chain \a r. The orientation of the relative velocity is with
+ * of a kinematic chain \a chain. The orientation of the relative velocity is with
  * respect to the world frame.
  *
  * For all these functions, the result is stored where is pointed by \a jacobi.
@@ -33,32 +34,32 @@ __BEGIN_DECLS
  * rkChainLinkToLinkAngJacobi() and
  * rkChainLinkToLinkLinJacobi()' return a pointer \a jacobi.
  */
-__ROKI_EXPORT zMat rkChainLinkWldAngJacobi(rkChain *c, int id, zMat jacobi);
-__ROKI_EXPORT zMat rkChainLinkWldLinJacobi(rkChain *c, int id, zVec3D *p, zMat jacobi);
-__ROKI_EXPORT zMat rkChainLinkToLinkAngJacobi(rkChain *c, int from, int to, zMat jacobi);
-__ROKI_EXPORT zMat rkChainLinkToLinkLinJacobi(rkChain *c, int from, int to, zVec3D *p, zMat jacobi);
+__ROKI_EXPORT zMat rkChainLinkWldAngJacobi(rkChain *chain, int id, zMat jacobi);
+__ROKI_EXPORT zMat rkChainLinkWldLinJacobi(rkChain *chain, int id, zVec3D *p, zMat jacobi);
+__ROKI_EXPORT zMat rkChainLinkToLinkAngJacobi(rkChain *chain, int from, int to, zMat jacobi);
+__ROKI_EXPORT zMat rkChainLinkToLinkLinJacobi(rkChain *chain, int from, int to, zVec3D *p, zMat jacobi);
 
 /*! \brief COM Jacobian matrix
  *
  * rkChainCOMJacobi() calculates Jacobian matrices which maps the whole joint
- * velocity to the velocity of the center of mass of a kinematic chain \a r
+ * velocity to the velocity of the center of mass of a kinematic chain \a chain
  * with respect to the world frame. The result is put into \a jacobi.
  * \return
  * rkChainCOMJacobi() returns a pointer \a jacobi.
  * \sa
  * rkChainLinkWldLinJacobi
  */
-__ROKI_EXPORT zMat rkChainCOMJacobi(rkChain *c, zMat jacobi);
+__ROKI_EXPORT zMat rkChainCOMJacobi(rkChain *chain, zMat jacobi);
 
 /*! \brief angular momentum matrix.
  *
  * rkChainLinkAMMat() calculates a matrix that maps the joint velocity
- * vector of a kinematic chain \a c to the angular momentum of the \a id'th
+ * vector of a kinematic chain \a chain to the angular momentum of the \a id'th
  * link of the chain about a given point \a p. \a p is with respect to the
  * world frame.
  *
  * rkChainAMMat() calculates a matrix that maps the joint velocity vector
- * of \a c to the total angular momentum of the chain about the given point
+ * of \a chain to the total angular momentum of the chain about the given point
  * \a p.
  * rkChainAMCOMMat() calculates a matrix that maps the joint velocity vector
  * to the total angular momentum of the chain about the center of mass.
@@ -76,9 +77,9 @@ __ROKI_EXPORT zMat rkChainCOMJacobi(rkChain *c, zMat jacobi);
  * rkChainLinkAMMat(), rkChainAMMat() and rkChainAMCOMMat() return a pointer
  * \a m.
  */
-__ROKI_EXPORT zMat rkChainLinkAMMat(rkChain *c, int id, zVec3D *p, zMat m);
-__ROKI_EXPORT zMat rkChainAMMat(rkChain *c, zVec3D *p, zMat m);
-__ROKI_EXPORT zMat rkChainAMCOMMat(rkChain *c, zMat m);
+__ROKI_EXPORT zMat rkChainLinkAMMat(rkChain *chain, int id, zVec3D *p, zMat m);
+__ROKI_EXPORT zMat rkChainAMMat(rkChain *chain, zVec3D *p, zMat m);
+__ROKI_EXPORT zMat rkChainAMCOMMat(rkChain *chain, zMat m);
 
 /*! \brief measure of manipulability.
  *

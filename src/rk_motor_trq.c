@@ -7,87 +7,96 @@
 
 #include <roki/rk_motor.h>
 
-#define _rkc(p) ((rkMotorTrqPrp *)p)
+#define _rkp(ms) ((rkMotorTrqPrp *)((rkMotorSpec *)(ms))->prp)
 
-static void _rkMotorTrqInit(void *prp)
-{
-  _rkc(prp)->input = 0.0;
-  _rkc(prp)->min = -HUGE_VAL;
-  _rkc(prp)->max = HUGE_VAL;
+static void _rkMotorSpecTrqInitPrp(rkMotorSpec *ms){
+  _rkp(ms)->min = -HUGE_VAL;
+  _rkp(ms)->max =  HUGE_VAL;
 }
 
-static void *_rkMotorTrqAlloc(void){ return zAlloc( rkMotorTrqPrp, 1 ); }
-
-static void _rkMotorTrqCopy(void *src, void *dst){
-  memcpy( dst, src, sizeof(rkMotorTrqPrp) );
-}
-
-static void _rkMotorTrqSetInput(void *prp, double *val){
-  _rkc(prp)->input = zLimit( *val, _rkc(prp)->min, _rkc(prp)->max );
-}
-
-static void _rkMotorTrqInertia(void *prp, double *val){
-  *val = 0.0;
-}
-
-static void _rkMotorTrqInputTrq(void *prp, double *val){
-  *val = _rkc(prp)->input;
-}
-
-static void _rkMotorTrqRegistance(void *prp, double *dis, double *vel, double *val){
-  *val = 0.0;
-}
-
-static void _rkMotorTrqDrivingTrq(void *prp, double *dis, double *vel, double *acc, double *val){
-  _rkMotorTrqInputTrq( prp, val );
-}
+RK_MOTOR_COM_DEF_ALLOC_COPY_FUNC( Trq )
 
 /* ZTK */
 
-static void *_rkMotorTrqMaxFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->max = ZTKDouble(ztk);
-  return prp;
+static void *_rkMotorSpecTrqMaxFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  _rkp(obj)->max = ZTKDouble(ztk);
+  return obj;
 }
-static void *_rkMotorTrqMinFromZTK(void *prp, int i, void *arg, ZTK *ztk){
-  _rkc(prp)->min = ZTKDouble(ztk);
-  return prp;
+static void *_rkMotorSpecTrqMinFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  _rkp(obj)->min = ZTKDouble(ztk);
+  return obj;
 }
 
-static void _rkMotorTrqMaxFPrintZTK(FILE *fp, int i, void *prp){
-  fprintf( fp, "%.10g\n", _rkc(prp)->max );
+static void _rkMotorSpecTrqMaxFPrintZTK(FILE *fp, int i, void *obj){
+  fprintf( fp, "%.10g\n", _rkp(obj)->max );
 }
-static void _rkMotorTrqMinFPrintZTK(FILE *fp, int i, void *prp){
-  fprintf( fp, "%.10g\n", _rkc(prp)->min );
+static void _rkMotorSpecTrqMinFPrintZTK(FILE *fp, int i, void *obj){
+  fprintf( fp, "%.10g\n", _rkp(obj)->min );
 }
 
 static ZTKPrp __ztk_prp_rkmotor_trq[] = {
-  { "max", 1, _rkMotorTrqMaxFromZTK, _rkMotorTrqMaxFPrintZTK },
-  { "min", 1, _rkMotorTrqMinFromZTK, _rkMotorTrqMinFPrintZTK },
+  { "max", 1, _rkMotorSpecTrqMaxFromZTK, _rkMotorSpecTrqMaxFPrintZTK },
+  { "min", 1, _rkMotorSpecTrqMinFromZTK, _rkMotorSpecTrqMinFPrintZTK },
 };
 
-static void *_rkMotorTrqFromZTK(void *prp, ZTK *ztk)
+static rkMotorSpec *_rkMotorSpecTrqFromZTK(rkMotorSpec *ms, ZTK *ztk)
 {
-  return ZTKEvalKey( prp, NULL, ztk, __ztk_prp_rkmotor_trq );
+  return ZTKEvalKey( ms, NULL, ztk, __ztk_prp_rkmotor_trq );
 }
 
-static void _rkMotorTrqFPrintZTK(FILE *fp, void *prp)
+static void _rkMotorSpecTrqFPrintZTK(FILE *fp, rkMotorSpec *ms)
 {
-  ZTKPrpKeyFPrint( fp, prp, __ztk_prp_rkmotor_trq );
+  ZTKPrpKeyFPrint( fp, ms, __ztk_prp_rkmotor_trq );
+}
+
+#undef _rkp
+
+/* methods for motor instances */
+
+#define _rkp(m) ((rkMotorTrqPrp *)((rkMotor *)(m))->spec->prp)
+#define _rks(m) ((rkMotorTrqState *)((rkMotor *)(m))->state)
+
+static void _rkMotorTrqInitState(rkMotor *motor){
+  _rks(motor)->input = 0.0;
+}
+
+static void _rkMotorTrqSetInput(rkMotor *motor, double *val){
+  _rks(motor)->input = zLimit( *val, _rkp(motor)->min, _rkp(motor)->max );
+}
+
+static void _rkMotorTrqInertia(rkMotor *motor, double *val){
+  *val = 0.0;
+}
+
+static void _rkMotorTrqInputTrq(rkMotor *motor, double *val){
+  *val = _rks(motor)->input;
+}
+
+static void _rkMotorTrqRegistance(rkMotor *motor, double *dis, double *vel, double *val){
+  *val = 0.0;
+}
+
+static void _rkMotorTrqDrivingTrq(rkMotor *motor, double *dis, double *vel, double *acc, double *val){
+  _rkMotorTrqInputTrq( motor, val );
 }
 
 rkMotorCom rk_motor_trq = {
   "trq",
   1,
-  _rkMotorTrqInit,
-  _rkMotorTrqAlloc,
-  _rkMotorTrqCopy,
+  _rkMotorSpecTrqInitPrp,
+  _rkMotorSpecTrqAllocPrp,
+  _rkMotorSpecTrqCopyPrp,
+  _rkMotorSpecTrqFromZTK,
+  _rkMotorSpecTrqFPrintZTK,
+  _rkMotorTrqInitState,
+  _rkMotorTrqAllocState,
+  _rkMotorTrqCopyState,
   _rkMotorTrqSetInput,
   _rkMotorTrqInertia,
   _rkMotorTrqInputTrq,
   _rkMotorTrqRegistance,
   _rkMotorTrqDrivingTrq,
-  _rkMotorTrqFromZTK,
-  _rkMotorTrqFPrintZTK,
 };
 
-#undef _rkc
+#undef _rkp
+#undef _rks

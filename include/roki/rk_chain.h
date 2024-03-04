@@ -24,9 +24,9 @@ struct _rkIK;
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   Z_NAMED_CLASS;
-  rkLinkArray link; /*!< array of links */
-  zMShape3D *shape; /*!< multishape */
-  rkMotorArray *motor; /*!< array of motors (may not need to be a pointer) */
+  rkLinkArray linkarray;           /*!< array of links */
+  zMShape3D *shape;                /*!< multishape */
+  rkMotorSpecArray motorspecarray; /*!< array of motor specifications */
 
   zVec3D wldcom;    /*!< position of COM in the world frame */
   zVec3D wldcomvel; /*!< velocity of COM in the world frame */
@@ -42,19 +42,18 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   /*! \endcond */
 };
 
-#define rkChainLinkArray(c)           ( &(c)->link )
-#define rkChainRoot(c)                zArrayBuf( &(c)->link )
-#define rkChainLink(c,i)              zArrayElemNC( &(c)->link, i )
-#define rkChainLinkNum(c)             zArraySize( &(c)->link )
+#define rkChainLinkArray(c)           ( &(c)->linkarray )
+#define rkChainRoot(c)                zArrayBuf( rkChainLinkArray(c) )
+#define rkChainLink(c,i)              zArrayElemNC( rkChainLinkArray(c), i )
+#define rkChainLinkNum(c)             zArraySize( rkChainLinkArray(c) )
 #define rkChainShape(c)               (c)->shape
-#define rkChainMotor(c)               (c)->motor
+#define rkChainMotorSpecArray(c)      ( &(c)->motorspecarray )
 #define rkChainWldCOM(c)              ( &(c)->wldcom )
 #define rkChainCOMVel(c)              ( &(c)->wldcomvel )
 #define rkChainCOMAcc(c)              ( &(c)->wldcomacc )
 #define rkChainMass(c)                rkLinkCRBMass( rkChainRoot(c) )
 
 #define rkChainSetShape(c,s)          ( rkChainShape(c) = (s) )
-#define rkChainSetMotor(c,m)          ( rkChainMotor(c) = (m) )
 #define rkChainSetMass(c,m)           ( rkChainMass(c) = (m) )
 #define rkChainSetWldCOM(c,p)         zVec3DCopy( p, rkChainWldCOM(c) )
 #define rkChainSetCOMVel(c,v)         zVec3DCopy( v, rkChainCOMVel(c) )
@@ -63,7 +62,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainLinkName(c,i)          zName(rkChainLink(c,i))
 #define rkChainLinkJointIDOffset(c,i) rkLinkJointIDOffset(rkChainLink(c,i))
 #define rkChainLinkJoint(c,i)         rkLinkJoint(rkChainLink(c,i))
-#define rkChainLinkJointSize(c,i)     rkLinkJointSize(rkChainLink(c,i))
+#define rkChainLinkJointDOF(c,i)      rkLinkJointDOF(rkChainLink(c,i))
 #define rkChainLinkJointTypeStr(c,i)  rkLinkJointTypeStr(rkChainLink(c,i))
 #define rkChainLinkMass(c,i)          rkLinkMass(rkChainLink(c,i))
 #define rkChainLinkCOM(c,i)           rkLinkCOM(rkChainLink(c,i))
@@ -159,15 +158,14 @@ __ROKI_EXPORT rkChain *rkChainCopyState(rkChain *src, rkChain *dst);
 
 /*! \brief count total number of joints of a kinematic chain.
  *
- * rkChainJointSize() counts the total number of joints of a
- * kinematic chain \a c. How to count is conforming to rkJointSize.
+ * rkChainJointSize() counts the total number of joints of a kinematic
+ * chain \a c. How to count is conforming to rkJointDOF().
  *
  * rkChainCreateDefaultJointIndex() creates a joint index of \a c,
  * which only arranges the movable joints.
  * The fixed joints are ignored.
  *
- * rkChainJointIndexSize() counts the total joint size indicated
- * by \a idx.
+ * rkChainJointIndexSize() counts the total joint size indicated by \a idx.
  * \return
  * rkChainJointSize() and rkChainJointIndexSize() returns the
  * total joint size counted.

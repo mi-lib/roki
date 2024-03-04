@@ -11,7 +11,7 @@ zVec dis;
 
 void update_dis(int st)
 {
-  register int i;
+  int i;
 
   for( i=7; i<zVecSizeNC(dis); i++ )
     zVecSetElem( dis, i, DTHETA*(1-cos(2*zPI*st/STEP)) );
@@ -28,7 +28,7 @@ void total_zmp_test(void)
 
 int main(void)
 {
-  register int i;
+  int i;
 
   rkChainReadZTK( &chain, CHAIN_FILE );
   rkChainUpdateID( &chain );

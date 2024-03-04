@@ -31,7 +31,7 @@ void chain_ik_init(rkChain *chain)
 
   for( typenum=0; rk_joint_com[typenum]; typenum++ );
   rkChainInit( chain );
-  zArrayAlloc( &chain->link, rkLink, NJ );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), NJ );
   for( i=0; i<NJ; i++ ){
     chain_create_link( chain, i, rk_joint_com[zRandI(0,typenum-1)] );
     if( i > 0 )
@@ -60,15 +60,15 @@ bool assert_joint_reg_one(void)
 
   ofs_head = 0;
   for( i=0; i<NJ; i++ ){
-    if( zRandI(0,1) == 0 && rkChainLinkJointSize(&chain,i) > 0 ){
+    if( zRandI(0,1) == 0 && rkChainLinkJointDOF(&chain,i) > 0 ){
       rkChainRegIKJointID( &chain, i, ( w = zRandF(0,100) ) );
       zIndexIncSize( idx );
       zIndexSetElem( idx, zArraySize(idx)-1, i );
       zIndexSetElem( ofs, i, ofs_head );
-      ofs_head += rkChainLinkJointSize(&chain,i);
-      for( j=0; j<rkChainLinkJointSize(&chain,i); j++ )
+      ofs_head += rkChainLinkJointDOF(&chain,i);
+      for( j=0; j<rkChainLinkJointDOF(&chain,i); j++ )
         zVecSetElemNC( wn, zVecSize(wn)+j, w );
-      zVecSizeNC(wn) += rkChainLinkJointSize(&chain,i);
+      zVecSizeNC(wn) += rkChainLinkJointDOF(&chain,i);
     } else
       zIndexSetElem( ofs, i, -1 );
   }
@@ -182,7 +182,7 @@ void assert_ik_revol(void)
   bool result = true;
 
   rkChainInit( &chain );
-  zArrayAlloc( &chain.link, rkLink, NL );
+  rkLinkArrayAlloc( rkChainLinkArray(&chain), NL );
   for( i=0; i<NL; i++ ){
     chain_create_link( &chain, i, i < NL-1 ? &rk_joint_revol : &rk_joint_fixed );
     if( i > 0 ){
@@ -237,7 +237,7 @@ void assert_ik_spher(void)
   bool result = true;
 
   rkChainInit( &chain );
-  zArrayAlloc( &chain.link, rkLink, 3 );
+  rkLinkArrayAlloc( rkChainLinkArray(&chain), 3 );
   /* link #0 */
   chain_create_link( &chain, 0, &rk_joint_fixed );
   zMat3DCreate( rkChainLinkOrgAtt(&chain,0), 1, 0, 0, 0, 0, 1, 0,-1, 0 );
@@ -301,7 +301,7 @@ void assert_ik_float(void)
   bool result = true;
 
   rkChainInit( &chain );
-  zArrayAlloc( &chain.link, rkLink, 3 );
+  rkLinkArrayAlloc( rkChainLinkArray(&chain), 3 );
   /* link #0 */
   chain_create_link( &chain, 0, &rk_joint_fixed );
   zMat3DCreate( rkChainLinkOrgAtt(&chain,0), 1, 0, 0, 0, 0, 1, 0,-1, 0 );
@@ -372,8 +372,7 @@ void assert_ik_l2l(void)
   bool result = true;
 
   rkChainInit( &chain );
-  zArrayAlloc( &chain.link, rkLink, NL*2+1 );
-
+  rkLinkArrayAlloc( rkChainLinkArray(&chain), NL*2+1 );
   chain_create_link( &chain, 0, &rk_joint_fixed );
   chain_add_link( &chain, 1, 0, &rk_joint_spher );
   chain_add_link( &chain, NL+1, 0, &rk_joint_spher );
@@ -506,6 +505,59 @@ void assert_puma_arm(void)
   zAssert( rkChainIK (PUMA), result );
 }
 
+bool assert_ik_rjo_test(rkChain *chain, rkIKCell *entry[], zVec q, double px, double py, double pz, double ax, double ay, double az)
+{
+  zVec6D ref, err;
+  zFrame3D fd;
+
+  rkChainDeactivateIK( chain );
+  rkChainBindIK( chain );
+  zVec6DCreate( &ref, px, py, pz, ax, ay, az );
+  zVec6DToFrame3DZYX( &ref, &fd );
+  rkIKCellSetRefVec( entry[0], zVec6DLin(&ref) );
+  rkIKCellSetRefVec( entry[1], zVec6DAng(&ref) );
+  rkChainIK_RJO( chain, q, zTOL, 0 );
+  zFrame3DError( &fd, rkChainLinkWldFrame(chain,rkIKCellAttr(entry[0])->id), &err );
+  return zVec6DIsTiny( &err );
+}
+
+void assert_ik_rjo(void)
+{
+  rkChain chain;
+  rkIKAttr attr;
+  rkIKCell *entry[2];
+  zVec q;
+  const double wn = 0.001;
+  bool result = true;
+
+  rkChainReadZTK( &chain, "../example/model/H5.ztk" );
+  rkChainCreateIK( &chain );
+  rkChainRegIKJoint( &chain, "left_hip_rotation",    wn );
+  rkChainRegIKJoint( &chain, "left_hip_abduction",   wn );
+  rkChainRegIKJoint( &chain, "left_hip_flexion",     wn );
+  rkChainRegIKJoint( &chain, "left_knee_flexion",    wn );
+  rkChainRegIKJoint( &chain, "left_ankle_flexion",   wn );
+  rkChainRegIKJoint( &chain, "left_ankle_abduction", wn );
+  zVec3DZero( &attr.ap );
+  rkIKAttrSetLinkID( &attr, &chain, "left_foot" );
+  entry[0] = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_AP );
+  entry[1] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID );
+
+  q = zVecAlloc( zArraySize( rkChainIKJointIndex(&chain) ) );
+  if( !assert_ik_rjo_test( &chain, entry, q, 0.01,-0.02, 0.05, 0, 0, 0 ) ) result = false;
+  if( !assert_ik_rjo_test( &chain, entry, q, 0.1,  0.2,  0.2,  0, 0, 0 ) ) result = false;
+  if( !assert_ik_rjo_test( &chain, entry, q, 0.01,-0.02, 0.05,-0.25*zPI, 0, 0 ) ) result = false;
+  if( !assert_ik_rjo_test( &chain, entry, q, 0.01,-0.02, 0.05, 0.25*zPI, 0, 0 ) ) result = false;
+  if( !assert_ik_rjo_test( &chain, entry, q, 0.01,-0.02, 0.05, 0,-0.25*zPI, 0 ) ) result = false;
+  if( !assert_ik_rjo_test( &chain, entry, q, 0.01,-0.02, 0.05, 0, 0.25*zPI, 0 ) ) result = false;
+  if( !assert_ik_rjo_test( &chain, entry, q, 0.01,-0.02, 0.05, 0, 0,-0.25*zPI ) ) result = false;
+  if( !assert_ik_rjo_test( &chain, entry, q, 0.01,-0.02, 0.05, 0, 0, 0.25*zPI ) ) result = false;
+
+  rkChainDestroy( &chain );
+  zVecFree( q );
+  zAssert( rkChainIK_RJO (H5), result );
+}
+
 int main(void)
 {
   zRandInit();
@@ -517,5 +569,6 @@ int main(void)
   assert_ik_l2l();
   assert_ik_arm();
   assert_puma_arm();
+  assert_ik_rjo();
   return 0;
 }

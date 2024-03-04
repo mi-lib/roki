@@ -278,9 +278,9 @@ static ZTKPrp __ztk_prp_rkjoint_float[] = {
   { "dis", 1, _rkJointFloatDisFromZTK, _rkJointFloatDisFPrintZTK },
 };
 
-static rkJoint *_rkJointFloatFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
+static rkJoint *_rkJointFloatFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
 {
-  return rkJointPrpFromZTK( joint, motorarray, ztk, __ztk_prp_rkjoint_float );
+  return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_float );
 }
 
 static void _rkJointFloatFPrintZTK(FILE *fp, rkJoint *joint, char *name)
@@ -330,7 +330,6 @@ rkJointCom rk_joint_float = {
   _rkJointFloatVal,
   _rkJointFloatVal,
 
-  rkJointGetNullMotor,
   rkJointMotorSetValDummy,
   _rkJointFloatMotorInertia,
   _rkJointFloatMotorInputTrq,

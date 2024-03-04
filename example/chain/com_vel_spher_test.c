@@ -44,15 +44,12 @@ void world_com_test(void)
   zVec3DCopy( &v, &vel );
 }
 
-
-
-
 void chain_init(rkChain *chain)
 {
   char name[BUFSIZ];
 
   rkChainInit( chain );
-  zArrayAlloc( &chain->link, rkLink, 2 );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 2 );
   sprintf( name, "root" );
   rkLinkInit( rkChainLink(chain,0) );
   zNameSet( rkChainLink(chain,0), name );
@@ -72,7 +69,7 @@ void chain_init(rkChain *chain)
 
 int main(void)
 {
-  register int i;
+  int i;
 
   chain_init( &chain );
   rkChainConnectionFPrint( stderr, &chain );

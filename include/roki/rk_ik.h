@@ -35,7 +35,7 @@ __BEGIN_DECLS
  3. Register constraint cell of inverse kinematics, using
      entry = rkChainRegIKCell( &chain, &attr, ref_fp, mf_fp, vf_fp, bind_fp, acm_fp, util );
      ...
-     \a attr : attributes of the attented property (see 'rk_ik_cell.h/c')
+     \a attr : attributes of the attention property (see 'rk_ik_cell.h/c')
      \a ref_fp : a function that provides the reference (a set of three values)
      \a mf_fp : a function that computes the constraint matrix
      \a vf_fp : a function that computes the 3D constraint vector
@@ -141,7 +141,7 @@ __ROKI_EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
  * rkChainRegIKCell() registers a constraint cell denoted by \a attr, \a rf,
  * \a mf, \a vf, and \a bf, to the cell list of the inverse kinematics
  * solver of \a chain.
- * \a attr contains attributes of the attented property (link or point to
+ * \a attr contains attributes of the attention property (link or point to
  * be constrained). See rk_ik_cell.h for detail.
  * \a rf points a function that provides reference (a set of three values).
  * \a mf points a function that computes the constraint matrix.

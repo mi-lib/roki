@@ -7,14 +7,11 @@
 #include <roki/rk_joint.h>
 
 #define _rks(joint) ((rkJointSpherState *)((rkJoint *)(joint))->state)
-#define _rkp(joint) ((rkJointSpherPrp   *)((rkJoint *)(joint))->prp)
 
-static void _rkJointSpherInit(rkJoint *joint){
-  rkMotorAssign( &_rkp(joint)->m, &rk_motor_none );
-}
+static void _rkJointSpherInit(rkJoint *joint){}
 
 static void *_rkJointSpherAllocState(void){ return zAlloc( rkJointSpherState, 1 ); }
-static void *_rkJointSpherAllocPrp(void){ return zAlloc( rkJointSpherPrp, 1 ); }
+static void *_rkJointSpherAllocPrp(void){ return NULL; }
 
 static void _rkJointSpherCopyPrp(rkJoint *src, rkJoint *dst){}
 
@@ -208,30 +205,28 @@ static void _rkJointSpherVal(rkJoint *joint, double *val){}
 
 /* motor */
 
-static rkMotor *_rkJointSpherGetMotor(rkJoint *joint){ return &_rkp(joint)->m; }
-
 static void _rkJointSpherMotorSetInput(rkJoint *joint, double *val){
-  rkMotorSetInput( &_rkp(joint)->m, val );
+  rkMotorSetInput( rkJointMotor(joint), val );
 }
 
 static void _rkJointSpherMotorInertia(rkJoint *joint, double *val){
   zMat3DZero( (zMat3D *)val );
-  rkMotorInertia( &_rkp(joint)->m, val );
+  rkMotorInertia( rkJointMotor(joint), val );
 }
 
 static void _rkJointSpherMotorInputTrq(rkJoint *joint, double *val){
   zVec3DZero( (zVec3D *)val );
-  rkMotorInputTrq( &_rkp(joint)->m, val );
+  rkMotorInputTrq( rkJointMotor(joint), val );
 }
 
 static void _rkJointSpherMotorResistance(rkJoint *joint, double *val){
   zVec3DZero( (zVec3D *)val );
-  rkMotorRegistance( &_rkp(joint)->m, &_rks(joint)->aa.e[zX], &_rks(joint)->vel.e[zX], val );
+  rkMotorRegistance( rkJointMotor(joint), &_rks(joint)->aa.e[zX], &_rks(joint)->vel.e[zX], val );
 }
 
 static void _rkJointSpherMotorDrivingTrq(rkJoint *joint, double *val){
   zVec3DZero( (zVec3D *)val );
-  rkMotorDrivingTrq( &_rkp(joint)->m, &_rks(joint)->aa.e[zX], &_rks(joint)->vel.e[zX], &_rks(joint)->acc.e[zX], val );
+  rkMotorDrivingTrq( rkJointMotor(joint), &_rks(joint)->aa.e[zX], &_rks(joint)->vel.e[zX], &_rks(joint)->acc.e[zX], val );
 }
 
 /* ABI */
@@ -270,9 +265,7 @@ static void *_rkJointSpherDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return joint;
 }
 static void *_rkJointSpherMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  rkMotor *mp;
-  if( !( mp = rkMotorArrayFind( (rkMotorArray *)arg, ZTKVal(ztk) ) ) ) return NULL;
-  return rkMotorClone( mp, &_rkp(joint)->m ) ? joint : NULL;
+  return rkJointMotorQuery( joint, arg, ZTKVal(ztk) );
 }
 
 static void _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
@@ -284,16 +277,16 @@ static ZTKPrp __ztk_prp_rkjoint_spher[] = {
   { "motor", 1, _rkJointSpherMotorFromZTK, NULL },
 };
 
-static rkJoint *_rkJointSpherFromZTK(rkJoint *joint, rkMotorArray *motorarray, ZTK *ztk)
+static rkJoint *_rkJointSpherFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
 {
-  return rkJointPrpFromZTK( joint, motorarray, ztk, __ztk_prp_rkjoint_spher );
+  return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_spher );
 }
 
 static void _rkJointSpherFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_spher );
-  if( rkMotorIsAssigned( &_rkp(joint)->m ) )
-    fprintf( fp, "motor: %s\n", zName(&_rkp(joint)->m) );
+  if( rkJointMotor( joint ) )
+    fprintf( fp, "motor: %s\n", rkMotorName( rkJointMotor(joint) ) );
 }
 
 rkJointCom rk_joint_spher = {
@@ -338,7 +331,6 @@ rkJointCom rk_joint_spher = {
   _rkJointSpherVal,
   _rkJointSpherVal,
 
-  _rkJointSpherGetMotor,
   _rkJointSpherMotorSetInput,
   _rkJointSpherMotorInertia,
   _rkJointSpherMotorInputTrq,
@@ -359,4 +351,3 @@ rkJointCom rk_joint_spher = {
 };
 
 #undef _rks
-#undef _rkp

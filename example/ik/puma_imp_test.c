@@ -30,9 +30,9 @@ int main(int argc, char *argv[])
   zVec dis;
   rkIKCell *cell[2];
   double x0, y0, z0, x, y, z, t;
-  register int i;
   zVec6D err;
   zFrame3D goal;
+  int i;
   FILE *fp;
 
   init( &puma, &puma_v, cell );

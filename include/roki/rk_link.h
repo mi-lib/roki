@@ -65,122 +65,127 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 
 #define RK_LINK_INVALID (-1)
 
-#define rkLinkJointIDOffset(l) (l)->joint_id_offset
-#define rkLinkJoint(l)         ( &(l)->joint )
-#define rkLinkJointSize(l)     rkJointSize( rkLinkJoint(l) )
-#define rkLinkJointTypeStr(l)  rkJointTypeStr( rkLinkJoint(l) )
-#define rkLinkBody(l)          ( &(l)->body )
-#define rkLinkMP(l)            ( &rkLinkBody(l)->mp )
-#define rkLinkMass(l)          rkBodyMass( rkLinkBody(l) )
-#define rkLinkCOM(l)           rkBodyCOM( rkLinkBody(l) )
-#define rkLinkInertia(l)       rkBodyInertia( rkLinkBody(l) )
-#define rkLinkCRB(l)           ( &(l)->crb )
-#define rkLinkCRBMass(l)       rkMPMass( rkLinkCRB(l) )
-#define rkLinkCRBCOM(l)        rkMPCOM( rkLinkCRB(l) )
-#define rkLinkCRBInertia(l)    rkMPInertia( rkLinkCRB(l) )
-#define rkLinkVel(l)           rkBodyVel( rkLinkBody(l) )
-#define rkLinkAcc(l)           rkBodyAcc( rkLinkBody(l) )
-#define rkLinkLinVel(l)        rkBodyLinVel( rkLinkBody(l) )
-#define rkLinkLinAcc(l)        rkBodyLinAcc( rkLinkBody(l) )
-#define rkLinkAngVel(l)        rkBodyAngVel( rkLinkBody(l) )
-#define rkLinkAngAcc(l)        rkBodyAngAcc( rkLinkBody(l) )
-#define rkLinkCOMVel(l)        rkBodyCOMVel( rkLinkBody(l) )
-#define rkLinkCOMAcc(l)        rkBodyCOMAcc( rkLinkBody(l) )
-#define rkLinkExtWrench(l)     rkBodyExtWrench( rkLinkBody(l) )
-#define rkLinkShapeList(l)     rkBodyShapeList( rkLinkBody(l) )
-#define rkLinkShapeNum(l)      rkBodyShapeNum( rkLinkBody(l) )
-#define rkLinkShapeIsEmpty(l)  rkBodyShapeIsEmpty( rkLinkBody(l) )
-#define rkLinkStuff(l)         rkBodyStuff( rkLinkBody(l) )
-#define rkLinkOrgFrame(l)      ( &(l)->orgframe )
-#define rkLinkOrgPos(l)        zFrame3DPos(rkLinkOrgFrame(l))
-#define rkLinkOrgAtt(l)        zFrame3DAtt(rkLinkOrgFrame(l))
-#define rkLinkAdjFrame(l)      ( &(l)->adjframe )
-#define rkLinkAdjPos(l)        zFrame3DPos(rkLinkAdjFrame(l))
-#define rkLinkAdjAtt(l)        zFrame3DAtt(rkLinkAdjFrame(l))
-#define rkLinkWldFrame(l)      rkBodyFrame( rkLinkBody(l) )
-#define rkLinkWldPos(l)        rkBodyPos( rkLinkBody(l) )
-#define rkLinkWldAtt(l)        rkBodyAtt( rkLinkBody(l) )
-#define rkLinkWldCOM(l)        rkBodyWldCOM( rkLinkBody(l) )
-#define rkLinkWrench(l)        rkJointWrench( rkLinkJoint(l) )
-#define rkLinkForce(l)         zVec6DLin(rkLinkWrench(l))
-#define rkLinkTorque(l)        zVec6DAng(rkLinkWrench(l))
-#define rkLinkParent(l)        (l)->parent
-#define rkLinkChild(l)         (l)->child
-#define rkLinkSibl(l)          (l)->sibl
-#define rkLinkABIPrp(l)        ( &(l)->_abiprp )
-#define rkLinkExtWrenchBuf(l)  ( &(l)->_abiprp.wlist )
+#define rkLinkJointIDOffset(link) (link)->joint_id_offset
+#define rkLinkJoint(link)         ( &(link)->joint )
+#define rkLinkJointDOF(link)      rkJointDOF( rkLinkJoint(link) )
+#define rkLinkJointTypeStr(link)  rkJointTypeStr( rkLinkJoint(link) )
+#define rkLinkBody(link)          ( &(link)->body )
+#define rkLinkMP(link)            ( &rkLinkBody(link)->mp )
+#define rkLinkMass(link)          rkBodyMass( rkLinkBody(link) )
+#define rkLinkCOM(link)           rkBodyCOM( rkLinkBody(link) )
+#define rkLinkInertia(link)       rkBodyInertia( rkLinkBody(link) )
+#define rkLinkCRB(link)           ( &(link)->crb )
+#define rkLinkCRBMass(link)       rkMPMass( rkLinkCRB(link) )
+#define rkLinkCRBCOM(link)        rkMPCOM( rkLinkCRB(link) )
+#define rkLinkCRBInertia(link)    rkMPInertia( rkLinkCRB(link) )
+#define rkLinkVel(link)           rkBodyVel( rkLinkBody(link) )
+#define rkLinkAcc(link)           rkBodyAcc( rkLinkBody(link) )
+#define rkLinkLinVel(link)        rkBodyLinVel( rkLinkBody(link) )
+#define rkLinkLinAcc(link)        rkBodyLinAcc( rkLinkBody(link) )
+#define rkLinkAngVel(link)        rkBodyAngVel( rkLinkBody(link) )
+#define rkLinkAngAcc(link)        rkBodyAngAcc( rkLinkBody(link) )
+#define rkLinkCOMVel(link)        rkBodyCOMVel( rkLinkBody(link) )
+#define rkLinkCOMAcc(link)        rkBodyCOMAcc( rkLinkBody(link) )
+#define rkLinkExtWrench(link)     rkBodyExtWrench( rkLinkBody(link) )
+#define rkLinkShapeList(link)     rkBodyShapeList( rkLinkBody(link) )
+#define rkLinkShapeNum(link)      rkBodyShapeNum( rkLinkBody(link) )
+#define rkLinkShapeIsEmpty(link)  rkBodyShapeIsEmpty( rkLinkBody(link) )
+#define rkLinkStuff(link)         rkBodyStuff( rkLinkBody(link) )
+#define rkLinkOrgFrame(link)      ( &(link)->orgframe )
+#define rkLinkOrgPos(link)        zFrame3DPos(rkLinkOrgFrame(link))
+#define rkLinkOrgAtt(link)        zFrame3DAtt(rkLinkOrgFrame(link))
+#define rkLinkAdjFrame(link)      ( &(link)->adjframe )
+#define rkLinkAdjPos(link)        zFrame3DPos(rkLinkAdjFrame(link))
+#define rkLinkAdjAtt(link)        zFrame3DAtt(rkLinkAdjFrame(link))
+#define rkLinkWldFrame(link)      rkBodyFrame( rkLinkBody(link) )
+#define rkLinkWldPos(link)        rkBodyPos( rkLinkBody(link) )
+#define rkLinkWldAtt(link)        rkBodyAtt( rkLinkBody(link) )
+#define rkLinkWldCOM(link)        rkBodyWldCOM( rkLinkBody(link) )
+#define rkLinkWrench(link)        rkJointWrench( rkLinkJoint(link) )
+#define rkLinkForce(link)         zVec6DLin(rkLinkWrench(link))
+#define rkLinkTorque(link)        zVec6DAng(rkLinkWrench(link))
+#define rkLinkParent(link)        (link)->parent
+#define rkLinkChild(link)         (link)->child
+#define rkLinkSibl(link)          (link)->sibl
+#define rkLinkABIPrp(link)        ( &(link)->_abiprp )
+#define rkLinkExtWrenchBuf(link)  ( &(link)->_abiprp.wlist )
 
-#define rkLinkSetJointIDOffset(l,o) ( rkLinkJointIDOffset(l) = (o) )
-#define rkLinkSetMass(l,m)     do{\
-  rkBodySetMass( rkLinkBody(l), m );\
-  rkMPSetMass( rkLinkCRB(l), rkLinkMass(l) );\
+#define rkLinkSetJointIDOffset(link,o) ( rkLinkJointIDOffset(link) = (o) )
+#define rkLinkSetMass(link,m)     do{\
+  rkBodySetMass( rkLinkBody(link), m );\
+  rkMPSetMass( rkLinkCRB(link), rkLinkMass(link) );\
 } while(0)
-#define rkLinkSetCOM(l,c)      do{\
-  rkBodySetCOM( rkLinkBody(l), c );\
-  rkMPSetCOM( rkLinkCRB(l), rkLinkCOM(l) );\
+#define rkLinkSetCOM(link,c)      do{\
+  rkBodySetCOM( rkLinkBody(link), c );\
+  rkMPSetCOM( rkLinkCRB(link), rkLinkCOM(link) );\
 } while(0)
-#define rkLinkSetInertia(l,i)  do{\
-  rkBodySetInertia( rkLinkBody(l), i );\
-  rkMPSetInertia( rkLinkCRB(l), rkLinkInertia(l) );\
+#define rkLinkSetInertia(link,i)  do{\
+  rkBodySetInertia( rkLinkBody(link), i );\
+  rkMPSetInertia( rkLinkCRB(link), rkLinkInertia(link) );\
 } while(0)
-#define rkLinkSetVel(l,v)      rkBodySetVel( rkLinkBody(l), v )
-#define rkLinkSetAcc(l,a)      rkBodySetAcc( rkLinkBody(l), a )
-#define rkLinkSetLinVel(l,v)   rkBodySetLinVel( rkLinkBody(l), v )
-#define rkLinkSetLinAcc(l,a)   rkBodySetLinAcc( rkLinkBody(l), a )
-#define rkLinkSetAngVel(l,v)   rkBodySetAngVel( rkLinkBody(l), v )
-#define rkLinkSetAngAcc(l,a)   rkBodySetAngAcc( rkLinkBody(l), a )
-#define rkLinkSetCOMVel(l,v)   rkBodySetCOMVel( rkLinkBody(l), v )
-#define rkLinkSetCOMAcc(l,a)   rkBodySetCOMAcc( rkLinkBody(l), a )
-#define rkLinkSetStuff(l,s)    rkBodySetStuff( rkLinkBody(l), s )
-#define rkLinkSetOrgFrame(l,f) zFrame3DCopy( f, rkLinkOrgFrame(l) )
-#define rkLinkSetOrgPos(l,p)   zFrame3DSetPos( rkLinkOrgFrame(l), p )
-#define rkLinkSetOrgAtt(l,a)   zFrame3DSetAtt( rkLinkOrgFrame(l), a )
-#define rkLinkSetAdjFrame(l,f) zFrame3DCopy( f, rkLinkAdjFrame(l) )
-#define rkLinkSetAdjPos(l,p)   zFrame3DSetPos( rkLinkAdjFrame(l), p )
-#define rkLinkSetAdjAtt(l,a)   zFrame3DSetAtt( rkLinkAdjFrame(l), a )
-#define rkLinkSetWldFrame(l,f) rkBodySetFrame( rkLinkBody(l), f )
-#define rkLinkSetWldPos(l,p)   rkBodySetPos( rkLinkBody(l), p )
-#define rkLinkSetWldAtt(l,a)   rkBodySetAtt( rkLinkBody(l), a )
-#define rkLinkSetWldCOM(l,c)   rkBodySetWldCOM( rkLinkBody(l), c )
-#define rkLinkSetWrench(l,f)   zVec6DCopy( f, rkLinkWrench(l) )
-#define rkLinkSetForce(l,f)    zVec3DCopy( f, rkLinkForce(l) )
-#define rkLinkSetTorque(l,n)   zVec3DCopy( n, rkLinkTorque(l) )
-#define rkLinkSetParent(l,p)   ( rkLinkParent(l) = (p) )
-#define rkLinkSetChild(l,c)    ( rkLinkChild(l) = (c) )
-#define rkLinkSetSibl(l,b)     ( rkLinkSibl(l) = (b) )
+#define rkLinkSetVel(link,v)      rkBodySetVel( rkLinkBody(link), v )
+#define rkLinkSetAcc(link,a)      rkBodySetAcc( rkLinkBody(link), a )
+#define rkLinkSetLinVel(link,v)   rkBodySetLinVel( rkLinkBody(link), v )
+#define rkLinkSetLinAcc(link,a)   rkBodySetLinAcc( rkLinkBody(link), a )
+#define rkLinkSetAngVel(link,v)   rkBodySetAngVel( rkLinkBody(link), v )
+#define rkLinkSetAngAcc(link,a)   rkBodySetAngAcc( rkLinkBody(link), a )
+#define rkLinkSetCOMVel(link,v)   rkBodySetCOMVel( rkLinkBody(link), v )
+#define rkLinkSetCOMAcc(link,a)   rkBodySetCOMAcc( rkLinkBody(link), a )
+#define rkLinkSetStuff(link,s)    rkBodySetStuff( rkLinkBody(link), s )
+#define rkLinkSetOrgFrame(link,f) zFrame3DCopy( f, rkLinkOrgFrame(link) )
+#define rkLinkSetOrgPos(link,p)   zFrame3DSetPos( rkLinkOrgFrame(link), p )
+#define rkLinkSetOrgAtt(link,a)   zFrame3DSetAtt( rkLinkOrgFrame(link), a )
+#define rkLinkSetAdjFrame(link,f) zFrame3DCopy( f, rkLinkAdjFrame(link) )
+#define rkLinkSetAdjPos(link,p)   zFrame3DSetPos( rkLinkAdjFrame(link), p )
+#define rkLinkSetAdjAtt(link,a)   zFrame3DSetAtt( rkLinkAdjFrame(link), a )
+#define rkLinkSetWldFrame(link,f) rkBodySetFrame( rkLinkBody(link), f )
+#define rkLinkSetWldPos(link,p)   rkBodySetPos( rkLinkBody(link), p )
+#define rkLinkSetWldAtt(link,a)   rkBodySetAtt( rkLinkBody(link), a )
+#define rkLinkSetWldCOM(link,c)   rkBodySetWldCOM( rkLinkBody(link), c )
+#define rkLinkSetWrench(link,f)   zVec6DCopy( f, rkLinkWrench(link) )
+#define rkLinkSetForce(link,f)    zVec3DCopy( f, rkLinkForce(link) )
+#define rkLinkSetTorque(link,n)   zVec3DCopy( n, rkLinkTorque(link) )
+#define rkLinkSetParent(link,p)   ( rkLinkParent(link) = (p) )
+#define rkLinkSetChild(link,c)    ( rkLinkChild(link) = (c) )
+#define rkLinkSetSibl(link,b)     ( rkLinkSibl(link) = (b) )
 
 /*! \brief initialization and destruction of link object.
  *
- * rkLinkInit() initializes a link object \a l, cleaning up
- * all inner properties.
+ * rkLinkInit() initializes a link object \a link, cleaning up all inner properties.
  *
- * rkLinkDestroy() destroys \a l, freeing the memory space
- * allocated for its name and external force, and cleaning it up.
+ * rkLinkDestroy() destroys \a link, freeing the memory space allocated for its name
+ * and external force, and cleaning it up.
  * \return
  * Neither rkLinkInit() nor rkLinkDestroy() returns any values.
  */
-__ROKI_EXPORT void rkLinkInit(rkLink *l);
-__ROKI_EXPORT void rkLinkDestroy(rkLink *l);
+__ROKI_EXPORT void rkLinkInit(rkLink *link);
+__ROKI_EXPORT void rkLinkDestroy(rkLink *link);
 
 /*! \brief clone a link.
  *
- * rkLinkClone() clones a link \a org, namely, copies its body and
- * connectivities with other links, to another \a cln.
+ * rkLinkClone() clones a link \a org, namely, copies its body and connectivities
+ * with other links, to another \a cln.
  *
- * The multishapes associated with \a org and \a cln are pointed by
- * \a so and \sc, respectively. It is supposed that the orders of the
- * shapes of \a org and \a cln are the same in \a so and \sc. Namely,
- * if the k-th shape of \a so is attached with \a org, the k-th shape
- * of \a sc is supposed to be attached with \a cln.
- * \return cln
+ * The multishapes associated with \a org and \a cln are pointed by \a shape_org
+ * and \a shape_cln, respectively. It is supposed that the orders of the shapes
+ * of \a org and \a cln are the same in \a shape_org and \a shape_cln. Namely,
+ * if the k-th shape of \a shape_org is referred from \a org, the k-th shape
+ * of \a shape_cln is referred from \a cln.
+ *
+ * \a msarray_org and \a msarray_cln are arrays of motor specifications associated
+ * with \a org and \a cln, respectively. The same condition about the order with
+ * the multishapes is assumed.
+ * \return
+ * rkLinkClone() returns \a cln if it succeeds. Otherwise, the null pointer is
+ * returned.
  */
-__ROKI_EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *so, zMShape3D *sc);
+__ROKI_EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
 
 /*! \brief zero velocity and acceleration of a link.
  *
  * rkLinkZeroRate() zeroes velocity and acceleration of a link.
  */
-#define rkLinkZeroRate(l) rkBodyZeroRate( rkLinkBody(l) )
+#define rkLinkZeroRate(link) rkBodyZeroRate( rkLinkBody(link) )
 
 /*! \brief copy state of a link.
  *
@@ -194,37 +199,37 @@ __ROKI_EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dst);
 
 /*! \brief add link branch.
  *
- * rkLinkAddSibl() connects a link \a bl to the other \a l
+ * rkLinkAddSibl() connects a link \a bl to the other \a link
  * as a sibling link, namely, a link which have the same
- * parent link with \a l.
+ * parent link with \a link.
  *
- * rkLinkAddChild() connects a link \a cl to the other \a l
+ * rkLinkAddChild() connects a link \a cl to the other \a link
  * as a child link. One link can have plural children.
- * When \a l already has more than one child, \a cl is
+ * When \a link already has more than one child, \a cl is
  * connected to the youngest link of them as its sibling link.
  * \return
  * Each of rkLinkAddSibl() and rkLinkAddChild() returns a
  * pointer to the added link.
  */
-__ROKI_EXPORT rkLink *rkLinkAddSibl(rkLink *l, rkLink *bl);
-__ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *l, rkLink *cl);
+__ROKI_EXPORT rkLink *rkLinkAddSibl(rkLink *link, rkLink *sibl);
+__ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
 
 /* \brief compute the inertial ellipsoid of a link.
  */
-#define rkLinkInertiaEllips(l,e) rkBodyInertiaEllips( rkLinkBody(l), e )
+#define rkLinkInertiaEllips(link,e) rkBodyInertiaEllips( rkLinkBody(link), e )
 
 /*! \brief push and pop of external force applied to link.
  *
  * rkLinkExtForcePush() pushes a new external force list cell
- * \a cell to the list on a link \a l.
+ * \a cell to the list on a link \a link.
  *
  * rkLinkExtForcePop() pops the latest external force list
- * cell from the list on \a l.
+ * cell from the list on \a link.
  *
  * rkLinkExtForceDelete() destroys the external force list
- * on \a l, freeing all cells.
+ * on \a link, freeing all cells.
  * \notes
- * When the external force list on \a l includes statically-allocated
+ * When the external force list on \a link includes statically-allocated
  * cells, zListExtForceDelete() causes segmentation fault.
  * \return
  * rkLinkExtForcePush() returns a pointer to the cell pushed.
@@ -233,34 +238,34 @@ __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *l, rkLink *cl);
  * \sa
  * rkBodyExtForcePush, rkBodyExtForcePop, rkBodyExtForceDelete
  */
-#define rkLinkExtWrenchPush(l,f)  rkBodyExtWrenchPush( rkLinkBody(l), f )
-#define rkLinkExtWrenchPop(l)     rkBodyExtWrenchPop( rkLinkBody(l) )
-#define rkLinkExtWrenchDestroy(l) rkBodyExtWrenchDestroy( rkLinkBody(l) )
+#define rkLinkExtWrenchPush(link,f)  rkBodyExtWrenchPush( rkLinkBody(link), f )
+#define rkLinkExtWrenchPop(link)     rkBodyExtWrenchPop( rkLinkBody(link) )
+#define rkLinkExtWrenchDestroy(link) rkBodyExtWrenchDestroy( rkLinkBody(link) )
 
 /*! \brief calculation of total external wrench acting to link.
  *
  * rkLinkNetExtWrench() calculates the net external wrench acting to
- * a link \a l by summing up individual external forces in the force
+ * a link \a link by summing up individual external forces in the force
  * list. The result is put into \a w.
  * \return
  * rkLinkNetExtWrench() returns a pointer \a w.
  * \sa
  * rkBodyNetExtWrench
  */
-#define rkLinkNetExtWrench(l,w) rkBodyNetExtWrench( rkLinkBody(l), w )
+#define rkLinkNetExtWrench(link,w) rkBodyNetExtWrench( rkLinkBody(link), w )
 
 /*! \brief push and pop of shape attached to link.
  *
  * rkLinkShapePush() pushes a new shape \a shape to the
- * shape list of a link \a l.
+ * shape list of a link \a link.
  *
- * rkLinkShapePop() pops the last shape attached to \a l
+ * rkLinkShapePop() pops the last shape attached to \a link
  * from the list.
  *
- * rkLinkShapeDelete() destroys the shape list of \a l,
+ * rkLinkShapeDelete() destroys the shape list of \a link,
  * freeing all cells.
  * \notes
- * When the shape list of \a l includes statically-allocated
+ * When the shape list of \a link includes statically-allocated
  * cells, rkLinkShapeDelete() causes segmentation fault.
  * \return
  * rkLinkShapePush() returns a pointer to the cell pushed.
@@ -269,108 +274,108 @@ __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *l, rkLink *cl);
  * \sa
  * rkBodyShapePush, rkBodyShapePop, rkBodyShapeDelete
  */
-#define rkLinkShapePush(l,s)  rkBodyShapePush( rkLinkBody(l), s )
-#define rkLinkShapePop(l)     rkBodyShapePop( rkLinkBody(l) )
-#define rkLinkShapeDestroy(l) rkBodyShapeDestroy( rkLinkBody(l) )
+#define rkLinkShapePush(link,s)  rkBodyShapePush( rkLinkBody(link), s )
+#define rkLinkShapePop(link)     rkBodyShapePop( rkLinkBody(link) )
+#define rkLinkShapeDestroy(link) rkBodyShapeDestroy( rkLinkBody(link) )
 
-#define rkLinkContigVert(l,p,d) rkBodyContigVert( rkLinkBody(l), p, d )
+#define rkLinkContigVert(link,p,d) rkBodyContigVert( rkLinkBody(link), p, d )
 
 /*! \brief position of a point on a link in the world frame. */
-#define rkLinkPointWldPos(l,p,pw) zXform3D( rkLinkWldFrame(l), p, pw )
+#define rkLinkPointWldPos(link,p,pw) zXform3D( rkLinkWldFrame(link), p, pw )
 
 /*! \brief velocity of a point on link.
  *
  * rkLinkPointVel() calculates the velocity of a point \a p
- * attached to the local frame of a link \a l with respect
+ * attached to the local frame of a link \a link with respect
  * to the inertia frame. The result is put into \a v.
  * \return
  * rkLinkPointVel() returns a pointer \a v.
  * \notes
- * \a p is with respect to the local frame of \a l.
+ * \a p is with respect to the local frame of \a link.
  */
-__ROKI_EXPORT zVec3D *rkLinkPointVel(rkLink *l, zVec3D *p, zVec3D *v);
-__ROKI_EXPORT zVec3D *rkLinkPointAcc(rkLink *l, zVec3D *p, zVec3D *a);
+__ROKI_EXPORT zVec3D *rkLinkPointVel(rkLink *link, zVec3D *p, zVec3D *v);
+__ROKI_EXPORT zVec3D *rkLinkPointAcc(rkLink *link, zVec3D *p, zVec3D *a);
 
 /*! \brief compute inertia tensor of a link with respect to the inertial frame.
  *
- * rkLinkWldInertia() computes the inertia tensor of a link \a l
+ * rkLinkWldInertia() computes the inertia tensor of a link \a link
  * with respect to the inertial frame.
  * The result is put where \a i points.
  * \return \a i
  */
-__ROKI_EXPORT zMat3D *rkLinkWldInertia(rkLink *l, zMat3D *i);
+__ROKI_EXPORT zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i);
 
 /*! \brief set and get joint displacement.
  *
- * rkLinkSetJointDis() sets the joint displacement of \a l
+ * rkLinkSetJointDis() sets the joint displacement of \a link
  * for \a dis. It automatically limits components of \a dis
  * which is out of motion range.
  *
  * rkLinkSetJointDisCNT() continuously updates the joint
- * displacement of \a l to \a dis over the time step \a dt.
+ * displacement of \a link to \a dis over the time step \a dt.
  * Then, the velocity and acceleration is calculated in
  * accordance with a simple differentiation.
  *
- * rkLinkGetJointDis() gets the joint displacement of \a l
+ * rkLinkGetJointDis() gets the joint displacement of \a link
  * and puts it into \a dis.
  * \return
  * These functions return no value.
  */
-#define rkLinkJointLimDis(l,td,ld)    rkJointLimDis( rkLinkJoint(l), td, ld )
-#define rkLinkJointSetDis(l,d)        rkJointSetDis( rkLinkJoint(l), d )
-#define rkLinkJointSetVel(l,v)        rkJointSetVel( rkLinkJoint(l), v )
-#define rkLinkJointSetAcc(l,a)        rkJointSetAcc( rkLinkJoint(l), a )
-#define rkLinkJointSetMin(l,m)        rkJointSetMin( rkLinkJoint(l), m )
-#define rkLinkJointSetMax(l,m)        rkJointSetMax( rkLinkJoint(l), m )
-#define rkLinkJointSetDisCNT(l,d,t)   rkJointSetDisCNT( rkLinkJoint(l), d, t )
-#define rkLinkJointSetTrq(l,t)        rkJointSetTrq( rkLinkJoint(l), t )
+#define rkLinkJointLimDis(link,td,ld)    rkJointLimDis( rkLinkJoint(link), td, ld )
+#define rkLinkJointSetDis(link,d)        rkJointSetDis( rkLinkJoint(link), d )
+#define rkLinkJointSetVel(link,v)        rkJointSetVel( rkLinkJoint(link), v )
+#define rkLinkJointSetAcc(link,a)        rkJointSetAcc( rkLinkJoint(link), a )
+#define rkLinkJointSetMin(link,m)        rkJointSetMin( rkLinkJoint(link), m )
+#define rkLinkJointSetMax(link,m)        rkJointSetMax( rkLinkJoint(link), m )
+#define rkLinkJointSetDisCNT(link,d,t)   rkJointSetDisCNT( rkLinkJoint(link), d, t )
+#define rkLinkJointSetTrq(link,t)        rkJointSetTrq( rkLinkJoint(link), t )
 
-#define rkLinkJointGetDis(l,d)        rkJointGetDis( rkLinkJoint(l), d )
-#define rkLinkJointGetVel(l,v)        rkJointGetVel( rkLinkJoint(l), v )
-#define rkLinkJointGetAcc(l,a)        rkJointGetAcc( rkLinkJoint(l), a )
-#define rkLinkJointGetMin(l,m)        rkJointGetMin( rkLinkJoint(l), m )
-#define rkLinkJointGetMax(l,m)        rkJointGetMax( rkLinkJoint(l), m )
-#define rkLinkJointGetTrq1(l,i)       rkJointGetTrq1( rkLinkJoint(l), i )
-#define rkLinkJointGetTrq(l,t)        rkJointGetTrq( rkLinkJoint(l), t )
+#define rkLinkJointGetDis(link,d)        rkJointGetDis( rkLinkJoint(link), d )
+#define rkLinkJointGetVel(link,v)        rkJointGetVel( rkLinkJoint(link), v )
+#define rkLinkJointGetAcc(link,a)        rkJointGetAcc( rkLinkJoint(link), a )
+#define rkLinkJointGetMin(link,m)        rkJointGetMin( rkLinkJoint(link), m )
+#define rkLinkJointGetMax(link,m)        rkJointGetMax( rkLinkJoint(link), m )
+#define rkLinkJointGetTrq1(link,i)       rkJointGetTrq1( rkLinkJoint(link), i )
+#define rkLinkJointGetTrq(link,t)        rkJointGetTrq( rkLinkJoint(link), t )
 
-#define rkLinkJointGetMotor(l,m)      rkJointGetMotor( rkLinkJoint(l), m )
-#define rkLinkJointMotorSetInput(l,t) rkJointMotorSetInput( rkLinkJoint(l), t )
+#define rkLinkJointMotor(link)           rkJointMotor( rkLinkJoint(link) )
+#define rkLinkJointMotorSetInput(link,t) rkJointMotorSetInput( rkLinkJoint(link), t )
 
-#define rkLinkJointNeutral(l)         rkJointNeutral( rkLinkJoint(l) )
+#define rkLinkJointNeutral(link)         rkJointNeutral( rkLinkJoint(link) )
 
 /*! \brief update link motion state.
  *
- * rkLinkUpdateFrame() updates the frame and COM of link \a l
+ * rkLinkUpdateFrame() updates the frame and COM of link \a link
  * with respect to the world frame.
- * The children and siblings of \a l are recursively updated.
+ * The children and siblings of \a link are recursively updated.
  *
  * rkLinkUpdateRate() updates the velocity and acceleration
- * of \a l with respect to the inertia frame. Note that the
+ * of \a link with respect to the inertia frame. Note that the
  * orientation of those velocity and acceleration are with
- * repect to the frame of \a l itself.
+ * repect to the frame of \a link itself.
  *
- * rkLinkUpdateForce() updates the joint force of \a l. It
+ * rkLinkUpdateForce() updates the joint force of \a link. It
  * recursively computes the joint forces of the descendants
- * of \a l, accumulating them and subtracting them from the
+ * of \a link, accumulating them and subtracting them from the
  * net inertia force. Basically, it is an implementation of
  * Newton=Euler s method proposed by Luh, Walker and Paul(1980).
  * Note that the orientation of those force and torque are
- * with repect to the frame of \a l itself.
+ * with repect to the frame of \a link itself.
  * \return
  * All these functions return no values.
  * \notes
- * Before calling rkLinkUpdateForce(), the state of \a l
+ * Before calling rkLinkUpdateForce(), the state of \a link
  * with respect to the world frame has to be updated by
  * rkLinkUpdateRate(). It is not simple in the case of
  * underactuated systems contacting with the environment.
  * Be careful when coding inverse dynamics. Use them in
  * correct ways, considering the purpose of the computation.
  */
-__ROKI_EXPORT void rkLinkUpdateFrame(rkLink *l, zFrame3D *pwf);
-__ROKI_EXPORT void rkLinkUpdateVel(rkLink *l, zVec6D *pvel);
-__ROKI_EXPORT void rkLinkUpdateAcc(rkLink *l, zVec6D *pvel, zVec6D *pacc);
-__ROKI_EXPORT void rkLinkUpdateRate(rkLink *l, zVec6D *pvel, zVec6D *pacc);
-__ROKI_EXPORT void rkLinkUpdateWrench(rkLink *l);
+__ROKI_EXPORT void rkLinkUpdateFrame(rkLink *link, zFrame3D *pwf);
+__ROKI_EXPORT void rkLinkUpdateVel(rkLink *link, zVec6D *pvel);
+__ROKI_EXPORT void rkLinkUpdateAcc(rkLink *link, zVec6D *pvel, zVec6D *pacc);
+__ROKI_EXPORT void rkLinkUpdateRate(rkLink *link, zVec6D *pvel, zVec6D *pacc);
+__ROKI_EXPORT void rkLinkUpdateWrench(rkLink *link);
 
 /*! \brief update mass of the composite rigit body of a link. */
 __ROKI_EXPORT double rkLinkUpdateCRBMass(rkLink *link);
@@ -378,30 +383,30 @@ __ROKI_EXPORT double rkLinkUpdateCRBMass(rkLink *link);
 __ROKI_EXPORT rkMP *rkLinkUpdateCRB(rkLink *link);
 
 /*! \brief convert 6D configuration of a link to joint displacement. */
-__ROKI_EXPORT void rkLinkConfToJointDis(rkLink *l);
+__ROKI_EXPORT void rkLinkConfToJointDis(rkLink *link);
 
 /*! \brief angular momentum and kinematic energy of link.
  *
- * rkLinkAM() calculates angular momentum of a link \a l
+ * rkLinkAM() calculates angular momentum of a link \a link
  * around the point \a p. The result will be stored into \a am.
  * Both \a p and \a am are with respect to the local frame of
- * \a l itself.
+ * \a link itself.
  *
  * rkLinkKE Energy() calculates kinematic energy originating
- * from linear and angular velocity of \a l.
+ * from linear and angular velocity of \a link.
  * \return
  * rkLinkAM() returns a pointer \a am.
  * rkLinkKE() returns a value calculated.
  * \sa
  * rkBodyAM, rkBodyKE
  */
-#define rkLinkAM(l,p,m) rkBodyAM( rkLinkBody(l), (p), (m) )
-#define rkLinkKE(l)     rkBodyKE( rkLinkBody(l) )
+#define rkLinkAM(link,p,m) rkBodyAM( rkLinkBody(link), (p), (m) )
+#define rkLinkKE(link)     rkBodyKE( rkLinkBody(link) )
 
 /*! \brief compute volume of a link. */
-#define rkLinkShapeVolume(l) rkBodyShapeVolume( rkLinkBody(l) )
+#define rkLinkShapeVolume(link) rkBodyShapeVolume( rkLinkBody(link) )
 /*! \brief compute mass property of a link. */
-#define rkLinkShapeMP(l,d,mp) rkBodyShapeMP( rkLinkBody(l), (d), (mp) )
+#define rkLinkShapeMP(link,d,mp) rkBodyShapeMP( rkLinkBody(link), (d), (mp) )
 
 /* ********************************************************** */
 /*! \struct rkLinkArray
@@ -409,6 +414,14 @@ __ROKI_EXPORT void rkLinkConfToJointDis(rkLink *l);
  * ********************************************************** */
 
 zArrayClass( rkLinkArray, rkLink );
+
+__ROKI_EXPORT rkLinkArray *rkLinkArrayAlloc(rkLinkArray *linkarray, int size);
+
+__ROKI_EXPORT void rkLinkArrayDestroy(rkLinkArray *linkarray);
+
+__ROKI_EXPORT rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
+
+__ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
 
 /* ***** ZTK ***** */
 
@@ -458,26 +471,26 @@ zArrayClass( rkLinkArray, rkLink );
  * 3. non-existing shape name is specified.
  * 4. link name is not defined.
  *
- * rkLinkFPrintZTK() prints out properties of a link \a l to
+ * rkLinkFPrintZTK() prints out properties of a link \a link to
  * the current position of a file \a fp in the above format.
  *
- * rkLinkPostureFPrint() prints out the posture of a link \a l
+ * rkLinkPostureFPrint() prints out the posture of a link \a link
  * in the adjacent and world frames to the current position
  * of a file \a fp.
  * rkLinkPosturePrint() prints out the result to the standard
  * output.
  *
  * rkLinkConnectionFPrint() prints out the connectivity of
- * a link \a l to the current position of a file \a fp.
+ * a link \a link to the current position of a file \a fp.
  * \a n is a width of indent.
  * rkLinkConnectionPrint() prints out the connectivity to
  * the standard output.
  *
  * rkLinkExtForceFPrint() prints out the whole external forces
- * applied to a link \a l. See zForceListCellFPrint().
+ * applied to a link \a link. See zForceListCellFPrint().
  * rkLinkExtForcePrint() prints them out to the standard output.
  * \return
- * rkLinkFromZTK() returns a pointer \a l if succeeding, or the
+ * rkLinkFromZTK() returns a pointer \a link if succeeding, or the
  * null pointer otherwise.
  *
  * rkLinkFPrintZTK(), rkLinkPostureFPrint(),
@@ -485,17 +498,17 @@ zArrayClass( rkLinkArray, rkLink );
  * rkLinkConnectionPrint(), rkLinkExtForceFPrint() and
  * rkLinkExtForcePrint() return no values.
  */
-__ROKI_EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorArray *motorarray, ZTK *ztk);
+__ROKI_EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorSpecArray *motorspecarray, ZTK *ztk);
 __ROKI_EXPORT rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk);
 
-__ROKI_EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *l);
+__ROKI_EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *link);
 
-__ROKI_EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *l);
-__ROKI_EXPORT void rkLinkConnectionFPrint(FILE *fp, rkLink *l, int n);
-__ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *l);
-#define rkLinkPosturePrint(l)      rkLinkPostureFPrint( stdout, (l) )
-#define rkLinkConnectionPrint(l,n) rkLinkConnectionFPrint( stdout, (l), (n) )
-#define rkLinkExtWrenchPrint(l)     rkLinkExtWrenchFPrint( stdout, (l) )
+__ROKI_EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *link);
+__ROKI_EXPORT void rkLinkConnectionFPrint(FILE *fp, rkLink *link, int n);
+__ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *link);
+#define rkLinkPosturePrint(link)      rkLinkPostureFPrint( stdout, (link) )
+#define rkLinkConnectionPrint(link,n) rkLinkConnectionFPrint( stdout, (link), (n) )
+#define rkLinkExtWrenchPrint(link)     rkLinkExtWrenchFPrint( stdout, (link) )
 
 __END_DECLS
 

@@ -32,11 +32,11 @@ rkLink *rkLinkAllocABI(rkLink *link)
 
   ap = rkLinkABIPrp(link);
   memset( (void *)ap, 0, sizeof(rkABIPrp) );
-  if( rkLinkJointSize(link) == 0 ){
+  if( rkLinkJointDOF(link) == 0 ){
     ap->axi = ap->iaxi = NULL;
   } else{
-    if( !( ap->axi  = zMatAllocSqr( rkLinkJointSize(link) ) ) ||
-        !( ap->iaxi = zMatAllocSqr( rkLinkJointSize(link) ) ) ) result = false;
+    if( !( ap->axi  = zMatAllocSqr( rkLinkJointDOF(link) ) ) ||
+        !( ap->iaxi = zMatAllocSqr( rkLinkJointDOF(link) ) ) ) result = false;
   }
   zListInit( &ap->wlist );
   _rkLinkInitABIInertia( link );

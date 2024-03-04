@@ -86,9 +86,9 @@ void step4(FILE *fout_vs, FILE *fout_cs, double t, rkChain *robot, rkIKCell *ent
 int main(int argc, char *argv[])
 {
   rkChain robot;
-  register int i;
   rkIKCell *entry[6];
   zVec q;
+  int i;
   FILE *fout_vs, *fout_cs;
 
   rkChainReadZTK( &robot, H5_ZTK );
