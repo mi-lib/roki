@@ -14,17 +14,8 @@ static void _rkJointRevolInit(rkJoint *joint){
   _rkp(joint)->min =-HUGE_VAL;
 }
 
-static void *_rkJointRevolAllocState(void){ return zAlloc( rkJointRevolState, 1 ); }
-static void *_rkJointRevolAllocPrp(void){ return zAlloc( rkJointRevolPrp, 1 ); }
-
-static void _rkJointRevolCopyPrp(rkJoint *src, rkJoint *dst){
-  _rkp(dst)->min = _rkp(src)->min;
-  _rkp(dst)->max = _rkp(src)->max;
-  _rkp(dst)->stiffness = _rkp(src)->stiffness;
-  _rkp(dst)->viscosity = _rkp(src)->viscosity;
-  _rkp(dst)->coulomb = _rkp(src)->coulomb;
-  _rkp(dst)->sf = _rkp(src)->sf;
-}
+RK_JOINT_COM_DEF_PRP_FUNC( Revol )
+RK_JOINT_COM_DEF_STATE_FUNC( Revol )
 
 /* set joint displacement, velocity, acceleration and torque */
 
@@ -307,7 +298,7 @@ static void *_rkJointRevolStaticFrictionFromZTK(void *joint, int i, void *arg, Z
   return joint;
 }
 static void *_rkJointRevolMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  return rkJointMotorQuery( joint, arg, ZTKVal(ztk) );
+  return rkJointAssignMotorByStr( joint, arg, ZTKVal(ztk) );
 }
 
 static void _rkJointRevolDisFPrintZTK(FILE *fp, int i, void *joint){
@@ -359,9 +350,10 @@ rkJointCom rk_joint_revol = {
   "revolute",
   1,
   _rkJointRevolInit,
-  _rkJointRevolAllocState,
   _rkJointRevolAllocPrp,
+  _rkJointRevolAllocState,
   _rkJointRevolCopyPrp,
+  _rkJointRevolCopyState,
   _rkJointRevolLimDis,
   _rkJointRevolSetDis,
   _rkJointRevolSetMin,

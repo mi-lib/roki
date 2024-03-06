@@ -16,23 +16,8 @@ static void _rkJointHookeInit(rkJoint *joint){
   _rkp(joint)->min[1] =-HUGE_VAL;
 }
 
-static void *_rkJointHookeAllocState(void){ return zAlloc( rkJointHookeState, 1 ); }
-static void *_rkJointHookeAllocPrp(void){ return zAlloc( rkJointHookePrp, 1 ); }
-
-static void _rkJointHookeCopyPrp(rkJoint *src, rkJoint *dst){
-  _rkp(dst)->min[0] = _rkp(src)->min[0];
-  _rkp(dst)->min[1] = _rkp(src)->min[1];
-  _rkp(dst)->max[0] = _rkp(src)->max[0];
-  _rkp(dst)->max[1] = _rkp(src)->max[1];
-  _rkp(dst)->stiffness[0] = _rkp(src)->stiffness[0];
-  _rkp(dst)->stiffness[1] = _rkp(src)->stiffness[1];
-  _rkp(dst)->viscosity[0] = _rkp(src)->viscosity[0];
-  _rkp(dst)->viscosity[1] = _rkp(src)->viscosity[1];
-  _rkp(dst)->coulomb[0] = _rkp(src)->coulomb[0];
-  _rkp(dst)->coulomb[1] = _rkp(src)->coulomb[1];
-  _rkp(dst)->sf[0] = _rkp(src)->sf[0];
-  _rkp(dst)->sf[1] = _rkp(src)->sf[1];
-}
+RK_JOINT_COM_DEF_PRP_FUNC( Hooke )
+RK_JOINT_COM_DEF_STATE_FUNC( Hooke )
 
 /* limit joint displacement */
 static double _rkJointHookeLimDis1(rkJoint *joint, int i, double testval){
@@ -373,9 +358,10 @@ rkJointCom rk_joint_hooke = {
   "hooke",
   2,
   _rkJointHookeInit,
-  _rkJointHookeAllocState,
   _rkJointHookeAllocPrp,
+  _rkJointHookeAllocState,
   _rkJointHookeCopyPrp,
+  _rkJointHookeCopyState,
   _rkJointHookeLimDis,
   _rkJointHookeSetDis,
   _rkJointHookeSetMin,

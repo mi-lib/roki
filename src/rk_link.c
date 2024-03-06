@@ -339,7 +339,7 @@ static void *_rkLinkNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return zNamePtr((rkLink*)obj) ? obj : NULL;
 }
 static void *_rkLinkJointTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  return rkJointQueryAssign( rkLinkJoint((rkLink*)obj), ZTKVal(ztk) );
+  return rkJointAssignByStr( rkLinkJoint((rkLink*)obj), ZTKVal(ztk) );
 }
 static void *_rkLinkMassFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   ((_rkLinkRefPrp*)arg)->given_mass = true;

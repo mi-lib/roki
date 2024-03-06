@@ -16,23 +16,8 @@ static void _rkJointCylinInit(rkJoint *joint){
   _rkp(joint)->min[1] =-HUGE_VAL;
 }
 
-static void *_rkJointCylinAllocState(void){ return zAlloc( rkJointCylinState, 1 ); }
-static void *_rkJointCylinAllocPrp(void){ return zAlloc( rkJointCylinPrp, 1 ); }
-
-static void _rkJointCylinCopyPrp(rkJoint *src, rkJoint *dst){
-  _rkp(dst)->min[0] = _rkp(src)->min[0];
-  _rkp(dst)->min[1] = _rkp(src)->min[1];
-  _rkp(dst)->max[0] = _rkp(src)->max[0];
-  _rkp(dst)->max[1] = _rkp(src)->max[1];
-  _rkp(dst)->stiffness[0] = _rkp(src)->stiffness[0];
-  _rkp(dst)->stiffness[1] = _rkp(src)->stiffness[1];
-  _rkp(dst)->viscosity[0] = _rkp(src)->viscosity[0];
-  _rkp(dst)->viscosity[1] = _rkp(src)->viscosity[1];
-  _rkp(dst)->coulomb[0] = _rkp(src)->coulomb[0];
-  _rkp(dst)->coulomb[1] = _rkp(src)->coulomb[1];
-  _rkp(dst)->sf[0] = _rkp(src)->sf[0];
-  _rkp(dst)->sf[1] = _rkp(src)->sf[1];
-}
+RK_JOINT_COM_DEF_PRP_FUNC( Cylin )
+RK_JOINT_COM_DEF_STATE_FUNC( Cylin )
 
 /* limit joint displacement */
 static void _rkJointCylinLimDis(rkJoint *joint, double *testval, double *limval){
@@ -391,9 +376,10 @@ rkJointCom rk_joint_cylin = {
   "cylindrical",
   2,
   _rkJointCylinInit,
-  _rkJointCylinAllocState,
   _rkJointCylinAllocPrp,
+  _rkJointCylinAllocState,
   _rkJointCylinCopyPrp,
+  _rkJointCylinCopyState,
   _rkJointCylinLimDis,
   _rkJointCylinSetDis,
   _rkJointCylinSetMin,

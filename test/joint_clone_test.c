@@ -28,21 +28,8 @@ void assert_revol_set(rkJoint *joint)
 
 bool assert_revol_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointRevolState *stat1, *stat2;
-  rkJointRevolPrp *prp1, *prp2;
-
-  stat1 = (rkJointRevolState *)joint1->state;
-  stat2 = (rkJointRevolState *)joint2->state;
-  prp1 = (rkJointRevolPrp *)joint1->prp;
-  prp2 = (rkJointRevolPrp *)joint2->prp;
-  return 
-    zIsEqual( stat1->dis, stat2->dis, zTOL ) &&
-    zIsEqual( prp1->min, prp2->min, zTOL ) &&
-    zIsEqual( prp1->max, prp2->max, zTOL ) &&
-    zIsEqual( prp1->stiffness, prp2->stiffness, zTOL ) &&
-    zIsEqual( prp1->viscosity, prp2->viscosity, zTOL ) &&
-    zIsEqual( prp1->coulomb, prp2->coulomb, zTOL ) &&
-    zIsEqual( prp1->sf, prp2->sf, zTOL );
+  return memcmp( joint1->prp, joint2->prp, sizeof(rkJointRevolPrp) ) == 0 &&
+         memcmp( joint1->state, joint2->state, sizeof(rkJointRevolState) ) == 0;
 }
 
 void assert_prism_set(rkJoint *joint)
@@ -64,21 +51,8 @@ void assert_prism_set(rkJoint *joint)
 
 bool assert_prism_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointPrismState *stat1, *stat2;
-  rkJointPrismPrp *prp1, *prp2;
-
-  stat1 = (rkJointPrismState *)joint1->state;
-  stat2 = (rkJointPrismState *)joint2->state;
-  prp1 = (rkJointPrismPrp *)joint1->prp;
-  prp2 = (rkJointPrismPrp *)joint2->prp;
-  return 
-    zIsEqual( stat1->dis, stat2->dis, zTOL ) &&
-    zIsEqual( prp1->min, prp2->min, zTOL ) &&
-    zIsEqual( prp1->max, prp2->max, zTOL ) &&
-    zIsEqual( prp1->stiffness, prp2->stiffness, zTOL ) &&
-    zIsEqual( prp1->viscosity, prp2->viscosity, zTOL ) &&
-    zIsEqual( prp1->coulomb, prp2->coulomb, zTOL ) &&
-    zIsEqual( prp1->sf, prp2->sf, zTOL );
+  return memcmp( joint1->prp, joint2->prp, sizeof(rkJointPrismPrp) ) == 0 &&
+         memcmp( joint1->state, joint2->state, sizeof(rkJointPrismState) ) == 0;
 }
 
 void assert_cylin_set(rkJoint *joint)
@@ -109,28 +83,8 @@ void assert_cylin_set(rkJoint *joint)
 
 bool assert_cylin_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointCylinState *stat1, *stat2;
-  rkJointCylinPrp *prp1, *prp2;
-
-  stat1 = (rkJointCylinState *)joint1->state;
-  stat2 = (rkJointCylinState *)joint2->state;
-  prp1 = (rkJointCylinPrp *)joint1->prp;
-  prp2 = (rkJointCylinPrp *)joint2->prp;
-  return
-    zIsEqual( stat1->dis[0], stat2->dis[0], zTOL ) &&
-    zIsEqual( prp1->min[0], prp2->min[0], zTOL ) &&
-    zIsEqual( prp1->max[0], prp2->max[0], zTOL ) &&
-    zIsEqual( prp1->stiffness[0], prp2->stiffness[0], zTOL ) &&
-    zIsEqual( prp1->viscosity[0], prp2->viscosity[0], zTOL ) &&
-    zIsEqual( prp1->coulomb[0], prp2->coulomb[0], zTOL ) &&
-    zIsEqual( prp1->sf[0], prp2->sf[0], zTOL ) &&
-    zIsEqual( stat1->dis[1], stat2->dis[1], zTOL ) &&
-    zIsEqual( prp1->min[1], prp2->min[1], zTOL ) &&
-    zIsEqual( prp1->max[1], prp2->max[1], zTOL ) &&
-    zIsEqual( prp1->stiffness[1], prp2->stiffness[1], zTOL ) &&
-    zIsEqual( prp1->viscosity[1], prp2->viscosity[1], zTOL ) &&
-    zIsEqual( prp1->coulomb[1], prp2->coulomb[1], zTOL ) &&
-    zIsEqual( prp1->sf[1], prp2->sf[1], zTOL );
+  return memcmp( joint1->prp, joint2->prp, sizeof(rkJointCylinPrp) ) == 0 &&
+         memcmp( joint1->state, joint2->state, sizeof(rkJointCylinState) ) == 0;
 }
 
 void assert_hooke_set(rkJoint *joint)
@@ -161,28 +115,8 @@ void assert_hooke_set(rkJoint *joint)
 
 bool assert_hooke_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointHookeState *stat1, *stat2;
-  rkJointHookePrp *prp1, *prp2;
-
-  stat1 = (rkJointHookeState *)joint1->state;
-  stat2 = (rkJointHookeState *)joint2->state;
-  prp1 = (rkJointHookePrp *)joint1->prp;
-  prp2 = (rkJointHookePrp *)joint2->prp;
-  return
-    zIsEqual( stat1->dis[0], stat2->dis[0], zTOL ) &&
-    zIsEqual( prp1->min[0], prp2->min[0], zTOL ) &&
-    zIsEqual( prp1->max[0], prp2->max[0], zTOL ) &&
-    zIsEqual( prp1->stiffness[0], prp2->stiffness[0], zTOL ) &&
-    zIsEqual( prp1->viscosity[0], prp2->viscosity[0], zTOL ) &&
-    zIsEqual( prp1->coulomb[0], prp2->coulomb[0], zTOL ) &&
-    zIsEqual( prp1->sf[0], prp2->sf[0], zTOL ) &&
-    zIsEqual( stat1->dis[1], stat2->dis[1], zTOL ) &&
-    zIsEqual( prp1->min[1], prp2->min[1], zTOL ) &&
-    zIsEqual( prp1->max[1], prp2->max[1], zTOL ) &&
-    zIsEqual( prp1->stiffness[1], prp2->stiffness[1], zTOL ) &&
-    zIsEqual( prp1->viscosity[1], prp2->viscosity[1], zTOL ) &&
-    zIsEqual( prp1->coulomb[1], prp2->coulomb[1], zTOL ) &&
-    zIsEqual( prp1->sf[1], prp2->sf[1], zTOL );
+  return memcmp( joint1->prp, joint2->prp, sizeof(rkJointHookePrp) ) == 0 &&
+         memcmp( joint1->state, joint2->state, sizeof(rkJointHookeState) ) == 0;
 }
 
 void assert_spher_set(rkJoint *joint)
@@ -196,11 +130,7 @@ void assert_spher_set(rkJoint *joint)
 
 bool assert_spher_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointSpherState *stat1, *stat2;
-
-  stat1 = (rkJointSpherState *)joint1->state;
-  stat2 = (rkJointSpherState *)joint2->state;
-  return zVec3DEqual( &stat1->aa, &stat2->aa );
+  return memcmp( joint1->state, joint2->state, sizeof(rkJointSpherState) ) == 0;
 }
 
 void assert_float_set(rkJoint *joint)
@@ -215,11 +145,7 @@ void assert_float_set(rkJoint *joint)
 
 bool assert_float_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointFloatState *stat1, *stat2;
-
-  stat1 = (rkJointFloatState *)joint1->state;
-  stat2 = (rkJointFloatState *)joint2->state;
-  return zVec6DEqual( &stat1->dis, &stat2->dis );
+  return memcmp( joint1->state, joint2->state, sizeof(rkJointFloatState) ) == 0;
 }
 
 void assert_brfloat_set(rkJoint *joint)
@@ -239,24 +165,15 @@ void assert_brfloat_set(rkJoint *joint)
 
 bool assert_brfloat_comp(rkJoint *joint1, rkJoint *joint2)
 {
-  rkJointBrFloatState *stat1, *stat2;
-  rkJointBrFloatPrp *prp1, *prp2;
-
-  stat1 = (rkJointBrFloatState *)joint1->state;
-  stat2 = (rkJointBrFloatState *)joint2->state;
-  prp1 = (rkJointBrFloatPrp *)joint1->prp;
-  prp2 = (rkJointBrFloatPrp *)joint2->prp;
-  return 
-    zIsEqual( prp1->ep_f, prp2->ep_f, zTOL ) &&
-    zIsEqual( prp1->ep_t, prp2->ep_t, zTOL ) &&
-    zVec6DEqual( &stat1->dis, &stat2->dis );
+  return memcmp( joint1->prp, joint2->prp, sizeof(rkJointBrFloatPrp) ) == 0 &&
+         memcmp( joint1->state, joint2->state, sizeof(rkJointBrFloatState) ) == 0;
 }
 
 bool assert_clone_one(char *str, void (*set_func)(rkJoint*), bool (*comp_func)(rkJoint*,rkJoint*))
 {
   rkJoint jorg, jcln;
 
-  if( rkJointQueryAssign( &jorg, str ) == NULL ) return false;
+  if( rkJointAssignByStr( &jorg, str ) == NULL ) return false;
   set_func( &jorg );
   if( rkJointClone( &jorg, &jcln, NULL, NULL ) == NULL ) return false;
   return comp_func( &jorg, &jcln );

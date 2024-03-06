@@ -18,13 +18,8 @@ static void _rkJointBrFloatInit(rkJoint *joint){
   _rkp(joint)->ep_t = HUGE_VAL;
 }
 
-static void *_rkJointBrFloatAllocState(void){ return zAlloc( rkJointBrFloatState, 1 ); }
-static void *_rkJointBrFloatAllocPrp(void){ return zAlloc( rkJointBrFloatPrp, 1 ); }
-
-static void _rkJointBrFloatCopyPrp(rkJoint *src, rkJoint *dst){
-  _rkp(dst)->ep_f = _rkp(src)->ep_f;
-  _rkp(dst)->ep_t = _rkp(src)->ep_t;
-}
+RK_JOINT_COM_DEF_PRP_FUNC( BrFloat )
+RK_JOINT_COM_DEF_STATE_FUNC( BrFloat )
 
 /* limit joint displacement */
 static void _rkJointBrFloatLimDis(rkJoint *joint, double *testval, double *limval){
@@ -343,9 +338,10 @@ rkJointCom rk_joint_brfloat = {
   "breakablefloat",
   6,
   _rkJointBrFloatInit,
-  _rkJointBrFloatAllocState,
   _rkJointBrFloatAllocPrp,
+  _rkJointBrFloatAllocState,
   _rkJointBrFloatCopyPrp,
+  _rkJointBrFloatCopyState,
   _rkJointBrFloatLimDis,
   _rkJointBrFloatSetDis,
   _rkJointBrFloatSetMinMax,

@@ -19,8 +19,8 @@ rkMotorSpec *rkMotorSpecAssign(rkMotorSpec *ms, rkMotorCom *com)
   return ms;
 }
 
-/* query motor specification by a string. */
-rkMotorSpec *rkMotorSpecQuery(rkMotorSpec *ms, const char *str)
+/* assign motor specification by a string. */
+rkMotorSpec *rkMotorSpecAssignByStr(rkMotorSpec *ms, const char *str)
 {
   RK_MOTOR_COM_ARRAY;
   int i;
@@ -56,7 +56,7 @@ static void *_rkMotorSpecNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return zNamePtr((rkMotorSpec*)obj) ? obj : NULL;
 }
 static void *_rkMotorSpecTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  return rkMotorSpecQuery( (rkMotorSpec *)obj, ZTKVal(ztk) );
+  return rkMotorSpecAssignByStr( (rkMotorSpec *)obj, ZTKVal(ztk) );
 }
 
 static void _rkMotorSpecNameFPrintZTK(FILE *fp, int i, void *obj){

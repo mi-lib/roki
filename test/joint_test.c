@@ -6,12 +6,12 @@
 #define TOL_VEL (1.0e-9)
 #define TOL_ACC (1.0e-6)
 
-bool assert_joint_queryassign_one(char *str, int size)
+bool assert_joint_assign_one(char *str, int size)
 {
   rkJoint j;
   bool ret;
 
-  ret = rkJointQueryAssign( &j, str ) != NULL;
+  ret = rkJointAssignByStr( &j, str ) != NULL;
   if( size >= 0 ){
     ret = ret && strcmp( str, rkJointTypeStr(&j) ) == 0 && rkJointDOF(&j) == size;
   } else{
@@ -21,17 +21,17 @@ bool assert_joint_queryassign_one(char *str, int size)
   return ret;
 }
 
-void assert_joint_queryassign(void)
+void assert_joint_assign(void)
 {
-  zAssert( rkJointQueryAssign,
-    assert_joint_queryassign_one( "fixed", 0 ) &&
-    assert_joint_queryassign_one( "revolute", 1 ) &&
-    assert_joint_queryassign_one( "prismatic", 1 ) &&
-    assert_joint_queryassign_one( "cylindrical", 2 ) &&
-    assert_joint_queryassign_one( "hooke", 2 ) &&
-    assert_joint_queryassign_one( "spherical", 3 ) &&
-    assert_joint_queryassign_one( "float", 6 ) &&
-    assert_joint_queryassign_one( "invalid", -1 ) );
+  zAssert( rkJointAssignByStr,
+    assert_joint_assign_one( "fixed", 0 ) &&
+    assert_joint_assign_one( "revolute", 1 ) &&
+    assert_joint_assign_one( "prismatic", 1 ) &&
+    assert_joint_assign_one( "cylindrical", 2 ) &&
+    assert_joint_assign_one( "hooke", 2 ) &&
+    assert_joint_assign_one( "spherical", 3 ) &&
+    assert_joint_assign_one( "float", 6 ) &&
+    assert_joint_assign_one( "invalid", -1 ) );
 }
 
 void assert_limit_dis(void)
@@ -250,7 +250,7 @@ void assert_joint_torsion(void)
 int main(void)
 {
   zRandInit();
-  assert_joint_queryassign();
+  assert_joint_assign();
   assert_limit_dis();
   assert_joint_neutral();
   assert_spher_cat();

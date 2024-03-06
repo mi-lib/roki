@@ -58,8 +58,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorSpec ){
 
 /*! \brief assign a motor type to motor specification instance. */
 __ROKI_EXPORT rkMotorSpec *rkMotorSpecAssign(rkMotorSpec *ms, rkMotorCom *com);
-/*! \brief query motor specification by a string. */
-__ROKI_EXPORT rkMotorSpec *rkMotorSpecQuery(rkMotorSpec *ms, const char *str);
+/*! \brief assign motor specification by a string. */
+__ROKI_EXPORT rkMotorSpec *rkMotorSpecAssignByStr(rkMotorSpec *ms, const char *str);
 /*! \brief destroy a motor specification instance. */
 __ROKI_EXPORT void rkMotorSpecDestroy(rkMotorSpec *ms);
 

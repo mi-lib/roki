@@ -41,9 +41,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   const char *typestr; /*!< a string to identify the type of joint */
   byte dof;            /*!< degree-of-freedom of joint movement */
   void (*_init)(rkJoint*);
-  void *(*_alloc_state)(void);
   void *(*_alloc_prp)(void);
+  void *(*_alloc_state)(void);
   void (*_copy_prp)(rkJoint*,rkJoint*);
+  void (*_copy_state)(rkJoint*,rkJoint*);
 
   /* joint value manipulation function */
   void (*_lim_dis)(rkJoint*,double*,double*); /* limit displacements */
@@ -106,6 +107,16 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   void (*_fprintZTK)(FILE*,rkJoint*,char*);  /* print */
 };
 
+#define RK_JOINT_COM_DEF_PRP_FUNC( name ) \
+  static void *_rkJoint##name##AllocPrp(void){ return zAlloc( rkJoint##name##Prp, 1 ); } \
+  static void _rkJoint##name##CopyPrp(rkJoint *src, rkJoint *dst){ \
+    memcpy( dst->prp, src->prp, sizeof(rkJoint##name##Prp) ); }
+
+#define RK_JOINT_COM_DEF_STATE_FUNC( name ) \
+  static void *_rkJoint##name##AllocState(void){ return zAlloc( rkJoint##name##State, 1 ); } \
+  static void _rkJoint##name##CopyState(rkJoint *src, rkJoint *dst){ \
+    memcpy( dst->state, src->state, sizeof(rkJoint##name##State) ); }
+
 #define rkJointDOF(joint)      (joint)->com->dof
 #define rkJointTypeStr(joint)  (joint)->com->typestr
 #define rkJointMotor(joint)    (joint)->motor
@@ -130,7 +141,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
 } while(0)
 
 __ROKI_EXPORT rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com);
-__ROKI_EXPORT rkJoint *rkJointQueryAssign(rkJoint *joint, char *str);
+__ROKI_EXPORT rkJoint *rkJointAssignByStr(rkJoint *joint, char *str);
 __ROKI_EXPORT void rkJointDestroy(rkJoint *joint);
 
 __ROKI_EXPORT rkJoint *rkJointClone(rkJoint *org, rkJoint *cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
@@ -346,7 +357,7 @@ __ROKI_EXPORT void _rkJointUpdateWrench(rkJoint *joint, zMat6D *i, zVec6D *b, zV
 __ROKI_EXPORT void rkJointMotorSetValDummy(rkJoint *joint, double *val);
 __ROKI_EXPORT void rkJointMotorGetValDummy(rkJoint *joint, double *val);
 
-__ROKI_EXPORT rkJoint *rkJointMotorQuery(rkJoint *joint, rkMotorSpecArray *msarray, const char *str);
+__ROKI_EXPORT rkJoint *rkJointAssignMotorByStr(rkJoint *joint, rkMotorSpecArray *msarray, const char *str);
 
 /*! \brief scan and print out joint displacement and properties.
  *

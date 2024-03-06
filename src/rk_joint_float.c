@@ -10,10 +10,10 @@
 
 static void _rkJointFloatInit(rkJoint *joint){}
 
-static void *_rkJointFloatAllocState(void){ return zAlloc( rkJointFloatState, 1 ); }
 static void *_rkJointFloatAllocPrp(void){ return NULL; }
-
 static void _rkJointFloatCopyPrp(rkJoint *src, rkJoint *dst){}
+
+RK_JOINT_COM_DEF_STATE_FUNC( Float )
 
 /* limit joint displacement */
 static void _rkJointFloatLimDis(rkJoint *joint, double *testval, double *limval){
@@ -292,9 +292,10 @@ rkJointCom rk_joint_float = {
   "float",
   6,
   _rkJointFloatInit,
-  _rkJointFloatAllocState,
   _rkJointFloatAllocPrp,
+  _rkJointFloatAllocState,
   _rkJointFloatCopyPrp,
+  _rkJointFloatCopyState,
   _rkJointFloatLimDis,
   _rkJointFloatSetDis,
   _rkJointFloatSetMinMax,

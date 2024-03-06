@@ -12,7 +12,8 @@
 __BEGIN_DECLS
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointBrFloatPrp ){
-  double ep_f, ep_t; /* threshold to break joint */
+  double ep_f; /* threshold force to break joint */
+  double ep_t; /* threshold torque to break joint */
 };
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointBrFloatState ){

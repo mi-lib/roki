@@ -23,7 +23,7 @@ rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com)
   return joint;
 }
 
-rkJoint *rkJointQueryAssign(rkJoint *joint, char *str)
+rkJoint *rkJointAssignByStr(rkJoint *joint, char *str)
 {
   int i;
 
@@ -71,20 +71,15 @@ rkJoint *rkJointClone(rkJoint *org, rkJoint *cln, rkMotorSpecArray *msarray_org,
 /* copy joint state. */
 rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst)
 {
-  double val[6];
-
-  rkJointGetDis( src, val ); rkJointSetDis( dst, val );
-  rkJointGetVel( src, val ); rkJointSetVel( dst, val );
-  rkJointGetAcc( src, val ); rkJointSetAcc( dst, val );
-  rkJointGetTrq( src, val ); rkJointSetTrq( dst, val );
+  if( src->com != dst->com ) return NULL;
+  src->com->_copy_state( src, dst );
   return dst;
 }
 
 /* copy joint propety */
 rkJoint *rkJointCopyPrp(rkJoint *src, rkJoint *dst)
 {
-  if( strcmp( rkJointTypeStr(src), rkJointTypeStr(dst) ) != 0 )
-    return NULL;
+  if( src->com != dst->com ) return NULL;
   src->com->_copy_prp( src, dst );
   return dst;
 }
@@ -192,7 +187,7 @@ void _rkJointUpdateWrench(rkJoint *joint, zMat6D *i, zVec6D *b, zVec6D *acc)
 void rkJointMotorSetValDummy(rkJoint *joint, double *val){}
 void rkJointMotorGetValDummy(rkJoint *joint, double *val){}
 
-rkJoint *rkJointMotorQuery(rkJoint *joint, rkMotorSpecArray *msarray, const char *str)
+rkJoint *rkJointAssignMotorByStr(rkJoint *joint, rkMotorSpecArray *msarray, const char *str)
 {
   rkMotorSpec *ms;
 

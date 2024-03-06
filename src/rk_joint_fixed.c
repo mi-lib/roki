@@ -7,10 +7,8 @@
 #include <roki/rk_joint.h>
 
 static void _rkJointFixedInit(rkJoint *joint){}
-
 static void *_rkJointFixedAllocDummy(void){ return NULL; }
-
-static void _rkJoinFixedCopyPrp(rkJoint *src, rkJoint *dst){}
+static void _rkJoinFixedCopyDummy(rkJoint *src, rkJoint *dst){}
 
 /* limit joint displacement (dummy) */
 
@@ -106,7 +104,8 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedInit,
   _rkJointFixedAllocDummy,
   _rkJointFixedAllocDummy,
-  _rkJoinFixedCopyPrp,
+  _rkJoinFixedCopyDummy,
+  _rkJoinFixedCopyDummy,
   _rkJointFixedLimVal,
   _rkJointFixedVal,
   _rkJointFixedVal,

@@ -10,10 +10,10 @@
 
 static void _rkJointSpherInit(rkJoint *joint){}
 
-static void *_rkJointSpherAllocState(void){ return zAlloc( rkJointSpherState, 1 ); }
 static void *_rkJointSpherAllocPrp(void){ return NULL; }
-
 static void _rkJointSpherCopyPrp(rkJoint *src, rkJoint *dst){}
+
+RK_JOINT_COM_DEF_STATE_FUNC( Spher )
 
 /* limit joint displacement */
 static void _rkJointSpherLimDis(rkJoint *joint, double *testval, double *limval){
@@ -265,7 +265,7 @@ static void *_rkJointSpherDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return joint;
 }
 static void *_rkJointSpherMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  return rkJointMotorQuery( joint, arg, ZTKVal(ztk) );
+  return rkJointAssignMotorByStr( joint, arg, ZTKVal(ztk) );
 }
 
 static void _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
@@ -293,9 +293,10 @@ rkJointCom rk_joint_spher = {
   "spherical",
   3,
   _rkJointSpherInit,
-  _rkJointSpherAllocState,
   _rkJointSpherAllocPrp,
+  _rkJointSpherAllocState,
   _rkJointSpherCopyPrp,
+  _rkJointSpherCopyState,
   _rkJointSpherLimDis,
   _rkJointSpherSetDis,
   _rkJointSpherSetMinMax,
