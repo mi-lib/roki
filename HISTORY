@@ -1,3 +1,4 @@
+2024. 3.19. Removed rk_cd_brep.h,c and rk_cd_brep_trunc.h,c. [rk_cd]
 2024. 3.19. Modified specification of _rkIKLookupCell to accept a constant pointer to a string. [rk_ik]
 2024. 3.19. Modified specifications of rkChainFindLink, rkChainFindLinkID, and rkChainFindLinkJointIDOffset to accept constant pointers to strings. [rk_chain]
 2024. 3.19. Debugged rkContactInfoArrayWriteZTK. [rk_contact]
