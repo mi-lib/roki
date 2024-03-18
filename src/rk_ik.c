@@ -476,7 +476,7 @@ static struct _rkIKLookup{
   { NULL, NULL },
 };
 
-static struct _rkIKLookup *_rkIKLookupCell(char *str)
+static struct _rkIKLookup *_rkIKLookupCell(const char *str)
 {
   struct _rkIKLookup *lookup;
 
@@ -491,7 +491,7 @@ static struct _rkIKLookup *_rkIKLookupCell(char *str)
 static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   rkLink *link;
   double w = RK_IK_JOINT_WEIGHT_DEFAULT;
-  char *linkname;
+  const char *linkname;
 
   linkname = ZTKVal(ztk);
   if( ZTKValNext(ztk) ) w = ZTKDouble(ztk);

@@ -141,7 +141,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
 } while(0)
 
 __ROKI_EXPORT rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com);
-__ROKI_EXPORT rkJoint *rkJointAssignByStr(rkJoint *joint, char *str);
+__ROKI_EXPORT rkJoint *rkJointAssignByStr(rkJoint *joint, const char *str);
 __ROKI_EXPORT void rkJointDestroy(rkJoint *joint);
 
 __ROKI_EXPORT rkJoint *rkJointClone(rkJoint *org, rkJoint *cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);

@@ -1,3 +1,8 @@
+2024. 3.19. Modified specification of _rkIKLookupCell to accept a constant pointer to a string. [rk_ik]
+2024. 3.19. Modified specifications of rkChainFindLink, rkChainFindLinkID, and rkChainFindLinkJointIDOffset to accept constant pointers to strings. [rk_chain]
+2024. 3.19. Debugged rkContactInfoArrayWriteZTK. [rk_contact]
+2024. 3.19. Modified specification of rkJointAssignByStr to accept a constant pointer to a string. [rk_joint]
+2024. 3.19. Modified specifications of rkContactInfoRigidCreate, rkContactInfoElasticCreate, rkContactInfoAssoc, rkContactInfoArrayAssoc, rkContactInfoArrayAssocType, rkContactInfoArrayReadZTK, and rkContactInfoArrayWriteZTK to accept constant pointers to strings. [rk_contact]
 2024. 3. 6. Defined RK_JOINT_COM_DEF_PRP_FUNC and RK_JOINT_COM_DEF_STATE_FUNC, and reimplemented rkJoint*AllocPrp/State and rkJoint*CopyPrp/State. [rk_joint, rk_joint_*]
 2024. 3. 6. Renamed rkJointMotorQuery to rkJointAssignMotorByStr. [rk_joint, rk_joint_*]
 2024. 3. 6. Renamed rkJointQuery to rkJointAssignByStr. [rk_joint, rk_link]

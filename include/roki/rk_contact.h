@@ -77,8 +77,8 @@ typedef struct{
  * rkContactInfoDestroy() returns no value.
  */
 #define rkContactInfoInit(c) memset( (c), 0, sizeof(rkContactInfo) )
-__ROKI_EXPORT rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, double sf, double kf, char *stf1, char *stf2);
-__ROKI_EXPORT rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, double e, double v, double sf, double kf, char *stf1, char *stf2);
+__ROKI_EXPORT rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, double sf, double kf, const char *stf1, const char *stf2);
+__ROKI_EXPORT rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, double e, double v, double sf, double kf, const char *stf1, const char *stf2);
 #define rkContactInfoDestroy(c) do{\
   zFree( (c)->__stf[0] );\
   zFree( (c)->__stf[1] );\
@@ -93,7 +93,7 @@ __ROKI_EXPORT rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, doubl
  * If \a ci matches the pair of \a stf1 and \a stf2, it returns
  * \a ci. Otherwise, the null pointer is returned.
  */
-__ROKI_EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *stf2);
+__ROKI_EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, const char *stf1, const char *stf2);
 
 #define ZTK_TAG_RKCONTACTINFO "contact"
 
@@ -146,8 +146,8 @@ __ROKI_EXPORT void rkContactInfoArrayDestroy(rkContactInfoArray *ci);
  * \a stf2 is associated is returned. Unless any of the information
  * set in \a ci matches the pair, the null pointer is returned.
  */
-__ROKI_EXPORT rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *ci, char *stf1, char *stf2);
-__ROKI_EXPORT rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *ci, char *stf1, char *stf2, char type);
+__ROKI_EXPORT rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *ci, const char *stf1, const char *stf2);
+__ROKI_EXPORT rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *ci, const char *stf1, const char *stf2, const char type);
 
 /* ZTK */
 
@@ -157,9 +157,9 @@ __ROKI_EXPORT rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *
 __ROKI_EXPORT void rkContactInfoArrayFPrintZTK(FILE *fp, rkContactInfoArray *ci);
 
 /* read contact information array from a ZTK file. */
-__ROKI_EXPORT rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, char filename[]);
+__ROKI_EXPORT rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, const char filename[]);
 /* write contact information array to a ZTK file. */
-__ROKI_EXPORT bool rkContactInfoArrayWriteZTK(rkContactInfoArray *ci, char filename[]);
+__ROKI_EXPORT bool rkContactInfoArrayWriteZTK(rkContactInfoArray *ci, const char filename[]);
 
 __END_DECLS
 

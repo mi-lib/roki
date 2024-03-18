@@ -23,7 +23,7 @@ rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com)
   return joint;
 }
 
-rkJoint *rkJointAssignByStr(rkJoint *joint, char *str)
+rkJoint *rkJointAssignByStr(rkJoint *joint, const char *str)
 {
   int i;
 

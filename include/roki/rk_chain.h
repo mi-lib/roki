@@ -193,9 +193,9 @@ __ROKI_EXPORT int rkChainJointIndexSize(rkChain *c, zIndex idx);
  * the null pointer, and rkChainFindLinkID() and rkChainFindLinkJointIDOffset()
  * return -1 as an invaid value.
  */
-__ROKI_EXPORT rkLink *rkChainFindLink(rkChain *chain, char *name);
-__ROKI_EXPORT int rkChainFindLinkID(rkChain *chain, char *name);
-__ROKI_EXPORT int rkChainFindLinkJointIDOffset(rkChain *chain, char *name);
+__ROKI_EXPORT rkLink *rkChainFindLink(rkChain *chain, const char *name);
+__ROKI_EXPORT int rkChainFindLinkID(rkChain *chain, const char *name);
+__ROKI_EXPORT int rkChainFindLinkJointIDOffset(rkChain *chain, const char *name);
 
 /*! \brief update joint state.
  *

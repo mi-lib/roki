@@ -121,7 +121,7 @@ int rkChainJointIndexSize(rkChain *chain, zIndex idx)
 }
 
 /* find a link of a kinematic chain from name. */
-rkLink *rkChainFindLink(rkChain *chain, char *name)
+rkLink *rkChainFindLink(rkChain *chain, const char *name)
 {
   rkLink *l;
 
@@ -131,14 +131,14 @@ rkLink *rkChainFindLink(rkChain *chain, char *name)
 }
 
 /* find a link identifier of a kinematic chain from name. */
-int rkChainFindLinkID(rkChain *chain, char *name)
+int rkChainFindLinkID(rkChain *chain, const char *name)
 {
   rkLink *l;
   return ( l = rkChainFindLink( chain, name ) ) ? (int)( l - rkChainRoot(chain) ) : -1;
 }
 
 /* find a joint identifier offset of a link of a kinematic chain from name. */
-int rkChainFindLinkJointIDOffset(rkChain *chain, char *name)
+int rkChainFindLinkJointIDOffset(rkChain *chain, const char *name)
 {
   rkLink *l;
   return ( l = rkChainFindLink( chain, name ) ) ? rkLinkJointIDOffset(l) : -1;

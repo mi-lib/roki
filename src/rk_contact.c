@@ -12,7 +12,7 @@
  * ********************************************************** */
 
 /* create a rigid contact model. */
-rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, double sf, double kf, char *stf1, char *stf2)
+rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, double sf, double kf, const char *stf1, const char *stf2)
 {
   rkContactInfoSetType( ci, RK_CONTACT_RIGID );
   rkContactInfoSetK( ci, k );
@@ -25,7 +25,7 @@ rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, d
 }
 
 /* create an elastic contact model. */
-rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, double e, double v, double sf, double kf, char *stf1, char *stf2)
+rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, double e, double v, double sf, double kf, const char *stf1, const char *stf2)
 {
   rkContactInfoSetType( ci, RK_CONTACT_ELASTIC );
   rkContactInfoSetE( ci, e );
@@ -38,7 +38,7 @@ rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, double e, double v,
 }
 
 /* associate contact info with a pair of stuff. */
-rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *stf2)
+rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, const char *stf1, const char *stf2)
 {
   if( ( strcmp( ci->__stf[0], stf1 ) == 0 && strcmp( ci->__stf[1], stf2 ) == 0 ) ||
       ( strcmp( ci->__stf[0], stf2 ) == 0 && strcmp( ci->__stf[1], stf1 ) == 0 ) )
@@ -49,7 +49,7 @@ rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, char *stf1, char *stf2)
 /* ZTK */
 
 static void *_rkContactInfoBindFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  char *stf0, *stf1;
+  const char *stf0, *stf1;
   stf0 = ZTKVal(ztk);
   ZTKValNext( ztk );
   stf1 = ZTKVal(ztk);
@@ -141,7 +141,7 @@ void rkContactInfoArrayDestroy(rkContactInfoArray *carray)
 }
 
 /* associate contact information with a pair of keys. */
-rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *carray, char *stf1, char *stf2)
+rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *carray, const char *stf1, const char *stf2)
 {
   int i;
 
@@ -153,7 +153,7 @@ rkContactInfo *rkContactInfoArrayAssoc(rkContactInfoArray *carray, char *stf1, c
 }
 
 /* associate contact information that matches specified type with a pair of keys. */
-rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *carray, char *stf1, char *stf2, char type)
+rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *carray, const char *stf1, const char *stf2, const char type)
 {
   int i;
 
@@ -197,7 +197,7 @@ void rkContactInfoArrayFPrintZTK(FILE *fp, rkContactInfoArray *carray)
 }
 
 /* read contact information array from a ZTK file. */
-rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, char filename[])
+rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, const char filename[])
 {
   ZTK ztk;
 
@@ -209,12 +209,11 @@ rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, char f
 }
 
 /* write contact information array to a ZTK file. */
-bool rkContactInfoArrayWriteZTK(rkContactInfoArray *carray, char filename[])
+bool rkContactInfoArrayWriteZTK(rkContactInfoArray *carray, const char filename[])
 {
-  char name[BUFSIZ];
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( name, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( filename, "w" ) ) ) return false;
   rkContactInfoArrayFPrintZTK( fp, carray );
   return true;
 }
