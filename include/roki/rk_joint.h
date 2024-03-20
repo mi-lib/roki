@@ -18,8 +18,7 @@ __BEGIN_DECLS
 /* CLASS: rkJoint
  * joint class
  * ********************************************************** */
-struct _rkJointCom;
-typedef struct _rkJointCom rkJointCom;
+ZDECL_STRUCT( rkJointCom );
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJoint ){
   void *prp;       /*!< joint properties */
@@ -98,7 +97,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   void (*_add_bias)(rkJoint*,zMat6D*,zVec6D*,zFrame3D*,zMat,zVec6D*);
   void (*_dtrq)(rkJoint*);
   void (*_qacc)(rkJoint*,zMat6D*,zVec6D*,zVec6D*,zMat,zVec6D*);
-  void (*_wrench)(struct _rkJoint*,zMat6D*,zVec6D*,zVec6D*);
+  void (*_wrench)(rkJoint*,zMat6D*,zVec6D*,zVec6D*);
 
   /* I/O */
   void *(*_dis_fromZTK)(void*,int,void*,ZTK*);

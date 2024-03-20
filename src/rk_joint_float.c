@@ -266,7 +266,7 @@ static void _rkJointFloatABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 static void *_rkJointFloatDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   zVec6D dis;
   zVec6DFromZTK( &dis, ztk );
-  _rkJointFloatSetDis( joint, dis.e );
+  _rkJointFloatSetDis( (rkJoint *)joint, dis.e );
   return joint;
 }
 

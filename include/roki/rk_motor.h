@@ -16,10 +16,8 @@ __BEGIN_DECLS
 /*! \struct rkMotorSpec
  * \brief motor specification class
  * ********************************************************** */
-struct _rkMotor;
-typedef struct _rkMotor rkMotor;
-struct _rkMotorSpec;
-typedef struct _rkMotorSpec rkMotorSpec;
+ZDECL_STRUCT( rkMotor );
+ZDECL_STRUCT( rkMotorSpec );
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorCom ){
   const char *typestr; /*!< \brief a string for type identification */

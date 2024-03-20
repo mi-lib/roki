@@ -261,11 +261,11 @@ static void _rkJointSpherABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 static void *_rkJointSpherDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   zVec3D aa;
   zVec3DFromZTK( &aa, ztk );
-  _rkJointSpherSetDis( joint, aa.e );
+  _rkJointSpherSetDis( (rkJoint *)joint, aa.e );
   return joint;
 }
 static void *_rkJointSpherMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  return rkJointAssignMotorByStr( joint, arg, ZTKVal(ztk) );
+  return rkJointAssignMotorByStr( (rkJoint *)joint, (rkMotorSpecArray *)arg, ZTKVal(ztk) );
 }
 
 static void _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){

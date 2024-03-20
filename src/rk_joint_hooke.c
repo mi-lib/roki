@@ -277,8 +277,8 @@ static void _rkJointHookeABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 /* ZTK */
 
 static void *_rkJointHookeDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  _rkJointHookeSetDis1( joint, 0, zDeg2Rad(ZTKDouble(ztk)) );
-  _rkJointHookeSetDis1( joint, 1, zDeg2Rad(ZTKDouble(ztk)) );
+  _rkJointHookeSetDis1( (rkJoint *)joint, 0, zDeg2Rad(ZTKDouble(ztk)) );
+  _rkJointHookeSetDis1( (rkJoint *)joint, 1, zDeg2Rad(ZTKDouble(ztk)) );
   return joint;
 }
 static void *_rkJointHookeMinFromZTK(void *joint, int i, void *arg, ZTK *ztk){

@@ -282,7 +282,7 @@ static void *_rkJointCylinDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   double dis[2];
   dis[0] = ZTKDouble(ztk);
   dis[1] = zDeg2Rad(ZTKDouble(ztk));
-  _rkJointCylinSetDis( joint, dis );
+  _rkJointCylinSetDis( (rkJoint *)joint, dis );
   return joint;
 }
 static void *_rkJointCylinMinFromZTK(void *joint, int i, void *arg, ZTK *ztk){

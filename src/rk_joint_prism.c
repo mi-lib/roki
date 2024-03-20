@@ -262,7 +262,7 @@ static void _rkJointPrismABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 static void *_rkJointPrismDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   double val;
   val = ZTKDouble(ztk);
-  _rkJointPrismSetDis( joint, &val );
+  _rkJointPrismSetDis( (rkJoint *)joint, &val );
   return joint;
 }
 static void *_rkJointPrismMinFromZTK(void *joint, int i, void *arg, ZTK *ztk){
@@ -290,7 +290,7 @@ static void *_rkJointPrismStaticFrictionFromZTK(void *joint, int i, void *arg, Z
   return joint;
 }
 static void *_rkJointPrismMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  return rkJointAssignMotorByStr( joint, arg, ZTKVal(ztk) );
+  return rkJointAssignMotorByStr( (rkJoint *)joint, (rkMotorSpecArray *)arg, ZTKVal(ztk) );
 }
 
 static void _rkJointPrismDisFPrintZTK(FILE *fp, int i, void *joint){

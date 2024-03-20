@@ -296,7 +296,7 @@ static void _rkJointBrFloatFixedUpdateWrench(rkJoint *joint, zMat6D *i, zVec6D *
 static void *_rkJointBrFloatDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   zVec6D dis;
   zVec6DFromZTK( &dis, ztk );
-  _rkJointBrFloatSetDis( joint, dis.e );
+  _rkJointBrFloatSetDis( (rkJoint *)joint, dis.e );
   return joint;
 }
 static void *_rkJointBrFloatForceThFromZTK(void *joint, int i, void *arg, ZTK *ztk){

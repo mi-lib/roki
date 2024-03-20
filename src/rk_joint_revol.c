@@ -270,7 +270,7 @@ static void _rkJointRevolABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 static void *_rkJointRevolDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   double val;
   val = zDeg2Rad( ZTKDouble(ztk) );
-  _rkJointRevolSetDis( joint, &val );
+  _rkJointRevolSetDis( (rkJoint *)joint, &val );
   return joint;
 }
 static void *_rkJointRevolMinFromZTK(void *joint, int i, void *arg, ZTK *ztk){
@@ -298,7 +298,7 @@ static void *_rkJointRevolStaticFrictionFromZTK(void *joint, int i, void *arg, Z
   return joint;
 }
 static void *_rkJointRevolMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
-  return rkJointAssignMotorByStr( joint, arg, ZTKVal(ztk) );
+  return rkJointAssignMotorByStr( (rkJoint *)joint, (rkMotorSpecArray *)arg, ZTKVal(ztk) );
 }
 
 static void _rkJointRevolDisFPrintZTK(FILE *fp, int i, void *joint){
