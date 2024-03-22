@@ -116,6 +116,9 @@ zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 /* intialize a cell */
 __ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
 
+/*! \brief copy a cell to another. */
+#define rkIKCellCopy(src,dest) zCopy( rkIKCell, src, dest )
+
 /* set constraint mode */
 #define rkIKCellSetMode(c,m)   rkIKAttrSetMode( rkIKCellAttr(c), m )
 #define rkIKCellUnsetMode(c,m) rkIKAttrUnsetMode( rkIKCellAttr(c), m )
