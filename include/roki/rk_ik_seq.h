@@ -12,18 +12,18 @@
 __BEGIN_DECLS
 
 /*! \brief IK entry scanned from a file. */
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKEntry ){
   int id;        /*!< cell identifier */
   double w[3];   /*!< weight on constraint */
   double val[3]; /*!< referential values */
-} rkIKEntry;
+};
 
 /*! \brief IK sequence cell scanned from a file. */
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKSeqCell ){
   double dt;
   int nc;
   rkIKEntry *entry;
-} rkIKSeqCell;
+};
 
 /*! \brief initialize IK sequence cell. */
 #define rkIKSeqCellInit(c) do{\
@@ -52,7 +52,7 @@ __ROKI_EXPORT rkIKSeq *rkIKSeqInit(rkIKSeq *seq);
 __ROKI_EXPORT void rkIKSeqFree(rkIKSeq *seq);
 
 /*! \brief suffix to an IK sequence file. */
-#define RK_IKSEQ_SUFFIX "zen"
+#define RK_IKSEQ_SUFFIX "zcs"
 
 /*! \brief scan an IK sequence from a file. */
 __ROKI_EXPORT bool rkIKSeqScanFile(rkIKSeq *seq, char filename[]);

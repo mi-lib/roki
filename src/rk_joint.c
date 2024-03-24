@@ -19,7 +19,7 @@ rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com)
   if( ( joint->state = ( joint->com = com )->_alloc_state() ) &&
       ( joint->prp   = ( joint->com = com )->_alloc_prp() ) )
     joint->com->_init( joint );
-  rkJointNeutral( joint );
+  rkJointNeutralize( joint );
   return joint;
 }
 
@@ -93,7 +93,7 @@ void rkJointIncRate(rkJoint *joint, zVec3D *w, zVec6D *vel, zVec6D *acc)
 }
 
 /* neutralize joint displacement. */
-void rkJointNeutral(rkJoint *joint)
+void rkJointNeutralize(rkJoint *joint)
 {
   double dis[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   rkJointSetDis( joint, dis );

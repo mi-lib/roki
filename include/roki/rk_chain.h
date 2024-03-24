@@ -16,11 +16,7 @@ __BEGIN_DECLS
  * kinematic chain class
  * ********************************************************** */
 
-#ifdef __cplusplus
-struct rkIK;
-#else
-struct _rkIK;
-#endif /* __cplusplus */
+ZDECL_STRUCT( rkIK );
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   Z_NAMED_CLASS;
@@ -34,101 +30,97 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 
   /*! \cond */
   bool _iscol; /* flag for collision check */
-#if __cplusplus
   rkIK *_ik; /* IK solver */
-#else
-  struct _rkIK *_ik; /* IK solver */
-#endif /* __cplusplus */
   /*! \endcond */
 };
 
-#define rkChainLinkArray(c)           ( &(c)->linkarray )
-#define rkChainRoot(c)                zArrayBuf( rkChainLinkArray(c) )
-#define rkChainLink(c,i)              zArrayElemNC( rkChainLinkArray(c), i )
-#define rkChainLinkNum(c)             zArraySize( rkChainLinkArray(c) )
-#define rkChainShape(c)               (c)->shape
-#define rkChainMotorSpecArray(c)      ( &(c)->motorspecarray )
-#define rkChainWldCOM(c)              ( &(c)->wldcom )
-#define rkChainCOMVel(c)              ( &(c)->wldcomvel )
-#define rkChainCOMAcc(c)              ( &(c)->wldcomacc )
-#define rkChainMass(c)                rkLinkCRBMass( rkChainRoot(c) )
+#define rkChainLinkArray(c)             ( &(c)->linkarray )
+#define rkChainRoot(c)                  zArrayBuf( rkChainLinkArray(c) )
+#define rkChainLink(c,i)                zArrayElemNC( rkChainLinkArray(c), i )
+#define rkChainLinkNum(c)               zArraySize( rkChainLinkArray(c) )
+#define rkChainShape(c)                 (c)->shape
+#define rkChainMotorSpecArray(c)        ( &(c)->motorspecarray )
+#define rkChainWldCOM(c)                ( &(c)->wldcom )
+#define rkChainCOMVel(c)                ( &(c)->wldcomvel )
+#define rkChainCOMAcc(c)                ( &(c)->wldcomacc )
+#define rkChainMass(c)                  rkLinkCRBMass( rkChainRoot(c) )
 
-#define rkChainSetShape(c,s)          ( rkChainShape(c) = (s) )
-#define rkChainSetMass(c,m)           ( rkChainMass(c) = (m) )
-#define rkChainSetWldCOM(c,p)         zVec3DCopy( p, rkChainWldCOM(c) )
-#define rkChainSetCOMVel(c,v)         zVec3DCopy( v, rkChainCOMVel(c) )
-#define rkChainSetCOMAcc(c,a)         zVec3DCopy( a, rkChainCOMAcc(c) )
+#define rkChainSetShape(c,s)            ( rkChainShape(c) = (s) )
+#define rkChainSetMass(c,m)             ( rkChainMass(c) = (m) )
+#define rkChainSetWldCOM(c,p)           zVec3DCopy( p, rkChainWldCOM(c) )
+#define rkChainSetCOMVel(c,v)           zVec3DCopy( v, rkChainCOMVel(c) )
+#define rkChainSetCOMAcc(c,a)           zVec3DCopy( a, rkChainCOMAcc(c) )
 
-#define rkChainLinkName(c,i)          zName(rkChainLink(c,i))
-#define rkChainLinkJointIDOffset(c,i) rkLinkJointIDOffset(rkChainLink(c,i))
-#define rkChainLinkJoint(c,i)         rkLinkJoint(rkChainLink(c,i))
-#define rkChainLinkJointDOF(c,i)      rkLinkJointDOF(rkChainLink(c,i))
-#define rkChainLinkJointTypeStr(c,i)  rkLinkJointTypeStr(rkChainLink(c,i))
-#define rkChainLinkMass(c,i)          rkLinkMass(rkChainLink(c,i))
-#define rkChainLinkCOM(c,i)           rkLinkCOM(rkChainLink(c,i))
-#define rkChainLinkInertia(c,i)       rkLinkInertia(rkChainLink(c,i))
-#define rkChainLinkCRB(c,i)           rkLinkCRB(rkChainLink(c,i))
-#define rkChainLinkCRBMass(c,i)       rkLinkCRBMass(rkChainLink(c,i))
-#define rkChainLinkCRBCOM(c,i)        rkLinkCRBCOM(rkChainLink(c,i))
-#define rkChainLinkCRBInertia(c,i)    rkLinkCRBInertia(rkChainLink(c,i))
-#define rkChainLinkExtWrench(c,i)     rkLinkExtWrench(rkChainLink(c,i))
-#define rkChainLinkShapeList(c,i)     rkLinkShapeList(rkChainLink(c,i))
-#define rkChainLinkShapeNum(c,i)      rkLinkShapeNum(rkChainLink(c,i))
-#define rkChainLinkOrgFrame(c,i)      rkLinkOrgFrame(rkChainLink(c,i))
-#define rkChainLinkOrgPos(c,i)        rkLinkOrgPos(rkChainLink(c,i))
-#define rkChainLinkOrgAtt(c,i)        rkLinkOrgAtt(rkChainLink(c,i))
-#define rkChainLinkAdjFrame(c,i)      rkLinkAdjFrame(rkChainLink(c,i))
-#define rkChainLinkAdjPos(c,i)        rkLinkAdjPos(rkChainLink(c,i))
-#define rkChainLinkAdjAtt(c,i)        rkLinkAdjAtt(rkChainLink(c,i))
-#define rkChainLinkWldFrame(c,i)      rkLinkWldFrame(rkChainLink(c,i))
-#define rkChainLinkWldPos(c,i)        rkLinkWldPos(rkChainLink(c,i))
-#define rkChainLinkWldAtt(c,i)        rkLinkWldAtt(rkChainLink(c,i))
-#define rkChainLinkWldCOM(c,i)        rkLinkWldCOM(rkChainLink(c,i))
-#define rkChainLinkVel(c,i)           rkLinkVel(rkChainLink(c,i))
-#define rkChainLinkLinVel(c,i)        rkLinkLinVel(rkChainLink(c,i))
-#define rkChainLinkLinAcc(c,i)        rkLinkLinAcc(rkChainLink(c,i))
-#define rkChainLinkAngVel(c,i)        rkLinkAngVel(rkChainLink(c,i))
-#define rkChainLinkAngAcc(c,i)        rkLinkAngAcc(rkChainLink(c,i))
-#define rkChainLinkAcc(c,i)           rkLinkAcc(rkChainLink(c,i))
-#define rkChainLinkCOMVel(c,i)        rkLinkCOMVel(rkChainLink(c,i))
-#define rkChainLinkCOMAcc(c,i)        rkLinkCOMAcc(rkChainLink(c,i))
-#define rkChainLinkWrench(c,i)        rkLinkWrench(rkChainLink(c,i))
-#define rkChainLinkForce(c,i)         rkLinkForce(rkChainLink(c,i))
-#define rkChainLinkTorque(c,i)        rkLinkTorque(rkChainLink(c,i))
-#define rkChainLinkParent(c,i)        rkLinkParent(rkChainLink(c,i))
-#define rkChainLinkChild(c,i)         rkLinkChild(rkChainLink(c,i))
-#define rkChainLinkSibl(c,i)          rkLinkSibl(rkChainLink(c,i))
+#define rkChainLinkName(c,i)            zName(rkChainLink(c,i))
+#define rkChainLinkJointIDOffset(c,i)   rkLinkJointIDOffset(rkChainLink(c,i))
+#define rkChainLinkJoint(c,i)           rkLinkJoint(rkChainLink(c,i))
+#define rkChainLinkJointDOF(c,i)        rkLinkJointDOF(rkChainLink(c,i))
+#define rkChainLinkJointTypeStr(c,i)    rkLinkJointTypeStr(rkChainLink(c,i))
+#define rkChainLinkMass(c,i)            rkLinkMass(rkChainLink(c,i))
+#define rkChainLinkCOM(c,i)             rkLinkCOM(rkChainLink(c,i))
+#define rkChainLinkInertia(c,i)         rkLinkInertia(rkChainLink(c,i))
+#define rkChainLinkCRB(c,i)             rkLinkCRB(rkChainLink(c,i))
+#define rkChainLinkCRBMass(c,i)         rkLinkCRBMass(rkChainLink(c,i))
+#define rkChainLinkCRBCOM(c,i)          rkLinkCRBCOM(rkChainLink(c,i))
+#define rkChainLinkCRBInertia(c,i)      rkLinkCRBInertia(rkChainLink(c,i))
+#define rkChainLinkExtWrench(c,i)       rkLinkExtWrench(rkChainLink(c,i))
+#define rkChainLinkShapeList(c,i)       rkLinkShapeList(rkChainLink(c,i))
+#define rkChainLinkShapeNum(c,i)        rkLinkShapeNum(rkChainLink(c,i))
+#define rkChainLinkOrgFrame(c,i)        rkLinkOrgFrame(rkChainLink(c,i))
+#define rkChainLinkOrgPos(c,i)          rkLinkOrgPos(rkChainLink(c,i))
+#define rkChainLinkOrgAtt(c,i)          rkLinkOrgAtt(rkChainLink(c,i))
+#define rkChainLinkAdjFrame(c,i)        rkLinkAdjFrame(rkChainLink(c,i))
+#define rkChainLinkAdjPos(c,i)          rkLinkAdjPos(rkChainLink(c,i))
+#define rkChainLinkAdjAtt(c,i)          rkLinkAdjAtt(rkChainLink(c,i))
+#define rkChainLinkWldFrame(c,i)        rkLinkWldFrame(rkChainLink(c,i))
+#define rkChainLinkWldPos(c,i)          rkLinkWldPos(rkChainLink(c,i))
+#define rkChainLinkWldAtt(c,i)          rkLinkWldAtt(rkChainLink(c,i))
+#define rkChainLinkWldCOM(c,i)          rkLinkWldCOM(rkChainLink(c,i))
+#define rkChainLinkVel(c,i)             rkLinkVel(rkChainLink(c,i))
+#define rkChainLinkLinVel(c,i)          rkLinkLinVel(rkChainLink(c,i))
+#define rkChainLinkLinAcc(c,i)          rkLinkLinAcc(rkChainLink(c,i))
+#define rkChainLinkAngVel(c,i)          rkLinkAngVel(rkChainLink(c,i))
+#define rkChainLinkAngAcc(c,i)          rkLinkAngAcc(rkChainLink(c,i))
+#define rkChainLinkAcc(c,i)             rkLinkAcc(rkChainLink(c,i))
+#define rkChainLinkCOMVel(c,i)          rkLinkCOMVel(rkChainLink(c,i))
+#define rkChainLinkCOMAcc(c,i)          rkLinkCOMAcc(rkChainLink(c,i))
+#define rkChainLinkWrench(c,i)          rkLinkWrench(rkChainLink(c,i))
+#define rkChainLinkForce(c,i)           rkLinkForce(rkChainLink(c,i))
+#define rkChainLinkTorque(c,i)          rkLinkTorque(rkChainLink(c,i))
+#define rkChainLinkParent(c,i)          rkLinkParent(rkChainLink(c,i))
+#define rkChainLinkChild(c,i)           rkLinkChild(rkChainLink(c,i))
+#define rkChainLinkSibl(c,i)            rkLinkSibl(rkChainLink(c,i))
 
-#define rkChainLinkJointNeutral(c,i)  rkLinkJointNeutral( rkChainLink(c,i) )
+#define rkChainLinkJointNeutralize(c,i) rkLinkJointNeutralize( rkChainLink(c,i) )
 
-#define rkChainOrgFrame(c)            rkLinkOrgFrame(rkChainRoot(c))
-#define rkChainOrgPos(c)              rkLinkOrgPos(rkChainRoot(c))
-#define rkChainOrgAtt(c)              rkLinkOrgAtt(rkChainRoot(c))
-#define rkChainRootFrame(c)           rkLinkWldFrame(rkChainRoot(c))
-#define rkChainRootPos(c)             rkLinkWldPos(rkChainRoot(c))
-#define rkChainRootAtt(c)             rkLinkWldAtt(rkChainRoot(c))
-#define rkChainRootVel(c)             rkLinkVel(rkChainRoot(c))
-#define rkChainRootAcc(c)             rkLinkAcc(rkChainRoot(c))
-#define rkChainRootLinVel(c)          rkLinkLinVel(rkChainRoot(c))
-#define rkChainRootLinAcc(c)          rkLinkLinAcc(rkChainRoot(c))
-#define rkChainRootAngVel(c)          rkLinkAngVel(rkChainRoot(c))
-#define rkChainRootAngAcc(c)          rkLinkAngAcc(rkChainRoot(c))
-#define rkChainRootWrench(c)          rkLinkWrench(rkChainRoot(c))
-#define rkChainRootForce(c)           rkLinkForce(rkChainRoot(c))
-#define rkChainRootTorque(c)          rkLinkTorque(rkChainRoot(c))
+#define rkChainOrgFrame(c)              rkLinkOrgFrame(rkChainRoot(c))
+#define rkChainOrgPos(c)                rkLinkOrgPos(rkChainRoot(c))
+#define rkChainOrgAtt(c)                rkLinkOrgAtt(rkChainRoot(c))
+#define rkChainRootFrame(c)             rkLinkWldFrame(rkChainRoot(c))
+#define rkChainRootPos(c)               rkLinkWldPos(rkChainRoot(c))
+#define rkChainRootAtt(c)               rkLinkWldAtt(rkChainRoot(c))
+#define rkChainRootVel(c)               rkLinkVel(rkChainRoot(c))
+#define rkChainRootAcc(c)               rkLinkAcc(rkChainRoot(c))
+#define rkChainRootLinVel(c)            rkLinkLinVel(rkChainRoot(c))
+#define rkChainRootLinAcc(c)            rkLinkLinAcc(rkChainRoot(c))
+#define rkChainRootAngVel(c)            rkLinkAngVel(rkChainRoot(c))
+#define rkChainRootAngAcc(c)            rkLinkAngAcc(rkChainRoot(c))
+#define rkChainRootWrench(c)            rkLinkWrench(rkChainRoot(c))
+#define rkChainRootForce(c)             rkLinkForce(rkChainRoot(c))
+#define rkChainRootTorque(c)            rkLinkTorque(rkChainRoot(c))
 
-#define rkChainSetRootFrame(c,f)      rkLinkSetWldFrame(rkChainRoot(c),f)
-#define rkChainSetRootPos(c,p)        rkLinkSetWldPos(rkChainRoot(c),p)
-#define rkChainSetRootAtt(c,m)        rkLinkSetWldAtt(rkChainRoot(c),m)
-#define rkChainSetRootVel(c,v)        rkLinkSetVel(rkChainRoot(c),v)
-#define rkChainSetRootAcc(c,a)        rkLinkSetAcc(rkChainRoot(c),a)
-#define rkChainSetRootLinVel(c,v)     rkLinkSetLinVel(rkChainRoot(c),v)
-#define rkChainSetRootLinAcc(c,a)     rkLinkSetLinAcc(rkChainRoot(c),a)
-#define rkChainSetRootAngVel(c,o)     rkLinkSetAngVel(rkChainRoot(c),o)
-#define rkChainSetRootAngAcc(c,a)     rkLinkSetAngAcc(rkChainRoot(c),a)
-#define rkChainSetRootWrench(c,f)     rkLinkSetWrench(rkChainRoot(c),f)
-#define rkChainSetRootForce(c,f)      rkLinkSetForce(rkChainRoot(c),f)
-#define rkChainSetRootTorque(c,n)     rkLinkSetTorque(rkChainRoot(c),n)
+#define rkChainSetRootFrame(c,f)        rkLinkSetWldFrame(rkChainRoot(c),f)
+#define rkChainSetRootPos(c,p)          rkLinkSetWldPos(rkChainRoot(c),p)
+#define rkChainSetRootAtt(c,m)          rkLinkSetWldAtt(rkChainRoot(c),m)
+#define rkChainSetRootVel(c,v)          rkLinkSetVel(rkChainRoot(c),v)
+#define rkChainSetRootAcc(c,a)          rkLinkSetAcc(rkChainRoot(c),a)
+#define rkChainSetRootLinVel(c,v)       rkLinkSetLinVel(rkChainRoot(c),v)
+#define rkChainSetRootLinAcc(c,a)       rkLinkSetLinAcc(rkChainRoot(c),a)
+#define rkChainSetRootAngVel(c,o)       rkLinkSetAngVel(rkChainRoot(c),o)
+#define rkChainSetRootAngAcc(c,a)       rkLinkSetAngAcc(rkChainRoot(c),a)
+#define rkChainSetRootWrench(c,f)       rkLinkSetWrench(rkChainRoot(c),f)
+#define rkChainSetRootForce(c,f)        rkLinkSetForce(rkChainRoot(c),f)
+#define rkChainSetRootTorque(c,n)       rkLinkSetTorque(rkChainRoot(c),n)
 
 /*! \brief initialize and destroy a kinematic chain.
  *
@@ -359,7 +351,7 @@ __ROKI_EXPORT void rkChainUpdateFK(rkChain *c);
 __ROKI_EXPORT void rkChainFK(rkChain *c, zVec dis);
 
 /*! \brief neutralize all joints of a kinematic chain. */
-__ROKI_EXPORT void rkChainNeutral(rkChain *chain);
+__ROKI_EXPORT void rkChainNeutralize(rkChain *chain);
 
 /*! \brief inverse dynamics of kinematic chain.
  *

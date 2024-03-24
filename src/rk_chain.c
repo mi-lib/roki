@@ -434,12 +434,12 @@ void rkChainFK(rkChain *chain, zVec dis)
 }
 
 /* neutralize all joints of a kinematic chain. */
-void rkChainNeutral(rkChain *chain)
+void rkChainNeutralize(rkChain *chain)
 {
   int i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
-    rkChainLinkJointNeutral( chain, i );
+    rkChainLinkJointNeutralize( chain, i );
   rkChainUpdateFK( chain );
 }
 

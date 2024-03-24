@@ -81,7 +81,7 @@ typedef zVec3D* (* rkIKAcm_fp)(rkChain*,rkIKAcm*,void*,zVec3D*);
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
   int id;        /*!< identifier */
-  rkIKAttr attr; /*!< attributes of attented quantity */
+  rkIKAttr attr; /*!< attributes of attention quantity */
   rkIKRef ref;   /*!< referential position or attitude */
   rkIKAcm acm;   /*!< error accumulation correction */
 

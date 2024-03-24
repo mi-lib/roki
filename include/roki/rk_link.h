@@ -341,7 +341,7 @@ __ROKI_EXPORT zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i);
 #define rkLinkJointMotor(link)           rkJointMotor( rkLinkJoint(link) )
 #define rkLinkJointMotorSetInput(link,t) rkJointMotorSetInput( rkLinkJoint(link), t )
 
-#define rkLinkJointNeutral(link)         rkJointNeutral( rkLinkJoint(link) )
+#define rkLinkJointNeutralize(link)      rkJointNeutralize( rkLinkJoint(link) )
 
 /*! \brief update link motion state.
  *

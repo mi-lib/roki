@@ -206,21 +206,19 @@ __ROKI_EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 
 /*! \brief neutral configuration of joint.
  *
- * rkJointNeutral() sets displacement, velocity and
- * acceleration of a joint \a joint for zero.
+ * rkJointNeutralize() sets displacement, velocity and acceleration of a joint
+ * \a joint for zero.
  *
- * rkJointIsNeutral() checks if the joint \a joint is in
- * neutral configuration where all the components are
- * at zero values.
+ * rkJointIsNeutral() checks if the joint \a joint is in neutral configuration
+ * where all the components are zero.
  * \return
- * rkJointNeutral() returns no value.
+ * rkJointNeutralize() returns no value.
  *
- * rkJointIsNeutral() returns the true value if all
- * (i.e. the number of degrees-of-freedom) the components
- * of joint displacement of \a joint are zero. Otherwise, the false
- * value is returned.
+ * rkJointIsNeutral() returns the true value if all (i.e. the number of
+ * degrees-of-freedom) the components of joint displacement of \a joint are zero.
+ * Otherwise, the false value is returned.
  */
-void rkJointNeutral(rkJoint *joint);
+void rkJointNeutralize(rkJoint *joint);
 bool rkJointIsNeutral(rkJoint *joint);
 
 /*! \brief transform a joint frame, velocity, acceleration and torque.
