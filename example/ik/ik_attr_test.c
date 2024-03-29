@@ -4,7 +4,7 @@
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectable );
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectClass ){
-  void* (*init                )(void**,void*,void*,int*);
+  void* (*init                )(void**,void*);
   void (*select_com           )(void*);
   bool (*com                  )(void*);
   void (*select_link          )(void*);
@@ -27,11 +27,16 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectClass ){
   bool (*force                )(void*);
   bool (*select_weight        )(void*);
   bool (*weight               )(void*);
+  void (*set_link_id          )(void*,int);
+  void (*set_ap               )(void*,double,double,double);
+  void (*set_weight           )(void*,double,double,double);
+  void (*set_sub_link_frame_id)(void*,int);
   rkIKCell* (*call_api        )(void*);
 };
 
+
 /* declaration */
-void* init                (void **instance, void *chain, void *attr, int *mask);
+void* init                (void **instance, void *chain);
 void select_com           (void *instance);
 bool com                  (void *instance);
 void select_link          (void *instance);
@@ -54,6 +59,10 @@ bool select_force         (void *instance);
 bool force                (void *instance);
 bool select_weight        (void *instance);
 bool weight               (void *instance);
+void set_link_id          (void* instance, int link_id);
+void set_ap               (void* instance, double v1, double v2, double v3);
+void set_weight           (void* instance, double w1, double w2, double w3);
+void set_sub_link_frame_id(void* instance, int sub_link_id);
 rkIKCell* call_api        (void *instance);
 
 static rkIKAttrSelectClass rkIKAttrSelectClassImpl = {
@@ -80,8 +89,13 @@ static rkIKAttrSelectClass rkIKAttrSelectClassImpl = {
   force,
   select_weight,
   weight,
+  set_link_id,
+  set_ap,
+  set_weight,
+  set_sub_link_frame_id,
   call_api
 };
+
 
 /* implement */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectable ){
@@ -103,18 +117,15 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectable ){
   bool _weight;
   /* arguments for call api */
   rkChain* _chain;
-  rkIKAttr* _attr;
-  int* _mask;
+  rkIKAttr _attr;
 };
 
-void* init(void** instance, void* chain, void* attr, int* mask)
+void* init(void** instance, void* chain)
 {
   rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(*instance);
   sel = zAlloc( rkIKAttrSelectable, 1 );
   *instance = (void*)(sel);
   sel->_chain = (rkChain*)(chain);
-  sel->_attr = (rkIKAttr*)(attr);
-  sel->_mask = mask;
   return sel;
 }
 
@@ -258,6 +269,30 @@ bool weight(void* instance){
   return sel->_weight;
 }
 
+/**/
+
+void set_link_id(void* instance, int link_id){
+  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  sel->_attr.id = link_id;
+}
+
+void set_ap(void* instance, double v1, double v2, double v3){
+  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKAttrSetAP( &sel->_attr, v1, v2, v3 );
+}
+
+void set_weight(void* instance, double w1, double w2, double w3){
+  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKAttrSetWeight( &sel->_attr, w1, w2, w3 );
+}
+
+void set_sub_link_frame_id(void* instance, int sub_link_id){
+  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  sel->_attr.id_sub = sub_link_id;
+}
+
+/**/
+
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, _rkIKLookup ){
   rkIKCell *(*reg_ik_cell)(rkChain*,rkIKAttr*,int);
 };
@@ -311,15 +346,24 @@ rkIKCell *call_api(void* instance){
     ZRUNERROR( RK_ERR_IK_UNKNOWN, "Invalid rkIKAttr Setting Pattern" );
     return NULL;
   }
-  return lookup->reg_ik_cell( sel->_chain, sel->_attr, *sel->_mask );
+  int mask = RK_IK_ATTR_NONE;
+  if( sel->_link_ap )
+    mask |= RK_IK_ATTR_AP;
+  if( sel->_weight )
+    mask |= RK_IK_ATTR_WEIGHT;
+  if( sel->_force )
+    mask |= RK_IK_ATTR_FORCE;
+  if( sel->_link )
+    mask |= RK_IK_ATTR_ID;
+  if( sel->_sub_link_frame )
+    mask |= RK_IK_ATTR_ID_SUB;
+  return lookup->reg_ik_cell( sel->_chain, &sel->_attr, mask );
 }
 
 
 int main(int argc, char *argv[])
 {
   rkChain chain;
-  rkIKAttr attr;
-  int mask;
 
   bool com, link;
   bool link_org, link_ap;
@@ -330,7 +374,7 @@ int main(int argc, char *argv[])
   void* instance = NULL;
   rkIKAttrSelectClass* test = &rkIKAttrSelectClassImpl;
 
-  test->init( &instance, &chain, &attr, &mask );
+  test->init( &instance, &chain );
   /**/
   test->select_com( instance );
   com  = test->com( instance );
