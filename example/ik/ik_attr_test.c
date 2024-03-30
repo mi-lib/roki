@@ -1,8 +1,6 @@
 #include <roki/rk_chain.h>
 
-/* header */
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectable );
-
+/* header .h -------------------------------------------------------------- */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectClass ){
   void* (*init                )(void**,void*);
   void (*select_com           )(void*);
@@ -31,7 +29,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectClass ){
   void (*set_ap               )(void*,double,double,double);
   void (*set_weight           )(void*,double,double,double);
   void (*set_sub_link_frame_id)(void*,int);
-  rkIKCell* (*call_api        )(void*);
+  void* (*call_api            )(void*);
 };
 
 
@@ -59,11 +57,11 @@ bool select_force         (void *instance);
 bool force                (void *instance);
 bool select_weight        (void *instance);
 bool weight               (void *instance);
-void set_link_id          (void* instance, int link_id);
-void set_ap               (void* instance, double v1, double v2, double v3);
-void set_weight           (void* instance, double w1, double w2, double w3);
-void set_sub_link_frame_id(void* instance, int sub_link_id);
-rkIKCell* call_api        (void *instance);
+void set_link_id          (void *instance, int link_id);
+void set_ap               (void *instance, double v1, double v2, double v3);
+void set_weight           (void *instance, double w1, double w2, double w3);
+void set_sub_link_frame_id(void *instance, int sub_link_id);
+void* call_api            (void *instance);
 
 static rkIKAttrSelectClass rkIKAttrSelectClassImpl = {
   init,
@@ -97,7 +95,8 @@ static rkIKAttrSelectClass rkIKAttrSelectClassImpl = {
 };
 
 
-/* implement */
+/* implement .c (capsuled) ------------------------------------------------ */
+
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectable ){
   /* target */
   bool _com;  /* Center Of Mass */
@@ -119,6 +118,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectable ){
   rkChain* _chain;
   rkIKAttr _attr;
 };
+
+/**/
 
 void* init(void** instance, void* chain)
 {
@@ -305,7 +306,7 @@ static _rkIKLookup api_com       = { rkChainRegIKCellCOM    };
 static _rkIKLookup api_am        = { rkChainRegIKCellAM     };
 static _rkIKLookup api_amcom     = { rkChainRegIKCellAMCOM  };
 
-rkIKCell *call_api(void* instance){
+_rkIKLookup* api_factory(void* instance){
   rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
   _rkIKLookup *lookup = NULL;
   if( sel->_link &&
@@ -346,6 +347,11 @@ rkIKCell *call_api(void* instance){
     ZRUNERROR( RK_ERR_IK_UNKNOWN, "Invalid rkIKAttr Setting Pattern" );
     return NULL;
   }
+  return lookup;
+}
+
+int mask_factory(void* instance){
+  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
   int mask = RK_IK_ATTR_NONE;
   if( sel->_link_ap )
     mask |= RK_IK_ATTR_AP;
@@ -357,10 +363,22 @@ rkIKCell *call_api(void* instance){
     mask |= RK_IK_ATTR_ID;
   if( sel->_sub_link_frame )
     mask |= RK_IK_ATTR_ID_SUB;
-  return lookup->reg_ik_cell( sel->_chain, &sel->_attr, mask );
+
+  return mask;
+}
+
+void* call_api(void* instance){
+  _rkIKLookup *lookup = api_factory( instance );
+  if( lookup == NULL )
+    return NULL;
+  int mask = mask_factory( instance );
+  rkIKAttrSelectable *sel = (rkIKAttrSelectable*)(instance);
+  rkIKCell *cell = lookup->reg_ik_cell( sel->_chain, &sel->_attr, mask );
+  return (void*)(cell);
 }
 
 
+/* test code that includes the header --------------------------------------*/
 int main(int argc, char *argv[])
 {
   rkChain chain;
