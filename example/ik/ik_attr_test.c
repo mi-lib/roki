@@ -2,7 +2,7 @@
 
 /* header .h -------------------------------------------------------------- */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectClass ){
-  void* (*init                )(void**,void*);
+  void* (*init                )(void**);
   void (*select_com           )(void*);
   bool (*com                  )(void*);
   void (*select_link          )(void*);
@@ -29,12 +29,13 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectClass ){
   void (*set_ap               )(void*,double,double,double);
   void (*set_weight           )(void*,double,double,double);
   void (*set_sub_link_frame_id)(void*,int);
-  void* (*call_api            )(void*);
+  void (*reset                )(void*);
+  void* (*call_api            )(void*,void*);
 };
 
 
 /* declaration */
-void* init                (void **instance, void *chain);
+void* init                (void **instance);
 void select_com           (void *instance);
 bool com                  (void *instance);
 void select_link          (void *instance);
@@ -61,7 +62,8 @@ void set_link_id          (void *instance, int link_id);
 void set_ap               (void *instance, double v1, double v2, double v3);
 void set_weight           (void *instance, double w1, double w2, double w3);
 void set_sub_link_frame_id(void *instance, int sub_link_id);
-void* call_api            (void *instance);
+void reset                (void *instance);
+void* call_api            (void *instance, void *chain);
 
 static rkIKAttrSelectClass rkIKAttrSelectClassImpl = {
   init,
@@ -91,6 +93,7 @@ static rkIKAttrSelectClass rkIKAttrSelectClassImpl = {
   set_ap,
   set_weight,
   set_sub_link_frame_id,
+  reset,
   call_api
 };
 
@@ -115,23 +118,26 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectable ){
   bool _force;  /* weight is forced to be max */
   bool _weight;
   /* arguments for call api */
-  rkChain* _chain;
+};
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegister ){
+  rkIKAttrSelectable _sel;
   rkIKAttr _attr;
 };
 
 /**/
 
-void* init(void** instance, void* chain)
+void* init(void** instance)
 {
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(*instance);
-  sel = zAlloc( rkIKAttrSelectable, 1 );
-  *instance = (void*)(sel);
-  sel->_chain = (rkChain*)(chain);
-  return sel;
+  rkIKRegister* reg = (rkIKRegister*)(*instance);
+  reg = zAlloc( rkIKRegister, 1 );
+  *instance = (void*)(reg);
+  return reg;
 }
 
 void select_com(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   sel->_com = true;
   sel->_link     = !sel->_com; /* false */
   sel->_link_org = !sel->_com;
@@ -139,23 +145,27 @@ void select_com(void* instance){
 }
 
 bool com(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_com;
 }
 
 void select_link(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   sel->_link = true;
   sel->_com = !sel->_link; /* false */
 }
 
 bool link(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_link;
 }
 
 bool select_link_org(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   if(sel->_com) return false; /* validation */
   sel->_link_org = true;
   sel->_link_ap = !sel->_link_org;
@@ -163,12 +173,14 @@ bool select_link_org(void* instance){
 }
 
 bool link_org(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_link_org;
 }
 
 bool select_link_ap(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   if(sel->_com) return false; /* validation */
   sel->_link_ap = true;
   sel->_link_org = !sel->_link_ap;
@@ -176,12 +188,14 @@ bool select_link_ap(void* instance){
 }
 
 bool link_ap(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_link_ap;
 }
 
 bool select_pos(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   sel->_pos = true;
   sel->_att = !sel->_pos;
   sel->_am  = !sel->_pos;
@@ -189,12 +203,14 @@ bool select_pos(void* instance){
 }
 
 bool pos(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_pos;
 }
 
 bool select_att(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   if(sel->_com) return false; /* validation */
   sel->_att = true;
   sel->_pos = !sel->_att;
@@ -203,12 +219,14 @@ bool select_att(void* instance){
 }
 
 bool att(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_att;
 }
 
 bool select_am(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   sel->_am = true;
   sel->_pos = !sel->_am;
   sel->_att = !sel->_am;
@@ -216,24 +234,28 @@ bool select_am(void* instance){
 }
 
 bool am(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_am;
 }
 
 bool select_wld_frame(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   sel->_wld_frame = true;
   sel->_sub_link_frame = !sel->_wld_frame;
   return true;
 }
 
 bool wld_frame(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_wld_frame;
 }
 
 bool select_sub_link_frame(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   if(sel->_com) return false; /* validation */
   if(sel->_am) return false; /* validation */
   sel->_sub_link_frame = true;
@@ -242,54 +264,73 @@ bool select_sub_link_frame(void* instance){
 }
 
 bool sub_link_frame(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_sub_link_frame;
 }
 
 bool select_force(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   sel->_force = true;
   sel->_weight = !sel->_force;
   return true;
 }
 
 bool force(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_force;
 }
 
 bool select_weight(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   sel->_weight = true;
   sel->_force = !sel->_weight;
   return true;
 }
 
 bool weight(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   return sel->_weight;
 }
 
 /**/
 
 void set_link_id(void* instance, int link_id){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
-  sel->_attr.id = link_id;
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttr* attr = &reg->_attr;
+  attr->id = link_id;
 }
 
 void set_ap(void* instance, double v1, double v2, double v3){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
-  rkIKAttrSetAP( &sel->_attr, v1, v2, v3 );
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttr* attr = &reg->_attr;
+  rkIKAttrSetAP( attr, v1, v2, v3 );
 }
 
 void set_weight(void* instance, double w1, double w2, double w3){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
-  rkIKAttrSetWeight( &sel->_attr, w1, w2, w3 );
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttr* attr = &reg->_attr;
+  rkIKAttrSetWeight( attr, w1, w2, w3 );
 }
 
 void set_sub_link_frame_id(void* instance, int sub_link_id){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
-  sel->_attr.id_sub = sub_link_id;
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttr* attr = &reg->_attr;
+  attr->id_sub = sub_link_id;
+}
+
+/**/
+
+void reset(void *instance){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable defalut_sel = {false,false,  false,false, false,false,false, false,false, false,false};
+  zCopy( rkIKAttrSelectable, &defalut_sel, &reg->_sel );
+  rkIKAttr blank_attr;
+  zCopy( rkIKAttr, &blank_attr, &reg->_attr );
 }
 
 /**/
@@ -307,7 +348,8 @@ static _rkIKLookup api_am        = { rkChainRegIKCellAM     };
 static _rkIKLookup api_amcom     = { rkChainRegIKCellAMCOM  };
 
 _rkIKLookup* api_factory(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   _rkIKLookup *lookup = NULL;
   if( sel->_link &&
       sel->_pos &&
@@ -344,14 +386,15 @@ _rkIKLookup* api_factory(void* instance){
       sel->_wld_frame ) {
     lookup = &api_amcom;
   } else {
-    ZRUNERROR( RK_ERR_IK_UNKNOWN, "Invalid rkIKAttr Setting Pattern" );
     return NULL;
   }
+
   return lookup;
 }
 
 int mask_factory(void* instance){
-  rkIKAttrSelectable* sel = (rkIKAttrSelectable*)(instance);
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttrSelectable* sel = &reg->_sel;
   int mask = RK_IK_ATTR_NONE;
   if( sel->_link_ap )
     mask |= RK_IK_ATTR_AP;
@@ -367,22 +410,24 @@ int mask_factory(void* instance){
   return mask;
 }
 
-void* call_api(void* instance){
+void* call_api(void* instance, void* chain){
   _rkIKLookup *lookup = api_factory( instance );
   if( lookup == NULL )
     return NULL;
   int mask = mask_factory( instance );
-  rkIKAttrSelectable *sel = (rkIKAttrSelectable*)(instance);
-  rkIKCell *cell = lookup->reg_ik_cell( sel->_chain, &sel->_attr, mask );
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKCell *cell = lookup->reg_ik_cell( chain, &reg->_attr, mask );
+  if( cell == NULL )
+    ZRUNERROR( RK_ERR_IK_UNKNOWN, "Invalid rkIKAttr Setting Pattern" );
+
   return (void*)(cell);
 }
 
 
 /* test code that includes the header --------------------------------------*/
+#define H5_ZTK "../model/H5.ztk"
 int main(int argc, char *argv[])
 {
-  rkChain chain;
-
   bool com, link;
   bool link_org, link_ap;
   bool pos, att, am;
@@ -392,7 +437,7 @@ int main(int argc, char *argv[])
   void* instance = NULL;
   rkIKAttrSelectClass* test = &rkIKAttrSelectClassImpl;
 
-  test->init( &instance, &chain );
+  test->init( &instance );
   /**/
   test->select_com( instance );
   com  = test->com( instance );
@@ -477,7 +522,81 @@ int main(int argc, char *argv[])
   printf("select_weight\n");
   printf("  force  = %d\n", force);
   printf("  weight = %d\n", weight);
+  /**/
+  printf("set_link_id\n");
+  test->set_link_id( instance, 0 );
+  printf("set_ap\n");
+  test->set_ap( instance, 0.1, 0.2, 0.3 );
+  printf("set_weight\n");
+  test->set_weight( instance, 0.01, 0.01, 0.01 );
+  printf("set_sub_link_frame_id\n");
+  test->set_sub_link_frame_id( instance, 6 );
+  /**/
+  void* chain = NULL;
+  /* use wrapper as possible */
+  rkChain instance_chain;
+  chain = &instance_chain;
+  rkChainReadZTK( (rkChain*)(chain), H5_ZTK );
+  rkChainCreateIK( (rkChain*)(chain) );
+  rkChainRegIKJointAll( (rkChain*)(chain), 0.001 ); /* joint weight = 0.01 */
+  /**/
+  test->reset( instance );
+  test->select_link( instance );
+  test->select_pos( instance );
+  test->select_wld_frame( instance );
+  printf("call api_world_pos\n");
+  void* cell_wld_pos = test->call_api( instance, chain );
+  (void)cell_wld_pos;
+  /**/
+  test->reset( instance );
+  test->select_link( instance );
+  test->select_att( instance );
+  test->select_wld_frame( instance );
+  printf("call api_world_att\n");
+  void* cell_wld_att = test->call_api( instance, chain );
+  (void)cell_wld_att;
+  /**/
+  test->reset( instance );
+  test->select_link( instance );
+  test->select_pos( instance );
+  test->select_sub_link_frame( instance );
+  printf("call api_l2l_pos  \n");
+  void* cell_l2l_pos = test->call_api( instance, chain );
+  (void)cell_l2l_pos;
+  /**/
+  test->reset( instance );
+  test->select_link( instance );
+  test->select_att( instance );
+  test->select_sub_link_frame( instance );
+  printf("call api_l2l_att  \n");
+  void* cell_l2l_att = test->call_api( instance, chain );
+  (void)cell_l2l_att;
+  /**/
+  test->reset( instance );
+  test->select_com( instance );
+  test->select_pos( instance );
+  test->select_wld_frame( instance );
+  printf("call api_com      \n");
+  void* cell_com = test->call_api( instance, chain );
+  (void)cell_com;
+  /**/
+  test->reset( instance );
+  test->select_link( instance );
+  test->select_am( instance );
+  test->select_wld_frame( instance );
+  printf("call api_am       \n");
+  void* cell_am = test->call_api( instance, chain );
+  (void)cell_am;
+  /**/
+  test->reset( instance );
+  test->select_com( instance );
+  test->select_am( instance );
+  test->select_wld_frame( instance );
+  printf("call api_amcom    \n");
+  void* cell_comam = test->call_api( instance, chain );
+  (void)cell_comam;
 
   zFree( instance );
+  rkChainDestroy( (rkChain*)(chain) );
   return 0;
 }
