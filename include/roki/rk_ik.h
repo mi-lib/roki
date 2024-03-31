@@ -95,9 +95,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
   /*! \endcond */
 };
 
-#define rkChainIKConstraintMat(c) (c)->_ik->_c_mat
-#define rkChainIKConstraintVec(c) (c)->_ik->_c_vec
-#define rkChainIKJointIndex(c)    (c)->_ik->_j_idx
+#define rkChainIKConstraintMat(chain) (chain)->_ik->_c_mat
+#define rkChainIKConstraintVec(chain) (chain)->_ik->_c_vec
+#define rkChainIKJointIndex(chain)    (chain)->_ik->_j_idx
 
 /*! \brief create and destroy inverse kinematics solver.
  *
@@ -174,13 +174,13 @@ __ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKAttr *attr, in
 
 /*! \brief find a constraint cell.
  *
- * rkChainFindIKCell() finds a constraint cell with an identifier \a id from
+ * rkChainFindIKCellID() finds a constraint cell with an identifier \a id from
  * the constraint list registered in a kinematic chain \a chain.
  * \return
- * rkChainFindIKCell() returns a pointer to the found cell, or the null pointer
+ * rkChainFindIKCellID() returns a pointer to the found cell, or the null pointer
  * if not found.
  */
-__ROKI_EXPORT rkIKCell *rkChainFindIKCell(rkChain *chain, int id);
+__ROKI_EXPORT rkIKCell *rkChainFindIKCellID(rkChain *chain, int id);
 
 /*! \brief deactivate and bind a constraint.
  *
@@ -250,7 +250,7 @@ __ROKI_EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
 
 #define ZTK_TAG_RKIK "ik"
 
-__ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *ik, ZTK *ztk);
+__ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk);
 __ROKI_EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, const char *filename);
 
 __END_DECLS

@@ -16,6 +16,8 @@ __BEGIN_DECLS
  * inverse kinematics cell class
  * ********************************************************** */
 
+ZDECL_STRUCT( rkChain );
+
 ZDEF_UNION( __ROKI_CLASS_EXPORT, rkIKRef ){
   zVec3D pos; /*!< position reference */
   zMat3D att; /*!< attitude reference */

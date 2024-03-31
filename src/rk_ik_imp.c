@@ -4,7 +4,7 @@
  * rk_ik_imp - inverse kinematics: impedance control
  */
 
-#include <roki/rk_ik.h>
+#include <roki/rk_chain.h>
 
 /* strict referential velocity for impedance control. */
 static zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv)

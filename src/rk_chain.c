@@ -585,14 +585,14 @@ static void _rkChainBiasVec(rkChain *chain, zVec bias)
 }
 
 /* bias force vector of a kinematic chain by the unit vector method. */
-bool rkChainBiasVec(rkChain *chain, zVec bias)
+zVec rkChainBiasVec(rkChain *chain, zVec bias)
 {
   if( zVecSizeNC(bias) != rkChainJointSize(chain) ){
     ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
-    return false;
+    return NULL;
   }
   _rkChainBiasVec( chain, bias );
-  return true;
+  return bias;
 }
 
 /* inertia matrix of a kinematic chain from momentum Jacobian matrices. */
@@ -604,6 +604,10 @@ zMat rkChainInertiaMatMJ(rkChain *chain, zMat inertia)
   int i, n;
 
   n = rkChainJointSize( chain );
+  if( !zMatIsSqr( inertia ) || zMatRowSizeNC(inertia) != n ){
+    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    return NULL;
+  }
   inertia_tmp = zMatAllocSqr( n );
   jacobi = zMatAlloc( 3, n );
   tmp = zMatAlloc( 3, n );
@@ -653,19 +657,19 @@ static void _rkChainInertiaMatUV(rkChain *chain, zVec bias, zMat inertia)
 }
 
 /* inertia matrix of a kinematic chain by the unit vector method. */
-bool rkChainInertiaMatUV(rkChain *chain, zMat inertia)
+zMat rkChainInertiaMatUV(rkChain *chain, zMat inertia)
 {
-  zVec b;
+  zVec bias;
 
   if( !zMatIsSqr( inertia ) || zMatColSizeNC(inertia) != rkChainJointSize(chain) ){
     ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
-    return false;
+    return NULL;
   }
-  if( !( b = zVecAlloc( zMatRowSizeNC(inertia) ) ) ) return false;
-  _rkChainBiasVec( chain, b );
-  _rkChainInertiaMatUV( chain, b, inertia );
-  zVecFree( b );
-  return true;
+  if( !( bias = zVecAlloc( zMatRowSizeNC(inertia) ) ) ) return NULL;
+  _rkChainBiasVec( chain, bias );
+  _rkChainInertiaMatUV( chain, bias, inertia );
+  zVecFree( bias );
+  return inertia;
 }
 
 /* compute a cell of the inertia matrix of a kinematic chain based on the composite rigid body method. */
@@ -702,7 +706,7 @@ static void _rkChainLinkInertiaMatCRB(rkLink *link, zVec6D wi[], zVec6D si[], zM
 }
 
 /* compute the inertia matrix of a kinematic chain based on the composite rigid body method. */
-bool rkChainInertiaMatCRB(rkChain *chain, zMat inertia)
+zMat rkChainInertiaMatCRB(rkChain *chain, zMat inertia)
 {
   zMatStruct hij;
   zVec6D wi[6], si[6];
@@ -711,10 +715,10 @@ bool rkChainInertiaMatCRB(rkChain *chain, zMat inertia)
   rkChainUpdateCRB( chain );
   zMatBufNC(&hij) = _e;
   _rkChainLinkInertiaMatCRB( rkChainRoot(chain), wi, si, &hij, inertia );
-  return true;
+  return inertia;
 }
 
-bool (* rkChainInertiaMat)(rkChain*,zMat) = rkChainInertiaMatCRB;
+zMat (* rkChainInertiaMat)(rkChain*,zMat) = rkChainInertiaMatCRB;
 
 /* inertia matrix and bias force vector of a kinematic chain by the unit vector method. */
 bool rkChainInertiaMatBiasVecUV(rkChain *chain, zMat inertia, zVec bias)

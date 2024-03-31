@@ -52,14 +52,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
    */
   /*! \endcond */
 #ifdef __cplusplus
-  rkJoint &Joint();
-  rkBody &Body();
-  int jointIDoffset() const;
-  zFrame3D &orgFrame();
-  zFrame3D &adjFrame();
-  rkLink *Parent() const;
-  rkLink *Child() const;
-  rkLink *Sibl() const;
+  rkLink();
+  ~rkLink();
 #endif /* __cplusplus */
 };
 
@@ -513,14 +507,8 @@ __ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *link);
 __END_DECLS
 
 #ifdef __cplusplus
-inline rkJoint &rkLink::Joint(){ return joint; }
-inline rkBody &rkLink::Body(){ return body; }
-inline int rkLink::jointIDoffset() const { return joint_id_offset; }
-inline zFrame3D &rkLink::orgFrame(){ return orgframe; }
-inline zFrame3D &rkLink::adjFrame(){ return adjframe; }
-inline rkLink *rkLink::Parent() const { return parent; }
-inline rkLink *rkLink::Child() const { return child; }
-inline rkLink *rkLink::Sibl() const { return sibl; }
+inline rkLink::rkLink(){ rkLinkInit( this ); }
+inline rkLink::~rkLink(){ rkLinkDestroy( this ); }
 #endif /* __cplusplus */
 
 #endif /* __ZDF_LINK_H__ */

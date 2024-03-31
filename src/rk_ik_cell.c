@@ -4,7 +4,7 @@
  * rk_ik_cell - inverse kinematics: cell
  */
 
-#include <roki/rk_ik.h>
+#include <roki/rk_chain.h>
 
 /* ********************************************************** */
 /* CLASS: rkIKCell

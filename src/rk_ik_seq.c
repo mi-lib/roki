@@ -4,7 +4,7 @@
  * rk_ik_seq - inverse kinematics: sequence
  */
 
-#include <roki/rk_ik.h>
+#include <roki/rk_chain.h>
 
 /* set IK sequence cell to IK solver. */
 bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c)
@@ -16,7 +16,7 @@ bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c)
 
   for( i=0; i<c->nc; i++ ){
     e = &c->entry[i];
-    if( !( cell = rkChainFindIKCell( chain, e->id ) ) ){
+    if( !( cell = rkChainFindIKCellID( chain, e->id ) ) ){
       ZRUNWARN( RK_WARN_IK_CELL_NOTFOUND );
       ret = false;
       continue;

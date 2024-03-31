@@ -4,7 +4,7 @@
  * rk_ik - inverse kinematics
  */
 
-#include <roki/rk_ik.h>
+#include <roki/rk_chain.h>
 
 /* ********************************************************** */
 /* CLASS: rkIK
@@ -253,7 +253,7 @@ rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKAttr *attr, int mask){
 }
 
 /* find a constraint cell of inverse kinematics solver from identifier. */
-rkIKCell *rkChainFindIKCell(rkChain *chain, int id)
+rkIKCell *rkChainFindIKCellID(rkChain *chain, int id)
 {
   rkIKCell *cp;
 
