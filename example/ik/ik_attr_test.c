@@ -1,7 +1,7 @@
 #include <roki/rk_chain.h>
 
 /* header .h -------------------------------------------------------------- */
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectClass ){
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   void* (*init                )(void**);
   void (*select_com           )(void*);
   bool (*com                  )(void*);
@@ -33,62 +33,62 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttrSelectClass ){
 
 
 /* declaration */
-void* init                (void **instance);
-void select_com           (void *instance);
-bool com                  (void *instance);
-void select_link          (void *instance);
-bool link                 (void *instance);
-bool select_link_ap       (void *instance);
-bool link_ap              (void *instance);
-bool select_pos           (void *instance);
-bool pos                  (void *instance);
-bool select_att           (void *instance);
-bool att                  (void *instance);
-bool select_am            (void *instance);
-bool am                   (void *instance);
-bool select_wld_frame     (void *instance);
-bool wld_frame            (void *instance);
-bool select_sub_link_frame(void *instance);
-bool sub_link_frame       (void *instance);
-bool select_force         (void *instance);
-bool force                (void *instance);
-bool select_weight        (void *instance);
-bool weight               (void *instance);
-void set_link_id          (void *instance, int link_id);
-void set_ap               (void *instance, double v1, double v2, double v3);
-void set_weight           (void *instance, double w1, double w2, double w3);
-void set_sub_link_frame_id(void *instance, int sub_link_id);
-void reset                (void *instance);
-void* call_api            (void *instance, void *chain);
+void* rkIKRegSelect_init                (void **instance);
+void rkIKRegSelect_select_com           (void *instance);
+bool rkIKRegSelect_com                  (void *instance);
+void rkIKRegSelect_select_link          (void *instance);
+bool rkIKRegSelect_link                 (void *instance);
+bool rkIKRegSelect_select_link_ap       (void *instance);
+bool rkIKRegSelect_link_ap              (void *instance);
+bool rkIKRegSelect_select_pos           (void *instance);
+bool rkIKRegSelect_pos                  (void *instance);
+bool rkIKRegSelect_select_att           (void *instance);
+bool rkIKRegSelect_att                  (void *instance);
+bool rkIKRegSelect_select_am            (void *instance);
+bool rkIKRegSelect_am                   (void *instance);
+bool rkIKRegSelect_select_wld_frame     (void *instance);
+bool rkIKRegSelect_wld_frame            (void *instance);
+bool rkIKRegSelect_select_sub_link_frame(void *instance);
+bool rkIKRegSelect_sub_link_frame       (void *instance);
+bool rkIKRegSelect_select_force         (void *instance);
+bool rkIKRegSelect_force                (void *instance);
+bool rkIKRegSelect_select_weight        (void *instance);
+bool rkIKRegSelect_weight               (void *instance);
+void rkIKRegSelect_set_link_id          (void *instance, int link_id);
+void rkIKRegSelect_set_ap               (void *instance, double v1, double v2, double v3);
+void rkIKRegSelect_set_weight           (void *instance, double w1, double w2, double w3);
+void rkIKRegSelect_set_sub_link_frame_id(void *instance, int sub_link_id);
+void rkIKRegSelect_reset                (void *instance);
+void* rkIKRegSelect_call_api            (void *instance, void *chain);
 
-static rkIKAttrSelectClass rkIKAttrSelectClassImpl = {
-  init,
-  select_com,
-  com,
-  select_link,
-  link,
-  select_link_ap,
-  link_ap,
-  select_pos,
-  pos,
-  select_att,
-  att,
-  select_am,
-  am,
-  select_wld_frame,
-  wld_frame,
-  select_sub_link_frame,
-  sub_link_frame,
-  select_force,
-  force,
-  select_weight,
-  weight,
-  set_link_id,
-  set_ap,
-  set_weight,
-  set_sub_link_frame_id,
-  reset,
-  call_api
+static rkIKRegSelectClass rkIKRegSelectClassImpl = {
+  rkIKRegSelect_init,
+  rkIKRegSelect_select_com,
+  rkIKRegSelect_com,
+  rkIKRegSelect_select_link,
+  rkIKRegSelect_link,
+  rkIKRegSelect_select_link_ap,
+  rkIKRegSelect_link_ap,
+  rkIKRegSelect_select_pos,
+  rkIKRegSelect_pos,
+  rkIKRegSelect_select_att,
+  rkIKRegSelect_att,
+  rkIKRegSelect_select_am,
+  rkIKRegSelect_am,
+  rkIKRegSelect_select_wld_frame,
+  rkIKRegSelect_wld_frame,
+  rkIKRegSelect_select_sub_link_frame,
+  rkIKRegSelect_sub_link_frame,
+  rkIKRegSelect_select_force,
+  rkIKRegSelect_force,
+  rkIKRegSelect_select_weight,
+  rkIKRegSelect_weight,
+  rkIKRegSelect_set_link_id,
+  rkIKRegSelect_set_ap,
+  rkIKRegSelect_set_weight,
+  rkIKRegSelect_set_sub_link_frame_id,
+  rkIKRegSelect_reset,
+  rkIKRegSelect_call_api
 };
 
 
@@ -136,7 +136,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegister ){
 
 /**/
 
-void* init(void** instance)
+void* rkIKRegSelect_init(void** instance)
 {
   rkIKRegister* reg = (rkIKRegister*)(*instance);
   reg = zAlloc( rkIKRegister, 1 );
@@ -144,57 +144,57 @@ void* init(void** instance)
   return reg;
 }
 
-void select_com(void* instance){
+void rkIKRegSelect_select_com(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_target = RK_IK_TARGET_COM;
 }
 
-bool com(void* instance){
+bool rkIKRegSelect_com(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_target == RK_IK_TARGET_COM);
 }
 
-void select_link(void* instance){
+void rkIKRegSelect_select_link(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_target = RK_IK_TARGET_LINK;
 }
 
-bool link(void* instance){
+bool rkIKRegSelect_link(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_target == RK_IK_TARGET_LINK);
 }
 
-bool select_link_ap(void* instance){
+bool rkIKRegSelect_select_link_ap(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_target = RK_IK_TARGET_LINK_AP;
   return true;
 }
 
-bool link_ap(void* instance){
+bool rkIKRegSelect_link_ap(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_target == RK_IK_TARGET_LINK_AP);
 }
 
-bool select_pos(void* instance){
+bool rkIKRegSelect_select_pos(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_quantity = RK_IK_TARGET_QUANTITY_POS;
   return true;
 }
 
-bool pos(void* instance){
+bool rkIKRegSelect_pos(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_quantity == RK_IK_TARGET_QUANTITY_POS);
 }
 
-bool select_att(void* instance){
+bool rkIKRegSelect_select_att(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   if( sel->_target == RK_IK_TARGET_COM ) return false; /* validation */
@@ -202,39 +202,39 @@ bool select_att(void* instance){
   return true;
 }
 
-bool att(void* instance){
+bool rkIKRegSelect_att(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_quantity == RK_IK_TARGET_QUANTITY_ATT);
 }
 
-bool select_am(void* instance){
+bool rkIKRegSelect_select_am(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_quantity = RK_IK_TARGET_QUANTITY_AM;
   return true;
 }
 
-bool am(void* instance){
+bool rkIKRegSelect_am(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_quantity == RK_IK_TARGET_QUANTITY_AM);
 }
 
-bool select_wld_frame(void* instance){
+bool rkIKRegSelect_select_wld_frame(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_ref_frame = RK_IK_REF_FRAME_WLD;
   return true;
 }
 
-bool wld_frame(void* instance){
+bool rkIKRegSelect_wld_frame(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_ref_frame == RK_IK_REF_FRAME_WLD);
 }
 
-bool select_sub_link_frame(void* instance){
+bool rkIKRegSelect_select_sub_link_frame(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   if( sel->_target == RK_IK_TARGET_COM ) return false; /* validation */
@@ -243,33 +243,33 @@ bool select_sub_link_frame(void* instance){
   return true;
 }
 
-bool sub_link_frame(void* instance){
+bool rkIKRegSelect_sub_link_frame(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_ref_frame == RK_IK_REF_FRAME_SUB_LINK);
 }
 
-bool select_force(void* instance){
+bool rkIKRegSelect_select_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_priority = RK_IK_PRIORITY_FORCE;
   return true;
 }
 
-bool force(void* instance){
+bool rkIKRegSelect_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_priority == RK_IK_PRIORITY_FORCE);
 }
 
-bool select_weight(void* instance){
+bool rkIKRegSelect_select_weight(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_priority = RK_IK_PRIORITY_WEIGHT;
   return true;
 }
 
-bool weight(void* instance){
+bool rkIKRegSelect_weight(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   return (sel->_priority == RK_IK_PRIORITY_WEIGHT);
@@ -277,25 +277,25 @@ bool weight(void* instance){
 
 /**/
 
-void set_link_id(void* instance, int link_id){
+void rkIKRegSelect_set_link_id(void* instance, int link_id){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKAttr* attr = &reg->_attr;
   attr->id = link_id;
 }
 
-void set_ap(void* instance, double v1, double v2, double v3){
+void rkIKRegSelect_set_ap(void* instance, double v1, double v2, double v3){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKAttr* attr = &reg->_attr;
   rkIKAttrSetAP( attr, v1, v2, v3 );
 }
 
-void set_weight(void* instance, double w1, double w2, double w3){
+void rkIKRegSelect_set_weight(void* instance, double w1, double w2, double w3){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKAttr* attr = &reg->_attr;
   rkIKAttrSetWeight( attr, w1, w2, w3 );
 }
 
-void set_sub_link_frame_id(void* instance, int sub_link_id){
+void rkIKRegSelect_set_sub_link_frame_id(void* instance, int sub_link_id){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKAttr* attr = &reg->_attr;
   attr->id_sub = sub_link_id;
@@ -303,7 +303,7 @@ void set_sub_link_frame_id(void* instance, int sub_link_id){
 
 /**/
 
-void reset(void *instance){
+void rkIKRegSelect_reset(void *instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable defalut_sel = {RK_IK_TARGET_NONE, RK_IK_TARGET_QUANTITY_NONE, RK_IK_REF_FRAME_NONE, RK_IK_PRIORITY_NONE};
   zCopy( rkIKRegSelectable, &defalut_sel, &reg->_sel );
@@ -388,7 +388,7 @@ int mask_factory(void* instance){
   return mask;
 }
 
-void* call_api(void* instance, void* chain){
+void* rkIKRegSelect_call_api(void* instance, void* chain){
   _rkIKLookup *lookup = api_factory( instance );
   if( lookup == NULL )
     return NULL;
@@ -412,7 +412,7 @@ int main(int argc, char *argv[])
   bool force, weight;
 
   void* instance = NULL;
-  rkIKAttrSelectClass* test = &rkIKAttrSelectClassImpl;
+  rkIKRegSelectClass* test = &rkIKRegSelectClassImpl;
 
   test->init( &instance );
   /**/
@@ -421,25 +421,27 @@ int main(int argc, char *argv[])
   link = test->link( instance );
   link_ap  = test->link_ap( instance );
   printf("select_com\n");
-  printf("  com  = %d\n", com);
-  printf("  link = %d\n", link);
-  printf("  link_ap  = %d\n", link_ap);
+  printf("  com     = %d\n", com);
+  printf("  link    = %d\n", link);
+  printf("  link_ap = %d\n", link_ap);
   /**/
   test->select_link( instance );
   com  = test->com( instance );
   link = test->link( instance );
   link_ap  = test->link_ap( instance );
   printf("select_link\n");
-  printf("  com  = %d\n", com);
-  printf("  link = %d\n", link);
-  printf("  link_ap  = %d\n", link_ap);
+  printf("  com     = %d\n", com);
+  printf("  link    = %d\n", link);
+  printf("  link_ap = %d\n", link_ap);
   /**/
   test->select_link_ap( instance );
+  com  = test->com( instance );
+  link = test->link( instance );
   link_ap  = test->link_ap( instance );
   printf("select_link\n");
-  printf("  com  = %d\n", com);
-  printf("  link = %d\n", link);
-  printf("  link_ap  = %d\n", link_ap);
+  printf("  com     = %d\n", com);
+  printf("  link    = %d\n", link);
+  printf("  link_ap = %d\n", link_ap);
   /**/
   test->select_pos( instance );
   pos = test->pos( instance );
