@@ -24,13 +24,16 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   bool (*select_weight        )(void*);
   bool (*weight               )(void*);
   void (*set_link_id          )(void*,int);
+  int  (*get_link_id          )(void*);
   void (*set_ap               )(void*,double,double,double);
+  void (*get_ap               )(void*,double*,double*,double*);
   void (*set_weight           )(void*,double,double,double);
+  void (*get_weight           )(void*,double*,double*,double*);
   void (*set_sub_link_frame_id)(void*,int);
+  int  (*get_sub_link_frame_id)(void*);
   void (*reset                )(void*);
   void* (*call_api            )(void*,void*);
 };
-
 
 /* declaration */
 void* rkIKRegSelect_init                (void **instance);
@@ -55,9 +58,13 @@ bool rkIKRegSelect_force                (void *instance);
 bool rkIKRegSelect_select_weight        (void *instance);
 bool rkIKRegSelect_weight               (void *instance);
 void rkIKRegSelect_set_link_id          (void *instance, int link_id);
+int  rkIKRegSelect_get_link_id          (void *instance);
 void rkIKRegSelect_set_ap               (void *instance, double v1, double v2, double v3);
+void rkIKRegSelect_get_ap               (void *instance, double *v1, double *v2, double *v3);
 void rkIKRegSelect_set_weight           (void *instance, double w1, double w2, double w3);
+void rkIKRegSelect_get_weight           (void *instance, double *w1, double *w2, double *w3);
 void rkIKRegSelect_set_sub_link_frame_id(void *instance, int sub_link_id);
+int  rkIKRegSelect_get_sub_link_frame_id(void *instance);
 void rkIKRegSelect_reset                (void *instance);
 void* rkIKRegSelect_call_api            (void *instance, void *chain);
 
@@ -84,13 +91,16 @@ static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_select_weight,
   rkIKRegSelect_weight,
   rkIKRegSelect_set_link_id,
+  rkIKRegSelect_get_link_id,
   rkIKRegSelect_set_ap,
+  rkIKRegSelect_get_ap,
   rkIKRegSelect_set_weight,
+  rkIKRegSelect_get_weight,
   rkIKRegSelect_set_sub_link_frame_id,
+  rkIKRegSelect_get_sub_link_frame_id,
   rkIKRegSelect_reset,
   rkIKRegSelect_call_api
 };
-
 
 /* implement .c (capsuled) ------------------------------------------------ */
 
@@ -283,10 +293,23 @@ void rkIKRegSelect_set_link_id(void* instance, int link_id){
   attr->id = link_id;
 }
 
+int rkIKRegSelect_get_link_id(void *instance){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  return reg->_attr.id;
+}
+
 void rkIKRegSelect_set_ap(void* instance, double v1, double v2, double v3){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKAttr* attr = &reg->_attr;
   rkIKAttrSetAP( attr, v1, v2, v3 );
+}
+
+void rkIKRegSelect_get_ap(void *instance, double *v1, double *v2, double *v3){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttr* attr = &reg->_attr;
+  *v1 = attr->ap.c.x;
+  *v2 = attr->ap.c.y;
+  *v3 = attr->ap.c.z;
 }
 
 void rkIKRegSelect_set_weight(void* instance, double w1, double w2, double w3){
@@ -295,10 +318,23 @@ void rkIKRegSelect_set_weight(void* instance, double w1, double w2, double w3){
   rkIKAttrSetWeight( attr, w1, w2, w3 );
 }
 
+void rkIKRegSelect_get_weight(void *instance, double *w1, double *w2, double *w3){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  rkIKAttr* attr = &reg->_attr;
+  *w1 = attr->w.c.x;
+  *w2 = attr->w.c.y;
+  *w3 = attr->w.c.z;
+}
+
 void rkIKRegSelect_set_sub_link_frame_id(void* instance, int sub_link_id){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKAttr* attr = &reg->_attr;
   attr->id_sub = sub_link_id;
+}
+
+int rkIKRegSelect_get_sub_link_frame_id(void *instance){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  return reg->_attr.id_sub;
 }
 
 /**/
@@ -499,14 +535,30 @@ int main(int argc, char *argv[])
   printf("  force  = %d\n", force);
   printf("  weight = %d\n", weight);
   /**/
+  int in_link_id=1;
+  int out_link_id;
+  double in_ap_x=0.1, in_ap_y=0.2, in_ap_z=0.3;
+  double out_ap_x, out_ap_y, out_ap_z;
+  double in_wx=0.01, in_wy=0.02, in_wz=0.03;
+  double out_wx, out_wy, out_wz;
+  int in_sub_link_frame_id=6;
+  int out_sub_link_frame_id;
   printf("set_link_id\n");
-  test->set_link_id( instance, 0 );
+  test->set_link_id( instance, in_link_id );
+  out_link_id = test->get_link_id( instance );
+  printf("  set/get OK? = %d : link_id = %d\n", (in_link_id==out_link_id), out_link_id);
   printf("set_ap\n");
-  test->set_ap( instance, 0.1, 0.2, 0.3 );
+  test->set_ap( instance, in_ap_x, in_ap_y, in_ap_z );
+  test->get_ap( instance, &out_ap_x, &out_ap_y, &out_ap_z);
+  printf("  set/get OK? = %d : v1 = %.2f, v2 = %.2f, v3 = %.2f\n", ((in_ap_x==out_ap_x) && (in_ap_y==out_ap_y) && (in_ap_z==out_ap_z)), out_ap_x, out_ap_y, out_ap_z);
   printf("set_weight\n");
-  test->set_weight( instance, 0.01, 0.01, 0.01 );
+  test->set_weight( instance, in_wx, in_wy, in_wz );
+  test->get_weight( instance, &out_wx, &out_wy, &out_wz);
+  printf("  set/get OK? = %d : w1 = %.2f, w2 = %.2f, w3 = %.2f\n", ((in_wx==out_wx) && (in_wy==out_wy) && (in_wz==out_wz)), out_wx, out_wy, out_wz);
   printf("set_sub_link_frame_id\n");
-  test->set_sub_link_frame_id( instance, 6 );
+  test->set_sub_link_frame_id( instance, in_sub_link_frame_id );
+  out_sub_link_frame_id = test->get_sub_link_frame_id( instance );
+  printf("  set/get OK? = %d : sub_link_frame_id = %d\n", (in_sub_link_frame_id==out_sub_link_frame_id), out_sub_link_frame_id);
   /**/
   void* chain = NULL;
   /* use wrapper as possible */
