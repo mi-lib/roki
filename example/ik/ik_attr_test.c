@@ -3,6 +3,8 @@
 /* header .h -------------------------------------------------------------- */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   void* (*init                )(void**);
+  void (*copy                 )(void*,void*);
+  void (*free                 )(void**);
   void (*select_com           )(void*);
   bool (*com                  )(void*);
   void (*select_link          )(void*);
@@ -36,6 +38,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
 
 /* declaration */
 void* rkIKRegSelect_init                (void **instance);
+void rkIKRegSelect_copy                 (void *src, void *dest);
+void rkIKRegSelect_free                 (void **instance);
 void rkIKRegSelect_select_com           (void *instance);
 bool rkIKRegSelect_com                  (void *instance);
 void rkIKRegSelect_select_link          (void *instance);
@@ -68,6 +72,8 @@ bool rkIKRegSelect_call_unreg_api       (void *chain, void* cell);
 
 static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_init,
+  rkIKRegSelect_copy,
+  rkIKRegSelect_free,
   rkIKRegSelect_select_com,
   rkIKRegSelect_com,
   rkIKRegSelect_select_link,
@@ -150,6 +156,18 @@ void* rkIKRegSelect_init(void** instance)
   *instance = (void*)(reg);
 
   return instance;
+}
+
+void rkIKRegSelect_copy(void* src, void* dest)
+{
+  zCopy( rkIKRegister, (rkIKRegister*)(src), (rkIKRegister*)(dest) );
+}
+
+void rkIKRegSelect_free(void **instance)
+{
+  rkIKRegister* reg = (rkIKRegister*)(*instance);
+  zFree( reg );
+  *instance = NULL;
 }
 
 void rkIKRegSelect_select_com(void* instance){
@@ -621,7 +639,15 @@ int main(int argc, char *argv[])
   is_unreg_ok = test->unreg( chain, cell_comam );
   printf("  unreg %s\n", (is_unreg_ok ? "OK." : "NG!!"));
 
-  zFree( instance );
+  void* copy_instance = NULL;
+  test->init( &copy_instance );
+  test->copy( instance, copy_instance );
+  int src_link_id = test->get_link_id( instance );
+  int copy_link_id = test->get_link_id( copy_instance );
+  printf("copy %s\n", (src_link_id==copy_link_id ? "OK." : "NG!"));
+  test->free( &instance );
+  test->free( &copy_instance );
+  printf("free %s\n", (instance==NULL ? "OK." : "NG!"));
   rkChainDestroy( (rkChain*)(chain) );
   return 0;
 }
