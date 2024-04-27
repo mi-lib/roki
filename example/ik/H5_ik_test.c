@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
   rkChainIKConfReadZTK( &robot, H5_ZTK );
   q = zVecAlloc( rkChainJointSize(&robot) );
   for( i=0; i<6; i++ )
-    entry[i] = rkChainFindIKCell( &robot, i );
+    entry[i] = rkChainFindIKCellID( &robot, i );
   fout_vs = fopen( "walk.zvs", "w" );
   fout_cs = fopen( "walk.zcs", "w" );
   for( i=0; i<DIV; i++ ) step1( fout_vs, fout_cs, T*i/DIV, &robot, entry, q );
