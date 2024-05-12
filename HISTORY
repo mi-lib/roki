@@ -1,3 +1,4 @@
+2024. 5.13. Put config.app in app. [app]
 2024. 4.21. Fixed joint_test.c (thanks to Daishi Kaneta). [test]
 2024. 3.31. Modified C++ interfaces to rkLink. [rk_link]
 2024. 3.31. Corrected header files to include in some source files. [rk_chain, rk_ik_cell, rk_ik, rk_ik_seq, rk_ik_imp]

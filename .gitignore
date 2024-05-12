@@ -8,4 +8,5 @@ tools/*
 app/*
 !app/*.c
 !app/makefile
+!app/config.app
 .vscode/*
