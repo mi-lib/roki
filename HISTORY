@@ -1,3 +1,5 @@
+2024. 5.13. Added DEPENDENCY in config.app. [app]
+2024. 5.13. Added STD in config.org. [config]
 2024. 5.13. Put config.app in app. [app]
 2024. 4.21. Fixed joint_test.c (thanks to Daishi Kaneta). [test]
 2024. 3.31. Modified C++ interfaces to rkLink. [rk_link]
