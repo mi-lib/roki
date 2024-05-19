@@ -90,7 +90,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
   zVec _c_we;               /* weight on residual constraint error */
   zVec (*_solve_eq)(rkIK*); /* motion constraint equation solver */
   /* workspace for motion constraint equation solver */
-  zLE __le;
+  zLEWorkspace __le;
   zVec __c;
   /*! \endcond */
 };
@@ -113,6 +113,17 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
  */
 __ROKI_EXPORT rkChain *rkChainCreateIK(rkChain *chain);
 __ROKI_EXPORT void rkChainDestroyIK(rkChain *chain);
+
+/*! \brief clone an inverse kinematics solver of a kinematic chain.
+ *
+ * rkChainCloneIK() clones an inverse kinematics solver of a kinematic chain \a src
+ * and set it in another kinematic chain \a dest.
+ * \return
+ * rkChainCloneIK() returns the boolean value. If it succeeds to duplicate the
+ * inverse kinematics solver, the true value is returned. Otherwise, the false
+ * value is returned.
+ */
+__ROKI_EXPORT bool rkChainCloneIK(rkChain *src, rkChain *dest);
 
 /*! \brief register/unregister cooperating joints of the inverse kinematics.
  *

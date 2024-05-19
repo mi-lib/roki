@@ -1,3 +1,6 @@
+2024. 5.19. Modified rkChainClone to duplicate the inverse kinematics solver by using rkChainCloneIK. [rk_chain]
+2024. 5.19. Added _rkIKClone and rkChainCloneIK. [rk_ik]
+2024. 5.19. Reflected renaming of zLEWorkspace. [rk_ik]
 2024. 5.13. Added DEPENDENCY in config.app. [app]
 2024. 5.13. Added STD in config.org. [config]
 2024. 5.13. Put config.app in app. [app]

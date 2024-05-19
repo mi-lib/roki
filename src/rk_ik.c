@@ -32,7 +32,7 @@ static void _rkIKInit(rkIK *ik)
   ik->_c_we = NULL;
   ik->_solve_eq = rkIKSolveEqED; /* default motion constraint solver */
   ik->__c = NULL;
-  zLEInit( &ik->__le );
+  zLEWorkspaceInit( &ik->__le );
 }
 
 /* create an inverse kinematics solver for a kinematic chain. */
@@ -53,7 +53,7 @@ rkChain *rkChainCreateIK(rkChain *chain)
   chain->_ik->_j_ofs = zIndexCreate( rkChainLinkNum(chain) );
   chain->_ik->_c_mat_cell = zMatAlloc( 3, rkChainJointSize(chain) );
   if( !chain->_ik->joint_sw || !chain->_ik->joint_weight ||
-      !chain->_ik->joint_vec || !chain->_ik->_c_mat_cell ){
+      !chain->_ik->joint_vec || !chain->_ik->_j_ofs || !chain->_ik->_c_mat_cell ){
     ZALLOCERROR();
     rkChainDestroyIK( chain );
     return NULL;
@@ -80,7 +80,7 @@ static void _rkIKDestroy(rkIK *ik)
   zVecFree( ik->_c_we );
   ik->_solve_eq = NULL;
   zVecFree( ik->__c );
-  zLEFree( &ik->__le );
+  zLEWorkspaceFree( &ik->__le );
 }
 
 /* destroy an inverse kinematics solver of a kinematic chain. */
@@ -90,6 +90,57 @@ void rkChainDestroyIK(rkChain *chain)
     _rkIKDestroy( chain->_ik );
     zFree( chain->_ik );
   }
+}
+
+/* clone an inverse kinematics solver. */
+static rkIK *_rkIKClone(rkIK *src)
+{
+  rkIK *cln;
+
+  if( !( cln = zAlloc( rkIK, 1 ) ) ){
+    ZALLOCERROR();
+    return NULL;
+  }
+  _rkIKInit( cln );
+  cln->joint_sw = zClone( src->joint_sw, sizeof(bool)*zIndexSizeNC(src->_j_ofs) );
+  cln->joint_weight = zClone( src->joint_weight, sizeof(double)*zIndexSizeNC(src->_j_ofs) );
+  if( !cln->joint_sw || !cln->joint_weight ){
+    ZALLOCERROR();
+    goto FAILURE;
+  }
+  cln->joint_vec = zVecClone( src->joint_vec );
+  cln->eval = src->eval;
+  cln->_c_mat_cell = zMatClone( src->_c_mat_cell );
+  zVec3DCopy( &src->_c_vec_cell, &cln->_c_vec_cell );
+  cln->_j_idx = zIndexClone( src->_j_idx );
+  cln->_j_ofs = zIndexClone( src->_j_ofs );
+  cln->_j_vec = zVecClone( src->_j_vec );
+  cln->_j_wn = zVecClone( src->_j_wn );
+  cln->_c_mat = zMatClone( src->_c_mat );
+  cln->_c_vec = zVecClone( src->_c_vec );
+  cln->_c_we = zVecClone( src->_c_we );
+  cln->_solve_eq = src->_solve_eq;
+  cln->__c = zVecClone( src->__c );
+  if( !cln->joint_vec || !cln->_c_mat_cell || !cln->_j_idx || !cln->_j_ofs ||
+      !cln->_j_vec || !cln->_j_wn || !cln->_c_mat || !cln->_c_vec || !cln->_c_we || !cln->__c ||
+      !zLEWorkspaceClone( &src->__le, &cln->__le ) )
+    goto FAILURE;
+  zListDup( rkIKCell, &src->clist, &cln->clist );
+  if( zListSize( &cln->clist ) != zListSize( &src->clist ) ) goto FAILURE;
+  return cln;
+
+ FAILURE:
+  _rkIKDestroy( cln );
+  free( cln );
+  return NULL;
+}
+
+/* clone an inverse kinematics solver of a kinematic chain. */
+bool rkChainCloneIK(rkChain *src, rkChain *dest)
+{
+  if( src->_ik )
+    if( !( dest->_ik = _rkIKClone( src->_ik ) ) ) return false;
+  return true;
 }
 
 /* allocate working memory for constraint coefficient matrix of inverse kinematics solver. */
@@ -127,11 +178,11 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
   /* allocate joint vector */
   zVecFree( ik->_j_vec );
   zVecFree( ik->_j_wn );
-  zLEFree( &ik->__le );
+  zLEWorkspaceFree( &ik->__le );
   count = rkChainJointIndexSize( chain, ik->_j_idx );
   if( !( ik->_j_vec = zVecAlloc(count) ) ||
       !( ik->_j_wn = zVecAlloc(count) ) ||
-      !zLEAlloc( &ik->__le, NULL, count ) ) return false;
+      !zLEWorkspaceAlloc( &ik->__le, NULL, count ) ) return false;
   for( wp=zVecBuf(ik->_j_wn), i=0; i<zArraySize(ik->_j_idx); i++ )
     for( j=0; j<rkChainLinkJointDOF(chain,zIndexElemNC(ik->_j_idx,i)); j++ )
       *wp++ = ik->joint_weight[zIndexElemNC(ik->_j_idx,i)];

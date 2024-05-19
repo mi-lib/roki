@@ -63,7 +63,8 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
   if( !rkLinkArrayClone( rkChainLinkArray(org), rkChainLinkArray(cln), rkChainShape(org), rkChainShape(cln), rkChainMotorSpecArray(org), rkChainMotorSpecArray(cln) ) )
     return NULL;
   rkChainCopyState( org, cln );
-  /* TODO: clone IK */
+  if( !rkChainCloneIK( org, cln ) )
+    return NULL;
   return cln;
 }
 
