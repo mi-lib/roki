@@ -820,12 +820,12 @@ zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl)
 }
 
 /* generate the bounding ball of a kinematic chain. */
-zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb)
+zSphere3D *rkChainBoundingBall(rkChain *chain, zSphere3D *bb)
 {
   zVec3DList pl;
 
   if( rkChainVertList( chain, &pl ) )
-    zBBall3DPL( bb, &pl, NULL );
+    zBoundingBall3DPL( bb, &pl, NULL );
   else
     bb = NULL;
   zVec3DListDestroy( &pl );

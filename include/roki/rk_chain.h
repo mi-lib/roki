@@ -722,13 +722,13 @@ __ROKI_EXPORT zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl);
 
 /*! \brief generate the bounding ball of a kinematic chain.
  *
- * rkChainBBall() generates the bounding ball of a kinematic chain
+ * rkChainBoundingBall() generates the bounding ball of a kinematic chain
  * \a chain. The result is stored in \a bb.
  * \return
- * rkChainBBall() returns a pointer \a bb if succeeds. Otherwise,
+ * rkChainBoundingBall() returns a pointer \a bb if succeeds. Otherwise,
  * the null pointer is returned.
  */
-__ROKI_EXPORT zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb);
+__ROKI_EXPORT zSphere3D *rkChainBoundingBall(rkChain *chain, zSphere3D *bb);
 
 /* ZTK */
 
@@ -860,7 +860,7 @@ inline bool rkChain::getInertiaMatBiasVec(zMat inertia, zVec bias){ return rkCha
 inline zVec6D *rkChain::netExternalWrench(zVec6D *wrench){ return rkChainNetExtWrench( this, wrench ); }
 inline void rkChain::destroyExternalWrench(){ rkChainExtWrenchDestroy( this ); }
 
-inline zSphere3D *rkChain::getBoundingBall(zSphere3D *bb){ return rkChainBBall( this, bb ); }
+inline zSphere3D *rkChain::getBoundingBall(zSphere3D *bb){ return rkChainBoundingBall( this, bb ); }
 
 inline rkChain *rkChain::fromZTK(ZTK *ztk){ return rkChainFromZTK( this, ztk ); }
 inline void rkChain::fprintZTK(FILE *fp){ rkChainFPrintZTK( fp, this ); }

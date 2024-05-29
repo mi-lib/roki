@@ -1,3 +1,6 @@
+2024. 5.29. Reflected renaming of zCH3DPL to zConvexHull3DPL. [rk_cd, app]
+2024. 5.29. Reflected renaming of zBBall3D to zBoundingBall3D, and renamed rkChainBBall to rkChainBoundingBall. [rk_chain]
+2024. 5.29. Changed the license from LGPL-3 to MIT license. [all]
 2024. 5.19. Modified rkChainClone to duplicate the inverse kinematics solver by using rkChainCloneIK. [rk_chain]
 2024. 5.19. Added _rkIKClone and rkChainCloneIK. [rk_ik]
 2024. 5.19. Reflected renaming of zLEWorkspace. [rk_ik]

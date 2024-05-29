@@ -29,15 +29,15 @@ void output(rkChain *chain, zSphere3D *bb)
 int main(int argc, char *argv[])
 {
   rkChain chain;
-  zSphere3D bball;
+  zSphere3D bb;
 
   if( argc < 2 ){
     eprintf( "Usage %s [.ztk file]\n", argv[0] );
     return 1;
   }
   if( !rkChainReadZTK( &chain, argv[1] ) ) return 1;
-  rkChainBBall( &chain, &bball );
-  output( &chain, &bball );
+  rkChainBoundingBall( &chain, &bb );
+  output( &chain, &bb );
   rkChainDestroy( &chain );
   return 0;
 }

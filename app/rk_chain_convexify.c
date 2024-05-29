@@ -2,6 +2,7 @@
  *
  * 2023. 6. 2. Originally developed by Kenta Imanishi.
  * 2023. 6. 4. Modified by Tom Sugihara.
+ * 2024. 5.29. Last updated by Tom Sugihara.
  */
 
 #include <roki/roki.h>
@@ -105,7 +106,7 @@ bool rcc_replace_link_shape(rkChain *chain)
     zNameSet( &shape, rkChainLinkName(chain,i) );
     /* create the convex hull from vertices. */
     if( option[RCC_VERBOSE].flag ) eprintf( "comvexify %s.\n", rkChainLinkName(chain,i) );
-    zCH3DPL( zShape3DPH(&shape), &vl );
+    zConvexHull3DPL( zShape3DPH(&shape), &vl );
     zVec3DListDestroy( &vl );
     zArrayAdd( &shape_array, zShape3D, &shape );
   }
