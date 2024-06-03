@@ -102,8 +102,8 @@ static rkIK *_rkIKClone(rkIK *src)
     return NULL;
   }
   _rkIKInit( cln );
-  cln->joint_sw = zClone( src->joint_sw, sizeof(bool)*zIndexSizeNC(src->_j_ofs) );
-  cln->joint_weight = zClone( src->joint_weight, sizeof(double)*zIndexSizeNC(src->_j_ofs) );
+  cln->joint_sw = zClone( src->joint_sw, bool, zIndexSizeNC(src->_j_ofs) );
+  cln->joint_weight = zClone( src->joint_weight, double, zIndexSizeNC(src->_j_ofs) );
   if( !cln->joint_sw || !cln->joint_weight ){
     ZALLOCERROR();
     goto FAILURE;
