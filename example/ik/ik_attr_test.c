@@ -5,9 +5,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   void* (*init                )(void**);
   void (*copy                 )(void*,void*);
   void (*free                 )(void**);
-  void (*select_com           )(void*);
+  bool (*select_com           )(void*);
   bool (*com                  )(void*);
-  void (*select_link          )(void*);
+  bool (*select_link          )(void*);
   bool (*link                 )(void*);
   bool (*select_pos           )(void*);
   bool (*pos                  )(void*);
@@ -40,9 +40,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
 void* rkIKRegSelect_init                (void **instance);
 void rkIKRegSelect_copy                 (void *src, void *dest);
 void rkIKRegSelect_free                 (void **instance);
-void rkIKRegSelect_select_com           (void *instance);
+bool rkIKRegSelect_select_com           (void *instance);
 bool rkIKRegSelect_com                  (void *instance);
-void rkIKRegSelect_select_link          (void *instance);
+bool rkIKRegSelect_select_link          (void *instance);
 bool rkIKRegSelect_link                 (void *instance);
 bool rkIKRegSelect_select_pos           (void *instance);
 bool rkIKRegSelect_pos                  (void *instance);
@@ -170,10 +170,11 @@ void rkIKRegSelect_free(void **instance)
   *instance = NULL;
 }
 
-void rkIKRegSelect_select_com(void* instance){
+bool rkIKRegSelect_select_com(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_target = RK_IK_TARGET_COM;
+  return true;
 }
 
 bool rkIKRegSelect_com(void* instance){
@@ -182,10 +183,11 @@ bool rkIKRegSelect_com(void* instance){
   return (sel->_target == RK_IK_TARGET_COM);
 }
 
-void rkIKRegSelect_select_link(void* instance){
+bool rkIKRegSelect_select_link(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   rkIKRegSelectable* sel = &reg->_sel;
   sel->_target = RK_IK_TARGET_LINK;
+  return true;
 }
 
 bool rkIKRegSelect_link(void* instance){
