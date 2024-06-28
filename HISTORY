@@ -1,3 +1,5 @@
+2024. 6.28. Debugged rkChainFPrintZTK and _rkChainInitFPrintZTK for cases with empty links. [rk_chain]
+2024. 6.28. Modified rkChainFromZTK to accept ZTK files without link-tag fields. [rk_chain, rk_errmsg]
 2024. 6. 3. Reflected new specification of zClone. [rk_ik]
 2024. 5.31. Removed test.sh. [test]
 2024. 5.29. Reflected renaming of zCH3DPL to zConvexHull3DPL. [rk_cd, app]

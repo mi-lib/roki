@@ -915,7 +915,8 @@ static void _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
   int k;
   rkLink *link;
 
-  ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_initkey );
+  if( rkChainLinkNum((rkChain*)obj) > 0 )
+    ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_initkey );
   for( k=0; k<rkChainLinkNum((rkChain*)obj); k++ ){
     link = rkChainLink((rkChain*)obj,k);
     if( rkLinkJointDOF(link) == 0 || rkJointIsNeutral( rkLinkJoint(link) ) ) continue;
@@ -957,18 +958,27 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     if( !rkMotorSpecArrayAlloc( rkChainMotorSpecArray(chain), num_motor ) ) return NULL;
   if( ( num_link = ZTKCountTag( ztk, ZTK_TAG_RKLINK ) ) > 0 ){
     if( !rkLinkArrayAlloc( rkChainLinkArray(chain), num_link ) ) return NULL;
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_optic ); /* to skip [optic] fields */
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_shape ); /* to skip [shape] fields */
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_motor );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_link );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_connection );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain );
+    rkChainSetJointIDOffset( chain ); /* joint identifier offset value */
+    rkChainUpdateCRBMass( chain );
   } else{
-    ZRUNWARN( RK_WARN_CHAIN_EMPTY );
-    return NULL;
+    int i;
+    if( !rkChainShape(chain) ){
+      ZRUNWARN( RK_WARN_CHAIN_EMPTY );
+      return NULL;
+    }
+    ZRUNWARN( RK_WARN_CHAIN_SHAPE_ONLY );
+    if( !rkLinkArrayAlloc( rkChainLinkArray(chain), 1 ) ) return NULL;
+    rkLinkInit( rkChainRoot(chain) );
+    if( !rkJointAssignByStr(rkLinkJoint(rkChainRoot(chain)), "float" ) ) return NULL;
+    for( i=0; i<zMShape3DShapeNum(rkChainShape(chain)); i++ )
+      rkLinkShapePush( rkChainRoot(chain), zMShape3DShape(rkChainShape(chain),i) );
   }
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_optic );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_shape );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_motor );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_link );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_connection );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain );
-  rkChainSetJointIDOffset( chain ); /* joint identifier offset value */
-  rkChainUpdateCRBMass( chain );
   if( rkChainMass(chain) == 0 )
     rkChainSetMass( chain, 1.0 ); /* dummy weight */
   rkChainUpdateFK( chain );
@@ -985,9 +995,11 @@ void rkChainFPrintZTK(FILE *fp, rkChain *chain)
     zMShape3DFPrintZTK( fp, rkChainShape(chain) );
   if( zArraySize(rkChainMotorSpecArray(chain)) > 0 )
     rkMotorSpecArrayFPrintZTK( fp, rkChainMotorSpecArray(chain) );
-  rkLinkArrayFPrintZTK( fp, rkChainLinkArray(chain) );
-  fprintf( fp, "[%s]\n", ZTK_TAG_INIT );
-  _rkChainInitFPrintZTK( fp, 0, chain );
+  if( rkChainLinkNum(chain) > 0 ){
+    rkLinkArrayFPrintZTK( fp, rkChainLinkArray(chain) );
+    fprintf( fp, "[%s]\n", ZTK_TAG_INIT );
+    _rkChainInitFPrintZTK( fp, 0, chain );
+  }
 }
 
 /* read a ZTK file and create a new kinematic chain. */
