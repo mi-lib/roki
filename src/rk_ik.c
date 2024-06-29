@@ -538,11 +538,10 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     ZRUNERROR( RK_ERR_LINK_UNKNOWN, linkname );
     return NULL;
   }
-  if( w == 0 ){
-    rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link), 0, NULL, ztk );
-    return obj;
-  }
   if( rkLinkJointDOF(link) == 0 ) return NULL;
+  if( ZTKValPtr(ztk) )
+    rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link), 0, NULL, ztk );
+  if( w == 0 ) return obj;
   return rkChainRegIKJointID( (rkChain*)obj, link - rkChainRoot((rkChain*)obj), w ) ? obj : NULL;
 }
 static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk){

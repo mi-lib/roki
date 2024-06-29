@@ -1,3 +1,4 @@
+2024. 6.29. Modified _rkIKJointFromZTK to accept joint displacement when values are specified after the weight value. [rk_ik]
 2024. 6.29. Renamed rkChainDeactivateIK to rkChainDisableIK. [rk_ik, app]
 2024. 6.29. Redefined rkIKSeqListCellFree as a function. [rk_ik_seq]
 2024. 6.29. Abolished id member of rkIKEntry, and assigned Z_NAMED_CLASS to rkIKEntry. [rk_ik_seq]

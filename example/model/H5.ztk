@@ -1593,6 +1593,12 @@ joint: torso 0 0 1.029 0 0 0
 
 [ik]
 joint: torso                 0.001
+joint: left_shoulder_flexion     0 -30
+joint: left_shoulder_abduction   0  15
+joint: left_elbow_flexion        0  60
+joint: right_shoulder_flexion    0 -30
+joint: right_shoulder_abduction  0  15
+joint: right_elbow_flexion       0  60
 joint: left_hip_rotation     0.001
 joint: left_hip_abduction    0.001
 joint: left_hip_flexion      0.001
