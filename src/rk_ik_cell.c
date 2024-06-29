@@ -14,16 +14,16 @@
 /* initialize constraint cell. */
 void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
 {
-  rkIKCellID(cell) = -1; /* dummy identifier */
+  zNameSetPtr( &cell->data, NULL );
   rkIKCellLinkID(cell)  = attr && ( mask & RK_IK_ATTR_ID ) ? attr->id : 0;
   rkIKCellLinkID2(cell) = attr && ( mask & RK_IK_ATTR_ID_SUB ) ? attr->id_sub : 0;
-  if( attr && ( mask & RK_IK_ATTR_AP ) )
-    zVec3DCopy( &attr->ap, rkIKCellAP(cell) );
+  if( attr && ( mask & RK_IK_ATTR_ATTENTION_POINT ) )
+    zVec3DCopy( &attr->attention_point, rkIKCellAttentionPoint(cell) );
   else
-    zVec3DZero( rkIKCellAP(cell) );
+    zVec3DZero( rkIKCellAttentionPoint(cell) );
   rkIKCellMode(cell) = mask & RK_IK_ATTR_FORCE ? RK_IK_CELL_FORCE : 0;
   if( attr && ( mask & RK_IK_ATTR_WEIGHT ) )
-    zVec3DCopy( &attr->w, rkIKCellWeight(cell) );
+    zVec3DCopy( &attr->weight, rkIKCellWeight(cell) );
   else
     rkIKCellSetWeight( cell, 1.0, 1.0, 1.0 ); /* default weight on constraint*/
 
@@ -40,6 +40,43 @@ void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKC
   cell->data._util = util;
 }
 
+#define _RK_IK_CELL_ALLOC_FUNC(__name,__operation) \
+  rkIKCell *cell; \
+  if( !( cell = zAlloc( rkIKCell, 1 ) ) ){ \
+    ZALLOCERROR(); \
+    return NULL; \
+  } \
+  __operation; \
+  if( __name ){ \
+    zNameSet( &cell->data, __name ); \
+    if( !zNamePtr(&cell->data) ){ \
+      ZALLOCERROR(); \
+      zFree( cell ); \
+      return NULL; \
+    } \
+  } \
+  return cell
+
+/* create an IK cell. */
+rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
+{
+  _RK_IK_CELL_ALLOC_FUNC( name, rkIKCellInit( cell, attr, mask, rf, mf, vf, bf, af, util ) );
+}
+
+/* clone an IK cell. */
+rkIKCell *rkIKCellClone(rkIKCell *src)
+{
+  _RK_IK_CELL_ALLOC_FUNC( zNamePtr(&src->data), zCopy( rkIKCell, src, cell ) );
+}
+
+/* destroy an IK cell. */
+void rkIKCellDestroy(rkIKCell *cell)
+{
+  zNameFree( &cell->data );
+  rkIKCellInit( cell, NULL, 0x0, NULL, NULL, NULL, NULL, NULL, NULL );
+}
+
+/* zero the accumulated error of a highly-prioritized IK constraint. */
 void rkIKCellAcmZero(rkIKCell *cell)
 {
   zVec3DZero( &cell->data.acm.ae.p );
@@ -75,7 +112,7 @@ void rkIKRefSetAA(rkIKRef *ref, double x, double y, double z)
 
 zMat rkIKJacobiLinkWldLin(rkChain *chain, rkIKAttr *attr, zMat j)
 { /* linear motion of a link in the world frame */
-  return rkChainLinkWldLinJacobi( chain, attr->id, &attr->ap, j );
+  return rkChainLinkWldLinJacobi( chain, attr->id, &attr->attention_point, j );
 }
 
 zMat rkIKJacobiLinkWldAng(rkChain *chain, rkIKAttr *attr, zMat j)
@@ -85,7 +122,7 @@ zMat rkIKJacobiLinkWldAng(rkChain *chain, rkIKAttr *attr, zMat j)
 
 zMat rkIKJacobiLinkL2LLin(rkChain *chain, rkIKAttr *attr, zMat j)
 { /* relative linear motion of a link with respect to another link */
-  return rkChainLinkToLinkLinJacobi( chain, attr->id, attr->id_sub, &attr->ap, j );
+  return rkChainLinkToLinkLinJacobi( chain, attr->id, attr->id_sub, &attr->attention_point, j );
 }
 
 zMat rkIKJacobiLinkL2LAng(rkChain *chain, rkIKAttr *attr, zMat j)
@@ -100,7 +137,7 @@ zMat rkIKJacobiCOM(rkChain *chain, rkIKAttr *attr, zMat j)
 
 zMat rkIKJacobiAM(rkChain *chain, rkIKAttr *attr, zMat j)
 { /* angular momentum about a point of a kinematic chain */
-  return rkChainAMMat( chain, &attr->ap, j );
+  return rkChainAMMat( chain, &attr->attention_point, j );
 }
 
 zMat rkIKJacobiAMCOM(rkChain *chain, rkIKAttr *attr, zMat j)
@@ -114,7 +151,7 @@ zVec3D *rkIKLinkWldPosErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *r
 { /* position error of a link in the world frame */
   zVec3D p;
 
-  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &p );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->attention_point, &p );
   return zVec3DSub( &ref->pos, &p, err );
 }
 
@@ -127,7 +164,7 @@ zVec3D *rkIKLinkL2LPosErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *r
 { /* position error of a link with respect to another link */
   zVec3D p;
 
-  zXform3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->ap, &p );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->attention_point, &p );
   zVec3DSubDRC( &p, rkChainLinkWldPos(chain,attr->id) );
   return zVec3DSub( &ref->pos, &p, err );
 }
@@ -149,7 +186,7 @@ zVec3D *rkIKCOMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVe
 
 zVec3D *rkIKAMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err)
 { /* angular momentum cancelleration */
-  rkChainAM( chain, &attr->ap, err );
+  rkChainAM( chain, &attr->attention_point, err );
   return zVec3DRevDRC( err );
 }
 
@@ -163,7 +200,7 @@ zVec3D *rkIKAMCOMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, z
 
 void rkIKBindLinkWldPos(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
 { /* current position of a link in the world frame */
-  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &ref->pos );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->attention_point, &ref->pos );
 }
 
 void rkIKBindLinkWldAtt(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
@@ -175,7 +212,7 @@ void rkIKBindLinkL2LPos(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref
 { /* current position of a link with respect to another link */
   zVec3D p;
 
-  zXform3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->ap, &p );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->attention_point, &p );
   zVec3DSub( &p, rkChainLinkWldPos(chain,attr->id), &ref->pos );
 }
 
@@ -192,7 +229,7 @@ void rkIKBindCOM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
 
 void rkIKBindAM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
 { /* current angular momentum about a point of a kinematic chain in the world frame */
-  rkChainAM( chain, &attr->ap, &ref->pos );
+  rkChainAM( chain, &attr->attention_point, &ref->pos );
 }
 
 void rkIKBindAMCOM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
@@ -215,4 +252,36 @@ zVec3D *rkIKAcmAtt(rkChain *chain, rkIKAcm *acm, void *util, zVec3D *vec)
   zEPCatDRC( &acm->ae.e, 1.0, &e );
   zEPCascade( &e, &acm->ae.e, &e );
   return zEP2AA( &e, vec );
+}
+
+/* clone an IK cell list \a src to \a dest. */
+rkIKCellList *rkIKCellListClone(rkIKCellList *src, rkIKCellList *dest)
+{
+  rkIKCell *scp, *new_cell;
+
+  zListInit( dest );
+  zListForEach( src, scp ){
+    if( !( new_cell = rkIKCellClone( scp ) ) ){
+      ZALLOCERROR();
+      break;
+    }
+    zListInsertHead( dest, new_cell );
+  }
+  if( zListSize( dest ) != zListSize( src ) ){
+    rkIKCellListDestroy( dest );
+    return NULL;
+  }
+  return dest;
+}
+
+/* destroy a list of IK cells. */
+void rkIKCellListDestroy(rkIKCellList *list)
+{
+  rkIKCell *cell;
+
+  while( !zListIsEmpty( list ) ){
+    zListDeleteHead( list, &cell );
+    rkIKCellDestroy( cell );
+    zFree( cell );
+  }
 }

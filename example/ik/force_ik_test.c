@@ -60,10 +60,10 @@ int main(int argc, char *argv[])
   for( i=0; i<3; i++ ){
     attr.id = i*3+3;
     attr.mode = RK_IK_CELL_FORCE;
-    cell[i*2]   = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_FORCE );
-    cell[i*2+1] = rkChainRegIKCellWldAtt( &chain, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_FORCE );
+    cell[i*2]   = rkChainRegIKCellWldPos( &chain, NULL, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_FORCE );
+    cell[i*2+1] = rkChainRegIKCellWldAtt( &chain, NULL, &attr, RK_IK_ATTR_ID | RK_IK_ATTR_FORCE );
   }
-  rkChainDeactivateIK( &chain );
+  rkChainDisableIK( &chain );
   rkChainBindIK( &chain );
 
   zVec3DCreate( &cell[0]->data.ref.pos, 1,  1, 0 );

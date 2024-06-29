@@ -13,7 +13,7 @@ __BEGIN_DECLS
 
 /*! \brief IK entry scanned from a file. */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKEntry ){
-  int id;        /*!< cell identifier */
+  Z_NAMED_CLASS;
   double w[3];   /*!< weight on constraint */
   double val[3]; /*!< referential values */
 };
@@ -38,13 +38,8 @@ __ROKI_EXPORT bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c);
 /*! \brief IK sequence. */
 zListClass( rkIKSeq, rkIKSeqListCell, rkIKSeqCell);
 
-/*! \brief destroy IK sequence cell. */
-#define rkIKSeqListCellFree(c) do{\
-  if( (c) ){\
-    zFree( (c)->data.entry );\
-    free( (c) );\
-  }\
-} while(0)
+/*! \brief free IK sequence cell. */
+__ROKI_EXPORT void rkIKSeqListCellFree(rkIKSeqListCell *cell);
 
 /*! \brief initialize IK sequence. */
 __ROKI_EXPORT rkIKSeq *rkIKSeqInit(rkIKSeq *seq);

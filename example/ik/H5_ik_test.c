@@ -27,7 +27,7 @@ void ik_cell_output(FILE *fp, double dt, zVec3D *pg, zVec3D *pl, zVec3D *pr)
 
 void ik_solve(FILE *fout_vs, FILE *fout_cs, rkChain *robot, rkIKCell *entry[], zVec q, zVec3D *pg, zVec3D *pl, zVec3D *pr)
 {
-  rkChainDeactivateIK( robot );
+  rkChainDisableIK( robot );
   rkChainBindIK( robot );
   rkIKCellSetRefVec( entry[0], pg );
   rkIKCellSetRefVec( entry[1], ZVEC3DZERO );
@@ -87,6 +87,7 @@ int main(int argc, char *argv[])
 {
   rkChain robot;
   rkIKCell *entry[6];
+  char name[] = { 0, 0 };
   zVec q;
   int i;
   FILE *fout_vs, *fout_cs;
@@ -94,8 +95,10 @@ int main(int argc, char *argv[])
   rkChainReadZTK( &robot, H5_ZTK );
   rkChainIKConfReadZTK( &robot, H5_ZTK );
   q = zVecAlloc( rkChainJointSize(&robot) );
-  for( i=0; i<6; i++ )
-    entry[i] = rkChainFindIKCellID( &robot, i );
+  for( i=0; i<6; i++ ){
+    sprintf( name, "%1d", i );
+    entry[i] = rkChainFindIKCellByName( &robot, name );
+  }
   fout_vs = fopen( "walk.zvs", "w" );
   fout_cs = fopen( "walk.zcs", "w" );
   for( i=0; i<DIV; i++ ) step1( fout_vs, fout_cs, T*i/DIV, &robot, entry, q );

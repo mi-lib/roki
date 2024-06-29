@@ -13,11 +13,11 @@ void init(rkChain *puma, rkChain *puma_v, rkIKCell *cell[])
   rkChainRegIKJointAll( puma_v, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCell( puma_v, &attr, RK_IK_ATTR_ID, rkIKRefSetAA,  rkIKJacobiLinkWldAng, rkIKImpWldAtt, rkIKBindLinkWldAtt, NULL, &imp_att );
-  cell[1] = rkChainRegIKCell( puma_v, &attr, RK_IK_ATTR_ID, rkIKRefSetPos, rkIKJacobiLinkWldLin, rkIKImpWldPos, rkIKBindLinkWldPos, NULL, &imp_pos );
+  cell[0] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_ID, rkIKRefSetAA,  rkIKJacobiLinkWldAng, rkIKImpWldAtt, rkIKBindLinkWldAtt, NULL, &imp_att );
+  cell[1] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_ID, rkIKRefSetPos, rkIKJacobiLinkWldLin, rkIKImpWldPos, rkIKBindLinkWldPos, NULL, &imp_pos );
 
   rkIKSetEqSolver( puma_v->_ik, rkIKSolveEqSR );
-  rkChainDeactivateIK( puma_v );
+  rkChainDisableIK( puma_v );
   rkChainBindIK( puma_v );
 }
 

@@ -16,7 +16,7 @@ bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c)
 
   for( i=0; i<c->nc; i++ ){
     e = &c->entry[i];
-    if( !( cell = rkChainFindIKCellID( chain, e->id ) ) ){
+    if( !( cell = rkChainFindIKCellByName( chain, zNamePtr(e) ) ) ){
       ZRUNWARN( RK_WARN_IK_CELL_NOTFOUND );
       ret = false;
       continue;
@@ -25,6 +25,17 @@ bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c)
     rkIKCellSetRef( cell, e->val[0], e->val[1], e->val[2] );
   }
   return ret;
+}
+
+/* free IK sequence cell. */
+void rkIKSeqListCellFree(rkIKSeqListCell *cell)
+{
+  int i;
+
+  for( i=0; i<cell->data.nc; i++ )
+    if( zNamePtr( &cell->data.entry[i] ) ) zNameFree( &cell->data.entry[i] );
+  free( cell->data.entry );
+  free( cell );
 }
 
 /* initialize IK sequence. */
@@ -64,6 +75,7 @@ bool rkIKSeqScanFile(rkIKSeq *seq, char filename[])
 rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;
+  char name[BUFSIZ];
   int i;
 
   rkIKSeqInit( seq );
@@ -81,7 +93,8 @@ rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq)
       break;
     }
     for( i=0; i<cp->data.nc; i++ ){
-      zFInt( fp, &cp->data.entry[i].id );
+      zFToken( fp, name, BUFSIZ );
+      zNameSet( &cp->data.entry[i], name );
       zFDouble( fp, &cp->data.entry[i].w[0] );
       zFDouble( fp, &cp->data.entry[i].w[1] );
       zFDouble( fp, &cp->data.entry[i].w[2] );
@@ -120,8 +133,8 @@ void rkIKSeqFPrint(FILE *fp, rkIKSeq *seq)
     fprintf( fp, "%.10g ", cp->data.dt );
     fprintf( fp, "%d", cp->data.nc );
     for( i=0; i<cp->data.nc; i++ )
-      fprintf( fp, " %d %.10g %.10g %.10g %.10g %.10g %.10g",
-        cp->data.entry[i].id,
+      fprintf( fp, " %s %.10g %.10g %.10g %.10g %.10g %.10g",
+        zName(&cp->data.entry[i]),
         cp->data.entry[i].w[0],
         cp->data.entry[i].w[1],
         cp->data.entry[i].w[2],

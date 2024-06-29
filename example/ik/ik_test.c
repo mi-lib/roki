@@ -15,10 +15,9 @@ int main(int argc, char *argv[])
   rkChainFK( &chain, dis );
 
   attr.id = 5;
-  cell = rkChainRegIKCellWldPos( &chain, &attr, RK_IK_ATTR_ID );
+  cell = rkChainRegIKCellWldPos( &chain, NULL, &attr, RK_IK_ATTR_ID );
 
-  rkChainDeactivateIK( &chain );
-  rkChainBindIK( &chain );
+  rkChainDisableIK( &chain );
   rkIKCellSetRef( cell, 0, -0.2, 0.1 );
   zVec3DPrint( rkIKCellRefPos(cell) );
   rkChainIK( &chain, dis, zTOL, 0 );
