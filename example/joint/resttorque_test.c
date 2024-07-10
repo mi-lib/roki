@@ -20,8 +20,8 @@ int main(void)
   int i;
 
   rkJointAssign( &j, &rk_joint_revol );
-  stat = j.state;
-  prp = j.prp;
+  stat = (rkJointRevolState*)j.state;
+  prp = (rkJointRevolPrp*)j.prp;
   stat->dis = 0.2;
   prp->stiffness = 1.0;
   prp->viscosity = 0.5;
