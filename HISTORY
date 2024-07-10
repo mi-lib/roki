@@ -1,3 +1,5 @@
+2024. 7.10. Renamed findInverseKinematicsID and deactivateInverseKinematics in C++ extentions to findInverseKinematicsByName and disableInverseKinematics, respectively (thanks to Daishi Kaneta). [rk_chain]
+2024. 7.10. Reflected new specifications of rkChaintRegIKCell* in C++ extentions (thanks to Daishi Kaneta). [rk_chain]
 2024. 6.29. Modified _rkIKJointFromZTK to accept joint displacement when values are specified after the weight value. [rk_ik]
 2024. 6.29. Renamed rkChainDeactivateIK to rkChainDisableIK. [rk_ik, app]
 2024. 6.29. Redefined rkIKSeqListCellFree as a function. [rk_ik_seq]
