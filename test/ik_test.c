@@ -41,6 +41,27 @@ void chain_ik_init(rkChain *chain)
   rkChainCreateIK( chain );
 }
 
+void assert_ik_constraint_find(void)
+{
+  const rkIKConstraint constraint_world_pos = {
+    typestr: "world_pos",
+  };
+  const rkIKConstraint constraint1 = {
+    typestr: "constraint1",
+  };
+  const rkIKConstraint constraint2 = {
+    typestr: "constraint2",
+  };
+
+  zAssert( rkIKConstraintFind (predefined case), rkIKConstraintFind( "world_pos" ) );
+  zAssert( rkIKConstraintListAdd, rkIKConstraintListAdd( &constraint1 ) );
+  zAssert( rkIKConstraintListAdd, rkIKConstraintListAdd( &constraint2 ) );
+  zAssert( rkIKConstraintListAdd (predefined case), !rkIKConstraintListAdd( &constraint_world_pos ) );
+  zAssert( rkIKConstraintListAdd (duplicate case), rkIKConstraintListAdd( &constraint1 ) );
+  zAssert( rkIKConstraintFind (user-defined case), rkIKConstraintFind( "constraint1" ) );
+  zAssert( rkIKConstraintFind (undefined case), !rkIKConstraintFind( "constraint3" ) );
+}
+
 bool assert_joint_reg_one(void)
 {
   rkChain chain;
@@ -118,7 +139,7 @@ bool assert_cell_reg_one(void)
   int cellcount;
   int i;
   bool result = true;
-  rkIKCell *(*reg_ik_cell[])(rkChain*,const char*,rkIKAttr*,int) = {
+  rkIKCell *(*reg_ik_cell[])(rkChain*,const char*,rkIKAttr*,uint) = {
     rkChainRegIKCellWldPos,
     rkChainRegIKCellWldAtt,
     rkChainRegIKCellL2LPos,
@@ -569,6 +590,7 @@ void assert_ik_rjo(void)
 int main(void)
 {
   zRandInit();
+  assert_ik_constraint_find();
   assert_joint_reg();
   assert_cell_reg();
   assert_ik_revol();

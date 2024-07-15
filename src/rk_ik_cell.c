@@ -12,7 +12,7 @@
  * ********************************************************** */
 
 /* initialize constraint cell. */
-void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
+void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, uint mask, const rkIKConstraint *constraint, void *util)
 {
   zNameSetPtr( &cell->data, NULL );
   rkIKCellLinkID(cell)  = attr && ( mask & RK_IK_ATTR_ID ) ? attr->id : 0;
@@ -30,12 +30,7 @@ void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKC
   rkIKRefClear( rkIKCellRef(cell) );
   rkIKCellAcmZero( cell );
   rkIKCellDisable( cell );
-  cell->data._ref_fp = rf;
-  cell->data._cmat_fp = mf;
-  cell->data._cvec_fp = vf;
-  cell->data._bind_fp = bf;
-  cell->data._acm_fp = af;
-  rkIKCellIndexOffset(cell) = 0;
+  cell->data.constraint = constraint;
   cell->data._eval = 0;
   cell->data._util = util;
 }
@@ -58,9 +53,9 @@ void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKC
   return cell
 
 /* create an IK cell. */
-rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util)
+rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, uint mask, const rkIKConstraint *constraint, void *util)
 {
-  _RK_IK_CELL_ALLOC_FUNC( name, rkIKCellInit( cell, attr, mask, rf, mf, vf, bf, af, util ) );
+  _RK_IK_CELL_ALLOC_FUNC( name, rkIKCellInit( cell, attr, mask, constraint, util ) );
 }
 
 /* clone an IK cell. */
@@ -73,15 +68,15 @@ rkIKCell *rkIKCellClone(rkIKCell *src)
 void rkIKCellDestroy(rkIKCell *cell)
 {
   zNameFree( &cell->data );
-  rkIKCellInit( cell, NULL, 0x0, NULL, NULL, NULL, NULL, NULL, NULL );
+  rkIKCellInit( cell, NULL, 0x0, NULL, NULL );
 }
 
 /* zero the accumulated error of a highly-prioritized IK constraint. */
 void rkIKCellAcmZero(rkIKCell *cell)
 {
-  zVec3DZero( &cell->data.acm.ae.p );
-  zVec3DCreate( &cell->data.acm.e_old.p, HUGE_VAL, HUGE_VAL, HUGE_VAL );
-  zVec3DCreate( &cell->data.acm.h_old, HUGE_VAL, HUGE_VAL, HUGE_VAL );
+  zVec3DZero( &cell->data._acm.ae.p );
+  zVec3DCreate( &cell->data._acm.e_old.p, HUGE_VAL, HUGE_VAL, HUGE_VAL );
+  zVec3DCreate( &cell->data._acm.h_old, HUGE_VAL, HUGE_VAL, HUGE_VAL );
 }
 
 /* reference */
@@ -284,4 +279,150 @@ void rkIKCellListDestroy(rkIKCellList *list)
     rkIKCellDestroy( cell );
     zFree( cell );
   }
+}
+
+/* ********************************************************** */
+/* inverse kinematics constraint class
+ * ********************************************************** */
+
+const rkIKConstraint rk_ik_constraint_link_world_pos = {
+  typestr: "world_pos",
+  _ref_fp: rkIKRefSetPos,
+  _cmat_fp: rkIKJacobiLinkWldLin,
+  _cvec_fp: rkIKLinkWldPosErr,
+  _bind_fp: rkIKBindLinkWldPos,
+  _acm_fp: rkIKAcmPos,
+};
+
+const rkIKConstraint rk_ik_constraint_link_world_att = {
+  typestr: "world_att",
+  _ref_fp: rkIKRefSetZYX,
+  _cmat_fp: rkIKJacobiLinkWldAng,
+  _cvec_fp: rkIKLinkWldAttErr,
+  _bind_fp: rkIKBindLinkWldAtt,
+  _acm_fp: rkIKAcmAtt,
+};
+
+const rkIKConstraint rk_ik_constraint_link2link_pos = {
+  typestr: "l2l_pos",
+  _ref_fp: rkIKRefSetPos,
+  _cmat_fp: rkIKJacobiLinkL2LLin,
+  _cvec_fp: rkIKLinkL2LPosErr,
+  _bind_fp: rkIKBindLinkL2LPos,
+  _acm_fp: rkIKAcmPos,
+};
+
+const rkIKConstraint rk_ik_constraint_link2link_att = {
+  typestr: "l2l_att",
+  _ref_fp: rkIKRefSetZYX,
+  _cmat_fp: rkIKJacobiLinkL2LAng,
+  _cvec_fp: rkIKLinkL2LAttErr,
+  _bind_fp: rkIKBindLinkL2LAtt,
+  _acm_fp: rkIKAcmAtt,
+};
+
+const rkIKConstraint rk_ik_constraint_world_com = {
+  typestr: "com",
+  _ref_fp: rkIKRefSetPos,
+  _cmat_fp: rkIKJacobiCOM,
+  _cvec_fp: rkIKCOMErr,
+  _bind_fp: rkIKBindCOM,
+  _acm_fp: rkIKAcmPos,
+};
+
+const rkIKConstraint rk_ik_constraint_world_angular_momentum = {
+  typestr: "angular_momentum",
+  _ref_fp: rkIKRefSetPos,
+  _cmat_fp: rkIKJacobiAM,
+  _cvec_fp: rkIKAMErr,
+  _bind_fp: rkIKBindAM,
+  _acm_fp: rkIKAcmAtt,
+};
+
+const rkIKConstraint rk_ik_constraint_world_angular_momentum_about_com = {
+  typestr: "angular_momentum_about_com",
+  _ref_fp: rkIKRefSetPos,
+  _cmat_fp: rkIKJacobiAMCOM,
+  _cvec_fp: rkIKAMCOMErr,
+  _bind_fp: rkIKBindAMCOM,
+  _acm_fp: rkIKAcmAtt,
+};
+
+const rkIKConstraint *rk_ik_constraint_array[] = {
+  &rk_ik_constraint_link_world_pos,
+  &rk_ik_constraint_link_world_att,
+  &rk_ik_constraint_link2link_pos,
+  &rk_ik_constraint_link2link_att,
+  &rk_ik_constraint_world_com,
+  &rk_ik_constraint_world_angular_momentum,
+  &rk_ik_constraint_world_angular_momentum_about_com,
+};
+
+static rkIKConstraintList rk_ik_constraint_list
+#ifdef __cplusplus
+;
+#else
+ = {
+  size: 0,
+  root: { prev: &rk_ik_constraint_list.root, next: &rk_ik_constraint_list.root },
+};
+#endif
+
+static const rkIKConstraint *_rkIKConstraintFindFromArray(const char *typestr)
+{
+  int i, n;
+
+  n = sizeof(rk_ik_constraint_array) / sizeof(rkIKConstraint*);
+  for( i=0; i<n; i++ ){
+    if( strcmp( typestr, rk_ik_constraint_array[i]->typestr ) == 0 )
+      return rk_ik_constraint_array[i];
+  }
+  return NULL;
+}
+
+static rkIKConstraintListCell *_rkIKConstraintFindFromList(const char *typestr)
+{
+  rkIKConstraintListCell *cp;
+
+  if( !zListIsEmpty( &rk_ik_constraint_list ) )
+    zListForEach( &rk_ik_constraint_list, cp )
+      if( strcmp( typestr, cp->data->typestr ) == 0 ) return cp;
+  return NULL;
+}
+
+const rkIKConstraint *rkIKConstraintFind(const char *typestr)
+{
+  const rkIKConstraint *constraint;
+  rkIKConstraintListCell *cp;
+
+  if( ( constraint = _rkIKConstraintFindFromArray( typestr ) ) ) return constraint;
+  if( ( cp = _rkIKConstraintFindFromList( typestr ) ) ) return cp->data;
+  ZRUNWARN( "constraint %s of the inverse kinematics not found", typestr );
+  return NULL;
+}
+
+rkIKConstraintListCell *rkIKConstraintListAdd(const rkIKConstraint *constraint)
+{
+  rkIKConstraintListCell *cp;
+
+  if( _rkIKConstraintFindFromArray( constraint->typestr ) ){
+    ZRUNWARN( "constraint %s predefined", constraint->typestr );
+    return NULL;
+  }
+  if( ( cp = _rkIKConstraintFindFromList( constraint->typestr ) ) ){
+    ZRUNWARN( "constraint %s already registered, replaced", constraint->typestr );
+  } else{
+    if( !( cp = zAlloc( rkIKConstraintListCell, 1 ) ) ){
+      ZALLOCERROR();
+      return NULL;
+    }
+    zListInsertHead( &rk_ik_constraint_list, cp );
+  }
+  cp->data = constraint;
+  return cp;
+}
+
+void rkIKConstraintListDestroy(void)
+{
+  zListDestroy( rkIKConstraintListCell, &rk_ik_constraint_list );
 }

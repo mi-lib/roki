@@ -13,7 +13,25 @@ zVec3D *att_srv(rkChain *chain, rkIKAttr *attr, void *priv, rkIKRef *ref, zVec3D
   return ZVEC3DZERO;
 }
 
-void init(rkChain *puma, rkChain *puma_v, rkIKCVec_fp srv_fp, zVec *dis, rkIKCell *cell[])
+const rkIKConstraint rk_ik_constraint_link_world_lin_vel = {
+  typestr: "world_lin_vel",
+  _ref_fp: rkIKRefSetPos,
+  _cmat_fp: rkIKJacobiLinkWldLin,
+  _cvec_fp: pos_srv,
+  _bind_fp: rkIKBindLinkWldPos,
+  _acm_fp: NULL,
+};
+
+const rkIKConstraint rk_ik_constraint_link_world_ang_vel = {
+  typestr: "world_ang_vel",
+  _ref_fp: rkIKRefSetAA,
+  _cmat_fp: rkIKJacobiLinkWldAng,
+  _cvec_fp: att_srv,
+  _bind_fp: rkIKBindLinkWldAtt,
+  _acm_fp: NULL,
+};
+
+void init(rkChain *puma, rkChain *puma_v, const rkIKConstraint *constraint_lin, const rkIKConstraint *constraint_ang, zVec *dis, rkIKCell *cell[])
 {
   rkIKAttr attr;
 
@@ -23,8 +41,8 @@ void init(rkChain *puma, rkChain *puma_v, rkIKCVec_fp srv_fp, zVec *dis, rkIKCel
   rkChainRegIKJointAll( puma_v, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_ID, rkIKRefSetAA,  rkIKJacobiLinkWldAng, att_srv, rkIKBindLinkWldAtt, NULL, NULL );
-  cell[1] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_ID, rkIKRefSetPos, rkIKJacobiLinkWldLin, srv_fp, rkIKBindLinkWldPos, NULL, NULL );
+  cell[0] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_ID, constraint_ang, NULL );
+  cell[1] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_ID, constraint_lin, NULL );
 
   rkIKSetEqSolver( puma_v->_ik, rkIKSolveEqSR );
   rkChainDisableIK( puma_v );
@@ -48,11 +66,11 @@ void cmp(rkChain *ra, rkChain *rb)
   zVec3D v, e;
 
   zVec3DDataPrint( &des_vel );
-  zMulMat3DVec3D( rkChainLinkWldAtt(ra,6), rkChainLinkLinAcc(ra,6), &v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(ra,6), rkChainLinkLinVel(ra,6), &v );
   zVec3DDataPrint( &v );
   zVec3DSub( &des_vel, &v, &e );
   zVec3DDataPrint( &e );
-  zMulMat3DVec3D( rkChainLinkWldAtt(rb,6), rkChainLinkLinAcc(rb,6), &v );
+  zMulMat3DVec3D( rkChainLinkWldAtt(rb,6), rkChainLinkLinVel(rb,6), &v );
   zVec3DDataPrint( &v );
   zVec3DSub( &des_vel, &v, &e );
   zVec3DDataNLPrint( &e );
@@ -68,9 +86,9 @@ int main(int argc, char *argv[])
   FILE *fpA, *fpB;
 
   /* type A: task space tracking */
-  init( &pumaA, &pumaA_v, rkIKLinkWldPosErr, &disA, cellA );
+  init( &pumaA, &pumaA_v, &rk_ik_constraint_link_world_pos, &rk_ik_constraint_link_world_att, &disA, cellA );
   /* type B: configuration space tracking */
-  init( &pumaB, &pumaB_v, pos_srv, &disB, cellB );
+  init( &pumaB, &pumaB_v, &rk_ik_constraint_link_world_lin_vel, &rk_ik_constraint_link_world_ang_vel, &disB, cellB );
   x = rkChainLinkWldPos(&pumaA,6)->e[zX];
   y = rkChainLinkWldPos(&pumaA,6)->e[zY];
   z = rkChainLinkWldPos(&pumaA,6)->e[zZ];

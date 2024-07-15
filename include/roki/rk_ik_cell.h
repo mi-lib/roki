@@ -18,6 +18,7 @@ __BEGIN_DECLS
 
 ZDECL_STRUCT( rkChain );
 
+/*! \class reference data class */
 ZDEF_UNION( __ROKI_CLASS_EXPORT, rkIKRef ){
   zVec3D pos; /*!< position reference */
   zMat3D att; /*!< attitude reference */
@@ -28,6 +29,7 @@ ZDEF_UNION( __ROKI_CLASS_EXPORT, rkIKRef ){
 
 #define rkIKRefClear(ref) zMat3DZero(&(ref)->att)
 
+/*! \class error accumulator class */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAcm ){
   union{
     zVec3D p; /*!< accumulated position error */
@@ -47,13 +49,15 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAcm ){
 #define RK_IK_ATTR_FORCE           0x08
 #define RK_IK_ATTR_WEIGHT          0x10
 
+/*! \class IK attribute class */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
-  int user_defined_type; /*!< user-defined type identifier */
-  int id;                /*!< attention link IDs */
-  int id_sub;            /*!< attention subordinate link IDs */
+  int user_defined_type;  /*!< user-defined type identifier */
+  int id;                 /*!< attention link IDs */
+  int id_sub;             /*!< attention subordinate link IDs */
   zVec3D attention_point; /*!< attention point */
-  byte mode;             /*!< constraint mode */
-  zVec3D weight;         /*!< weight on constraint */
+  byte mode;              /*!< constraint mode */
+  zVec3D weight;          /*!< weight on constraint */
+  uint mask;              /*!< mask for enabled attributes (to be implemented) */
 };
 
 #define RK_IK_CELL_XON    0x1
@@ -78,27 +82,39 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
 /* set weight on constraint of IK cell */
 #define rkIKAttrSetWeight(attr,w1,w2,w3) zVec3DCreate( &(attr)->weight, w1, w2, w3 )
 
+/*! \brief reference function pointer */
 typedef void (* rkIKRef_fp)(rkIKRef *ref, double v1, double v2, double v3);
+/*! \brief constraint matrix function pointer */
 typedef zMat (* rkIKCMat_fp)(rkChain*,rkIKAttr*,zMat);
+/*! \brief constraint vector function pointer */
 typedef zVec3D* (* rkIKCVec_fp)(rkChain*,rkIKAttr*,void*,rkIKRef*,zVec3D*);
+/*! \brief reference binding function pointer */
 typedef void (* rkIKBind_fp)(rkChain*,rkIKAttr*,void*,rkIKRef*);
+/*! \brief error accumulation function pointer */
 typedef zVec3D* (* rkIKAcm_fp)(rkChain*,rkIKAcm*,void*,zVec3D*);
 
+/*! \class IK constraint class */
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKConstraint ){
+  const char *typestr;  /*!< a string to identify constraint type */
+  rkIKRef_fp _ref_fp;   /*!< reference function pointer */
+  rkIKCMat_fp _cmat_fp; /*!< constraint matrix function pointer */
+  rkIKCVec_fp _cvec_fp; /*!< constraint vector function pointer */
+  rkIKBind_fp _bind_fp; /*!< reference binding function pointer */
+  rkIKAcm_fp _acm_fp;   /*!< error accumulation function pointer */
+};
+zListClass( rkIKConstraintList, rkIKConstraintListCell, const rkIKConstraint* );
+
+/*! \class IK constraint cell class */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
   Z_NAMED_CLASS; /*!< name of constraint */
   rkIKAttr attr; /*!< attributes of attention quantity */
+  const rkIKConstraint *constraint; /*!< constraint */
   rkIKRef ref;   /*!< referential position or attitude */
-  rkIKAcm acm;   /*!< error accumulation correction */
-
-  rkIKRef_fp _ref_fp;
-  rkIKCMat_fp _cmat_fp;
-  rkIKCVec_fp _cvec_fp;
-  rkIKBind_fp _bind_fp;
-  rkIKAcm_fp _acm_fp;
-  int index_offset;
+  /*! \cond */
+  rkIKAcm _acm;  /* error accumulation correction */
   double _eval;  /* weighted-squared norm of residual */
-  /* void-type pointer for utility */
-  void *_util;
+  void *_util;   /* void-type pointer for utility */
+  /*! \endcond */
 };
 
 zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
@@ -114,13 +130,11 @@ zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 #define rkIKCellRefPos(cell)         ( &rkIKCellRef(cell)->pos )
 #define rkIKCellRefAtt(cell)         ( &rkIKCellRef(cell)->att )
 
-#define rkIKCellIndexOffset(cell)    (cell)->data.index_offset
-
 /*! \brief intialize an IK cell */
-__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
+__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, uint mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief create an IK cell. */
-__ROKI_EXPORT rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
+__ROKI_EXPORT rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, uint mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief clone an IK cell. */
 __ROKI_EXPORT rkIKCell *rkIKCellClone(rkIKCell *src);
@@ -143,8 +157,9 @@ __ROKI_EXPORT void rkIKCellDestroy(rkIKCell *cell);
 
 #define rkIKCellSetRef(cell,v1,v2,v3) do{\
   rkIKCellEnable( cell );\
-  (cell)->data._ref_fp( rkIKCellRef(cell), v1, v2, v3 );\
+  (cell)->data.constraint->_ref_fp( rkIKCellRef(cell), v1, v2, v3 );\
 } while(0)
+
 #define rkIKCellSetRefVec(cell,v) \
   rkIKCellSetRef(cell,(v)->e[0],(v)->e[1],(v)->e[2])
 #define rkIKCellSetRefAtt(cell,r) do{\
@@ -163,15 +178,15 @@ __ROKI_EXPORT void rkIKCellDestroy(rkIKCell *cell);
 __ROKI_EXPORT void rkIKCellAcmZero(rkIKCell *cell);
 
 #define rkIKCellCMat(cell,r,mat) \
-  (cell)->data._cmat_fp( r, rkIKCellAttr(cell), mat )
+  (cell)->data.constraint->_cmat_fp( r, rkIKCellAttr(cell), mat )
 #define rkIKCellCVec(cell,r,vec) \
-  (cell)->data._cvec_fp( r, rkIKCellAttr(cell), (cell)->data._util, rkIKCellRef(cell), vec )
+  (cell)->data.constraint->_cvec_fp( r, rkIKCellAttr(cell), (cell)->data._util, rkIKCellRef(cell), vec )
 #define rkIKCellBind(cell,r) do{\
   rkIKCellEnable( cell );\
-  (cell)->data._bind_fp( r, rkIKCellAttr(cell), (cell)->data._util, rkIKCellRef(cell) );\
+  (cell)->data.constraint->_bind_fp( r, rkIKCellAttr(cell), (cell)->data._util, rkIKCellRef(cell) );\
 } while(0)
 #define rkIKCellAcm(cell,r,v) \
-  (cell)->data._acm_fp( r, &(cell)->data.acm, (cell)->data._util, v )
+  (cell)->data.constraint->_acm_fp( r, &(cell)->data._acm, (cell)->data._util, v )
 
 /* reference */
 __ROKI_EXPORT void rkIKRefSetPos(rkIKRef *ref, double x, double y, double z);
@@ -216,6 +231,24 @@ __ROKI_EXPORT void rkIKCellListDestroy(rkIKCellList *list);
 
 /*! \brief clone an IK cell list \a src to \a dest. */
 __ROKI_EXPORT rkIKCellList *rkIKCellListClone(rkIKCellList *src, rkIKCellList *dest);
+
+/* ********************************************************** */
+/* CLASS: rkIKConstraint
+ * inverse kinematics constraint class
+ * ********************************************************** */
+
+__ROKI_EXPORT const rkIKConstraint *rkIKConstraintFind(const char *typestr);
+
+__ROKI_EXPORT rkIKConstraintListCell *rkIKConstraintListAdd(const rkIKConstraint *constraint);
+__ROKI_EXPORT void rkIKConstraintListDestroy(void);
+
+__ROKI_EXPORT const rkIKConstraint rk_ik_constraint_link_world_pos;
+__ROKI_EXPORT const rkIKConstraint rk_ik_constraint_link_world_att;
+__ROKI_EXPORT const rkIKConstraint rk_ik_constraint_link2link_pos;
+__ROKI_EXPORT const rkIKConstraint rk_ik_constraint_link2link_att;
+__ROKI_EXPORT const rkIKConstraint rk_ik_constraint_world_com;
+__ROKI_EXPORT const rkIKConstraint rk_ik_constraint_world_angular_momentum;
+__ROKI_EXPORT const rkIKConstraint rk_ik_constraint_world_angular_momentum_about_com;
 
 __END_DECLS
 
