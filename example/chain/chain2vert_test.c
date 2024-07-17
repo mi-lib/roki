@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
   rkChainReadZTK( &chain, "../model/mighty.ztk" );
   rkChainVertList( &chain, &vl );
   zVec3DListDataPrint( &vl );
-  zBBall3DPL( &bb, &vl, NULL );
+  zBoundingBall3DPL( &bb, &vl, NULL );
   zSphere3DFPrintZTK( stderr, &bb );
 
   zVec3DListDestroy( &vl );

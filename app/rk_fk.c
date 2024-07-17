@@ -37,14 +37,14 @@ FILE *rk_fkOpenLogfile(char *linkname)
 
   if( option[RK_FK_SEQFILE].flag ){
     if( !zSeqScanFile( &seq, option[RK_FK_SEQFILE].arg ) )
-      return false;
+      return NULL;
   } else{
     option[RK_FK_SEQFILE].arg = "fk.out";
     if( !zSeqScan( &seq ) )
-      return false;
+      return NULL;
   }
   if( !( seqfilebase = zStrClone( option[RK_FK_SEQFILE].arg ) ) )
-    return false;
+    return NULL;
   zGetBasenameDRC( seqfilebase );
   sprintf( filename, "%s.%s", seqfilebase, linkname );
   if( ( fp = fopen( filename, "w" ) ) == NULL )

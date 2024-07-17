@@ -63,7 +63,8 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
   if( !rkLinkArrayClone( rkChainLinkArray(org), rkChainLinkArray(cln), rkChainShape(org), rkChainShape(cln), rkChainMotorSpecArray(org), rkChainMotorSpecArray(cln) ) )
     return NULL;
   rkChainCopyState( org, cln );
-  /* TODO: clone IK */
+  if( !rkChainCloneIK( org, cln ) )
+    return NULL;
   return cln;
 }
 
@@ -585,14 +586,14 @@ static void _rkChainBiasVec(rkChain *chain, zVec bias)
 }
 
 /* bias force vector of a kinematic chain by the unit vector method. */
-bool rkChainBiasVec(rkChain *chain, zVec bias)
+zVec rkChainBiasVec(rkChain *chain, zVec bias)
 {
   if( zVecSizeNC(bias) != rkChainJointSize(chain) ){
     ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
-    return false;
+    return NULL;
   }
   _rkChainBiasVec( chain, bias );
-  return true;
+  return bias;
 }
 
 /* inertia matrix of a kinematic chain from momentum Jacobian matrices. */
@@ -604,6 +605,10 @@ zMat rkChainInertiaMatMJ(rkChain *chain, zMat inertia)
   int i, n;
 
   n = rkChainJointSize( chain );
+  if( !zMatIsSqr( inertia ) || zMatRowSizeNC(inertia) != n ){
+    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    return NULL;
+  }
   inertia_tmp = zMatAllocSqr( n );
   jacobi = zMatAlloc( 3, n );
   tmp = zMatAlloc( 3, n );
@@ -653,19 +658,19 @@ static void _rkChainInertiaMatUV(rkChain *chain, zVec bias, zMat inertia)
 }
 
 /* inertia matrix of a kinematic chain by the unit vector method. */
-bool rkChainInertiaMatUV(rkChain *chain, zMat inertia)
+zMat rkChainInertiaMatUV(rkChain *chain, zMat inertia)
 {
-  zVec b;
+  zVec bias;
 
   if( !zMatIsSqr( inertia ) || zMatColSizeNC(inertia) != rkChainJointSize(chain) ){
     ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
-    return false;
+    return NULL;
   }
-  if( !( b = zVecAlloc( zMatRowSizeNC(inertia) ) ) ) return false;
-  _rkChainBiasVec( chain, b );
-  _rkChainInertiaMatUV( chain, b, inertia );
-  zVecFree( b );
-  return true;
+  if( !( bias = zVecAlloc( zMatRowSizeNC(inertia) ) ) ) return NULL;
+  _rkChainBiasVec( chain, bias );
+  _rkChainInertiaMatUV( chain, bias, inertia );
+  zVecFree( bias );
+  return inertia;
 }
 
 /* compute a cell of the inertia matrix of a kinematic chain based on the composite rigid body method. */
@@ -702,7 +707,7 @@ static void _rkChainLinkInertiaMatCRB(rkLink *link, zVec6D wi[], zVec6D si[], zM
 }
 
 /* compute the inertia matrix of a kinematic chain based on the composite rigid body method. */
-bool rkChainInertiaMatCRB(rkChain *chain, zMat inertia)
+zMat rkChainInertiaMatCRB(rkChain *chain, zMat inertia)
 {
   zMatStruct hij;
   zVec6D wi[6], si[6];
@@ -711,10 +716,10 @@ bool rkChainInertiaMatCRB(rkChain *chain, zMat inertia)
   rkChainUpdateCRB( chain );
   zMatBufNC(&hij) = _e;
   _rkChainLinkInertiaMatCRB( rkChainRoot(chain), wi, si, &hij, inertia );
-  return true;
+  return inertia;
 }
 
-bool (* rkChainInertiaMat)(rkChain*,zMat) = rkChainInertiaMatCRB;
+zMat (* rkChainInertiaMat)(rkChain*,zMat) = rkChainInertiaMatCRB;
 
 /* inertia matrix and bias force vector of a kinematic chain by the unit vector method. */
 bool rkChainInertiaMatBiasVecUV(rkChain *chain, zMat inertia, zVec bias)
@@ -815,12 +820,12 @@ zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl)
 }
 
 /* generate the bounding ball of a kinematic chain. */
-zSphere3D *rkChainBBall(rkChain *chain, zSphere3D *bb)
+zSphere3D *rkChainBoundingBall(rkChain *chain, zSphere3D *bb)
 {
   zVec3DList pl;
 
   if( rkChainVertList( chain, &pl ) )
-    zBBall3DPL( bb, &pl, NULL );
+    zBoundingBall3DPL( bb, &pl, NULL );
   else
     bb = NULL;
   zVec3DListDestroy( &pl );
@@ -910,7 +915,8 @@ static void _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
   int k;
   rkLink *link;
 
-  ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_initkey );
+  if( rkChainLinkNum((rkChain*)obj) > 0 )
+    ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_initkey );
   for( k=0; k<rkChainLinkNum((rkChain*)obj); k++ ){
     link = rkChainLink((rkChain*)obj,k);
     if( rkLinkJointDOF(link) == 0 || rkJointIsNeutral( rkLinkJoint(link) ) ) continue;
@@ -952,18 +958,27 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     if( !rkMotorSpecArrayAlloc( rkChainMotorSpecArray(chain), num_motor ) ) return NULL;
   if( ( num_link = ZTKCountTag( ztk, ZTK_TAG_RKLINK ) ) > 0 ){
     if( !rkLinkArrayAlloc( rkChainLinkArray(chain), num_link ) ) return NULL;
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_optic ); /* to skip [optic] fields */
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_shape ); /* to skip [shape] fields */
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_motor );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_link );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_connection );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain );
+    rkChainSetJointIDOffset( chain ); /* joint identifier offset value */
+    rkChainUpdateCRBMass( chain );
   } else{
-    ZRUNWARN( RK_WARN_CHAIN_EMPTY );
-    return NULL;
+    int i;
+    if( !rkChainShape(chain) ){
+      ZRUNWARN( RK_WARN_CHAIN_EMPTY );
+      return NULL;
+    }
+    ZRUNWARN( RK_WARN_CHAIN_SHAPE_ONLY );
+    if( !rkLinkArrayAlloc( rkChainLinkArray(chain), 1 ) ) return NULL;
+    rkLinkInit( rkChainRoot(chain) );
+    if( !rkJointAssignByStr(rkLinkJoint(rkChainRoot(chain)), "float" ) ) return NULL;
+    for( i=0; i<zMShape3DShapeNum(rkChainShape(chain)); i++ )
+      rkLinkShapePush( rkChainRoot(chain), zMShape3DShape(rkChainShape(chain),i) );
   }
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_optic );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_shape );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_motor );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_link );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_connection );
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain );
-  rkChainSetJointIDOffset( chain ); /* joint identifier offset value */
-  rkChainUpdateCRBMass( chain );
   if( rkChainMass(chain) == 0 )
     rkChainSetMass( chain, 1.0 ); /* dummy weight */
   rkChainUpdateFK( chain );
@@ -980,9 +995,11 @@ void rkChainFPrintZTK(FILE *fp, rkChain *chain)
     zMShape3DFPrintZTK( fp, rkChainShape(chain) );
   if( zArraySize(rkChainMotorSpecArray(chain)) > 0 )
     rkMotorSpecArrayFPrintZTK( fp, rkChainMotorSpecArray(chain) );
-  rkLinkArrayFPrintZTK( fp, rkChainLinkArray(chain) );
-  fprintf( fp, "[%s]\n", ZTK_TAG_INIT );
-  _rkChainInitFPrintZTK( fp, 0, chain );
+  if( rkChainLinkNum(chain) > 0 ){
+    rkLinkArrayFPrintZTK( fp, rkChainLinkArray(chain) );
+    fprintf( fp, "[%s]\n", ZTK_TAG_INIT );
+    _rkChainInitFPrintZTK( fp, 0, chain );
+  }
 }
 
 /* read a ZTK file and create a new kinematic chain. */

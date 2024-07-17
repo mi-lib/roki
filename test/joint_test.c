@@ -69,7 +69,7 @@ void assert_joint_neutral(void)
     rkJointSetDis( &joint, dis );
     rkJointGetDis( &joint, dis );
 
-    rkJointNeutral( &joint );
+    rkJointNeutralize( &joint );
     rkJointGetDis( &joint, dis );
     if( !rkJointIsNeutral(&joint) ){
       eprintf( "joint type = %s, joint displacement =", rkJointTypeStr(&joint) );
@@ -80,7 +80,7 @@ void assert_joint_neutral(void)
     }
     rkJointDestroy( &joint );
   }
-  zAssert( rkJointNeutral + rkJointIsNeutral, result );
+  zAssert( rkJointNeutralize + rkJointIsNeutral, result );
 }
 
 void assert_spher_cat(void)

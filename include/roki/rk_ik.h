@@ -32,30 +32,30 @@ __BEGIN_DECLS
     on the joint displacement. rkChainRegIKJoint( &ik, name, weight2 )
     changes the weight from \a weight to \a weight2.
 
- 3. Register constraint cell of inverse kinematics, using
-     entry = rkChainRegIKCell( &chain, &attr, ref_fp, mf_fp, vf_fp, bind_fp, acm_fp, util );
-     ...
-     \a attr : attributes of the attention property (see 'rk_ik_cell.h/c')
-     \a ref_fp : a function that provides the reference (a set of three values)
-     \a mf_fp : a function that computes the constraint matrix
-     \a vf_fp : a function that computes the 3D constraint vector
-        (velocity or residual error of displacement in most cases)
-     \a bind_fp : a function that computes the current vector to be constrained
-     \a util : programmers' utility to attach any type of data chunk.
-    Note that the constraint is not activated just by being registered;
-    calling rkIKSetRef() family function activates it.
+ 3. Register constraint cell of the inverse kinematics as
+     entry = rkChainRegIKCell*( &chain, name, &attr, mask );
+    where
+     \a name : name of the constraint
+     \a attr : attributes of the inverse kinematics constraint (see 'rk_ik_cell.h')
+     \a mask : mask for an attribute to be specified
+    The following functions are avaible for the above rkChainRegIKCell*:
+     rkChainRegIKCellWldPos : position of a point on a link in the world frame
+     rkChainRegIKCellWldAtt : attitude of a link in the world frame
+     rkChainRegIKCellL2LPos : relative position of a point on a link with respect to a frame of another link
+     rkChainRegIKCellL2LAtt : relative attitude of a link with respect to a frame of another link
+     rkChainRegIKCellCOM : position of the center of mass in the world frame
+     rkChainRegIKCellAM : angular momentum about the origin of the world frame
+     rkChainRegIKCellAMCOM : angular momentum about the center of mass
 
  4. Initialize the posture of \a chain.
 
- 5. Deactivate all constraints if necessary by
-     rkChainDeactivateIK( &chain );
+ 5. Disable all constraints if necessary by
+     rkChainDisableIK( &chain );
 
  6. Bind the current status of all constraints if necessary by
      rkChainBindIK( &chain );
 
  7. Set the referential values of the constraints by rkIKCellSetRef() and so forth.
-    Note that rkIKCellSetRef() internally calls rkIKCellSetMask() to activate
-    the constraint.
 
  8. Solve the inverse kinematics by
      rkChainIK( &chain, dis, tol, iter );
@@ -71,13 +71,13 @@ __BEGIN_DECLS
  * ***********************************************************/
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
-  bool *joint_sw;       /*!< joint cooperation switch */
-  double *joint_weight; /*!< joint cooperating weight */
-  zVec joint_vec;       /*!< joint vector */
-  double eval;          /*!< evaluation function */
+  bool *joint_is_enabled;   /*!< flag to check if each joint is enabled to cooperate */
+  double *joint_weight;     /*!< joint cooperating weight */
+  zVec joint_vec;           /*!< joint vector */
+  double eval;              /*!< evaluation function */
 
   /*! \cond */
-  rkIKCellList clist;       /* list of constraint cells */
+  rkIKCellList _c_list;     /* list of constraint cells */
   zMat _c_mat_cell;         /* cellular workspace for constraint matrix */
   zVec3D _c_vec_cell;       /* cellular workspace for constraint vector */
 
@@ -90,14 +90,14 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
   zVec _c_we;               /* weight on residual constraint error */
   zVec (*_solve_eq)(rkIK*); /* motion constraint equation solver */
   /* workspace for motion constraint equation solver */
-  zLE __le;
+  zLEWorkspace __le;
   zVec __c;
   /*! \endcond */
 };
 
-#define rkChainIKConstraintMat(c) (c)->_ik->_c_mat
-#define rkChainIKConstraintVec(c) (c)->_ik->_c_vec
-#define rkChainIKJointIndex(c)    (c)->_ik->_j_idx
+#define rkChainIKConstraintMat(chain) (chain)->_ik->_c_mat
+#define rkChainIKConstraintVec(chain) (chain)->_ik->_c_vec
+#define rkChainIKJointIndex(chain)    (chain)->_ik->_j_idx
 
 /*! \brief create and destroy inverse kinematics solver.
  *
@@ -113,6 +113,17 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
  */
 __ROKI_EXPORT rkChain *rkChainCreateIK(rkChain *chain);
 __ROKI_EXPORT void rkChainDestroyIK(rkChain *chain);
+
+/*! \brief clone an inverse kinematics solver of a kinematic chain.
+ *
+ * rkChainCloneIK() clones an inverse kinematics solver of a kinematic chain \a src
+ * and set it in another kinematic chain \a dest.
+ * \return
+ * rkChainCloneIK() returns the boolean value. If it succeeds to duplicate the
+ * inverse kinematics solver, the true value is returned. Otherwise, the false
+ * value is returned.
+ */
+__ROKI_EXPORT bool rkChainCloneIK(rkChain *src, rkChain *dest);
 
 /*! \brief register/unregister cooperating joints of the inverse kinematics.
  *
@@ -160,41 +171,40 @@ __ROKI_EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
  * internal memory for the inverse kinematics, the false value is returned.
  * Otherwise, the true value is returned.
  */
-__ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, rkIKAttr *attr, int mask, rkIKRef_fp rf, rkIKCMat_fp mf, rkIKCVec_fp vf, rkIKBind_fp bf, rkIKAcm_fp af, void *util);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 __ROKI_EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
 
 /*! \brief register a constraint cell of the inverse kinematics. */
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, rkIKAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, rkIKAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, rkIKAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, rkIKAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, rkIKAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, rkIKAttr *attr, int mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, rkIKAttr *attr, int mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
 
 /*! \brief find a constraint cell.
  *
- * rkChainFindIKCell() finds a constraint cell with an identifier \a id from
- * the constraint list registered in a kinematic chain \a chain.
+ * rkChainFindIKCellByName() finds a constraint cell with a name \a name from the constraint list
+ * registered in a kinematic chain \a chain.
  * \return
- * rkChainFindIKCell() returns a pointer to the found cell, or the null pointer
- * if not found.
+ * rkChainFindIKCellByName() returns a pointer to the found cell, or the null pointer if not found.
  */
-__ROKI_EXPORT rkIKCell *rkChainFindIKCell(rkChain *chain, int id);
+__ROKI_EXPORT rkIKCell *rkChainFindIKCellByName(rkChain *chain, const char *name);
 
-/*! \brief deactivate and bind a constraint.
+/*! \brief disable and bind a constraint.
  *
- * rkChainDeactivateIK() deactivates all the constraints registered to the
- * inverse kinematics solver of a kinematic chain \a chain. In order to activate
- * each constraint cell, call rkIKSetRef family functions, or activate it manually
+ * rkChainDisableIK() disables all the constraints registered to the
+ * inverse kinematics solver of a kinematic chain \a chain. In order to enable
+ * each constraint cell, call rkIKSetRef family functions, or enable it manually
  * by rkIKCellOn().
  *
  * rkChainBindIK() sets the references of the constraints of \a chain for the
- * current values. It activates the all cells that binding functions are assigned.
+ * current values. It enables the all cells that binding functions are assigned.
  * \return
  * They return no values.
  */
-__ROKI_EXPORT void rkChainDeactivateIK(rkChain *chain);
+__ROKI_EXPORT void rkChainDisableIK(rkChain *chain);
 __ROKI_EXPORT void rkChainBindIK(rkChain *chain);
 __ROKI_EXPORT void rkChainZeroIKAcm(rkChain *chain);
 
@@ -250,7 +260,7 @@ __ROKI_EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
 
 #define ZTK_TAG_RKIK "ik"
 
-__ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *ik, ZTK *ztk);
+__ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk);
 __ROKI_EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, const char *filename);
 
 __END_DECLS

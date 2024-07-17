@@ -4,7 +4,7 @@
  * rk_ik_imp - inverse kinematics: impedance control
  */
 
-#include <roki/rk_ik.h>
+#include <roki/rk_chain.h>
 
 /* strict referential velocity for impedance control. */
 static zVec3D *_rkIKImpSRV(zVec3D *err, zVec3D *v, rkIKImp *imp, zVec3D *srv)
@@ -37,10 +37,10 @@ zVec3D *rkIKImpWldPos(rkChain *chain, rkIKAttr *attr, void *priv, rkIKRef *ref, 
   zVec3D v, err;
 
   /* position error */
-  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->ap, &v );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->attention_point, &v );
   zVec3DSub( &ref->pos, &v, &err );
   /* velocity */
-  rkChainLinkPointVel( chain, attr->id, &attr->ap, &v );
+  rkChainLinkPointVel( chain, attr->id, &attr->attention_point, &v );
   zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,attr->id), &v );
   return _rkIKImpSRV( &err, &v, (rkIKImp *)priv, srv );
 }

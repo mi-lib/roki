@@ -121,7 +121,7 @@ void rk_ik_solve(FILE *fout)
   tol = atof( option[RK_IK_TOL].arg );
   while( !zListIsEmpty(&ik_seq) ){
     zQueueDequeue( &ik_seq, &cp );
-    rkChainDeactivateIK( &chain );
+    rkChainDisableIK( &chain );
     rkChainBindIK( &chain ); /* bind current status to the reference. */
     rkChainSetIKSeqCell( &chain, &cp->data );
     eprintf( "output: %d\n", ++i );

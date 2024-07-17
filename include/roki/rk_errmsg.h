@@ -29,6 +29,7 @@
 
 #define RK_WARN_CHAIN_NULL         "null chain specified."
 #define RK_WARN_CHAIN_EMPTY        "empty chain specified."
+#define RK_WARN_CHAIN_SHAPE_ONLY   "create a floating link to assign shape(s)"
 
 #define RK_WARN_IK_CELL_NOTFOUND   "IK cell not found"
 
