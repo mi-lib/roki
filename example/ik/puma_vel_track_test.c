@@ -15,20 +15,20 @@ zVec3D *att_srv(rkChain *chain, rkIKAttr *attr, void *priv, rkIKRef *ref, zVec3D
 
 const rkIKConstraint rk_ik_constraint_link_world_lin_vel = {
   typestr: "world_lin_vel",
-  _ref_fp: rkIKRefSetPos,
-  _cmat_fp: rkIKJacobiLinkWldLin,
-  _cvec_fp: pos_srv,
-  _bind_fp: rkIKBindLinkWldPos,
-  _acm_fp: NULL,
+  ref_fp: rkIKRefSetPos,
+  cmat_fp: rkIKJacobiLinkWldLin,
+  cvec_fp: pos_srv,
+  bind_fp: rkIKBindLinkWldPos,
+  acm_fp: NULL,
 };
 
 const rkIKConstraint rk_ik_constraint_link_world_ang_vel = {
   typestr: "world_ang_vel",
-  _ref_fp: rkIKRefSetAA,
-  _cmat_fp: rkIKJacobiLinkWldAng,
-  _cvec_fp: att_srv,
-  _bind_fp: rkIKBindLinkWldAtt,
-  _acm_fp: NULL,
+  ref_fp: rkIKRefSetAA,
+  cmat_fp: rkIKJacobiLinkWldAng,
+  cvec_fp: att_srv,
+  bind_fp: rkIKBindLinkWldAtt,
+  acm_fp: NULL,
 };
 
 void init(rkChain *puma, rkChain *puma_v, const rkIKConstraint *constraint_lin, const rkIKConstraint *constraint_ang, zVec *dis, rkIKCell *cell[])
@@ -41,8 +41,8 @@ void init(rkChain *puma, rkChain *puma_v, const rkIKConstraint *constraint_lin, 
   rkChainRegIKJointAll( puma_v, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_ID, constraint_ang, NULL );
-  cell[1] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_ID, constraint_lin, NULL );
+  cell[0] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_MASK_ID, constraint_ang, NULL );
+  cell[1] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_MASK_ID, constraint_lin, NULL );
 
   rkIKSetEqSolver( puma_v->_ik, rkIKSolveEqSR );
   rkChainDisableIK( puma_v );

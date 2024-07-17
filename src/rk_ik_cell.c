@@ -6,26 +6,42 @@
 
 #include <roki/rk_chain.h>
 
+/* initialize IK attribute */
+rkIKAttr* rkIKAttrInit(rkIKAttr *attr)
+{
+  attr->user_defined_type = -1;
+  attr->id = -1;
+  attr->id_sub = -1;
+  zVec3DZero( &attr->attention_point );
+  zVec3DCreate( &attr->weight, 1.0, 1.0, 1.0 );
+  attr->mask = RK_IK_ATTR_MASK_NONE;
+  return attr;
+}
+
 /* ********************************************************** */
 /* CLASS: rkIKCell
  * inverse kinematics cell class
  * ********************************************************** */
 
 /* initialize constraint cell. */
-void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, uint mask, const rkIKConstraint *constraint, void *util)
+void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
   zNameSetPtr( &cell->data, NULL );
-  rkIKCellLinkID(cell)  = attr && ( mask & RK_IK_ATTR_ID ) ? attr->id : 0;
-  rkIKCellLinkID2(cell) = attr && ( mask & RK_IK_ATTR_ID_SUB ) ? attr->id_sub : 0;
-  if( attr && ( mask & RK_IK_ATTR_ATTENTION_POINT ) )
-    zVec3DCopy( &attr->attention_point, rkIKCellAttentionPoint(cell) );
-  else
-    zVec3DZero( rkIKCellAttentionPoint(cell) );
-  rkIKCellMode(cell) = mask & RK_IK_ATTR_FORCE ? RK_IK_CELL_FORCE : 0;
-  if( attr && ( mask & RK_IK_ATTR_WEIGHT ) )
-    zVec3DCopy( &attr->weight, rkIKCellWeight(cell) );
-  else
-    rkIKCellSetWeight( cell, 1.0, 1.0, 1.0 ); /* default weight on constraint*/
+  rkIKAttrInit( &cell->data.attr );
+  if( attr ){
+    rkIKCellLinkID(cell) = ( mask & RK_IK_ATTR_MASK_ID ) ? attr->id : 0;
+    rkIKCellLinkID2(cell) = ( mask & RK_IK_ATTR_MASK_ID_SUB ) ? attr->id_sub : 0;
+    if( mask & RK_IK_ATTR_MASK_ATTENTION_POINT )
+      zVec3DCopy( &attr->attention_point, rkIKCellAttentionPoint(cell) );
+    else
+      zVec3DZero( rkIKCellAttentionPoint(cell) );
+    if( mask & RK_IK_ATTR_MASK_WEIGHT )
+      zVec3DCopy( &attr->weight, rkIKCellWeight(cell) );
+    else
+      rkIKCellSetWeight( cell, 1.0, 1.0, 1.0 ); /* default weight on constraint*/
+    cell->data.attr.mask = mask;
+  }
+  cell->data.mode = RK_IK_CELL_MODE_XYZ;
 
   rkIKRefClear( rkIKCellRef(cell) );
   rkIKCellAcmZero( cell );
@@ -53,7 +69,7 @@ void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, uint mask, const rkIKConstrain
   return cell
 
 /* create an IK cell. */
-rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, uint mask, const rkIKConstraint *constraint, void *util)
+rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
   _RK_IK_CELL_ALLOC_FUNC( name, rkIKCellInit( cell, attr, mask, constraint, util ) );
 }
@@ -287,65 +303,65 @@ void rkIKCellListDestroy(rkIKCellList *list)
 
 const rkIKConstraint rk_ik_constraint_link_world_pos = {
   typestr: "world_pos",
-  _ref_fp: rkIKRefSetPos,
-  _cmat_fp: rkIKJacobiLinkWldLin,
-  _cvec_fp: rkIKLinkWldPosErr,
-  _bind_fp: rkIKBindLinkWldPos,
-  _acm_fp: rkIKAcmPos,
+  ref_fp: rkIKRefSetPos,
+  cmat_fp: rkIKJacobiLinkWldLin,
+  cvec_fp: rkIKLinkWldPosErr,
+  bind_fp: rkIKBindLinkWldPos,
+  acm_fp: rkIKAcmPos,
 };
 
 const rkIKConstraint rk_ik_constraint_link_world_att = {
   typestr: "world_att",
-  _ref_fp: rkIKRefSetZYX,
-  _cmat_fp: rkIKJacobiLinkWldAng,
-  _cvec_fp: rkIKLinkWldAttErr,
-  _bind_fp: rkIKBindLinkWldAtt,
-  _acm_fp: rkIKAcmAtt,
+  ref_fp: rkIKRefSetZYX,
+  cmat_fp: rkIKJacobiLinkWldAng,
+  cvec_fp: rkIKLinkWldAttErr,
+  bind_fp: rkIKBindLinkWldAtt,
+  acm_fp: rkIKAcmAtt,
 };
 
 const rkIKConstraint rk_ik_constraint_link2link_pos = {
   typestr: "l2l_pos",
-  _ref_fp: rkIKRefSetPos,
-  _cmat_fp: rkIKJacobiLinkL2LLin,
-  _cvec_fp: rkIKLinkL2LPosErr,
-  _bind_fp: rkIKBindLinkL2LPos,
-  _acm_fp: rkIKAcmPos,
+  ref_fp: rkIKRefSetPos,
+  cmat_fp: rkIKJacobiLinkL2LLin,
+  cvec_fp: rkIKLinkL2LPosErr,
+  bind_fp: rkIKBindLinkL2LPos,
+  acm_fp: rkIKAcmPos,
 };
 
 const rkIKConstraint rk_ik_constraint_link2link_att = {
   typestr: "l2l_att",
-  _ref_fp: rkIKRefSetZYX,
-  _cmat_fp: rkIKJacobiLinkL2LAng,
-  _cvec_fp: rkIKLinkL2LAttErr,
-  _bind_fp: rkIKBindLinkL2LAtt,
-  _acm_fp: rkIKAcmAtt,
+  ref_fp: rkIKRefSetZYX,
+  cmat_fp: rkIKJacobiLinkL2LAng,
+  cvec_fp: rkIKLinkL2LAttErr,
+  bind_fp: rkIKBindLinkL2LAtt,
+  acm_fp: rkIKAcmAtt,
 };
 
 const rkIKConstraint rk_ik_constraint_world_com = {
   typestr: "com",
-  _ref_fp: rkIKRefSetPos,
-  _cmat_fp: rkIKJacobiCOM,
-  _cvec_fp: rkIKCOMErr,
-  _bind_fp: rkIKBindCOM,
-  _acm_fp: rkIKAcmPos,
+  ref_fp: rkIKRefSetPos,
+  cmat_fp: rkIKJacobiCOM,
+  cvec_fp: rkIKCOMErr,
+  bind_fp: rkIKBindCOM,
+  acm_fp: rkIKAcmPos,
 };
 
 const rkIKConstraint rk_ik_constraint_world_angular_momentum = {
   typestr: "angular_momentum",
-  _ref_fp: rkIKRefSetPos,
-  _cmat_fp: rkIKJacobiAM,
-  _cvec_fp: rkIKAMErr,
-  _bind_fp: rkIKBindAM,
-  _acm_fp: rkIKAcmAtt,
+  ref_fp: rkIKRefSetPos,
+  cmat_fp: rkIKJacobiAM,
+  cvec_fp: rkIKAMErr,
+  bind_fp: rkIKBindAM,
+  acm_fp: rkIKAcmAtt,
 };
 
 const rkIKConstraint rk_ik_constraint_world_angular_momentum_about_com = {
   typestr: "angular_momentum_about_com",
-  _ref_fp: rkIKRefSetPos,
-  _cmat_fp: rkIKJacobiAMCOM,
-  _cvec_fp: rkIKAMCOMErr,
-  _bind_fp: rkIKBindAMCOM,
-  _acm_fp: rkIKAcmAtt,
+  ref_fp: rkIKRefSetPos,
+  cmat_fp: rkIKJacobiAMCOM,
+  cvec_fp: rkIKAMCOMErr,
+  bind_fp: rkIKBindAMCOM,
+  acm_fp: rkIKAcmAtt,
 };
 
 const rkIKConstraint *rk_ik_constraint_array[] = {

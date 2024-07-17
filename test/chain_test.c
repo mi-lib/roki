@@ -155,7 +155,10 @@ void assert_getsetconf(rkChain *chain)
     rkChainSetConf( chain, conf );
     rkChainGetJointDisAll( chain, dis );
     zVecSubDRC( dis, orgdis );
-    if( !zVecIsTol( dis, TOL ) ) result1 = false;
+    if( !zVecIsTol( dis, TOL ) ){
+      eprintf( "(rkChainFK + rkChainGetConf + rkChainSetConf + rkChainGetJointDisAll) error abs max = %.10g\n", zVecAbsMax( dis, NULL ) );
+      result1 = false;
+    }
     /* configuration -> displacement -> configuration */
     zVecRandUniform( orgconf, -1.0, 1.0 );
     rkChainSetConf( chain, orgconf );
@@ -166,7 +169,10 @@ void assert_getsetconf(rkChain *chain)
     rkChainGetJointDisAll( chain, dis );
     rkChainGetConf( chain, conf );
     zVecSubDRC( conf, orgconf );
-    if( !zVecIsTol( conf, TOL ) ) result2 = false;
+    if( !zVecIsTol( conf, TOL ) ){
+      eprintf( "(rkChainSetConf + rkChainGetJointDisAll + rkChainFK + rkChainGetConf) error abs max = %.10g\n", zVecAbsMax( conf, NULL ) );
+      result2 = false;
+    }
   }
   zAssert( rkChainFK + rkChainGetConf + rkChainSetConf + rkChainGetJointDisAll, result1 );
   zAssert( rkChainSetConf + rkChainGetJointDisAll + rkChainFK + rkChainGetConf, result2 );
