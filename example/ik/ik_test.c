@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
   rkChainFK( &chain, dis );
 
   attr.id = 5;
-  cell = rkChainRegIKCellWldPos( &chain, NULL, &attr, RK_IK_ATTR_MASK_ID );
+  cell = rkChainRegIKCellWldPos( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
   r = rkChainLinkWldPos(&chain,attr.id)->c.z - rkChainLinkWldPos(&chain,1)->c.z;
 
   rkChainDisableIK( &chain );

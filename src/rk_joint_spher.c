@@ -269,7 +269,7 @@ static void *_rkJointSpherMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
 }
 
 static void _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
-  zVec3DFPrint( fp, &_rks(joint)->aa );
+  zVec3DDataNLFPrint( fp, &_rks(joint)->aa );
 }
 
 static ZTKPrp __ztk_prp_rkjoint_spher[] = {

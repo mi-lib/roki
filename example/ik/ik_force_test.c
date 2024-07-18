@@ -61,13 +61,14 @@ int main(int argc, char *argv[])
 
   for( i=0; i<BRANCH_NUM; i++ ){
     attr.id = i*3+3;
-    cell[i] = rkChainRegIKCellWldPos( &chain, NULL, &attr, RK_IK_ATTR_MASK_ID );
+    cell[i] = rkChainRegIKCellWldPos( &chain, NULL, 1, &attr, RK_IK_ATTR_MASK_ID );
     rkIKCellSetActiveComponent( cell[i], RK_IK_CELL_MODE_X | RK_IK_CELL_MODE_Y );
   }
   rkChainDisableIK( &chain );
   rkChainBindIK( &chain );
 
   zVec3DCreate( &cell[0]->data.ref.pos, 1, 1, 0 );
+  rkIKCellSetPriority( cell[0], 0 );
   rkIKCellForce( cell[0] );
   fp = fopen( "f.zvs", "w" );
   for( i=0; i<=DIV; i++ ){

@@ -41,8 +41,8 @@ void init(rkChain *puma, rkChain *puma_v, const rkIKConstraint *constraint_lin, 
   rkChainRegIKJointAll( puma_v, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_MASK_ID, constraint_ang, NULL );
-  cell[1] = rkChainRegIKCell( puma_v, NULL, &attr, RK_IK_ATTR_MASK_ID, constraint_lin, NULL );
+  cell[0] = rkChainRegIKCell( puma_v, NULL, 0, &attr, RK_IK_ATTR_MASK_ID, constraint_ang, NULL );
+  cell[1] = rkChainRegIKCell( puma_v, NULL, 0, &attr, RK_IK_ATTR_MASK_ID, constraint_lin, NULL );
 
   rkIKSetEqSolver( puma_v->_ik, rkIKSolveEqSR );
   rkChainDisableIK( puma_v );

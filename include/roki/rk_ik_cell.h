@@ -110,13 +110,16 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
 
 zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 
+#define rkIKCellName(cell)           zName( &(cell)->data )
+
 #define rkIKCellAttr(cell)           ( &(cell)->data.attr )
 #define rkIKCellLinkID(cell)         rkIKCellAttr(cell)->id
 #define rkIKCellLinkID2(cell)        rkIKCellAttr(cell)->id_sub
 #define rkIKCellAttentionPoint(cell) ( &rkIKCellAttr(cell)->attention_point )
 #define rkIKCellWeight(cell)         ( &rkIKCellAttr(cell)->weight )
 
-#define rkIKCellPriority(cell)       (cell)->data.priority
+#define rkIKCellPriority(cell)              (cell)->data.priority
+#define rkIKCellSetPriority(cell,_priority) ( rkIKCellPriority(cell) = (_priority) )
 
 #define RK_IK_CELL_MODE_X            0x01
 #define RK_IK_CELL_MODE_Y            0x02
@@ -141,10 +144,10 @@ zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 #define rkIKCellRefAtt(cell)         ( &rkIKCellRef(cell)->att )
 
 /*! \brief intialize an IK cell */
-__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief create an IK cell. */
-__ROKI_EXPORT rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+__ROKI_EXPORT rkIKCell *rkIKCellCreate(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief clone an IK cell. */
 __ROKI_EXPORT rkIKCell *rkIKCellClone(rkIKCell *src);

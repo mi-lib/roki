@@ -33,9 +33,10 @@ __BEGIN_DECLS
     changes the weight from \a weight to \a weight2.
 
  3. Register constraint cell of the inverse kinematics as
-     entry = rkChainRegIKCell*( &chain, name, &attr, mask );
+     entry = rkChainRegIKCell*( &chain, name, priority, &attr, mask );
     where
      \a name : name of the constraint
+     \a priority: priority of the constraint
      \a attr : attributes of the inverse kinematics constraint (see 'rk_ik_cell.h')
      \a mask : mask for an attribute to be specified
     The following functions are avaible for the above rkChainRegIKCell*:
@@ -149,39 +150,32 @@ __ROKI_EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
 
 /*! \brief register/unregister a constraint cell of the inverse kinematics.
  *
- * rkChainRegIKCell() registers a constraint cell denoted by \a attr, \a rf,
- * \a mf, \a vf, and \a bf, to the cell list of the inverse kinematics
- * solver of \a chain.
- * \a attr contains attributes of the attention property (link or point to
- * be constrained). See rk_ik_cell.h for detail.
- * \a rf points a function that provides reference (a set of three values).
- * \a mf points a function that computes the constraint matrix.
- * \a vf is a function that computes the 3D constraint vector (velocity or
- * residual error of displacement in most cases).
- * \a bf is a function that computes the current vector to be constrained.
- * \a util is available for programmers' conveniences, which points any type
- * of data chunk.
+ * rkChainRegIKCell() registers a constraint cell denoted by \a priority, \a attr, and \a constraint
+ * to the list of the inverse kinematics constraint cells of a kinematic chain \a chain.
+ * \a priority is the priority of the constraint.
+ * \a attr contains attributes of the attention property (link or point to be constrained). See
+ * rk_ik_cell.h for detail. \a mask specifies the attributes of \a attr to be validated.
+ * \a constraint is a set of functions that provide referential values, the constraint matrix,
+ * the constraint vector, the reference bound to the current posture, and the accumulated error.
+ * \a util is available for programmers' conveniences, which points any type of data chunk.
  *
- * rkChainUnregIKCell() unregisters a constraint cell of the inverse kinematics
- * solver of \a chain. \a id is the identifier of the cell to be unregistered.
+ * rkChainUnregIKCell() unregisters a constraint cell \a cell of the inverse kinematics solver of \a chain.
  * \return
- * rkChainRegIKCell() returns a pointer to the registered cell. If it fails,
- * the null pointer is returned.
- * rkChainUnregIKCell() returns the boolean value. If it fails to reallocate
- * internal memory for the inverse kinematics, the false value is returned.
- * Otherwise, the true value is returned.
+ * rkChainRegIKCell() returns a pointer to the registered cell, or the null pointer if it fails.
+ * rkChainUnregIKCell() returns the true value if it succeeds, or the false value if it fails to
+ * reallocate internal memory for the inverse kinematics.
  */
-__ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 __ROKI_EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
 
 /*! \brief register a constraint cell of the inverse kinematics. */
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, const char *name, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
 
 /*! \brief find a constraint cell.
  *
@@ -260,8 +254,15 @@ __ROKI_EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
 
 #define ZTK_TAG_RKIK "ik"
 
+/* read the inverse kinematics configuration of a kinematic chain from ZTK. */
 __ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk);
+/* read the inverse kinematics configuration of a kinematic chain from a file. */
 __ROKI_EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, const char *filename);
+
+/* print the inverse kinematics configuration of a kinematic chain out to the current position of a file. */
+__ROKI_EXPORT void rkChainIKConfFPrintZTK(FILE *fp, rkChain *chain);
+/* write the inverse kinematics configuration of a kinematic chain to a file in ZTK format. */
+__ROKI_EXPORT bool rkChainIKConfWriteZTK(rkChain *chain, const char *filename);
 
 __END_DECLS
 

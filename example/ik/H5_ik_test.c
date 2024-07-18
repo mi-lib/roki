@@ -11,18 +11,18 @@
 
 #define DT     ( T / DIV )
 
-void ik_cell_output(FILE *fp, double dt, zVec3D *pg, zVec3D *pl, zVec3D *pr)
+void ik_cell_output(FILE *fp, double dt, rkIKCell *entry[], zVec3D *pg, zVec3D *pl, zVec3D *pr)
 {
   fprintf( fp, "%.10g 6 ", dt );
-  fprintf( fp, " 0 1 1 1" );
+  fprintf( fp, " %s 1 1 1", rkIKCellName(entry[0]) );
   zVec3DDataFPrint( fp, pg );
-  fprintf( fp, " 1 1 1 1 0 0 0" );
-  fprintf( fp, " 2 1 1 1" );
+  fprintf( fp, " %s 1 1 1 0 0 0", rkIKCellName(entry[1]) );
+  fprintf( fp, " %s 1 1 1", rkIKCellName(entry[2]) );
   zVec3DDataFPrint( fp, pl );
-  fprintf( fp, " 3 1 1 1 0 0 0" );
-  fprintf( fp, " 4 1 1 1" );
+  fprintf( fp, " %s 1 1 1 0 0 0", rkIKCellName(entry[3]) );
+  fprintf( fp, " %s 1 1 1", rkIKCellName(entry[4]) );
   zVec3DDataFPrint( fp, pr );
-  fprintf( fp, " 5 1 1 1 0 0 0\n" );
+  fprintf( fp, " %s 1 1 1 0 0 0\n", rkIKCellName(entry[5]) );
 }
 
 void ik_solve(FILE *fout_vs, FILE *fout_cs, rkChain *robot, rkIKCell *entry[], zVec q, zVec3D *pg, zVec3D *pl, zVec3D *pr)
@@ -38,7 +38,7 @@ void ik_solve(FILE *fout_vs, FILE *fout_cs, rkChain *robot, rkIKCell *entry[], z
   rkChainIK( robot, q, zTOL, 0 );
   fprintf( fout_vs, "%g ", DT );
   zVecFPrint( fout_vs, q );
-  ik_cell_output( fout_cs, DT, pg, pl, pr );
+  ik_cell_output( fout_cs, DT, entry, pg, pl, pr );
 }
 
 void step1(FILE *fout_vs, FILE *fout_cs, double t, rkChain *robot, rkIKCell *entry[], zVec q)
@@ -87,7 +87,14 @@ int main(int argc, char *argv[])
 {
   rkChain robot;
   rkIKCell *entry[6];
-  char name[] = { 0, 0 };
+  char *name[] = {
+    "com",
+    "torso_att",
+    "left_foot_pos",
+    "left_foot_att",
+    "right_foot_pos",
+    "right_foot_att",
+  };
   zVec q;
   int i;
   FILE *fout_vs, *fout_cs;
@@ -95,10 +102,8 @@ int main(int argc, char *argv[])
   rkChainReadZTK( &robot, H5_ZTK );
   rkChainIKConfReadZTK( &robot, H5_ZTK );
   q = zVecAlloc( rkChainJointSize(&robot) );
-  for( i=0; i<6; i++ ){
-    sprintf( name, "%1d", i );
-    entry[i] = rkChainFindIKCellByName( &robot, name );
-  }
+  for( i=0; i<6; i++ )
+    entry[i] = rkChainFindIKCellByName( &robot, name[i] );
   fout_vs = fopen( "walk.zvs", "w" );
   fout_cs = fopen( "walk.zcs", "w" );
   for( i=0; i<DIV; i++ ) step1( fout_vs, fout_cs, T*i/DIV, &robot, entry, q );
