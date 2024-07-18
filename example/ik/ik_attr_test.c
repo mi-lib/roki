@@ -33,7 +33,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   int  (*get_sub_link_frame_id)(void*);
   void (*reset                )(void*);
   void* (*reg                 )(void*,void*);
+  void* (*get_ptr_by_name     )(void*,const char*);
   bool (*unreg                )(void*,void*);
+  bool (*unreg_by_name        )(void*,const char*);
 };
 
 /* declaration */
@@ -68,7 +70,9 @@ void rkIKRegSelect_set_sub_link_frame_id(void *instance, int sub_link_id);
 int  rkIKRegSelect_get_sub_link_frame_id(void *instance);
 void rkIKRegSelect_reset                (void *instance);
 void* rkIKRegSelect_call_reg_api        (void *instance, void *chain);
-bool rkIKRegSelect_call_unreg_api       (void *chain, void* cell);
+void* rkIKRegSelect_get_pointer_by_name (void* chain, const char* name);
+bool rkIKRegSelect_unreg_by_cell        (void *chain, void* cell);
+bool rkIKRegSelect_unreg_by_name        (void *chain, const char* name);
 
 static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_init,
@@ -102,57 +106,57 @@ static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_get_sub_link_frame_id,
   rkIKRegSelect_reset,
   rkIKRegSelect_call_reg_api,
-  rkIKRegSelect_call_unreg_api
+  rkIKRegSelect_get_pointer_by_name,
+  rkIKRegSelect_unreg_by_cell,
+  rkIKRegSelect_unreg_by_name
 };
+
+
 
 /* implement .c (capsuled) ------------------------------------------------ */
 
-typedef enum{
-  RK_IK_TARGET_NONE,
-  RK_IK_TARGET_COM,    /* Center Of Mass */
-  RK_IK_TARGET_LINK   /* the link with attented point */
-} rkIKTargetType;
+/**/
 
-typedef enum{
-  RK_IK_TARGET_QUANTITY_NONE,
-  RK_IK_TARGET_QUANTITY_POS,  /* position */
-  RK_IK_TARGET_QUANTITY_ATT,  /* attitude */
-  RK_IK_TARGET_QUANTITY_AM,   /* angular momentum */
-} rkIKTargetQuantityType;
-
-typedef enum{
-  RK_IK_REF_FRAME_NONE,
-  RK_IK_REF_FRAME_WLD,      /* on world frame */
-  RK_IK_REF_FRAME_SUB_LINK, /* on sub link frame */
-} rkIKReferenceFrameType;
-
-typedef enum{
-  RK_IK_PRIORITY_NONE,
-  RK_IK_PRIORITY_FORCE, /* weight is forced to be max */
-  RK_IK_PRIORITY_WEIGHT
-} rkIKPriorityType;
-
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectable ){
-  /* target */
-  rkIKTargetType _target;
-  rkIKTargetQuantityType _quantity;
-  rkIKReferenceFrameType _ref_frame;
-  rkIKPriorityType _priority;
-};
-
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegister ){
-  /* arguments for call api */
-  rkIKRegSelectable _sel;
-  rkIKAttr _attr;
-};
+/* int 32bit */
+/* User Defined Type (24bit) : Reference Frame Type, Target Type, Quantity Type */
+static const int32_t RK_IK_ATTR_TYPE__WORLD_LINK_POS     = 0x010101;
+static const int32_t RK_IK_ATTR_TYPE__WORLD_LINK_ATT     = 0x010102;
+static const int32_t RK_IK_ATTR_TYPE__WORLD_LINK_AM      = 0x010103;
+static const int32_t RK_IK_ATTR_TYPE__WORLD_COM_POS      = 0x010201;
+static const int32_t RK_IK_ATTR_TYPE__WORLD_COM_AM       = 0x010203;
+static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_LINK_POS  = 0x020101;
+static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_LINK_ATT  = 0x020102;
+/* static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_LINK_AM   = 0x020103; */
+/* static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_COM_POS   = 0x020201; */
+/* static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_COM_AM    = 0x020203; */
+/* Reference Frame Type for Selecting */
+static const int32_t RK_IK_ATTR_TYPE_REF_FRAME           = 0xff0000;
+static const int32_t RK_IK_ATTR_TYPE_REF_FRAME__WORLD    = 0x010000;
+static const int32_t RK_IK_ATTR_TYPE_REF_FRAME__SUB_LINK = 0x020000;
+/* Target Type for Selecting */
+static const int32_t RK_IK_ATTR_TYPE_TARGET              = 0x00ff00;
+static const int32_t RK_IK_ATTR_TYPE_TARGET__LINK        = 0x000100;
+static const int32_t RK_IK_ATTR_TYPE_TARGET__COM         = 0x000200;
+/* Quantity Type for Selecting */
+static const int32_t RK_IK_ATTR_TYPE_QUANTITY           = 0x00000ff;
+static const int32_t RK_IK_ATTR_TYPE_QUANTITY__POS      = 0x0000001;
+static const int32_t RK_IK_ATTR_TYPE_QUANTITY__ATT      = 0x0000002;
+static const int32_t RK_IK_ATTR_TYPE_QUANTITY__AM       = 0x0000003;
 
 /**/
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegister ){
+  /* arguments for call api */
+  int _priority;
+  ubyte _mode;
+  rkIKAttr _attr;
+};
 
 void* rkIKRegSelect_init(void** instance)
 {
   rkIKRegister* reg = (rkIKRegister*)(*instance);
   reg = zAlloc( rkIKRegister, 1 );
-  rkIKAttrSetAP( &reg->_attr, 0.0, 0.0, 0.0 );
+  rkIKAttrInit( &reg->_attr );
+  reg->_attr.user_defined_type = 0;
   *instance = (void*)(reg);
 
   return instance;
@@ -170,132 +174,127 @@ void rkIKRegSelect_free(void **instance)
   *instance = NULL;
 }
 
-bool rkIKRegSelect_select_com(void* instance){
-  rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  sel->_target = RK_IK_TARGET_COM;
-  return true;
-}
-
-bool rkIKRegSelect_com(void* instance){
-  rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_target == RK_IK_TARGET_COM);
-}
-
 bool rkIKRegSelect_select_link(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  sel->_target = RK_IK_TARGET_LINK;
+  reg->_attr.user_defined_type &= (~RK_IK_ATTR_TYPE_TARGET);
+  reg->_attr.user_defined_type |= RK_IK_ATTR_TYPE_TARGET__LINK;
   return true;
 }
 
 bool rkIKRegSelect_link(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_target == RK_IK_TARGET_LINK);
+  int target = reg->_attr.user_defined_type & RK_IK_ATTR_TYPE_TARGET;
+  return (target == RK_IK_ATTR_TYPE_TARGET__LINK);
+}
+
+bool rkIKRegSelect_select_com(void* instance){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  reg->_attr.user_defined_type &= (~RK_IK_ATTR_TYPE_TARGET);
+  reg->_attr.user_defined_type |= RK_IK_ATTR_TYPE_TARGET__COM;
+  return true;
+}
+
+bool rkIKRegSelect_com(void* instance){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  int target = reg->_attr.user_defined_type & RK_IK_ATTR_TYPE_TARGET;
+  return (target == RK_IK_ATTR_TYPE_TARGET__COM);
 }
 
 bool rkIKRegSelect_select_pos(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  sel->_quantity = RK_IK_TARGET_QUANTITY_POS;
+  reg->_attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
+  reg->_attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__POS;
   return true;
 }
 
 bool rkIKRegSelect_pos(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_quantity == RK_IK_TARGET_QUANTITY_POS);
+  int quantity = reg->_attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
+  return (quantity == RK_IK_ATTR_TYPE_QUANTITY__POS);
 }
 
 bool rkIKRegSelect_select_att(void* instance){
+  if( rkIKRegSelect_com( instance ) ) return false; /* validation */
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  if( sel->_target == RK_IK_TARGET_COM ) return false; /* validation */
-  sel->_quantity = RK_IK_TARGET_QUANTITY_ATT;
+  reg->_attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
+  reg->_attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__ATT;
   return true;
 }
 
 bool rkIKRegSelect_att(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_quantity == RK_IK_TARGET_QUANTITY_ATT);
+  int quantity = reg->_attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
+  return (quantity == RK_IK_ATTR_TYPE_QUANTITY__ATT);
 }
 
 bool rkIKRegSelect_select_am(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  sel->_quantity = RK_IK_TARGET_QUANTITY_AM;
+  reg->_attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
+  reg->_attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__AM;
   return true;
 }
 
 bool rkIKRegSelect_am(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_quantity == RK_IK_TARGET_QUANTITY_AM);
+  int quantity = reg->_attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
+  return (quantity == RK_IK_ATTR_TYPE_QUANTITY__AM);
 }
 
 bool rkIKRegSelect_select_wld_frame(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  sel->_ref_frame = RK_IK_REF_FRAME_WLD;
+  reg->_attr.user_defined_type &= (~RK_IK_ATTR_TYPE_REF_FRAME);
+  reg->_attr.user_defined_type |= RK_IK_ATTR_TYPE_REF_FRAME__WORLD;
   return true;
 }
 
 bool rkIKRegSelect_wld_frame(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_ref_frame == RK_IK_REF_FRAME_WLD);
+  int ref_frame = reg->_attr.user_defined_type & RK_IK_ATTR_TYPE_REF_FRAME;
+  return (ref_frame == RK_IK_ATTR_TYPE_REF_FRAME__WORLD);
 }
 
 bool rkIKRegSelect_select_sub_link_frame(void* instance){
+  if( rkIKRegSelect_com( instance ) ) return false; /* validation. but maybe change */
+  if( rkIKRegSelect_am( instance ) ) return false; /* validation */
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  if( sel->_target == RK_IK_TARGET_COM ) return false; /* validation */
-  if( sel->_quantity == RK_IK_TARGET_QUANTITY_AM ) return false; /* validation */
-  sel->_ref_frame = RK_IK_REF_FRAME_SUB_LINK;
+  reg->_attr.user_defined_type &= (~RK_IK_ATTR_TYPE_REF_FRAME);
+  reg->_attr.user_defined_type |= RK_IK_ATTR_TYPE_REF_FRAME__SUB_LINK;
   return true;
 }
 
 bool rkIKRegSelect_sub_link_frame(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_ref_frame == RK_IK_REF_FRAME_SUB_LINK);
+  int ref_frame = reg->_attr.user_defined_type & RK_IK_ATTR_TYPE_REF_FRAME;
+  return (ref_frame == RK_IK_ATTR_TYPE_REF_FRAME__SUB_LINK);
 }
 
 bool rkIKRegSelect_select_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  sel->_priority = RK_IK_PRIORITY_FORCE;
+  reg->_mode = RK_IK_CELL_MODE_FORCE;
   return true;
 }
 
 bool rkIKRegSelect_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_priority == RK_IK_PRIORITY_FORCE);
+  return ( (reg->_mode & RK_IK_CELL_MODE_FORCE) == RK_IK_CELL_MODE_FORCE );
 }
 
 bool rkIKRegSelect_select_weight(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  sel->_priority = RK_IK_PRIORITY_WEIGHT;
+  reg->_mode = 0x00;
   return true;
 }
 
 bool rkIKRegSelect_weight(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  return (sel->_priority == RK_IK_PRIORITY_WEIGHT);
+  return ( (reg->_mode & RK_IK_CELL_MODE_FORCE) != RK_IK_CELL_MODE_FORCE );
 }
 
 /**/
 
 void rkIKRegSelect_set_link_id(void* instance, int link_id){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKAttr* attr = &reg->_attr;
-  attr->id = link_id;
+  reg->_attr.id = link_id;
 }
 
 int rkIKRegSelect_get_link_id(void *instance){
@@ -305,36 +304,31 @@ int rkIKRegSelect_get_link_id(void *instance){
 
 void rkIKRegSelect_set_ap(void* instance, double v1, double v2, double v3){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKAttr* attr = &reg->_attr;
-  rkIKAttrSetAP( attr, v1, v2, v3 );
+  rkIKAttrSetAttentionPoint( &reg->_attr, v1, v2, v3 );
 }
 
 void rkIKRegSelect_get_ap(void *instance, double *v1, double *v2, double *v3){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKAttr* attr = &reg->_attr;
-  *v1 = attr->ap.c.x;
-  *v2 = attr->ap.c.y;
-  *v3 = attr->ap.c.z;
+  *v1 = reg->_attr.attention_point.c.x;
+  *v2 = reg->_attr.attention_point.c.y;
+  *v3 = reg->_attr.attention_point.c.z;
 }
 
 void rkIKRegSelect_set_weight(void* instance, double w1, double w2, double w3){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKAttr* attr = &reg->_attr;
-  rkIKAttrSetWeight( attr, w1, w2, w3 );
+  rkIKAttrSetWeight( &reg->_attr, w1, w2, w3 );
 }
 
 void rkIKRegSelect_get_weight(void *instance, double *w1, double *w2, double *w3){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKAttr* attr = &reg->_attr;
-  *w1 = attr->w.c.x;
-  *w2 = attr->w.c.y;
-  *w3 = attr->w.c.z;
+  *w1 = reg->_attr.weight.c.x;
+  *w2 = reg->_attr.weight.c.y;
+  *w3 = reg->_attr.weight.c.z;
 }
 
 void rkIKRegSelect_set_sub_link_frame_id(void* instance, int sub_link_id){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKAttr* attr = &reg->_attr;
-  attr->id_sub = sub_link_id;
+  reg->_attr.id_sub = sub_link_id;
 }
 
 int rkIKRegSelect_get_sub_link_frame_id(void *instance){
@@ -346,102 +340,106 @@ int rkIKRegSelect_get_sub_link_frame_id(void *instance){
 
 void rkIKRegSelect_reset(void *instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable defalut_sel = {RK_IK_TARGET_NONE, RK_IK_TARGET_QUANTITY_NONE, RK_IK_REF_FRAME_NONE, RK_IK_PRIORITY_NONE};
-  zCopy( rkIKRegSelectable, &defalut_sel, &reg->_sel );
   rkIKAttr blank_attr;
+  rkIKAttrInit( &blank_attr );
+  blank_attr.user_defined_type = 0;
   zCopy( rkIKAttr, &blank_attr, &reg->_attr );
 }
 
 /**/
 
-ZDEF_STRUCT( __ROKI_CLASS_EXPORT, _rkIKLookup ){
-  rkIKCell *(*reg_ik_cell)(rkChain*,rkIKAttr*,int);
-};
+/* ZDEF_STRUCT( __ROKI_CLASS_EXPORT, _rkIKLookup ){ */
+/*   rkIKCell *(*reg_ik_cell)(rkChain*,const char*,rkIKAttr*,int); */
+/* }; */
 
-static _rkIKLookup reg_api_world_pos = { rkChainRegIKCellWldPos };
-static _rkIKLookup reg_api_world_att = { rkChainRegIKCellWldAtt };
-static _rkIKLookup reg_api_l2l_pos   = { rkChainRegIKCellL2LPos };
-static _rkIKLookup reg_api_l2l_att   = { rkChainRegIKCellL2LAtt };
-static _rkIKLookup reg_api_com       = { rkChainRegIKCellCOM    };
-static _rkIKLookup reg_api_am        = { rkChainRegIKCellAM     };
-static _rkIKLookup reg_api_amcom     = { rkChainRegIKCellAMCOM  };
+/* static _rkIKLookup reg_api_world_pos = { rkChainRegIKCellWldPos }; */
+/* static _rkIKLookup reg_api_world_att = { rkChainRegIKCellWldAtt }; */
+/* static _rkIKLookup reg_api_l2l_pos   = { rkChainRegIKCellL2LPos }; */
+/* static _rkIKLookup reg_api_l2l_att   = { rkChainRegIKCellL2LAtt }; */
+/* static _rkIKLookup reg_api_com       = { rkChainRegIKCellCOM    }; */
+/* static _rkIKLookup reg_api_am        = { rkChainRegIKCellAM     }; */
+/* static _rkIKLookup reg_api_amcom     = { rkChainRegIKCellAMCOM  }; */
 
-_rkIKLookup* reg_api_factory(void* instance){
+const rkIKConstraint* reg_api_factory(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  _rkIKLookup *lookup = NULL;
-  if( sel->_target == RK_IK_TARGET_LINK &&
-      sel->_quantity == RK_IK_TARGET_QUANTITY_POS &&
-      sel->_ref_frame == RK_IK_REF_FRAME_WLD ){
-    lookup = &reg_api_world_pos;
+  if( reg->_attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_LINK_POS ){
+    return rkIKConstraintFind( "world_pos" );
   } else
-  if( sel->_target == RK_IK_TARGET_LINK &&
-      sel->_quantity == RK_IK_TARGET_QUANTITY_ATT &&
-      sel->_ref_frame == RK_IK_REF_FRAME_WLD ) {
-    lookup = &reg_api_world_att;
+  if( reg->_attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_LINK_ATT ){
+    return rkIKConstraintFind( "world_att" );
   } else
-  if( sel->_target == RK_IK_TARGET_LINK &&
-      sel->_quantity == RK_IK_TARGET_QUANTITY_POS &&
-      sel->_ref_frame == RK_IK_REF_FRAME_SUB_LINK ) {
-    lookup = &reg_api_l2l_pos;
+  if( reg->_attr.user_defined_type == RK_IK_ATTR_TYPE__SUB_LINK_LINK_POS ){
+    return rkIKConstraintFind( "l2l_pos" );
   } else
-  if( sel->_target == RK_IK_TARGET_LINK &&
-      sel->_quantity == RK_IK_TARGET_QUANTITY_ATT &&
-      sel->_ref_frame == RK_IK_REF_FRAME_SUB_LINK ) {
-    lookup = &reg_api_l2l_att;
+  if( reg->_attr.user_defined_type == RK_IK_ATTR_TYPE__SUB_LINK_LINK_ATT ){
+    return rkIKConstraintFind( "l2l_att" );
   } else
-  if( sel->_target == RK_IK_TARGET_COM &&
-      sel->_quantity == RK_IK_TARGET_QUANTITY_POS &&
-      sel->_ref_frame == RK_IK_REF_FRAME_WLD ) {
-    lookup = &reg_api_com;
+  if( reg->_attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_COM_POS ) {
+    return rkIKConstraintFind( "com" );
   } else
-  if( sel->_target == RK_IK_TARGET_LINK &&
-      sel->_quantity == RK_IK_TARGET_QUANTITY_AM &&
-      sel->_ref_frame == RK_IK_REF_FRAME_WLD ) {
-    lookup = &reg_api_am;
+  if( reg->_attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_LINK_AM ) {
+    return rkIKConstraintFind( "angular_momentum" );
   } else
-  if( sel->_target == RK_IK_TARGET_COM &&
-      sel->_quantity == RK_IK_TARGET_QUANTITY_AM &&
-      sel->_ref_frame == RK_IK_REF_FRAME_WLD ) {
-    lookup = &reg_api_amcom;
+  if( reg->_attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_COM_AM ) {
+    return rkIKConstraintFind( "angular_momentum_about_com" );
   } else {
     return NULL;
   }
-
-  return lookup;
 }
 
+
 int mask_factory(void* instance){
-  rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKRegSelectable* sel = &reg->_sel;
-  int mask = RK_IK_ATTR_NONE;
-  if( sel->_target == RK_IK_TARGET_LINK )
-    mask |= RK_IK_ATTR_ID | RK_IK_ATTR_AP;
-  if( sel->_ref_frame == RK_IK_REF_FRAME_SUB_LINK )
-    mask |= RK_IK_ATTR_ID_SUB;
-  if( sel->_priority == RK_IK_PRIORITY_WEIGHT )
-    mask |= RK_IK_ATTR_WEIGHT;
-  if( sel->_priority == RK_IK_PRIORITY_FORCE )
-    mask |= RK_IK_ATTR_FORCE;
+  int mask = RK_IK_ATTR_MASK_NONE;
+  if( rkIKRegSelect_link( instance ) )
+    mask |= RK_IK_ATTR_MASK_ID | RK_IK_ATTR_MASK_ATTENTION_POINT;
+  if( rkIKRegSelect_sub_link_frame( instance ) )
+    mask |= RK_IK_ATTR_MASK_ID_SUB;
+  if( rkIKRegSelect_weight( instance ) )
+    mask |= RK_IK_ATTR_MASK_WEIGHT;
 
   return mask;
 }
 
 void* rkIKRegSelect_call_reg_api(void* instance, void* chain){
-  _rkIKLookup *lookup = reg_api_factory( instance );
+  const rkIKConstraint* lookup = reg_api_factory( instance );
   if( lookup == NULL )
     return NULL;
   int mask = mask_factory( instance );
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKCell* cell = lookup->reg_ik_cell( (rkChain*)(chain), &reg->_attr, mask );
+  rkIKCell* cell = rkChainRegIKCell( (rkChain*)(chain), lookup->typestr, &reg->_attr, mask, lookup, NULL );
   if( cell == NULL )
     ZRUNERROR( RK_ERR_IK_UNKNOWN, "Invalid rkIKAttr Setting Pattern" );
+  if( rkIKRegSelect_force( instance ) )
+    rkIKCellForce( cell );
 
   return (void*)(cell);
 }
 
+void* rkIKRegSelect_get_pointer_by_name(void* chain, const char* name)
+{
+  rkIKCell* cell = rkChainFindIKCellByName( (rkChain*)(chain), name );
+  if( cell == NULL )
+    return NULL;
+  rkIKRegister* reg;
+  rkIKRegSelect_init( (void**)(&reg) );
+  zCopy( rkIKAttr, &cell->data.attr, &reg->_attr );
+  if( rkIKCellIsForced( cell ) )
+    rkIKRegSelect_select_force( (void*)reg );
+  return (void*)(reg);
+}
+
 /* just wrapper for encapsulating types */
-bool rkIKRegSelect_call_unreg_api(void *chain, void *cell){
+bool rkIKRegSelect_unreg_by_cell(void *chain, void *cell){
+  if( cell == NULL )
+    return false;
+  return rkChainUnregIKCell( (rkChain*)(chain), (rkIKCell*)(cell) );
+}
+
+bool rkIKRegSelect_unreg_by_name(void *chain, const char* name)
+{
+  rkIKCell* cell = rkChainFindIKCellByName( (rkChain*)(chain), name );
+  if( cell == NULL )
+    return false;
   return rkChainUnregIKCell( (rkChain*)(chain), (rkIKCell*)(cell) );
 }
 
