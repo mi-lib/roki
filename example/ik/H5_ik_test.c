@@ -27,8 +27,6 @@ void ik_cell_output(FILE *fp, double dt, rkIKCell *entry[], zVec3D *pg, zVec3D *
 
 void ik_solve(FILE *fout_vs, FILE *fout_cs, rkChain *robot, rkIKCell *entry[], zVec q, zVec3D *pg, zVec3D *pl, zVec3D *pr)
 {
-  rkChainDisableIK( robot );
-  rkChainBindIK( robot );
   rkIKCellSetRefVec( entry[0], pg );
   rkIKCellSetRefVec( entry[1], ZVEC3DZERO );
   rkIKCellSetRefVec( entry[2], pl );

@@ -233,6 +233,7 @@ static rkIKCell *_rkIKRegCell(rkIK *ik, const char *name, int priority, rkIKAttr
   rkIKCell *cell, *cp;
 
   if( !( cell = rkIKCellCreate( name, priority, attr, mask, constraint, util ) ) ) return NULL;
+  rkIKCellEnable( cell );
   zListForEach( &ik->_c_list, cp )
     if( rkIKCellPriority(cp) > rkIKCellPriority(cell) ) break;
   zListInsertPrev( &ik->_c_list, cp, cell );
@@ -354,7 +355,7 @@ static int _rkIKCellEq(rkIK *ik, rkChain *chain, rkIKCell *cell, int s, int row)
   return 1;
 }
 
-static void _rkIKEq(rkIK *ik, rkChain *chain)
+static void _rkIKCreateEq(rkIK *ik, rkChain *chain, int max_priority, rkIKCell *terminator)
 {
   int i;
   rkIKCell *cell;
@@ -362,13 +363,14 @@ static void _rkIKEq(rkIK *ik, rkChain *chain)
 
   ik->eval = 0;
   zListForEach( &ik->_c_list, cell ){
+    if( cell == terminator ) break;
     if( !rkIKCellIsEnabled( cell ) ) continue;
     rkIKCellGetCMat( cell, chain, ik->_c_mat_cell );
     rkIKCellGetCVec( cell, chain, &ik->_c_vec_cell );
     cell->data._eval = zVec3DWSqrNorm( &ik->_c_vec_cell, rkIKCellWeight(cell) );
     ik->eval += cell->data._eval;
     cell->data._eval = sqrt( cell->data._eval );
-    if( rkIKCellIsForced( cell ) )
+    if( rkIKCellPriority(cell) < max_priority )
       rkIKCellGetAcm( cell, chain, &ik->_c_vec_cell );
     for( i=0; i<3; i++ )
       row += _rkIKCellEq( ik, chain, cell, i, row );
@@ -378,10 +380,6 @@ static void _rkIKEq(rkIK *ik, rkChain *chain)
   zVecSetSize( ik->_c_vec, row );
   zVecSetSize( ik->__c, row );
   zVecSetSize( ik->_c_we, row );
-}
-void rkChainCreateIKEq(rkChain *chain)
-{
-  _rkIKEq( chain->_ik, chain );
 }
 
 /* solve the motion constraint equation with MP-inverse matrix. */
@@ -417,18 +415,13 @@ zVec rkIKSolveEqSRED(rkIK *ik)
   return ik->_j_vec;
 }
 
-#define _rkChainIKSolveEq(chain) do{ \
-  rkChainCreateIKEq( chain ); \
-  chain->_ik->_solve_eq( chain->_ik ); \
-} while(0)
-
 /* solve the motion constraint equation. */
-zVec rkChainIKSolveEq(rkChain *chain)
+static zVec _rkChainIKSolveEq(rkChain *chain)
 {
   int i, j, k;
   double *vp;
 
-  _rkChainIKSolveEq( chain );
+  chain->_ik->_solve_eq( chain->_ik );
   for( vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
     k = zIndexElemNC( chain->_ik->_j_idx, i );
     for( j=0; j<rkChainLinkJointDOF(chain,k); j++ )
@@ -438,14 +431,21 @@ zVec rkChainIKSolveEq(rkChain *chain)
 }
 
 /* solve one-step inverse kinematics based on Newton=Raphson's method. */
-zVec rkChainIKOne(rkChain *chain, zVec dis, double dt)
+static zVec _rkChainIKOne(rkChain *chain, zVec dis, double dt)
 {
-  rkChainIKSolveEq( chain );
+  _rkChainIKSolveEq( chain );
   rkChainCatJointDisAll( chain, dis, dt, chain->_ik->joint_vec );
   rkChainSetJointDisAll( chain, dis );
   rkChainGetJointDisAll( chain, dis );
   rkChainUpdateFK( chain );
   return dis;
+}
+
+/* solve one-step inverse kinematics based on Newton=Raphson's method. */
+zVec rkChainIKOne(rkChain *chain, zVec dis, double dt)
+{
+  _rkIKCreateEq( chain->_ik, chain, 0, NULL );
+  return _rkChainIKOne( chain, dis, dt );
 }
 
 static zVec _rkChainGetJointDisRJO(rkChain *chain, zVec dis)
@@ -454,12 +454,12 @@ static zVec _rkChainGetJointDisRJO(rkChain *chain, zVec dis)
 }
 
 /* solve one-step inverse kinematics only for registered joints based on Newton=Raphson's method. */
-zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
+static zVec _rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
 {
   int i, k;
   double *dp, *vp;
 
-  _rkChainIKSolveEq( chain );
+  chain->_ik->_solve_eq( chain->_ik );
   for( dp=zVecBuf(dis), vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
     k = zIndexElemNC(chain->_ik->_j_idx,i);
     rkJointCatDis( rkChainLinkJoint(chain,k), dp, dt, vp );
@@ -472,28 +472,41 @@ zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
   return dis;
 }
 
-/* solve inverse kinematics based on Newton=Raphson's method. */
+/* solve (prioritized) inverse kinematics based on Newton=Raphson's method. */
 static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*,zVec), zVec (*_solve_ik_one)(rkChain*,zVec,double), double tol, int iter)
 {
-  int i;
+  int i, iter_count = 0;
   double rest = HUGE_VAL;
+  rkIKCell *terminator;
+  int current_max_priority;
 
   _get_joint_dis( chain, dis );
   ZITERINIT( iter );
   rkChainZeroIKAcm( chain );
-  for( i=0; i<iter; i++ ){
-    _solve_ik_one( chain, dis, 1.0 );
-    if( zIsTol( chain->_ik->eval - rest, tol ) )
-      return i; /* probably no more decrease */
-    rest = chain->_ik->eval;
+  current_max_priority = rkIKCellPriority( zListTail(&chain->_ik->_c_list) );
+  for( terminator = zListTail(&chain->_ik->_c_list);
+       terminator != zListRoot(&chain->_ik->_c_list);
+       current_max_priority = rkIKCellPriority(terminator) ){
+    while( terminator != zListRoot(&chain->_ik->_c_list) &&
+           rkIKCellPriority(terminator) <= current_max_priority )
+      terminator = zListCellNext(terminator);
+    for( i=0; i<iter; i++ ){
+      _rkIKCreateEq( chain->_ik, chain, current_max_priority, terminator );
+      _solve_ik_one( chain, dis, 1.0 );
+      if( zIsTol( chain->_ik->eval - rest, tol ) ){
+        iter_count += i;
+        break; /* further decrease not expected */
+      }
+      rest = chain->_ik->eval;
+    }
   }
-  return -1;
+  return iter_count;
 }
 int rkChainIK(rkChain *chain, zVec dis, double tol, int iter){
-  return _rkChainIK( chain, dis, rkChainGetJointDisAll, rkChainIKOne, tol, iter );
+  return _rkChainIK( chain, dis, rkChainGetJointDisAll, _rkChainIKOne, tol, iter );
 }
 int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter){
-  return _rkChainIK( chain, dis, _rkChainGetJointDisRJO, rkChainIKOneRJO, tol, iter );
+  return _rkChainIK( chain, dis, _rkChainGetJointDisRJO, _rkChainIKOneRJO, tol, iter );
 }
 
 /* ********************************************************** */
@@ -581,6 +594,7 @@ static void _rkChainIKConfJointFPrintZTK(FILE *fp, rkChain *chain)
     if( chain->_ik->joint_is_enabled[i] || ( !chain->_ik->joint_is_enabled[i] && !dis_is_zero ) ){
       fprintf( fp, "joint: %s\t%g", zName(rkChainLink(chain,i)), chain->_ik->joint_weight[i] );
       if( !dis_is_zero ){
+        fputc( ' ', fp );
         rkChainLinkJoint(chain,i)->com->_dis_fprintZTK( fp, i, rkChainLinkJoint(chain,i) );
       } else
         fprintf( fp, "\n" );

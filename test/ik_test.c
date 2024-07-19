@@ -236,12 +236,8 @@ void assert_ik_revol(void)
   zVec3DZero( &attr.attention_point );
   cell = rkChainRegIKCellWldPos( &chain, dummy_name, 0, &attr, RK_IK_ATTR_MASK_ID );
   for( i=0; i<N;i ++ ){
-    rkChainDisableIK( &chain );
-    rkChainBindIK( &chain );
     zVec2DCreatePolar( (zVec2D*)&cell->data.ref.pos, zRandF(1,rkChainLinkNum(&chain)-2), zRandF(-zPI,zPI) );
     cell->data.ref.pos.c.z = 0;
-    rkIKCellEnable( cell );
-    zVecRandUniform( dis, -zPI_2, zPI_2 );
     rkChainIK( &chain, dis, zTOL, 0 );
     zVec3DSub( &cell->data.ref.pos, zFrame3DPos(rkChainLinkWldFrame(&chain,rkChainLinkNum(&chain)-1)), &err );
     if( !zVec3DIsTol( &err, zTOL*10 ) ){
@@ -302,11 +298,8 @@ void assert_ik_spher(void)
   ca1 = rkChainRegIKCellWldAtt( &chain, dummy_name, 0, &attr, RK_IK_ATTR_MASK_ID );
 
   for( i=0; i<N; i++ ){
-    rkChainDisableIK( &chain );
-    rkChainBindIK( &chain ); /* bind current status to the reference. */
     rkIKCellSetRef( ca0, zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
     rkIKCellSetRef( ca1, zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
-
     rkChainIK( &chain, dis, zTOL, 0 );
     rkChainFK( &chain, dis );
     zMat3DError( &ca0->data.ref.att, rkChainLinkWldAtt(&chain,1), &err1 );
@@ -369,13 +362,10 @@ void assert_ik_float(void)
   ca1 = rkChainRegIKCellWldAtt( &chain, dummy_name, 0, &attr, RK_IK_ATTR_MASK_ID );
 
   for( i=0; i<N;i ++ ){
-    rkChainDisableIK( &chain );
-    rkChainBindIK( &chain ); /* bind current status to the reference. */
     rkIKCellSetRef( cl0, zRandF(-10,10), zRandF(-10,10), zRandF(-10,10) );
     rkIKCellSetRef( ca0, zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
     rkIKCellSetRef( cl1, zRandF(-10,10), zRandF(-10,10), zRandF(-10,10) );
     rkIKCellSetRef( ca1, zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
-
     rkChainIK( &chain, dis, zTOL, 0 );
     rkChainFK( &chain, dis );
     zVec3DSub( &cl0->data.ref.pos, rkChainLinkWldPos(&chain,1), zVec6DLin(&err1) );
@@ -438,8 +428,6 @@ void assert_ik_l2l(void)
   cell[3] = rkChainRegIKCellL2LAtt( &chain, dummy_name, 0, &attr, RK_IK_ATTR_MASK_ID | RK_IK_ATTR_MASK_ID_SUB );
 
   for( i=0; i<N; i++ ){
-    rkChainDisableIK( &chain );
-    rkChainBindIK( &chain );
     zVec3DCreatePolar( &cell[0]->data.ref.pos, zRandF(0,NL-2), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
     rkIKCellSetRef( cell[1], zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
     rkIKCellSetRef( cell[2], 0, 0, 0 );
@@ -523,10 +511,8 @@ void assert_ik_componentwise(void)
   r = rkChainLinkWldPos(&chain,attr.id)->c.z - rkChainLinkWldPos(&chain,1)->c.z;
   cell = rkChainRegIKCellWldPos( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
   for( i=0; i<N; i++ ){
-    rkChainDisableIK( &chain );
     cell->data.ref.pos.c.x = r * zRandF(0.1,1.0);
     rkIKCellSetActiveComponent( cell, RK_IK_CELL_MODE_X );
-    rkIKCellEnable( cell );
     rkChainIK( &chain, dis, zTOL, 0 );
     if( !zIsTol( cell->data.ref.pos.c.x - rkChainLinkWldPos(&chain,attr.id)->c.x, zTOL*10 ) ){
       eprintf( "error = %.10g\n", cell->data.ref.pos.c.x - rkChainLinkWldPos(&chain,attr.id)->c.x );
@@ -563,7 +549,7 @@ void assert_puma_arm(void)
     rkChainFK( &chain, dis );
     rkIKCellSetRefAtt( cell[0], rkChainLinkWldAtt(&chain,attr.id) );
     rkIKCellSetRefVec( cell[1], rkChainLinkWldPos(&chain,attr.id) );
-    rkChainFK( &chain, zVecZero(dis) );
+    rkChainFK( &chain, zVecZero(dis) ); /* reset posture */
     rkChainIK( &chain, dis, zTOL, 0 );
     zMat3DError( rkIKCellRefAtt(cell[0]), rkChainLinkWldAtt(&chain,attr.id), zVec6DAng(&err) );
     zVec3DSub( rkIKCellRefPos(cell[1]), rkChainLinkWldPos(&chain,attr.id), zVec6DLin(&err) );
@@ -582,8 +568,6 @@ bool assert_ik_rjo_test(rkChain *chain, rkIKCell *entry[], zVec q, double px, do
   zVec6D ref, err;
   zFrame3D fd;
 
-  rkChainDisableIK( chain );
-  rkChainBindIK( chain );
   zVec6DCreate( &ref, px, py, pz, ax, ay, az );
   zVec6DToFrame3DZYX( &ref, &fd );
   rkIKCellSetRefVec( entry[0], zVec6DLin(&ref) );

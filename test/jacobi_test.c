@@ -130,7 +130,11 @@ bool assert_jacobi(rkChain *chain, zMat jacobi, zVec dis, zVec vel, zVec acc, zV
   test_f( chain, jacobi, &v );
   zMulMatVec( jacobi, vel, ev );
   zVec3DSub( (zVec3D*)zVecBuf(ev), &v, &err );
-  return zVec3DIsTiny( &err );
+  if( !zVec3DIsTiny( &err ) ){
+    zVec3DFPrint( stderr, &err );
+    return false;
+  }
+  return true;
 }
 
 bool assert_zeroacc(rkChain *chain, int id, zVec dis, zVec vel, zVec acc, zMat jacobi, zVec a)

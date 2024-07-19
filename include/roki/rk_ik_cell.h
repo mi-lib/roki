@@ -126,18 +126,15 @@ zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 #define RK_IK_CELL_MODE_Z            0x04
 #define RK_IK_CELL_MODE_XYZ          ( RK_IK_CELL_MODE_X | RK_IK_CELL_MODE_Y | RK_IK_CELL_MODE_Z )
 #define RK_IK_CELL_MODE_ENABLE       0x08
-#define RK_IK_CELL_MODE_FORCE        0x10
 
 /* set constraint mode */
 
 #define rkIKCellEnable(cell)         ( (cell)->data.mode |= RK_IK_CELL_MODE_ENABLE )
 #define rkIKCellDisable(cell)        ( (cell)->data.mode &=~RK_IK_CELL_MODE_ENABLE )
-#define rkIKCellForce(cell)          ( (cell)->data.mode |= RK_IK_CELL_MODE_FORCE )
-#define rkIKCellUnforce(cell)        ( (cell)->data.mode &=~RK_IK_CELL_MODE_FORCE )
-#define rkIKCellSetActiveComponent(cell,xyz) \
-  ( (cell)->data.mode = ( (cell)->data.mode & ( RK_IK_CELL_MODE_ENABLE | RK_IK_CELL_MODE_FORCE ) ) | (xyz) )
 #define rkIKCellIsEnabled(cell)      ( (cell)->data.mode & RK_IK_CELL_MODE_ENABLE )
-#define rkIKCellIsForced(cell)       ( (cell)->data.mode & RK_IK_CELL_MODE_FORCE )
+
+#define rkIKCellSetActiveComponent(cell,xyz) \
+  ( (cell)->data.mode = ( (cell)->data.mode & RK_IK_CELL_MODE_ENABLE ) | (xyz) )
 
 #define rkIKCellRef(cell)            ( &(cell)->data.ref )
 #define rkIKCellRefPos(cell)         ( &rkIKCellRef(cell)->pos )

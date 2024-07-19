@@ -50,21 +50,16 @@ __BEGIN_DECLS
 
  4. Initialize the posture of \a chain.
 
- 5. Disable all constraints if necessary by
-     rkChainDisableIK( &chain );
+ 5. Set the referential values of the constraints by rkIKCellSetRef() and so forth.
+    rkChainBindIK() is also available to set the references for the current values.
 
- 6. Bind the current status of all constraints if necessary by
-     rkChainBindIK( &chain );
-
- 7. Set the referential values of the constraints by rkIKCellSetRef() and so forth.
-
- 8. Solve the inverse kinematics by
+ 6. Solve the inverse kinematics by
      rkChainIK( &chain, dis, tol, iter );
      \a dis : a vector to store the solution of inverse kinematics
      \a tol : tolerance of error
      \a iter : the maximum number of iteration (if 0, Z_MAX_ITER_NUM is applied).
 
- 9. Destroy the inverse kinematics solver if necessary after the computation by
+ 7. (optional) Destroy the inverse kinematics solver if necessary after the computation by
      rkChainDestroyIK( &chain );
     Note that rkChainDestroyIK() is internally called by rkChainDestroy(). So,
     it is not necessary to call it explicitly in many cases.
@@ -202,29 +197,20 @@ __ROKI_EXPORT void rkChainDisableIK(rkChain *chain);
 __ROKI_EXPORT void rkChainBindIK(rkChain *chain);
 __ROKI_EXPORT void rkChainZeroIKAcm(rkChain *chain);
 
-/*! \brief solve inverse kinematics.
+/*! \brief methods to solve the constraint equation of the inverse kinematics.
  *
- * rkChainCreateIKEq() creates the motion rate constraint equation for the
- * inverse kinematics solver of a kinematic chain \a chain. It computes
- * coefficient matrix and strict referential vector of constrained values.
- *
- * rkChainIKRate() computes the joint vector by solving the motion constraint
- * equation J q = v. The solution method can be defined by rkIKSetEqSolver().
- * The following methods are predefined:
+ * A family of functions to solve the constraint equation of the inverse kinematics is predefined as follows.
  *  - rkIKSolveEqMP() for Moore-Penrose generalized inverse
  *  - rkIKSolveEqSR() for Singularity-robust inverse
  *  - rkIKSolveEqED() for error-damped inverse (default)
+ * \a ik is an instance of the inverse kinematics solver.
+ * The method can be set to the inverse kinematics solver by rkIKSetEqSolver().
  *
- * rkChainIK() solves the invserse kinematics of \a chain with numerical
- * iteration based on Levenberg-Marquardt method. It internally calls
- * rkChainIKOne() in an interative manner.
+ * Though those functions are publicly available in the library, it is not recommended to call them directly.
+ * Use rkChainIKSetEqSolverMP(), rkChainIKSetEqSolverSR(), or rkChainIKSetEqSolverED(), instead.
  * \return
- * rkChainCreateIKEq() does not return any value.
- * rkChainIKRate() returns a pointer to the joint rate vector.
- * rkChainIK() returns the actual number of iteration.
+ * These functions return a pointer to an internally allocated vector for the solution.
  */
-__ROKI_EXPORT void rkChainCreateIKEq(rkChain *chain);
-
 __ROKI_EXPORT zVec rkIKSolveEqMP(rkIK *ik);
 __ROKI_EXPORT zVec rkIKSolveEqSR(rkIK *ik);
 __ROKI_EXPORT zVec rkIKSolveEqED(rkIK *ik);
@@ -238,9 +224,18 @@ __ROKI_EXPORT zVec rkIKSolveEqSRED(rkIK *ik);
 #define rkChainIKSetEqSolverED(c)   rkChainIKSetEqSolver( c, rkIKSolveEqED )
 #define rkChainIKSetEqSolverSRED(c) rkChainIKSetEqSolver( c, rkIKSolveEqSRED )
 
-__ROKI_EXPORT zVec rkChainIKSolveEq(rkChain *chain);
+/*! \brief solve inverse kinematics.
+ *
+ * rkChainIKOne() updates a joint displacement vector \a dis of a kinematic chain \a chain by solving
+ * the motion constraint equation J dq = dp and concatenating the answer dq multiplied by \a dt.
+ *
+ * rkChainIK() numerically solves the invserse kinematics of \a chain based on Levenberg-Marquardt method.
+ * It internally calls rkChainIKOne() in an interative manner.
+ * \return
+ * rkChainIKOne() returns a pointer to the updated joint displacement vector \a dis.
+ * rkChainIK() returns the number of iterations.
+ */
 __ROKI_EXPORT zVec rkChainIKOne(rkChain *chain, zVec dis, double dt);
-__ROKI_EXPORT zVec rkChainIKOneRJO(rkChain *chain, zVec dis, double dt);
 __ROKI_EXPORT int rkChainIK(rkChain *chain, zVec dis, double tol, int iter);
 __ROKI_EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
 
