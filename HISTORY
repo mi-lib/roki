@@ -1,6 +1,6 @@
 2024. 7.19. Abolished method createInverseKinematicsEquation of rkChain. [rk_chain]
 2024. 7.19. Reflected new specifications of rkChaintRegIKCell* in C++ extentions. [rk_chain]
-2024. 7.19. Abolished RK_IK_CELL_MODE_FORCE, rkIKCellForce, rkIKCellUnforce, and rkIKCellIsForced. Modified rkIKCellSetActiveComponent and _rkIKCreateEq . [rk_ik_cell, rk_ik]
+2024. 7.19. Abolished RK_IK_CELL_MODE_FORCE, rkIKCellForce, rkIKCellUnforce, and rkIKCellIsForced. Modified rkIKCellSetActiveComponent and _rkIKCreateEq. [rk_ik_cell, rk_ik]
 2024. 7.19. Modified _rkIKRegCell to automatically enable registered constraint cells. [rk_ik]
 2024. 7.19. Modified _rkIKCreateEq and _rkChainIK to solve hierarchical prioritized inverse kinematics. [rk_ik]
 2024. 7.19. Moved _rkIKCreateEq out of _rkChainIKSolveEq, _rkChainIKOne, and _rkChainIKOneRJO to rkChainIKOne and _rkChainIK. [rk_ik]
