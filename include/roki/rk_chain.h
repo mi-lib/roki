@@ -177,6 +177,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   rkIKCell *registerInverseKinematicsCellAngularMomentumCOM(int priority, rkIKAttr *attr, ubyte mask);
   rkIKCell *registerInverseKinematicsCellAngularMomentumCOM(rkIKAttr *attr, ubyte mask);
   rkIKCell *findInverseKinematicsByName(const char *name);
+  bool setCellPriority(rkIKCell *cell, int priority);
   void disableInverseKinematics();
   void bindInverseKinematics();
   void resetInverseKinematicsAccumulator();
@@ -920,6 +921,7 @@ inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentumCOM(int pr
 inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentumCOM(rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellAMCOM( this, NULL, 0, attr, mask ); }
 
 inline rkIKCell *rkChain::findInverseKinematicsByName(const char *name){ return rkChainFindIKCellByName( this, name ); }
+inline bool rkChain::setCellPriority(rkIKCell *cell, int priority){ return rkChainSetIKCellPriority( this, cell, priority ); }
 inline void rkChain::disableInverseKinematics(){ rkChainDisableIK( this ); }
 inline void rkChain::bindInverseKinematics(){ rkChainBindIK( this ); }
 inline void rkChain::resetInverseKinematicsAccumulator(){ rkChainZeroIKAcm( this ); }
