@@ -181,6 +181,17 @@ __ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, const char *name, 
  */
 __ROKI_EXPORT rkIKCell *rkChainFindIKCellByName(rkChain *chain, const char *name);
 
+/*! \brief set priority of a constraint cell of an inverse kinematics solver.
+ *
+ * rkChainSetIKCellPriority() set priority of a constraint cell \a cell that is registered in a
+ * kinematic chain \a chain for \a priority. The order of the internal list of constraint cells
+ * is automatically rearranged.
+ * \return
+ * rkChainSetIKCellPriority() returns the true value if it succeeds to reorder the internal list
+ * of constraint cells. If \a cell is the null pointer, it returns the false value.
+ */
+__ROKI_EXPORT bool rkChainSetIKCellPriority(rkChain *chain, rkIKCell *cell, int priority);
+
 /*! \brief disable and bind a constraint.
  *
  * rkChainDisableIK() disables all the constraints registered to the
@@ -200,29 +211,29 @@ __ROKI_EXPORT void rkChainZeroIKAcm(rkChain *chain);
 /*! \brief methods to solve the constraint equation of the inverse kinematics.
  *
  * A family of functions to solve the constraint equation of the inverse kinematics is predefined as follows.
- *  - rkIKSolveEqMP() for Moore-Penrose generalized inverse
- *  - rkIKSolveEqSR() for Singularity-robust inverse
- *  - rkIKSolveEqED() for error-damped inverse (default)
+ *  - rkIKSolveEquationMP() for Moore-Penrose generalized inverse
+ *  - rkIKSolveEquationSR() for Singularity-robust inverse
+ *  - rkIKSolveEquationED() for error-damped inverse (default)
  * \a ik is an instance of the inverse kinematics solver.
- * The method can be set to the inverse kinematics solver by rkIKSetEqSolver().
+ * The method can be set to the inverse kinematics solver by rkIKSetEquationSolver().
  *
  * Though those functions are publicly available in the library, it is not recommended to call them directly.
- * Use rkChainIKSetEqSolverMP(), rkChainIKSetEqSolverSR(), or rkChainIKSetEqSolverED(), instead.
+ * Use rkChainIKSetEquationSolverMP(), rkChainIKSetEquationSolverSR(), or rkChainIKSetEquationSolverED(), instead.
  * \return
  * These functions return a pointer to an internally allocated vector for the solution.
  */
-__ROKI_EXPORT zVec rkIKSolveEqMP(rkIK *ik);
-__ROKI_EXPORT zVec rkIKSolveEqSR(rkIK *ik);
-__ROKI_EXPORT zVec rkIKSolveEqED(rkIK *ik);
-__ROKI_EXPORT zVec rkIKSolveEqSRED(rkIK *ik);
+__ROKI_EXPORT zVec rkIKSolveEquationMP(rkIK *ik);
+__ROKI_EXPORT zVec rkIKSolveEquationSR(rkIK *ik);
+__ROKI_EXPORT zVec rkIKSolveEquationED(rkIK *ik);
+__ROKI_EXPORT zVec rkIKSolveEquationSRED(rkIK *ik);
 
 /*! \brief solve the motion constraint. */
-#define rkIKSetEqSolver(ik,f)       ( (ik)->_solve_eq = (f) )
-#define rkChainIKSetEqSolver(c,f)   rkIKSetEqSolver( (c)->_ik, f )
-#define rkChainIKSetEqSolverMP(c)   rkChainIKSetEqSolver( c, rkIKSolveEqMP )
-#define rkChainIKSetEqSolverSR(c)   rkChainIKSetEqSolver( c, rkIKSolveEqSR )
-#define rkChainIKSetEqSolverED(c)   rkChainIKSetEqSolver( c, rkIKSolveEqED )
-#define rkChainIKSetEqSolverSRED(c) rkChainIKSetEqSolver( c, rkIKSolveEqSRED )
+#define rkIKSetEquationSolver(ik,f)       ( (ik)->_solve_eq = (f) )
+#define rkChainIKSetEquationSolver(c,f)   rkIKSetEquationSolver( (c)->_ik, f )
+#define rkChainIKSetEquationSolverMP(c)   rkChainIKSetEquationSolver( c, rkIKSolveEquationMP )
+#define rkChainIKSetEquationSolverSR(c)   rkChainIKSetEquationSolver( c, rkIKSolveEquationSR )
+#define rkChainIKSetEquationSolverED(c)   rkChainIKSetEquationSolver( c, rkIKSolveEquationED )
+#define rkChainIKSetEquationSolverSRED(c) rkChainIKSetEquationSolver( c, rkIKSolveEquationSRED )
 
 /*! \brief solve inverse kinematics.
  *

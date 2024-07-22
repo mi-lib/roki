@@ -44,7 +44,7 @@ void init(rkChain *puma, rkChain *puma_v, const rkIKConstraint *constraint_lin, 
   cell[0] = rkChainRegIKCell( puma_v, NULL, 0, &attr, RK_IK_ATTR_MASK_ID, constraint_ang, NULL );
   cell[1] = rkChainRegIKCell( puma_v, NULL, 0, &attr, RK_IK_ATTR_MASK_ID, constraint_lin, NULL );
 
-  rkIKSetEqSolver( puma_v->_ik, rkIKSolveEqSR );
+  rkIKSetEquationSolver( puma_v->_ik, rkIKSolveEquationSR );
   rkChainBindIK( puma_v );
 
   *dis = zVecAlloc( rkChainJointSize( puma ) );

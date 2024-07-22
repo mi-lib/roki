@@ -410,7 +410,7 @@ const rkIKConstraint *rkIKConstraintFind(const char *typestr)
 
   if( ( constraint = _rkIKConstraintFindFromArray( typestr ) ) ) return constraint;
   if( ( cp = _rkIKConstraintFindFromList( typestr ) ) ) return cp->data;
-  ZRUNWARN( "constraint %s of the inverse kinematics not found", typestr );
+  ZRUNERROR( RK_ERR_IK_CONSTRAINT_NOTFOUND, typestr );
   return NULL;
 }
 
@@ -419,11 +419,11 @@ rkIKConstraintListCell *rkIKConstraintListAdd(const rkIKConstraint *constraint)
   rkIKConstraintListCell *cp;
 
   if( _rkIKConstraintFindFromArray( constraint->typestr ) ){
-    ZRUNWARN( "constraint %s predefined", constraint->typestr );
+    ZRUNERROR( RK_ERR_IK_CONSTRAINT_PREDEFINED, constraint->typestr );
     return NULL;
   }
   if( ( cp = _rkIKConstraintFindFromList( constraint->typestr ) ) ){
-    ZRUNWARN( "constraint %s already registered, replaced", constraint->typestr );
+    ZRUNWARN( RK_WARN_IK_CONSTRAINT_ALREADY_REGISTERED, constraint->typestr );
   } else{
     if( !( cp = zAlloc( rkIKConstraintListCell, 1 ) ) ){
       ZALLOCERROR();

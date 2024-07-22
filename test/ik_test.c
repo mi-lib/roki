@@ -202,6 +202,51 @@ void assert_cell_reg(void)
   zAssert( rkChainRegIKCell + rkChainUnregIKCell, result );
 }
 
+bool check_priority(rkChain *chain, int p1, int p2, int p3, int p4, int p5)
+{
+  rkIKCell *cp;
+
+  cp = zListTail(&chain->_ik->_c_list);
+  if( rkIKCellPriority(cp) != p1 ) return false;
+  cp = zListCellNext(cp);
+  if( rkIKCellPriority(cp) != p2 ) return false;
+  cp = zListCellNext(cp);
+  if( rkIKCellPriority(cp) != p3 ) return false;
+  cp = zListCellNext(cp);
+  if( rkIKCellPriority(cp) != p4 ) return false;
+  cp = zListCellNext(cp);
+  if( rkIKCellPriority(cp) != p5 ) return false;
+  return true;
+}
+
+void assert_set_priority(void)
+{
+  rkChain chain;
+  rkIKCell *cell[5];
+
+  zRandInit();
+  rkChainReadZTK( &chain, "../example/model/arm.ztk" );
+  rkChainCreateIK( &chain );
+  rkChainRegIKJointAll( &chain, 0.001 );
+
+  cell[0] = rkChainRegIKCellWldPos( &chain, NULL, 1, NULL, RK_IK_ATTR_MASK_NONE );
+  cell[1] = rkChainRegIKCellWldPos( &chain, NULL, 2, NULL, RK_IK_ATTR_MASK_NONE );
+  cell[2] = rkChainRegIKCellWldPos( &chain, NULL, 2, NULL, RK_IK_ATTR_MASK_NONE );
+  cell[3] = rkChainRegIKCellWldPos( &chain, NULL, 4, NULL, RK_IK_ATTR_MASK_NONE );
+  cell[4] = rkChainRegIKCellWldPos( &chain, NULL, 4, NULL, RK_IK_ATTR_MASK_NONE );
+
+  rkChainSetIKCellPriority( &chain, cell[4], 0 );
+  zAssert( rkChainSetIKCellPriority (ascent case), check_priority( &chain, 0, 1, 2, 2, 4 ) );
+
+  rkChainSetIKCellPriority( &chain, cell[4], 10 );
+  zAssert( rkChainSetIKCellPriority (descent case), check_priority( &chain, 1, 2, 2, 4, 10 ) );
+
+  rkChainSetIKCellPriority( &chain, cell[4], 3 );
+  zAssert( rkChainSetIKCellPriority (insert case), check_priority( &chain, 1, 2, 2, 3, 4 ) );
+
+  rkChainDestroy( &chain );
+}
+
 void assert_ik_revol(void)
 {
   int i;
@@ -621,6 +666,7 @@ int main(void)
   assert_ik_constraint_find();
   assert_joint_reg();
   assert_cell_reg();
+  assert_set_priority();
   assert_ik_revol();
   assert_ik_spher();
   assert_ik_float();

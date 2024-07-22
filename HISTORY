@@ -1,3 +1,8 @@
+2024. 7.23. Undefined RK_WARN_IK_CELL_NOTFOUND and RK_ERR_IK_UNKNOWN_CONSTRAINT. [rk_errmsg, rk_ik, rk_ik_seq]
+2024. 7.23. Defined RK_ERR_IK_CONSTRAINT_NOTFOUND, RK_ERR_IK_CONSTRAINT_PREDEFINED, RK_ERR_IK_CELL_IS_NULL, and RK_ERR_IK_CELL_NOTFOUND. [rk_errmsg, rk_ik, rk_ik_seq]
+2024. 7.23. Added _rkIKCellSetPriority and rkChainSetIKCellPriority. [rk_errmsg, rk_ik]
+2024. 7.23. Abolished rkIKCellSetPriority. [rk_ik_cell]
+2024. 7.23. Renamed _rkIKCellEq, _rkIKCreateEq, rkIKSolveEq*, rkIKSetEqSolver, rkChainIKSetEqSolver*, and _rkChainIKSolveEq to _rkIKCellGetEquation, _rkIKCreateEquation, rkIKSetEquationSolver, rkIKSolveEquation*, rkChainIKSetEquationSolver, and _rkChainIKSolveEquation, respectively. [rk_ik]
 2024. 7.19. Abolished method createInverseKinematicsEquation of rkChain. [rk_chain]
 2024. 7.19. Reflected new specifications of rkChaintRegIKCell* in C++ extentions. [rk_chain]
 2024. 7.19. Abolished RK_IK_CELL_MODE_FORCE, rkIKCellForce, rkIKCellUnforce, and rkIKCellIsForced. Modified rkIKCellSetActiveComponent and _rkIKCreateEq. [rk_ik_cell, rk_ik]

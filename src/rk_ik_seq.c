@@ -17,7 +17,7 @@ bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c)
   for( i=0; i<c->nc; i++ ){
     e = &c->entry[i];
     if( !( cell = rkChainFindIKCellByName( chain, zNamePtr(e) ) ) ){
-      ZRUNWARN( RK_WARN_IK_CELL_NOTFOUND );
+      ZRUNWARN( RK_ERR_IK_CELL_NOTFOUND, zNamePtr(e) );
       ret = false;
       continue;
     }
