@@ -235,7 +235,7 @@ static rkIKCell *_rkIKRegCell(rkIK *ik, const char *name, int priority, rkIKAttr
   if( !( cell = rkIKCellCreate( name, priority, attr, mask, constraint, util ) ) ) return NULL;
   rkIKCellEnable( cell );
   zListForEach( &ik->_c_list, cp )
-    if( rkIKCellPriority(cp) > rkIKCellPriority(cell) ) break;
+    if( rkIKCellPriority(cp) < rkIKCellPriority(cell) ) break;
   zListInsertPrev( &ik->_c_list, cp, cell );
   return _rkIKAllocCVec( ik ) ? cell : NULL;
 }
@@ -311,16 +311,16 @@ static bool _rkIKCellSetPriority(rkIK *ik, rkIKCell *cell, int priority)
     ZRUNERROR( RK_ERR_IK_CELL_IS_NULL );
     return false;
   }
-  if( priority < rkIKCellPriority(cell) ){
+  if( priority > rkIKCellPriority(cell) ){
     for( cp = zListCellPrev(cell);
-         cp != zListRoot(&ik->_c_list) && rkIKCellPriority(cp) > priority;
+         cp != zListRoot(&ik->_c_list) && rkIKCellPriority(cp) < priority;
          cp = zListCellPrev(cp) );
     zListCellPurge( cell );
     zListCellInsertNext( cp, cell );
   } else
-  if( priority > rkIKCellPriority(cell) ){
+  if( priority < rkIKCellPriority(cell) ){
     for( cp = zListCellNext(cell);
-         cp != zListRoot(&ik->_c_list) && rkIKCellPriority(cp) < priority;
+         cp != zListRoot(&ik->_c_list) && rkIKCellPriority(cp) > priority;
          cp = zListCellNext(cp) );
     zListCellPurge( cell );
     zListCellInsertPrev( cp, cell );
@@ -402,7 +402,7 @@ static void _rkIKCreateEquation(rkIK *ik, rkChain *chain, int max_priority, rkIK
     cell->data._eval = zVec3DWSqrNorm( &ik->_c_vec_cell, rkIKCellWeight(cell) );
     ik->eval += cell->data._eval;
     cell->data._eval = sqrt( cell->data._eval );
-    if( rkIKCellPriority(cell) < max_priority )
+    if( rkIKCellPriority(cell) > max_priority )
       rkIKCellGetAcm( cell, chain, &ik->_c_vec_cell );
     for( i=0; i<3; i++ )
       row += _rkIKCellGetEquation( ik, chain, cell, i, row );
@@ -520,7 +520,7 @@ static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*
        terminator != zListRoot(&chain->_ik->_c_list);
        current_max_priority = rkIKCellPriority(terminator) ){
     while( terminator != zListRoot(&chain->_ik->_c_list) &&
-           rkIKCellPriority(terminator) <= current_max_priority )
+           rkIKCellPriority(terminator) >= current_max_priority )
       terminator = zListCellNext(terminator);
     for( i=0; i<iter; i++ ){
       _rkIKCreateEquation( chain->_ik, chain, current_max_priority, terminator );

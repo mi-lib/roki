@@ -150,16 +150,17 @@ bool assert_cell_reg_one(void)
     NULL,
   };
   const char *dummy_name = "dummy";
+  const int max_priority = 10;
 
   chain_ik_init( &chain );
   for( cellcount=0; reg_ik_cell[cellcount]; cellcount++ );
   rkChainRegIKJointAll( &chain, 1 );
   for( i=0; i<NC; i++ ){
-    cell[i] = reg_ik_cell[zRandI(0,cellcount-1)]( &chain, dummy_name, zRandI(0,10), NULL, RK_IK_ATTR_MASK_NONE );
+    cell[i] = reg_ik_cell[zRandI(0,cellcount-1)]( &chain, dummy_name, zRandI(0,max_priority), NULL, RK_IK_ATTR_MASK_NONE );
   }
-  priority_prev = -1;
+  priority_prev = max_priority + 1;
   zListForEach( &chain._ik->_c_list, cp ){
-    if( rkIKCellPriority(cp) < priority_prev ){
+    if( rkIKCellPriority(cp) > priority_prev ){
       eprintf( "priority flipped (%d <-> %d).\n", priority_prev, rkIKCellPriority(cp) );
       result = false;
       break;
@@ -236,13 +237,13 @@ void assert_set_priority(void)
   cell[4] = rkChainRegIKCellWldPos( &chain, NULL, 4, NULL, RK_IK_ATTR_MASK_NONE );
 
   rkChainSetIKCellPriority( &chain, cell[4], 0 );
-  zAssert( rkChainSetIKCellPriority (ascent case), check_priority( &chain, 0, 1, 2, 2, 4 ) );
+  zAssert( rkChainSetIKCellPriority (ascent case), check_priority( &chain, 4, 2, 2, 1, 0 ) );
 
   rkChainSetIKCellPriority( &chain, cell[4], 10 );
-  zAssert( rkChainSetIKCellPriority (descent case), check_priority( &chain, 1, 2, 2, 4, 10 ) );
+  zAssert( rkChainSetIKCellPriority (descent case), check_priority( &chain, 10, 4, 2, 2, 1 ) );
 
   rkChainSetIKCellPriority( &chain, cell[4], 3 );
-  zAssert( rkChainSetIKCellPriority (insert case), check_priority( &chain, 1, 2, 2, 3, 4 ) );
+  zAssert( rkChainSetIKCellPriority (insert case), check_priority( &chain, 4, 3, 2, 2, 1 ) );
 
   rkChainDestroy( &chain );
 }

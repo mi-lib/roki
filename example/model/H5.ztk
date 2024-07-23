@@ -1612,8 +1612,8 @@ joint: right_knee_flexion    0.001
 joint: right_ankle_flexion   0.001
 joint: right_ankle_abduction 0.001
 constraint: 1 com com
-constraint: 2 torso_att world_att torso
-constraint: 0 left_foot_pos world_pos left_foot
-constraint: 0 left_foot_att world_att left_foot
-constraint: 0 right_foot_pos world_pos right_foot
-constraint: 0 right_foot_att world_att right_foot
+constraint: 0 torso_att world_att torso
+constraint: 2 left_foot_pos world_pos left_foot
+constraint: 2 left_foot_att world_att left_foot
+constraint: 2 right_foot_pos world_pos right_foot
+constraint: 2 right_foot_att world_att right_foot

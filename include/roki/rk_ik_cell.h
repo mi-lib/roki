@@ -99,7 +99,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
   const rkIKConstraint *constraint; /*!< constraint */
   rkIKRef ref;   /*!< referential position or attitude */
   rkIKAttr attr; /*!< attributes of attention quantity */
-  int priority;  /*!< priority of the constraint */
+  int priority;  /*!< priority of the constraint (The larger the number becomes, the higher the priority is.) */
   ubyte mode;    /*!< constraint mode */
   /*! \cond */
   rkIKAcm _acm;  /* error accumulation correction */

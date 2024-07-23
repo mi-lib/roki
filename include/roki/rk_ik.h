@@ -36,7 +36,7 @@ __BEGIN_DECLS
      entry = rkChainRegIKCell*( &chain, name, priority, &attr, mask );
     where
      \a name : name of the constraint
-     \a priority: priority of the constraint
+     \a priority: priority of the constraint (The larger the number becomes, the higher the priority is.)
      \a attr : attributes of the inverse kinematics constraint (see 'rk_ik_cell.h')
      \a mask : mask for an attribute to be specified
     The following functions are avaible for the above rkChainRegIKCell*:
