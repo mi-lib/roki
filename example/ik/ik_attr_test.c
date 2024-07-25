@@ -1,6 +1,8 @@
 #include <roki/rk_chain.h>
 
 /* header .h -------------------------------------------------------------- */
+static const int RK_IK_MAX_PRIORITY = 1000000;
+
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   void* (*init                )(void**);
   void (*copy                 )(void*,void*);
@@ -20,9 +22,12 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   bool (*select_sub_link_frame)(void*);
   bool (*sub_link_frame       )(void*);
   bool (*select_force         )(void*);
+  bool (*unselect_force       )(void*);
   bool (*force                )(void*);
-  bool (*select_weight        )(void*);
-  bool (*weight               )(void*);
+  void (*set_name             )(void*,const char*);
+  const char* (*get_name      )(void*);
+  void (*set_priority         )(void*,int);
+  int  (*get_priority         )(void*);
   void (*set_link_id          )(void*,int);
   int  (*get_link_id          )(void*);
   void (*set_ap               )(void*,double,double,double);
@@ -57,9 +62,12 @@ bool rkIKRegSelect_wld_frame            (void *instance);
 bool rkIKRegSelect_select_sub_link_frame(void *instance);
 bool rkIKRegSelect_sub_link_frame       (void *instance);
 bool rkIKRegSelect_select_force         (void *instance);
+bool rkIKRegSelect_unselect_force       (void *instance);
 bool rkIKRegSelect_force                (void *instance);
-bool rkIKRegSelect_select_weight        (void *instance);
-bool rkIKRegSelect_weight               (void *instance);
+void rkIKRegSelect_set_name             (void* instance, const char* name);
+const char* rkIKRegSelect_get_name      (void* instance);
+void rkIKRegSelect_set_priority         (void* instance, int priority);
+int  rkIKRegSelect_get_priority         (void* instance);
 void rkIKRegSelect_set_link_id          (void *instance, int link_id);
 int  rkIKRegSelect_get_link_id          (void *instance);
 void rkIKRegSelect_set_ap               (void *instance, double v1, double v2, double v3);
@@ -93,9 +101,12 @@ static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_select_sub_link_frame,
   rkIKRegSelect_sub_link_frame,
   rkIKRegSelect_select_force,
+  rkIKRegSelect_unselect_force,
   rkIKRegSelect_force,
-  rkIKRegSelect_select_weight,
-  rkIKRegSelect_weight,
+  rkIKRegSelect_set_name,
+  rkIKRegSelect_get_name,
+  rkIKRegSelect_set_priority,
+  rkIKRegSelect_get_priority,
   rkIKRegSelect_set_link_id,
   rkIKRegSelect_get_link_id,
   rkIKRegSelect_set_ap,
@@ -110,7 +121,6 @@ static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_unreg_by_cell,
   rkIKRegSelect_unreg_by_name
 };
-
 
 
 /* implement .c (capsuled) ------------------------------------------------ */
@@ -146,8 +156,9 @@ static const int32_t RK_IK_ATTR_TYPE_QUANTITY__AM       = 0x0000003;
 /**/
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegister ){
   /* arguments for call api */
+  char *name;
   int _priority;
-  ubyte _mode;
+  bool _is_force;
   rkIKAttr _attr;
 };
 
@@ -155,6 +166,9 @@ void* rkIKRegSelect_init(void** instance)
 {
   rkIKRegister* reg = (rkIKRegister*)(*instance);
   reg = zAlloc( rkIKRegister, 1 );
+  zNameSet( reg, "" );
+  reg->_priority = 0;
+  reg->_is_force = false;
   rkIKAttrInit( &reg->_attr );
   reg->_attr.user_defined_type = 0;
   *instance = (void*)(reg);
@@ -164,12 +178,15 @@ void* rkIKRegSelect_init(void** instance)
 
 void rkIKRegSelect_copy(void* src, void* dest)
 {
+  zNameFree( (rkIKRegister*)(dest) );
   zCopy( rkIKRegister, (rkIKRegister*)(src), (rkIKRegister*)(dest) );
+  zNameSet( (rkIKRegister*)(dest), ((rkIKRegister*)(src))->name );
 }
 
 void rkIKRegSelect_free(void **instance)
 {
   rkIKRegister* reg = (rkIKRegister*)(*instance);
+  zNameFree( reg );
   zFree( reg );
   *instance = NULL;
 }
@@ -270,27 +287,48 @@ bool rkIKRegSelect_sub_link_frame(void* instance){
 
 bool rkIKRegSelect_select_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  reg->_mode = RK_IK_CELL_MODE_FORCE;
+  reg->_is_force = true;
+  return true;
+}
+
+bool rkIKRegSelect_unselect_force(void* instance){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  reg->_is_force = false;
   return true;
 }
 
 bool rkIKRegSelect_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  return ( (reg->_mode & RK_IK_CELL_MODE_FORCE) == RK_IK_CELL_MODE_FORCE );
-}
-
-bool rkIKRegSelect_select_weight(void* instance){
-  rkIKRegister* reg = (rkIKRegister*)(instance);
-  reg->_mode = 0x00;
-  return true;
-}
-
-bool rkIKRegSelect_weight(void* instance){
-  rkIKRegister* reg = (rkIKRegister*)(instance);
-  return ( (reg->_mode & RK_IK_CELL_MODE_FORCE) != RK_IK_CELL_MODE_FORCE );
+  return reg->_is_force;
 }
 
 /**/
+
+void rkIKRegSelect_set_name(void* instance, const char* name){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  zNameFree( reg );
+  zNameSet( reg, name );
+}
+
+const char* rkIKRegSelect_get_name(void* instance){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  return reg->name;
+}
+
+void rkIKRegSelect_set_priority(void* instance, int priority){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  if( priority < 0 )
+    priority = 0; /* validation */
+  if( priority >= RK_IK_MAX_PRIORITY )
+    reg->_priority = RK_IK_MAX_PRIORITY - 1;
+  else
+    reg->_priority = priority;
+}
+
+int rkIKRegSelect_get_priority(void *instance){
+  rkIKRegister* reg = (rkIKRegister*)(instance);
+  return reg->_priority;
+}
 
 void rkIKRegSelect_set_link_id(void* instance, int link_id){
   rkIKRegister* reg = (rkIKRegister*)(instance);
@@ -346,20 +384,6 @@ void rkIKRegSelect_reset(void *instance){
   zCopy( rkIKAttr, &blank_attr, &reg->_attr );
 }
 
-/**/
-
-/* ZDEF_STRUCT( __ROKI_CLASS_EXPORT, _rkIKLookup ){ */
-/*   rkIKCell *(*reg_ik_cell)(rkChain*,const char*,rkIKAttr*,int); */
-/* }; */
-
-/* static _rkIKLookup reg_api_world_pos = { rkChainRegIKCellWldPos }; */
-/* static _rkIKLookup reg_api_world_att = { rkChainRegIKCellWldAtt }; */
-/* static _rkIKLookup reg_api_l2l_pos   = { rkChainRegIKCellL2LPos }; */
-/* static _rkIKLookup reg_api_l2l_att   = { rkChainRegIKCellL2LAtt }; */
-/* static _rkIKLookup reg_api_com       = { rkChainRegIKCellCOM    }; */
-/* static _rkIKLookup reg_api_am        = { rkChainRegIKCellAM     }; */
-/* static _rkIKLookup reg_api_amcom     = { rkChainRegIKCellAMCOM  }; */
-
 const rkIKConstraint* reg_api_factory(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
   if( reg->_attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_LINK_POS ){
@@ -387,6 +411,33 @@ const rkIKConstraint* reg_api_factory(void* instance){
   }
 }
 
+const int32_t get_user_defined_type(const char* type)
+{
+  if( strcmp( type, "world_pos" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_LINK_POS;
+  } else
+  if( strcmp( type, "world_att" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_LINK_ATT;
+  } else
+  if( strcmp( type, "l2l_pos" ) == 0 ){
+    return RK_IK_ATTR_TYPE__SUB_LINK_LINK_POS;
+  } else
+  if( strcmp( type, "l2l_att" ) == 0 ){
+    return RK_IK_ATTR_TYPE__SUB_LINK_LINK_ATT;
+  } else
+  if( strcmp( type, "com" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_COM_POS;
+  } else
+  if( strcmp( type, "angular_momentum" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_LINK_AM;
+  } else
+  if( strcmp( type, "angular_momentum_about_com" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_COM_AM;
+  } else{
+    return 0;
+  }
+}
+
 
 int mask_factory(void* instance){
   int mask = RK_IK_ATTR_MASK_NONE;
@@ -394,8 +445,7 @@ int mask_factory(void* instance){
     mask |= RK_IK_ATTR_MASK_ID | RK_IK_ATTR_MASK_ATTENTION_POINT;
   if( rkIKRegSelect_sub_link_frame( instance ) )
     mask |= RK_IK_ATTR_MASK_ID_SUB;
-  if( rkIKRegSelect_weight( instance ) )
-    mask |= RK_IK_ATTR_MASK_WEIGHT;
+  mask |= RK_IK_ATTR_MASK_WEIGHT;
 
   return mask;
 }
@@ -406,11 +456,12 @@ void* rkIKRegSelect_call_reg_api(void* instance, void* chain){
     return NULL;
   int mask = mask_factory( instance );
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  rkIKCell* cell = rkChainRegIKCell( (rkChain*)(chain), lookup->typestr, &reg->_attr, mask, lookup, NULL );
-  if( cell == NULL )
-    ZRUNERROR( RK_ERR_IK_UNKNOWN, "Invalid rkIKAttr Setting Pattern" );
-  if( rkIKRegSelect_force( instance ) )
-    rkIKCellForce( cell );
+  int priority = rkIKRegSelect_force( instance ) ? RK_IK_MAX_PRIORITY : reg->_priority;
+  rkIKCell* cell = rkChainRegIKCell( (rkChain*)(chain), reg->name, priority, &reg->_attr, mask, lookup, NULL );
+  if( cell == NULL ){
+    eprintf( "Invalid rkIKAttr Setting Pattern \n" );
+    ZRUNERROR( RK_ERR_IK_CELL_NOTFOUND, lookup->typestr );
+  }
 
   return (void*)(cell);
 }
@@ -423,8 +474,14 @@ void* rkIKRegSelect_get_pointer_by_name(void* chain, const char* name)
   rkIKRegister* reg;
   rkIKRegSelect_init( (void**)(&reg) );
   zCopy( rkIKAttr, &cell->data.attr, &reg->_attr );
-  if( rkIKCellIsForced( cell ) )
+  reg->_attr.user_defined_type = get_user_defined_type( cell->data.constraint->typestr );
+  rkIKRegSelect_set_name( (void*)reg, rkIKCellName(cell) );
+  int priority = rkIKCellPriority( cell );
+  if( priority == RK_IK_MAX_PRIORITY ){
     rkIKRegSelect_select_force( (void*)reg );
+    priority = 0; /* To Be Considered */
+  }
+  rkIKRegSelect_set_priority( (void*)reg, priority );
   return (void*)(reg);
 }
 
@@ -451,7 +508,7 @@ int main(int argc, char *argv[])
   bool com, link;
   bool pos, att, am;
   bool wld_frame, sub_link_frame;
-  bool force, weight;
+  bool force;
 
   void* instance = NULL;
   rkIKRegSelectClass* test = &rkIKRegSelectClassImpl;
@@ -516,18 +573,16 @@ int main(int argc, char *argv[])
   /**/
   test->select_force( instance );
   force  = test->force( instance );
-  weight = test->weight( instance );
   printf("select_force\n");
   printf("  force  = %d\n", force);
-  printf("  weight = %d\n", weight);
   /**/
-  test->select_weight( instance );
+  test->unselect_force( instance );
   force  = test->force( instance );
-  weight = test->weight( instance );
-  printf("select_weight\n");
+  printf("unselect_force\n");
   printf("  force  = %d\n", force);
-  printf("  weight = %d\n", weight);
   /**/
+  int in_priority=999;
+  int out_priority;
   int in_link_id=1;
   int out_link_id;
   double in_ap_x=0.1, in_ap_y=0.2, in_ap_z=0.3;
@@ -536,6 +591,19 @@ int main(int argc, char *argv[])
   double out_wx, out_wy, out_wz;
   int in_sub_link_frame_id=6;
   int out_sub_link_frame_id;
+  /**/
+  const char in_name[] = "set_name";
+  printf("set/get_name\n");
+  test->set_name( instance, in_name );
+  const char* out_name = test->get_name( instance );
+  printf( "  get_name = %s : ", out_name );
+  printf( "%s\n", ((strcmp( in_name, out_name )==0) ? "OK" : "NG!!" ));
+  /**/
+  printf("set/get_priority : ");
+  test->set_priority( instance, in_priority );
+  out_priority = test->get_priority( instance );
+  printf( "%s\n", ((in_priority==out_priority) ? "OK" : "NG" ));
+  /**/
   printf("set/get_link_id : ");
   test->set_link_id( instance, in_link_id );
   out_link_id = test->get_link_id( instance );
@@ -572,9 +640,14 @@ int main(int argc, char *argv[])
   test->select_link( instance );
   test->select_pos( instance );
   test->select_wld_frame( instance );
+  const char name_wld_pos[] = "test_wld_pos";
+  test->set_name( instance, name_wld_pos );
   printf("call reg_api_world_pos : ");
   void* cell_wld_pos = test->reg( instance, chain );
   printf("%s\n", (cell_wld_pos!=NULL ? "OK." : "NG!!"));
+  const char* out_name_wld_pos = rkIKCellName( (rkIKCell*)cell_wld_pos );
+  printf( "  rkIKCellName = %s : ", out_name_wld_pos );
+  printf( "%s\n", ((strcmp(name_wld_pos, out_name_wld_pos)==0) ? "OK" : "NG") );
   bool is_unreg_ok;
   is_unreg_ok = test->unreg( chain, cell_wld_pos );
   printf("  unreg %s\n", (is_unreg_ok ? "OK." : "NG!!"));
