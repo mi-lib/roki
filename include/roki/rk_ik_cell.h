@@ -123,7 +123,9 @@ zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 #define rkIKCellAttentionPoint(cell) ( &rkIKCellAttr(cell)->attention_point )
 #define rkIKCellWeight(cell)         ( &rkIKCellAttr(cell)->weight )
 
-#define rkIKCellPriority(cell)              (cell)->data.priority
+#define rkIKCellPriority(cell)       (cell)->data.priority
+
+#define RK_IK_MAX_PRIORITY           INT_MAX
 
 #define RK_IK_CELL_MODE_X            0x01
 #define RK_IK_CELL_MODE_Y            0x02
