@@ -332,7 +332,7 @@ static void *_rkLinkNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   rkLink *link;
   zArrayFindName( ((_rkLinkRefPrp*)arg)->larray, ZTKVal(ztk), link );
   if( link ){
-    ZRUNWARN( RK_WARN_LINK_DUP, ZTKVal(ztk) );
+    ZRUNWARN( RK_WARN_LINK_DUPLICATE_NAME, ZTKVal(ztk) );
     return NULL;
   }
   zNameSet( (rkLink*)obj, ZTKVal(ztk) );
@@ -483,9 +483,9 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
   /* automatic mass property computation */
   if( prp.given_density ){ /* from density */
     if( prp.given_mass )
-      ZRUNWARN( RK_WARN_LINK_DUP_MASS_DENS );
+      ZRUNWARN( RK_WARN_LINK_DUALLYDEFINED_MASS );
     if( zIsTiny( prp.density ) )
-      ZRUNWARN( RK_WARN_LINK_TOO_SMALL_DENS );
+      ZRUNWARN( RK_WARN_LINK_TOO_SMALL_DENSITY );
     else if( rkLinkShapeIsEmpty( link ) )
       ZRUNWARN( RK_WARN_LINK_EMPTY_SHAPE );
     else
@@ -494,14 +494,14 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
   } else
   if( prp.auto_com || prp.auto_inertia ){ /* from mass */
     if( !prp.given_mass )
-      ZRUNWARN( RK_WARN_LINK_NO_MASS_DENS );
+      ZRUNWARN( RK_WARN_LINK_UNSPECIFIED_MASS );
     else
     if( zIsTiny( rkLinkMass(link) ) )
       ZRUNWARN( RK_WARN_LINK_TOO_SMALL_MASS );
     else if( rkLinkShapeIsEmpty( link ) )
       ZRUNWARN( RK_WARN_LINK_EMPTY_SHAPE );
     else if( zIsTiny( ( v = rkLinkShapeVolume(link) ) ) ){
-      ZRUNWARN( RK_WARN_LINK_TOO_SMALL_VOL );
+      ZRUNWARN( RK_WARN_LINK_TOO_SMALL_VOLUME );
       v = 1.0; /* dummy */
     } else
       rkLinkShapeMP( link, rkLinkMass(link)/v, &mp );

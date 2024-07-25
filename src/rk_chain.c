@@ -589,7 +589,7 @@ static void _rkChainBiasVec(rkChain *chain, zVec bias)
 zVec rkChainBiasVec(rkChain *chain, zVec bias)
 {
   if( zVecSizeNC(bias) != rkChainJointSize(chain) ){
-    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    ZRUNERROR( RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES );
     return NULL;
   }
   _rkChainBiasVec( chain, bias );
@@ -606,7 +606,7 @@ zMat rkChainInertiaMatMJ(rkChain *chain, zMat inertia)
 
   n = rkChainJointSize( chain );
   if( !zMatIsSqr( inertia ) || zMatRowSizeNC(inertia) != n ){
-    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    ZRUNERROR( RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES );
     return NULL;
   }
   inertia_tmp = zMatAllocSqr( n );
@@ -663,7 +663,7 @@ zMat rkChainInertiaMatUV(rkChain *chain, zMat inertia)
   zVec bias;
 
   if( !zMatIsSqr( inertia ) || zMatColSizeNC(inertia) != rkChainJointSize(chain) ){
-    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    ZRUNERROR( RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES );
     return NULL;
   }
   if( !( bias = zVecAlloc( zMatRowSizeNC(inertia) ) ) ) return NULL;
@@ -726,7 +726,7 @@ bool rkChainInertiaMatBiasVecUV(rkChain *chain, zMat inertia, zVec bias)
 {
   if( !zMatIsSqr( inertia ) || !zMatColVecSizeIsEqual( inertia, bias ) ||
       zVecSizeNC(bias) != rkChainJointSize(chain) ){
-    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    ZRUNERROR( RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES );
     return false;
   }
   _rkChainBiasVec( chain, bias );
@@ -739,7 +739,7 @@ bool rkChainInertiaMatBiasVecCRB(rkChain *chain, zMat inertia, zVec bias)
 {
   if( !zMatIsSqr( inertia ) || !zMatColVecSizeIsEqual( inertia, bias ) ||
       zVecSizeNC(bias) != rkChainJointSize(chain) ){
-    ZRUNERROR( RK_ERR_MAT_VEC_SIZMISMATCH );
+    ZRUNERROR( RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES );
     return false;
   }
   _rkChainBiasVec( chain, bias );

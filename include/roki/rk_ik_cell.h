@@ -82,6 +82,8 @@ typedef void (* rkIKBind_fp)(rkChain*,rkIKAttr*,void*,rkIKRef*);
 /*! \brief error accumulation function pointer */
 typedef zVec3D* (* rkIKAcm_fp)(rkChain*,rkIKAcm*,void*,zVec3D*);
 
+ZDECL_STRUCT( rkIKCell );
+
 /*! \class IK constraint class */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKConstraint ){
   const char *typestr; /*!< a string to identify constraint type */
@@ -90,6 +92,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKConstraint ){
   rkIKCVec_fp cvec_fp; /*!< constraint vector function pointer */
   rkIKBind_fp bind_fp; /*!< reference binding function pointer */
   rkIKAcm_fp  acm_fp;  /*!< error accumulation function pointer */
+  /* I/O */
+  bool (* fromZTK)(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk); /*!< a function to read attributes of an IK cell from ZTK */
+  void (* fprintZTK)(FILE*,rkChain*,rkIKCell*); /*!< a function to print attributes of an IK cell from ZTK */
 };
 zListClass( rkIKConstraintList, rkIKConstraintListCell, const rkIKConstraint* );
 

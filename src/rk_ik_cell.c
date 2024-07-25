@@ -298,6 +298,100 @@ void rkIKCellListDestroy(rkIKCellList *list)
 /* inverse kinematics constraint class
  * ********************************************************** */
 
+/* read an attention point of an IK cell from ZTK. */
+static bool _rkIKConstraintAttentionPointFromZTK(rkIKAttr *attr, ubyte *mask, ZTK *ztk)
+{
+  if( !ZTKValCmp( ztk, "at" ) ) return false;
+  ZTKValNext( ztk );
+  zVec3DFromZTK( &attr->attention_point, ztk );
+  *mask |= RK_IK_ATTR_MASK_ATTENTION_POINT;
+  return true;
+}
+
+/* read a weighting vector of an IK cell from ZTK. */
+static bool _rkIKConstraintWeightFromZTK(rkIKAttr *attr, ubyte *mask, ZTK *ztk)
+{
+  if( !ZTKValCmp( ztk, "w" ) ) return false;
+  ZTKValNext( ztk );
+  zVec3DFromZTK( &attr->weight, ztk );
+  *mask |= RK_IK_ATTR_MASK_WEIGHT;
+  return true;
+}
+
+/* read a name of a link for an IK cell from ZTK. */
+static bool _rkIKConstraintLinkFromZTK(rkChain *chain, int num, rkIKAttr *attr, ubyte *mask, ZTK *ztk)
+{
+  rkLink *link;
+
+  if( !( link = rkChainFindLink( chain, ZTKVal(ztk) ) ) ){
+    ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
+    return false;
+  }
+  if( num == -1 ){
+    ZRUNERROR( RK_WARN_IK_CONSTRAINT_DUALLYDEFINED_LINK, ZTKVal(ztk) );
+    return false;
+  } else
+  if( num == 0 ){
+    attr->id = link - rkChainRoot(chain);
+    *mask |= RK_IK_ATTR_MASK_ID;
+  } else{
+    attr->id_sub = link - rkChainRoot(chain);
+    *mask |= RK_IK_ATTR_MASK_ID_SUB;
+  }
+  ZTKValNext( ztk );
+  return true;
+}
+
+/* print an attention point of a link of an IK cell to a file in ZTK format. */
+static void _rkIKConstraintAttentionPointFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  if( cell->data.attr.mask & RK_IK_ATTR_MASK_ATTENTION_POINT ){
+    fprintf( fp, " at" );
+    zVec3DDataFPrint( fp, rkIKCellAttentionPoint(cell) );
+  }
+}
+
+/* print a weighting vector of a link of an IK cell to a file in ZTK format. */
+static void _rkIKConstraintWeightFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  if( cell->data.attr.mask & RK_IK_ATTR_MASK_WEIGHT ){
+    fprintf( fp, " w" );
+    zVec3DDataFPrint( fp, rkIKCellWeight(cell) );
+  }
+}
+
+/* print a name of a link of an IK cell to a file in ZTK format. */
+static void _rkIKConstraintLinkFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  if( cell->data.attr.mask & RK_IK_ATTR_MASK_ID )
+    fprintf( fp, " %s", rkChainLinkName(chain,rkIKCellLinkID(cell)) );
+}
+
+/* print a name of a sublink of an IK cell to a file in ZTK format. */
+static void _rkIKConstraintLinkSubFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  if( cell->data.attr.mask & RK_IK_ATTR_MASK_ID_SUB )
+    fprintf( fp, " %s", rkChainLinkName(chain,rkIKCellLinkID2(cell)) );
+}
+
+/* IK constraint: link_world_pos */
+static bool _rkIKConstraintWldPosFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk){
+  int linknum = 0;
+  while( ZTKValPtr(ztk) ){
+    if( !_rkIKConstraintAttentionPointFromZTK( attr, mask, ztk ) &&
+        !_rkIKConstraintWeightFromZTK( attr, mask, ztk ) ){
+      if( !_rkIKConstraintLinkFromZTK( chain, linknum, attr, mask, ztk ) ){
+        ZRUNERROR( ZEDA_ERR_ZTK_UNKNOWN_VAL, ZTKVal(ztk), ZTKTag(ztk), ZTKKey(ztk) );
+        return false;
+      }
+      if( linknum == 0 ) linknum = -1;
+    }
+  }
+  return true;
+}
+static void _rkIKConstraintWldPosFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  _rkIKConstraintLinkFPrintZTK( fp, chain, cell );
+  _rkIKConstraintAttentionPointFPrintZTK( fp, chain, cell );
+  _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
+  fprintf( fp, "\n" );
+}
+
 const rkIKConstraint rk_ik_constraint_link_world_pos = {
   typestr: "world_pos",
   ref_fp: rkIKRefSetPos,
@@ -305,7 +399,29 @@ const rkIKConstraint rk_ik_constraint_link_world_pos = {
   cvec_fp: rkIKLinkWldPosErr,
   bind_fp: rkIKBindLinkWldPos,
   acm_fp: rkIKAcmPos,
+  fromZTK: _rkIKConstraintWldPosFromZTK,
+  fprintZTK: _rkIKConstraintWldPosFPrintZTK,
 };
+
+/* IK constraint: link_world_att */
+static bool _rkIKConstraintWldAttFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk){
+  int linknum = 0;
+  while( ZTKValPtr(ztk) ){
+    if( !_rkIKConstraintWeightFromZTK( attr, mask, ztk ) ){
+      if( !_rkIKConstraintLinkFromZTK( chain, linknum, attr, mask, ztk ) ){
+        ZRUNERROR( ZEDA_ERR_ZTK_UNKNOWN_VAL, ZTKVal(ztk), ZTKTag(ztk), ZTKKey(ztk) );
+        return false;
+      }
+      if( linknum == 0 ) linknum = -1;
+    }
+  }
+  return true;
+}
+static void _rkIKConstraintWldAttFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
+  _rkIKConstraintLinkFPrintZTK( fp, chain, cell );
+  fprintf( fp, "\n" );
+}
 
 const rkIKConstraint rk_ik_constraint_link_world_att = {
   typestr: "world_att",
@@ -314,7 +430,34 @@ const rkIKConstraint rk_ik_constraint_link_world_att = {
   cvec_fp: rkIKLinkWldAttErr,
   bind_fp: rkIKBindLinkWldAtt,
   acm_fp: rkIKAcmAtt,
+  fromZTK: _rkIKConstraintWldAttFromZTK,
+  fprintZTK: _rkIKConstraintWldAttFPrintZTK,
 };
+
+/* IK constraint: link_to_link_pos */
+static bool _rkIKConstraintL2LPosFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk){
+  int linknum = 0;
+  while( ZTKValPtr(ztk) ){
+    if( !_rkIKConstraintAttentionPointFromZTK( attr, mask, ztk ) &&
+        !_rkIKConstraintWeightFromZTK( attr, mask, ztk ) ){
+      if( !_rkIKConstraintLinkFromZTK( chain, linknum, attr, mask, ztk ) ){
+        ZRUNERROR( ZEDA_ERR_ZTK_UNKNOWN_VAL, ZTKVal(ztk), ZTKTag(ztk), ZTKKey(ztk) );
+        return false;
+      }
+      if( linknum > -1 ){
+        if( ++linknum > 1 ) linknum = -1;
+      }
+    }
+  }
+  return true;
+}
+static void _rkIKConstraintL2LPosFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  _rkIKConstraintLinkFPrintZTK( fp, chain, cell );
+  _rkIKConstraintLinkSubFPrintZTK( fp, chain, cell );
+  _rkIKConstraintAttentionPointFPrintZTK( fp, chain, cell );
+  _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
+  fprintf( fp, "\n" );
+}
 
 const rkIKConstraint rk_ik_constraint_link2link_pos = {
   typestr: "l2l_pos",
@@ -323,7 +466,32 @@ const rkIKConstraint rk_ik_constraint_link2link_pos = {
   cvec_fp: rkIKLinkL2LPosErr,
   bind_fp: rkIKBindLinkL2LPos,
   acm_fp: rkIKAcmPos,
+  fromZTK: _rkIKConstraintL2LPosFromZTK,
+  fprintZTK: _rkIKConstraintL2LPosFPrintZTK,
 };
+
+/* IK constraint: link_to_link_att */
+static bool _rkIKConstraintL2LAttFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk){
+  int linknum = 0;
+  while( ZTKValPtr(ztk) ){
+    if( !_rkIKConstraintWeightFromZTK( attr, mask, ztk ) ){
+      if( !_rkIKConstraintLinkFromZTK( chain, linknum, attr, mask, ztk ) ){
+        ZRUNERROR( ZEDA_ERR_ZTK_UNKNOWN_VAL, ZTKVal(ztk), ZTKTag(ztk), ZTKKey(ztk) );
+        return false;
+      }
+      if( linknum > -1 ){
+        if( ++linknum > 1 ) linknum = -1;
+      }
+    }
+  }
+  return true;
+}
+static void _rkIKConstraintL2LAttFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  _rkIKConstraintLinkFPrintZTK( fp, chain, cell );
+  _rkIKConstraintLinkSubFPrintZTK( fp, chain, cell );
+  _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
+  fprintf( fp, "\n" );
+}
 
 const rkIKConstraint rk_ik_constraint_link2link_att = {
   typestr: "l2l_att",
@@ -332,7 +500,24 @@ const rkIKConstraint rk_ik_constraint_link2link_att = {
   cvec_fp: rkIKLinkL2LAttErr,
   bind_fp: rkIKBindLinkL2LAtt,
   acm_fp: rkIKAcmAtt,
+  fromZTK: _rkIKConstraintL2LAttFromZTK,
+  fprintZTK: _rkIKConstraintL2LAttFPrintZTK,
 };
+
+/* IK constraint: center_of_mass_pos */
+static bool _rkIKConstraintCOMFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk){
+  while( ZTKValPtr(ztk) ){
+    if( !_rkIKConstraintWeightFromZTK( attr, mask, ztk ) ){
+      ZRUNERROR( ZEDA_ERR_ZTK_UNKNOWN_VAL, ZTKVal(ztk), ZTKTag(ztk), ZTKKey(ztk) );
+      return false;
+    }
+  }
+  return true;
+}
+static void _rkIKConstraintCOMFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
+  fprintf( fp, "\n" );
+}
 
 const rkIKConstraint rk_ik_constraint_world_com = {
   typestr: "com",
@@ -341,7 +526,26 @@ const rkIKConstraint rk_ik_constraint_world_com = {
   cvec_fp: rkIKCOMErr,
   bind_fp: rkIKBindCOM,
   acm_fp: rkIKAcmPos,
+  fromZTK: _rkIKConstraintCOMFromZTK,
+  fprintZTK: _rkIKConstraintCOMFPrintZTK,
 };
+
+/* IK constraint: angular_momentum */
+static bool _rkIKConstraintAMFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk){
+  while( ZTKValPtr(ztk) ){
+    if( !_rkIKConstraintAttentionPointFromZTK( attr, mask, ztk ) &&
+        !_rkIKConstraintWeightFromZTK( attr, mask, ztk ) ){
+      ZRUNERROR( ZEDA_ERR_ZTK_UNKNOWN_VAL, ZTKVal(ztk), ZTKTag(ztk), ZTKKey(ztk) );
+      return false;
+    }
+  }
+  return true;
+}
+static void _rkIKConstraintAMFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+  _rkIKConstraintAttentionPointFPrintZTK( fp, chain, cell );
+  _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
+  fprintf( fp, "\n" );
+}
 
 const rkIKConstraint rk_ik_constraint_world_angular_momentum = {
   typestr: "angular_momentum",
@@ -350,8 +554,11 @@ const rkIKConstraint rk_ik_constraint_world_angular_momentum = {
   cvec_fp: rkIKAMErr,
   bind_fp: rkIKBindAM,
   acm_fp: rkIKAcmAtt,
+  fromZTK: _rkIKConstraintAMFromZTK,
+  fprintZTK: _rkIKConstraintAMFPrintZTK,
 };
 
+/* IK constraint: angular_momentum_about_com */
 const rkIKConstraint rk_ik_constraint_world_angular_momentum_about_com = {
   typestr: "angular_momentum_about_com",
   ref_fp: rkIKRefSetPos,
@@ -359,8 +566,11 @@ const rkIKConstraint rk_ik_constraint_world_angular_momentum_about_com = {
   cvec_fp: rkIKAMCOMErr,
   bind_fp: rkIKBindAMCOM,
   acm_fp: rkIKAcmAtt,
+  fromZTK: _rkIKConstraintCOMFromZTK,
+  fprintZTK: _rkIKConstraintCOMFPrintZTK,
 };
 
+/* an array of pre-defined IK constraints */
 const rkIKConstraint *rk_ik_constraint_array[] = {
   &rk_ik_constraint_link_world_pos,
   &rk_ik_constraint_link_world_att,
@@ -371,16 +581,17 @@ const rkIKConstraint *rk_ik_constraint_array[] = {
   &rk_ik_constraint_world_angular_momentum_about_com,
 };
 
+/* a list of user-defined IK constraints */
 static rkIKConstraintList rk_ik_constraint_list
-#ifdef __cplusplus
-;
-#else
+#ifndef __cplusplus
  = {
   size: 0,
   root: { prev: &rk_ik_constraint_list.root, next: &rk_ik_constraint_list.root },
-};
+}
 #endif
+;
 
+/* find an IK constraint from the array of pre-defined constraints */
 static const rkIKConstraint *_rkIKConstraintFindFromArray(const char *typestr)
 {
   int i, n;
@@ -393,6 +604,7 @@ static const rkIKConstraint *_rkIKConstraintFindFromArray(const char *typestr)
   return NULL;
 }
 
+/* find an IK constraint from the list of user-defined constraints */
 static rkIKConstraintListCell *_rkIKConstraintFindFromList(const char *typestr)
 {
   rkIKConstraintListCell *cp;
@@ -403,6 +615,7 @@ static rkIKConstraintListCell *_rkIKConstraintFindFromList(const char *typestr)
   return NULL;
 }
 
+/* find an IK constraint */
 const rkIKConstraint *rkIKConstraintFind(const char *typestr)
 {
   const rkIKConstraint *constraint;
@@ -414,6 +627,7 @@ const rkIKConstraint *rkIKConstraintFind(const char *typestr)
   return NULL;
 }
 
+/* add a user-defined IK constraint */
 rkIKConstraintListCell *rkIKConstraintListAdd(const rkIKConstraint *constraint)
 {
   rkIKConstraintListCell *cp;
@@ -435,6 +649,7 @@ rkIKConstraintListCell *rkIKConstraintListAdd(const rkIKConstraint *constraint)
   return cp;
 }
 
+/* destroy the lisft of user-defined IK constraints */
 void rkIKConstraintListDestroy(void)
 {
   zListDestroy( rkIKConstraintListCell, &rk_ik_constraint_list );
