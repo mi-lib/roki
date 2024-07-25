@@ -19,10 +19,9 @@ int main(int argc, char *argv[])
   rkChainRegIKJointAll( &chain, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCellWldAtt( &chain, NULL, &attr, RK_IK_ATTR_MASK_ID );
-  cell[1] = rkChainRegIKCellWldPos( &chain, NULL, &attr, RK_IK_ATTR_MASK_ID );
+  cell[0] = rkChainRegIKCellWldAtt( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
+  cell[1] = rkChainRegIKCellWldPos( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
 
-  rkChainDisableIK( &chain );
   rkChainBindIK( &chain );
   rkIKCellSetRef( cell[0],
     zDeg2Rad(zRandF(-30,30)), zDeg2Rad(zRandF(0,45)), zDeg2Rad(zRandF(-30,30)) );

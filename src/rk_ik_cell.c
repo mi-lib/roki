@@ -13,7 +13,7 @@ rkIKAttr* rkIKAttrInit(rkIKAttr *attr)
   attr->id = -1;
   attr->id_sub = -1;
   zVec3DZero( &attr->attention_point );
-  zVec3DCreate( &attr->weight, 1.0, 1.0, 1.0 );
+  zVec3DCreate( &attr->weight, 1.0, 1.0, 1.0 ); /* default weight on constraint*/
   attr->mask = RK_IK_ATTR_MASK_NONE;
   return attr;
 }
@@ -24,7 +24,7 @@ rkIKAttr* rkIKAttrInit(rkIKAttr *attr)
  * ********************************************************** */
 
 /* initialize constraint cell. */
-void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
+void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
   zNameSetPtr( &cell->data, NULL );
   rkIKAttrInit( &cell->data.attr );
@@ -33,14 +33,11 @@ void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, ubyte mask, const rkIKConstrai
     rkIKCellLinkID2(cell) = ( mask & RK_IK_ATTR_MASK_ID_SUB ) ? attr->id_sub : 0;
     if( mask & RK_IK_ATTR_MASK_ATTENTION_POINT )
       zVec3DCopy( &attr->attention_point, rkIKCellAttentionPoint(cell) );
-    else
-      zVec3DZero( rkIKCellAttentionPoint(cell) );
     if( mask & RK_IK_ATTR_MASK_WEIGHT )
       zVec3DCopy( &attr->weight, rkIKCellWeight(cell) );
-    else
-      rkIKCellSetWeight( cell, 1.0, 1.0, 1.0 ); /* default weight on constraint*/
     cell->data.attr.mask = mask;
   }
+  cell->data.priority = priority;
   cell->data.mode = RK_IK_CELL_MODE_XYZ;
 
   rkIKRefClear( rkIKCellRef(cell) );
@@ -69,9 +66,9 @@ void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, ubyte mask, const rkIKConstrai
   return cell
 
 /* create an IK cell. */
-rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
+rkIKCell *rkIKCellCreate(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
-  _RK_IK_CELL_ALLOC_FUNC( name, rkIKCellInit( cell, attr, mask, constraint, util ) );
+  _RK_IK_CELL_ALLOC_FUNC( name, rkIKCellInit( cell, priority, attr, mask, constraint, util ) );
 }
 
 /* clone an IK cell. */
@@ -84,7 +81,7 @@ rkIKCell *rkIKCellClone(rkIKCell *src)
 void rkIKCellDestroy(rkIKCell *cell)
 {
   zNameFree( &cell->data );
-  rkIKCellInit( cell, NULL, 0x0, NULL, NULL );
+  rkIKCellInit( cell, 0, NULL, 0x0, NULL, NULL );
 }
 
 /* zero the accumulated error of a highly-prioritized IK constraint. */
@@ -413,7 +410,7 @@ const rkIKConstraint *rkIKConstraintFind(const char *typestr)
 
   if( ( constraint = _rkIKConstraintFindFromArray( typestr ) ) ) return constraint;
   if( ( cp = _rkIKConstraintFindFromList( typestr ) ) ) return cp->data;
-  ZRUNWARN( "constraint %s of the inverse kinematics not found", typestr );
+  ZRUNERROR( RK_ERR_IK_CONSTRAINT_NOTFOUND, typestr );
   return NULL;
 }
 
@@ -422,11 +419,11 @@ rkIKConstraintListCell *rkIKConstraintListAdd(const rkIKConstraint *constraint)
   rkIKConstraintListCell *cp;
 
   if( _rkIKConstraintFindFromArray( constraint->typestr ) ){
-    ZRUNWARN( "constraint %s predefined", constraint->typestr );
+    ZRUNERROR( RK_ERR_IK_CONSTRAINT_PREDEFINED, constraint->typestr );
     return NULL;
   }
   if( ( cp = _rkIKConstraintFindFromList( constraint->typestr ) ) ){
-    ZRUNWARN( "constraint %s already registered, replaced", constraint->typestr );
+    ZRUNWARN( RK_WARN_IK_CONSTRAINT_ALREADY_REGISTERED, constraint->typestr );
   } else{
     if( !( cp = zAlloc( rkIKConstraintListCell, 1 ) ) ){
       ZALLOCERROR();

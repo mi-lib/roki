@@ -99,7 +99,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
   const rkIKConstraint *constraint; /*!< constraint */
   rkIKRef ref;   /*!< referential position or attitude */
   rkIKAttr attr; /*!< attributes of attention quantity */
-  int priority;  /*!< priority of the constraint */
+  int priority;  /*!< priority of the constraint (The larger the number becomes, the higher the priority is.) */
   ubyte mode;    /*!< constraint mode */
   /*! \cond */
   rkIKAcm _acm;  /* error accumulation correction */
@@ -110,41 +110,40 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
 
 zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 
+#define rkIKCellName(cell)           zName( &(cell)->data )
+
 #define rkIKCellAttr(cell)           ( &(cell)->data.attr )
 #define rkIKCellLinkID(cell)         rkIKCellAttr(cell)->id
 #define rkIKCellLinkID2(cell)        rkIKCellAttr(cell)->id_sub
 #define rkIKCellAttentionPoint(cell) ( &rkIKCellAttr(cell)->attention_point )
 #define rkIKCellWeight(cell)         ( &rkIKCellAttr(cell)->weight )
 
-#define rkIKCellPriority(cell)       (cell)->data.priority
+#define rkIKCellPriority(cell)              (cell)->data.priority
 
 #define RK_IK_CELL_MODE_X            0x01
 #define RK_IK_CELL_MODE_Y            0x02
 #define RK_IK_CELL_MODE_Z            0x04
 #define RK_IK_CELL_MODE_XYZ          ( RK_IK_CELL_MODE_X | RK_IK_CELL_MODE_Y | RK_IK_CELL_MODE_Z )
 #define RK_IK_CELL_MODE_ENABLE       0x08
-#define RK_IK_CELL_MODE_FORCE        0x10
 
 /* set constraint mode */
 
 #define rkIKCellEnable(cell)         ( (cell)->data.mode |= RK_IK_CELL_MODE_ENABLE )
 #define rkIKCellDisable(cell)        ( (cell)->data.mode &=~RK_IK_CELL_MODE_ENABLE )
-#define rkIKCellForce(cell)          ( (cell)->data.mode |= RK_IK_CELL_MODE_FORCE )
-#define rkIKCellUnforce(cell)        ( (cell)->data.mode &=~RK_IK_CELL_MODE_FORCE )
-#define rkIKCellSetActiveComponent(cell,xyz) \
-  ( (cell)->data.mode = ( (cell)->data.mode & ( RK_IK_CELL_MODE_ENABLE | RK_IK_CELL_MODE_FORCE ) ) | (xyz) )
 #define rkIKCellIsEnabled(cell)      ( (cell)->data.mode & RK_IK_CELL_MODE_ENABLE )
-#define rkIKCellIsForced(cell)       ( (cell)->data.mode & RK_IK_CELL_MODE_FORCE )
+
+#define rkIKCellSetActiveComponent(cell,xyz) \
+  ( (cell)->data.mode = ( (cell)->data.mode & RK_IK_CELL_MODE_ENABLE ) | (xyz) )
 
 #define rkIKCellRef(cell)            ( &(cell)->data.ref )
 #define rkIKCellRefPos(cell)         ( &rkIKCellRef(cell)->pos )
 #define rkIKCellRefAtt(cell)         ( &rkIKCellRef(cell)->att )
 
 /*! \brief intialize an IK cell */
-__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief create an IK cell. */
-__ROKI_EXPORT rkIKCell *rkIKCellCreate(const char *name, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+__ROKI_EXPORT rkIKCell *rkIKCellCreate(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief clone an IK cell. */
 __ROKI_EXPORT rkIKCell *rkIKCellClone(rkIKCell *src);

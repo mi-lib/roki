@@ -31,7 +31,7 @@
 #define RK_WARN_CHAIN_EMPTY        "empty chain specified."
 #define RK_WARN_CHAIN_SHAPE_ONLY   "create a floating link to assign shape(s)"
 
-#define RK_WARN_IK_CELL_NOTFOUND   "IK cell not found"
+#define RK_WARN_IK_CONSTRAINT_ALREADY_REGISTERED "constraint %s already registered, replaced"
 
 /* error messages */
 
@@ -59,7 +59,10 @@
 
 #define RK_ERR_SHAPE_UNKNOWN       "%s: unknown shape"
 
-#define RK_ERR_IK_UNKNOWN          "%s: unknown constraint type"
+#define RK_ERR_IK_CONSTRAINT_NOTFOUND   "constraint %s of the inverse kinematics not found"
+#define RK_ERR_IK_CONSTRAINT_PREDEFINED "constraint %s of the inverse kinematics predefined"
+#define RK_ERR_IK_CELL_IS_NULL     "null pointer specified for IK cell"
+#define RK_ERR_IK_CELL_NOTFOUND    "IK cell %s not found"
 
 #define RK_ERR_FATAL               "fatal error! - please report to the author"
 
