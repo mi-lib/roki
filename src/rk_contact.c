@@ -56,7 +56,7 @@ static void *_rkContactInfoBindFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   if( !( ((rkContactInfo*)obj)->__stf[0] = zStrClone( stf0 ) ) ||
       !( ((rkContactInfo*)obj)->__stf[1] = zStrClone( stf1 ) ) ) return NULL;
   if( rkContactInfoArrayAssoc( (rkContactInfoArray*)arg, stf0, stf1 ) != obj )
-    ZRUNWARN( RK_WARN_CONTACT_DUPKEY, stf0, stf1 );
+    ZRUNWARN( RK_WARN_CONTACT_DUPLICATE_KEY, stf0, stf1 );
   return obj;
 }
 static void *_rkContactInfoStaticFricFromZTK(void *obj, int i, void *arg, ZTK *ztk){

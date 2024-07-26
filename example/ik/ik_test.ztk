@@ -6,3 +6,4 @@ joint: link4 0.3
 constraint: 3 hand_pos world_pos hand at 0 0 0.08 w 10 20 30
 constraint: 1 hand_att world_att w 4 5 6
 constraint: 2 hand_pos_link2 l2l_pos hand link2 w 1 2 3 at 0 0 0.08
+constraint: 2 hand_pos_link2 l2l_att hand link2 w 1 2 3

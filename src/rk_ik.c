@@ -192,7 +192,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
 static bool _rkIKRegJointID(rkIK *ik, rkChain *chain, int id, bool sw, double weight)
 {
   if( id < 0 || id >= rkChainLinkNum(chain) ){
-    ZRUNERROR( RK_ERR_LINK_INVID, id );
+    ZRUNERROR( RK_ERR_LINK_INVALID_ID, id );
     return false;
   }
   ik->joint_is_enabled[id] = sw;
@@ -573,8 +573,6 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   const rkIKConstraint *constraint;
   rkIKAttr attr;
   ubyte mask = RK_IK_ATTR_MASK_NONE;
-  rkLink *link;
-  int linknum = 0;
   int priority;
   const char *nameptr;
 
@@ -584,30 +582,9 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   ZTKValNext( ztk );
   if( !( constraint = rkIKConstraintFind( ZTKVal(ztk) ) ) ) return NULL;
   ZTKValNext( ztk );
-  while( ztk->val_cp ){
-    if( ZTKValCmp( ztk, "at" ) ){
-      ZTKValNext( ztk );
-      zVec3DFromZTK( &attr.attention_point, ztk );
-      mask |= RK_IK_ATTR_MASK_ATTENTION_POINT;
-    } else
-    if( ZTKValCmp( ztk, "w" ) ){
-      ZTKValNext( ztk );
-      zVec3DFromZTK( &attr.weight, ztk );
-      mask |= RK_IK_ATTR_MASK_WEIGHT;
-    } else{
-      if( !( link = rkChainFindLink( (rkChain*)obj, ZTKVal(ztk) ) ) ){
-        ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
-        return NULL;
-      }
-      if( linknum++ == 0 ){
-        attr.id = link - rkChainRoot((rkChain*)obj);
-        mask |= RK_IK_ATTR_MASK_ID;
-      } else{
-        attr.id_sub = link - rkChainRoot((rkChain*)obj);
-        mask |= RK_IK_ATTR_MASK_ID_SUB;
-      }
-      ZTKValNext( ztk );
-    }
+  if( !constraint->fromZTK( (rkChain*)obj, &attr, &mask, ztk ) ){
+    ZRUNERROR( "in persing constraint %s", nameptr );
+    return NULL;
   }
   return rkChainRegIKCell( (rkChain *)obj, nameptr, priority, &attr, mask, constraint, NULL ) ? obj : NULL;
 }
@@ -640,19 +617,7 @@ static void _rkIKConstraintFPrintZTK(FILE *fp, rkChain *chain)
 
   zListForEach( &chain->_ik->_c_list, cp ){
     fprintf( fp, "constraint: %d %s %s", rkIKCellPriority(cp), rkIKCellName(cp), cp->data.constraint->typestr );
-    if( cp->data.attr.mask & RK_IK_ATTR_MASK_ID )
-      fprintf( fp, " %s", rkChainLinkName(chain,rkIKCellLinkID(cp)) );
-    if( cp->data.attr.mask & RK_IK_ATTR_MASK_ID_SUB )
-      fprintf( fp, " %s", rkChainLinkName(chain,rkIKCellLinkID2(cp)) );
-    if( cp->data.attr.mask & RK_IK_ATTR_MASK_ATTENTION_POINT ){
-      fprintf( fp, " at" );
-      zVec3DDataFPrint( fp, rkIKCellAttentionPoint(cp) );
-    }
-    if( cp->data.attr.mask & RK_IK_ATTR_MASK_WEIGHT ){
-      fprintf( fp, " w" );
-      zVec3DDataFPrint( fp, rkIKCellWeight(cp) );
-    }
-    fprintf( fp, "\n" );
+    cp->data.constraint->fprintZTK( fp, chain, cp );
   }
 }
 

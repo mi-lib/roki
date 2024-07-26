@@ -196,7 +196,7 @@ rkJoint *rkJointAssignMotorByStr(rkJoint *joint, rkMotorSpecArray *msarray, cons
     return NULL;
   }
   if( rkJointDOF(joint) != rkMotorSpecDOF(ms) ){
-    ZRUNERROR( RK_ERR_JOINT_DOFMISMATCH, rkJointDOF(joint), rkMotorSpecDOF(ms) );
+    ZRUNERROR( RK_ERR_JOINT_MISMATCH_DOF, rkJointDOF(joint), rkMotorSpecDOF(ms) );
     return NULL;
   }
   if( !( rkJointMotor(joint) = zAlloc( rkMotor, 1 ) ) ){
