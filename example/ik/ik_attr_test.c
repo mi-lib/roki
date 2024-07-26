@@ -1,7 +1,6 @@
 #include <roki/rk_chain.h>
 
 /* header .h -------------------------------------------------------------- */
-static const int RK_IK_MAX_PRIORITY = 1000000;
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   void* (*init                )(void**);
@@ -38,7 +37,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   int  (*get_sub_link_frame_id)(void*);
   void (*reset                )(void*);
   void* (*reg                 )(void*,void*);
-  void* (*get_ptr_by_name     )(void*,const char*);
+  void* (*from_cell_name      )(void*,const char*);
   bool (*unreg                )(void*,void*);
   bool (*unreg_by_name        )(void*,const char*);
 };
@@ -78,7 +77,7 @@ void rkIKRegSelect_set_sub_link_frame_id(void *instance, int sub_link_id);
 int  rkIKRegSelect_get_sub_link_frame_id(void *instance);
 void rkIKRegSelect_reset                (void *instance);
 void* rkIKRegSelect_call_reg_api        (void *instance, void *chain);
-void* rkIKRegSelect_get_pointer_by_name (void* chain, const char* name);
+void* rkIKRegSelect_from_cell_name      (void* chain, const char* name);
 bool rkIKRegSelect_unreg_by_cell        (void *chain, void* cell);
 bool rkIKRegSelect_unreg_by_name        (void *chain, const char* name);
 
@@ -117,7 +116,7 @@ static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_get_sub_link_frame_id,
   rkIKRegSelect_reset,
   rkIKRegSelect_call_reg_api,
-  rkIKRegSelect_get_pointer_by_name,
+  rkIKRegSelect_from_cell_name,
   rkIKRegSelect_unreg_by_cell,
   rkIKRegSelect_unreg_by_name
 };
@@ -438,9 +437,8 @@ const int32_t get_user_defined_type(const char* type)
   }
 }
 
-
-int mask_factory(void* instance){
-  int mask = RK_IK_ATTR_MASK_NONE;
+ubyte mask_factory(void* instance){
+  ubyte mask = RK_IK_ATTR_MASK_NONE;
   if( rkIKRegSelect_link( instance ) )
     mask |= RK_IK_ATTR_MASK_ID | RK_IK_ATTR_MASK_ATTENTION_POINT;
   if( rkIKRegSelect_sub_link_frame( instance ) )
@@ -454,7 +452,7 @@ void* rkIKRegSelect_call_reg_api(void* instance, void* chain){
   const rkIKConstraint* lookup = reg_api_factory( instance );
   if( lookup == NULL )
     return NULL;
-  int mask = mask_factory( instance );
+  ubyte mask = mask_factory( instance );
   rkIKRegister* reg = (rkIKRegister*)(instance);
   int priority = rkIKRegSelect_force( instance ) ? RK_IK_MAX_PRIORITY : reg->_priority;
   rkIKCell* cell = rkChainRegIKCell( (rkChain*)(chain), reg->name, priority, &reg->_attr, mask, lookup, NULL );
@@ -466,7 +464,7 @@ void* rkIKRegSelect_call_reg_api(void* instance, void* chain){
   return (void*)(cell);
 }
 
-void* rkIKRegSelect_get_pointer_by_name(void* chain, const char* name)
+void* rkIKRegSelect_from_cell_name(void* chain, const char* name)
 {
   rkIKCell* cell = rkChainFindIKCellByName( (rkChain*)(chain), name );
   if( cell == NULL )
