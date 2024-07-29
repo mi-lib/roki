@@ -387,7 +387,7 @@ static int _rkIKCellGetEquation(rkIK *ik, rkChain *chain, rkIKCell *cell, int s,
 }
 
 /* create a motion constraint equation of an inverse kinematics solver. */
-static void _rkIKCreateEquation(rkIK *ik, rkChain *chain, int max_priority, rkIKCell *terminator)
+static void _rkIKCreateEquation(rkIK *ik, rkChain *chain, int min_priority, rkIKCell *terminator)
 {
   int i;
   rkIKCell *cell;
@@ -402,7 +402,7 @@ static void _rkIKCreateEquation(rkIK *ik, rkChain *chain, int max_priority, rkIK
     cell->data._eval = zVec3DWSqrNorm( &ik->_c_vec_cell, rkIKCellWeight(cell) );
     ik->eval += cell->data._eval;
     cell->data._eval = sqrt( cell->data._eval );
-    if( rkIKCellPriority(cell) > max_priority )
+    if( rkIKCellPriority(cell) > min_priority )
       rkIKCellGetAcm( cell, chain, &ik->_c_vec_cell );
     for( i=0; i<3; i++ )
       row += _rkIKCellGetEquation( ik, chain, cell, i, row );
@@ -508,22 +508,21 @@ static zVec _rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
 static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*,zVec), zVec (*_solve_ik_one)(rkChain*,zVec,double), double tol, int iter)
 {
   int i, iter_count = 0;
-  double rest = HUGE_VAL;
-  rkIKCell *terminator;
-  int current_max_priority;
+  double rest;
+  rkIKCell *terminator, *terminator_prev;
+  int current_min_priority;
 
   _get_joint_dis( chain, dis );
   ZITERINIT( iter );
   rkChainZeroIKAcm( chain );
-  current_max_priority = rkIKCellPriority( zListTail(&chain->_ik->_c_list) );
-  for( terminator = zListTail(&chain->_ik->_c_list);
-       terminator != zListRoot(&chain->_ik->_c_list);
-       current_max_priority = rkIKCellPriority(terminator) ){
+  terminator_prev = zListTail(&chain->_ik->_c_list);
+  current_min_priority = rkIKCellPriority( terminator_prev );
+  for( terminator=terminator_prev; ; current_min_priority=rkIKCellPriority(terminator) ){
     while( terminator != zListRoot(&chain->_ik->_c_list) &&
-           rkIKCellPriority(terminator) >= current_max_priority )
+           rkIKCellPriority(terminator) >= current_min_priority )
       terminator = zListCellNext(terminator);
-    for( i=0; i<iter; i++ ){
-      _rkIKCreateEquation( chain->_ik, chain, current_max_priority, terminator );
+    for( rest=HUGE_VAL, i=0; i<iter; i++ ){
+      _rkIKCreateEquation( chain->_ik, chain, current_min_priority, terminator );
       _solve_ik_one( chain, dis, 1.0 );
       if( zIsTol( chain->_ik->eval - rest, tol ) ){
         iter_count += i;
@@ -531,6 +530,9 @@ static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*
       }
       rest = chain->_ik->eval;
     }
+    if( terminator == zListRoot(&chain->_ik->_c_list) ) break;
+    for( ; terminator_prev!=terminator; terminator_prev=zListCellNext(terminator_prev) )
+      rkIKCellBind( terminator_prev, chain );
   }
   return iter_count;
 }

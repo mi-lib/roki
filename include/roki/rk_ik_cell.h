@@ -61,15 +61,14 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
 /*! \brief initialize IK attribute */
 __ROKI_EXPORT rkIKAttr* rkIKAttrInit(rkIKAttr *attr);
 
-/* set constraint mode */
-
+/*! \brief set attributes of an IK cell */
 #define rkIKAttrSetLinkID(attr,chain,i)       ( (attr)->id = rkChainFindLinkID( chain, i ) )
 #define rkIKAttrSetLinkID2(attr,chain,i)      ( (attr)->id_sub = rkChainFindLinkID( chain, i ) )
 #define rkIKAttrSetAttentionPoint(attr,x,y,z) zVec3DCreate( &(attr)->attention_point, (x), (y), (z) )
 #define rkIKAttrCopyAttentionPoint(attr,pos)  zVec3DCopy( pos, &(attr)->attention_point )
 
 /* set weight on constraint of IK cell */
-#define rkIKAttrSetWeight(attr,w1,w2,w3) zVec3DCreate( &(attr)->weight, w1, w2, w3 )
+#define rkIKAttrSetWeight(attr,w1,w2,w3)      zVec3DCreate( &(attr)->weight, (w1), (w2), (w3) )
 
 /*! \brief reference function pointer */
 typedef void (* rkIKRef_fp)(rkIKRef *ref, double v1, double v2, double v3);
@@ -158,34 +157,28 @@ __ROKI_EXPORT rkIKCell *rkIKCellClone(rkIKCell *src);
 /*! \brief destroy an IK cell. */
 __ROKI_EXPORT void rkIKCellDestroy(rkIKCell *cell);
 
-/* set weight on constraint of an IK cell */
-#define rkIKCellSetWeight(cell,w1,w2,w3) rkIKAttrSetWeight( rkIKCellAttr(cell), w1, w2, w3 )
+/*! set weight on a constraint of an IK cell */
+__ROKI_EXPORT void rkIKCellSetWeight(rkIKCell *cell, double w1, double w2, double w3);
+__ROKI_EXPORT void rkIKCellSetWeightVec(rkIKCell *cell, zVec3D *weight);
 
 /* set referential value and enable the constraint */
-#define rkIKCellSetRef(cell,v1,v2,v3) do{\
-  rkIKCellEnable( cell );\
-  (cell)->data.constraint->ref_fp( rkIKCellRef(cell), v1, v2, v3 );\
-} while(0)
-#define rkIKCellSetRefVec(cell,v) \
-  rkIKCellSetRef(cell,(v)->e[0],(v)->e[1],(v)->e[2])
-#define rkIKCellSetRefAtt(cell,r) do{\
-  rkIKCellEnable( cell );\
-  zMat3DCopy( r, rkIKCellRefAtt(cell) );\
-} while(0)
+__ROKI_EXPORT void rkIKCellSetRef(rkIKCell *cell, double v1, double v2, double v3);
+__ROKI_EXPORT void rkIKCellSetRefVec(rkIKCell *cell, zVec3D *vec);
+__ROKI_EXPORT void rkIKCellSetRefAtt(rkIKCell *cell, zMat3D *att);
 
 /*! \brief zero the accumulated error of a highly-prioritized IK constraint. */
 __ROKI_EXPORT void rkIKCellAcmZero(rkIKCell *cell);
 
-#define rkIKCellGetCMat(cell,r,mat) \
-  (cell)->data.constraint->cmat_fp( r, rkIKCellAttr(cell), mat )
-#define rkIKCellGetCVec(cell,r,vec) \
-  (cell)->data.constraint->cvec_fp( r, rkIKCellAttr(cell), (cell)->data._util, rkIKCellRef(cell), vec )
-#define rkIKCellBind(cell,r) do{\
+#define rkIKCellGetCMat(cell,chain,mat) \
+  (cell)->data.constraint->cmat_fp( chain, rkIKCellAttr(cell), mat )
+#define rkIKCellGetCVec(cell,chain,vec) \
+  (cell)->data.constraint->cvec_fp( chain, rkIKCellAttr(cell), (cell)->data._util, rkIKCellRef(cell), vec )
+#define rkIKCellBind(cell,chain) do{\
   rkIKCellEnable( cell );\
-  (cell)->data.constraint->bind_fp( r, rkIKCellAttr(cell), (cell)->data._util, rkIKCellRef(cell) );\
+  (cell)->data.constraint->bind_fp( chain, rkIKCellAttr(cell), (cell)->data._util, rkIKCellRef(cell) );\
 } while(0)
-#define rkIKCellGetAcm(cell,r,v) \
-  (cell)->data.constraint->acm_fp( r, &(cell)->data._acm, (cell)->data._util, v )
+#define rkIKCellGetAcm(cell,chain,v) \
+  (cell)->data.constraint->acm_fp( chain, &(cell)->data._acm, (cell)->data._util, v )
 
 /* reference */
 __ROKI_EXPORT void rkIKRefSetPos(rkIKRef *ref, double x, double y, double z);

@@ -84,6 +84,38 @@ void rkIKCellDestroy(rkIKCell *cell)
   rkIKCellInit( cell, 0, NULL, 0x0, NULL, NULL );
 }
 
+/* set weight on a constraint of an IK cell */
+void rkIKCellSetWeight(rkIKCell *cell, double w1, double w2, double w3)
+{
+  rkIKAttrSetWeight( rkIKCellAttr(cell), w1, w2, w3 );
+}
+
+/* set the weight vector on a constraint of an IK cell */
+void rkIKCellSetWeightVec(rkIKCell *cell, zVec3D *weight)
+{
+  rkIKAttrSetWeight( rkIKCellAttr(cell), weight->c.x, weight->c.y, weight->c.z );
+}
+
+/* set the referential position of an IK cell */
+void rkIKCellSetRef(rkIKCell *cell, double v1, double v2, double v3)
+{
+  rkIKCellEnable( cell );
+  cell->data.constraint->ref_fp( rkIKCellRef(cell), v1, v2, v3 );
+}
+
+/* set the referential position vector of an IK cell */
+void rkIKCellSetRefVec(rkIKCell *cell, zVec3D *vec)
+{
+  rkIKCellSetRef( cell, vec->c.x, vec->c.y, vec->c.z );
+}
+
+/* set the referential attitude matrix of an IK cell */
+void rkIKCellSetRefAtt(rkIKCell *cell, zMat3D *att)
+{
+  rkIKCellEnable( cell );
+  zMat3DCopy( att, rkIKCellRefAtt(cell) );
+}
+
 /* zero the accumulated error of a highly-prioritized IK constraint. */
 void rkIKCellAcmZero(rkIKCell *cell)
 {
