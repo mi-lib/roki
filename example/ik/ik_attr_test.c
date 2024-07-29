@@ -40,6 +40,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegSelectClass ){
   void* (*from_cell_name      )(void*,const char*);
   bool (*unreg                )(void*,void*);
   bool (*unreg_by_name        )(void*,const char*);
+  void* (*from_ztk            )(void*,void*);
+  bool (*fprint_ztk           )(FILE*,void*,void*);
 };
 
 /* declaration */
@@ -80,6 +82,8 @@ void* rkIKRegSelect_call_reg_api        (void *instance, void *chain);
 void* rkIKRegSelect_from_cell_name      (void* chain, const char* name);
 bool rkIKRegSelect_unreg_by_cell        (void *chain, void* cell);
 bool rkIKRegSelect_unreg_by_name        (void *chain, const char* name);
+void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk);
+bool rkIKRegSelect_fprintZTK_as_constraint_key(FILE *fp, void* chain, void* instance);
 
 static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_init,
@@ -118,14 +122,15 @@ static rkIKRegSelectClass rkIKRegSelectClassImpl = {
   rkIKRegSelect_call_reg_api,
   rkIKRegSelect_from_cell_name,
   rkIKRegSelect_unreg_by_cell,
-  rkIKRegSelect_unreg_by_name
+  rkIKRegSelect_unreg_by_name,
+  rkIKRegSelect_fromZTK_constraint_key,
+  rkIKRegSelect_fprintZTK_as_constraint_key,
 };
 
 
 /* implement .c (capsuled) ------------------------------------------------ */
 
 /**/
-
 /* int 32bit */
 /* User Defined Type (24bit) : Reference Frame Type, Target Type, Quantity Type */
 static const int32_t RK_IK_ATTR_TYPE__WORLD_LINK_POS     = 0x010101;
@@ -157,7 +162,6 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKRegister ){
   /* arguments for call api */
   char *name;
   int _priority;
-  bool _is_force;
   rkIKAttr _attr;
 };
 
@@ -167,7 +171,6 @@ void* rkIKRegSelect_init(void** instance)
   reg = zAlloc( rkIKRegister, 1 );
   zNameSet( reg, "" );
   reg->_priority = 0;
-  reg->_is_force = false;
   rkIKAttrInit( &reg->_attr );
   reg->_attr.user_defined_type = 0;
   *instance = (void*)(reg);
@@ -185,7 +188,8 @@ void rkIKRegSelect_copy(void* src, void* dest)
 void rkIKRegSelect_free(void **instance)
 {
   rkIKRegister* reg = (rkIKRegister*)(*instance);
-  zNameFree( reg );
+  if( zNamePtr( reg ) != NULL )
+    zNameFree( reg );
   zFree( reg );
   *instance = NULL;
 }
@@ -286,19 +290,19 @@ bool rkIKRegSelect_sub_link_frame(void* instance){
 
 bool rkIKRegSelect_select_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  reg->_is_force = true;
+  reg->_priority = RK_IK_MAX_PRIORITY;
   return true;
 }
 
 bool rkIKRegSelect_unselect_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  reg->_is_force = false;
+  reg->_priority = 0;
   return true;
 }
 
 bool rkIKRegSelect_force(void* instance){
   rkIKRegister* reg = (rkIKRegister*)(instance);
-  return reg->_is_force;
+  return reg->_priority == RK_IK_MAX_PRIORITY;
 }
 
 /**/
@@ -437,6 +441,7 @@ const int32_t get_user_defined_type(const char* type)
   }
 }
 
+
 ubyte mask_factory(void* instance){
   ubyte mask = RK_IK_ATTR_MASK_NONE;
   if( rkIKRegSelect_link( instance ) )
@@ -475,10 +480,6 @@ void* rkIKRegSelect_from_cell_name(void* chain, const char* name)
   reg->_attr.user_defined_type = get_user_defined_type( cell->data.constraint->typestr );
   rkIKRegSelect_set_name( (void*)reg, rkIKCellName(cell) );
   int priority = rkIKCellPriority( cell );
-  if( priority == RK_IK_MAX_PRIORITY ){
-    rkIKRegSelect_select_force( (void*)reg );
-    priority = 0; /* To Be Considered */
-  }
   rkIKRegSelect_set_priority( (void*)reg, priority );
   return (void*)(reg);
 }
@@ -498,6 +499,46 @@ bool rkIKRegSelect_unreg_by_name(void *chain, const char* name)
   return rkChainUnregIKCell( (rkChain*)(chain), (rkIKCell*)(cell) );
 }
 
+void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
+{
+  const rkIKConstraint *constraint;
+  rkIKAttr attr;
+  ubyte mask = RK_IK_ATTR_MASK_NONE;
+  int priority;
+  const char *nameptr;
+  const char *typestr;
+  priority = ZTKInt((ZTK*)ztk);
+  nameptr = ZTKVal((ZTK*)ztk);
+  rkIKAttrInit( &attr );
+  ZTKValNext( (ZTK*)ztk );
+  typestr = ZTKVal((ZTK*)ztk);
+  if( !( constraint = rkIKConstraintFind( typestr ) ) ) return NULL;
+  ZTKValNext( (ZTK*)ztk );
+  if( !constraint->fromZTK( (rkChain*)chain, &attr, &mask, (ZTK*)ztk ) ){
+    ZRUNERROR( "in persing constraint %s", nameptr );
+    return NULL;
+  }
+  /* set */
+  rkIKRegister* reg;
+  rkIKRegSelect_init( (void**)(&reg) );
+  rkIKRegSelect_set_name( (void*)reg, nameptr );
+  zCopy( rkIKAttr, &attr, &reg->_attr );
+  reg->_attr.user_defined_type = get_user_defined_type( typestr );
+  rkIKRegSelect_set_priority( (void*)reg, priority );
+
+  return (void*)(reg);
+}
+
+bool rkIKRegSelect_fprintZTK_as_constraint_key(FILE *fp, void* chain, void* instance)
+{
+  rkIKCell* cp = rkIKRegSelect_call_reg_api( instance, chain );
+  if( cp == NULL )
+    return false;
+  fprintf( fp, "constraint: %d %s %s", rkIKCellPriority(cp), rkIKCellName(cp), cp->data.constraint->typestr );
+  cp->data.constraint->fprintZTK( fp, (rkChain*)chain, cp );
+  rkIKRegSelect_unreg_by_cell( chain, cp );
+  return true;
+}
 
 /* test code that includes the header --------------------------------------*/
 #define H5_ZTK "../model/H5.ztk"
@@ -638,8 +679,26 @@ int main(int argc, char *argv[])
   test->select_link( instance );
   test->select_pos( instance );
   test->select_wld_frame( instance );
+  test->set_link_id( instance, in_link_id );
+  /* test ztk I/O */
   const char name_wld_pos[] = "test_wld_pos";
   test->set_name( instance, name_wld_pos );
+  printf("test ZTK I/O: %s\n  ", name_wld_pos );
+  const char ztk_filepath[] = "ik_attr_test.ztk";
+  /* fprint_ztk file */
+  FILE* fp = fopen( ztk_filepath, "w" );
+  test->fprint_ztk( fp, chain, instance );
+  fclose( fp );
+  /* from_ztk file */
+  ZTK ztk;
+  ZTKParse( &ztk, ztk_filepath );
+  ZTKKeyRewind( &ztk );
+  printf( "find constraint key : %s\n  ", ZTKKeyCmp( &ztk, "constraint" ) ? "OK" : "NG" );
+  void* instance_02 = test->from_ztk( chain, &ztk );
+  /* fprint_ztk as stdout */
+  test->fprint_ztk( stdout, chain, instance_02 );
+  test->free( &instance_02 );
+  /**/
   printf("call reg_api_world_pos : ");
   void* cell_wld_pos = test->reg( instance, chain );
   printf("%s\n", (cell_wld_pos!=NULL ? "OK." : "NG!!"));
