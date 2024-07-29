@@ -531,7 +531,7 @@ void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
 
 bool rkIKRegSelect_fprintZTK_as_constraint_key(FILE *fp, void* chain, void* instance)
 {
-  rkIKCell* cp = rkIKRegSelect_call_reg_api( instance, chain );
+  rkIKCell* cp = (rkIKCell*)rkIKRegSelect_call_reg_api( instance, chain );
   if( cp == NULL )
     return false;
   fprintf( fp, "constraint: %d %s %s", rkIKCellPriority(cp), rkIKCellName(cp), cp->data.constraint->typestr );
