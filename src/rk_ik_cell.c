@@ -23,23 +23,22 @@ rkIKAttr* rkIKAttrInit(rkIKAttr *attr)
  * inverse kinematics cell class
  * ********************************************************** */
 
-/* initialize cell. name & constraint & util are NULL */
-void rkIKCellInitDefault(rkIKCell *cell)
+/* initialize an IK cell. */
+void rkIKCellInit(rkIKCell *cell)
 {
   zNameSetPtr( &cell->data, NULL );
+  cell->data.constraint = NULL;
+  rkIKRefClear( rkIKCellRef(cell) );
   rkIKAttrInit( &cell->data.attr );
   cell->data.priority = 0;
-  cell->data.mode = RK_IK_CELL_MODE_XYZ;
-  rkIKRefClear( rkIKCellRef(cell) );
+  cell->data.mode = RK_IK_CELL_MODE_NONE;
   rkIKCellAcmZero( cell );
-  rkIKCellDisable( cell );
-  cell->data.constraint = NULL;
   cell->data._eval = 0;
   cell->data._util = NULL;
 }
 
-/* initialize constraint cell. */
-void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
+/* assign priority, attributes and a constraint to an IK cell. */
+void rkIKCellAssign(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
   zNameSetPtr( &cell->data, NULL );
   rkIKAttrInit( &cell->data.attr );
@@ -63,65 +62,68 @@ void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, cons
   cell->data._util = util;
 }
 
-#define _RK_IK_CELL_ALLOC_FUNC(__name,__operation) \
-  rkIKCell *cell; \
-  if( !( cell = zAlloc( rkIKCell, 1 ) ) ){ \
-    ZALLOCERROR(); \
-    return NULL; \
-  } \
-  __operation; \
-  if( __name ){ \
-    zNameSet( &cell->data, __name ); \
-    if( !zNamePtr(&cell->data) ){ \
-      ZALLOCERROR(); \
-      zFree( cell ); \
-      return NULL; \
-    } \
-  } \
-  return cell
-
-/* create an default IK cell. name & constraint & util are NULL */
-rkIKCell *rkIKCellCreateDefault(void)
+/* allocate an IK cell */
+static rkIKCell *_rkIKCellAlloc(void)
 {
   rkIKCell *cell;
-  if( !( cell = zAlloc( rkIKCell, 1 ) ) ){
+
+  if( !( cell = zAlloc( rkIKCell, 1 ) ) )
     ZALLOCERROR();
-    return NULL;
+  return cell;
+}
+
+/* set name of an IK cell */
+static bool _rkIKCellSetName(rkIKCell *cell, const char* name)
+{
+  if( name ){
+    zNameSet( &cell->data, name );
+    if( !zNamePtr( &cell->data ) ){
+      ZALLOCERROR();
+      return false;
+    }
   }
-  rkIKCellInitDefault( cell );
+  return true;
+}
+
+/* allocate an empty IK cell. */
+rkIKCell *rkIKCellAlloc(void)
+{
+  rkIKCell *cell;
+
+  if( ( cell = _rkIKCellAlloc() ) )
+    rkIKCellInit( cell );
   return cell;
 }
 
 /* create an IK cell. */
 rkIKCell *rkIKCellCreate(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
-  _RK_IK_CELL_ALLOC_FUNC( name, rkIKCellInit( cell, priority, attr, mask, constraint, util ) );
+  rkIKCell *cell;
+
+  if( !( cell = _rkIKCellAlloc() ) ) return NULL;
+  rkIKCellAssign( cell, priority, attr, mask, constraint, util );
+  if( !_rkIKCellSetName( cell, name ) )
+    zFree( cell );
+  return cell;
 }
 
 /* clone an IK cell. */
 rkIKCell *rkIKCellClone(rkIKCell *src)
 {
-  _RK_IK_CELL_ALLOC_FUNC( zNamePtr(&src->data), zCopy( rkIKCell, src, cell ) );
+  rkIKCell *cell;
+
+  if( !( cell = _rkIKCellAlloc() ) ) return NULL;
+  zCopy( rkIKCell, src, cell );
+  if( !_rkIKCellSetName( cell, zNamePtr(&src->data) ) )
+    zFree( cell );
+  return cell;
 }
 
 /* destroy an IK cell. */
 void rkIKCellDestroy(rkIKCell *cell)
 {
   zNameFree( &cell->data );
-  rkIKCellInit( cell, 0, NULL, 0x0, NULL, NULL );
-}
-
-/* set name of an IK cell */
-char* rkIKCellSetName(rkIKCell *cell, const char* name)
-{
-  if( name ){
-    zNameSet( &cell->data, name );
-    if( !zNamePtr( &cell->data ) ){
-      ZALLOCERROR();
-      return NULL;
-    }
-  }
-  return zNamePtr( &cell->data );
+  rkIKCellInit( cell );
 }
 
 /* set weight on a constraint of an IK cell */

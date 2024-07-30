@@ -160,13 +160,7 @@ static const int32_t RK_IK_ATTR_TYPE_QUANTITY__AM       = 0x0000003;
 
 void* rkIKRegSelect_init(void** instance)
 {
-  rkIKCell* cell = (rkIKCell*)(*instance);
-  cell = rkIKCellCreateDefault();
-  rkIKCellSetName( cell, "" );
-  cell->data.priority = 0;
-  cell->data.attr.user_defined_type = 0;
-  *instance = (void*)(cell);
-
+  *instance = (void*)rkIKCellAlloc();
   return instance;
 }
 
@@ -179,138 +173,159 @@ void rkIKRegSelect_copy(void* src, void* dest)
 
 void rkIKRegSelect_free(void **instance)
 {
-  rkIKCell* cell = (rkIKCell*)(*instance);
-  rkIKCellDestroy( cell );
-  zFree( cell );
+  rkIKCellDestroy( (rkIKCell*)(*instance) );
+  free( (rkIKCell*)(*instance) );
   *instance = NULL;
 }
 
 bool rkIKRegSelect_select_link(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_TARGET);
   cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_TARGET__LINK;
   return true;
 }
 
 bool rkIKRegSelect_link(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   int target = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_TARGET;
   return (target == RK_IK_ATTR_TYPE_TARGET__LINK);
 }
 
 bool rkIKRegSelect_select_com(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_TARGET);
   cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_TARGET__COM;
   return true;
 }
 
 bool rkIKRegSelect_com(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   int target = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_TARGET;
   return (target == RK_IK_ATTR_TYPE_TARGET__COM);
 }
 
 bool rkIKRegSelect_select_pos(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
   cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__POS;
   return true;
 }
 
 bool rkIKRegSelect_pos(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   int quantity = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
   return (quantity == RK_IK_ATTR_TYPE_QUANTITY__POS);
 }
 
 bool rkIKRegSelect_select_att(void* instance){
+  rkIKCell* cell;
   if( rkIKRegSelect_com( instance ) ) return false; /* validation */
-  rkIKCell* cell = (rkIKCell*)(instance);
+  cell = (rkIKCell*)(instance);
   cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
   cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__ATT;
   return true;
 }
 
 bool rkIKRegSelect_att(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   int quantity = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
   return (quantity == RK_IK_ATTR_TYPE_QUANTITY__ATT);
 }
 
 bool rkIKRegSelect_select_am(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
   cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__AM;
   return true;
 }
 
 bool rkIKRegSelect_am(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   int quantity = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
   return (quantity == RK_IK_ATTR_TYPE_QUANTITY__AM);
 }
 
 bool rkIKRegSelect_select_wld_frame(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_REF_FRAME);
   cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_REF_FRAME__WORLD;
   return true;
 }
 
 bool rkIKRegSelect_wld_frame(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
-  int ref_frame = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_REF_FRAME;
+  rkIKCell* cell;
+  int ref_frame;
+  cell = (rkIKCell*)(instance);
+  ref_frame = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_REF_FRAME;
   return (ref_frame == RK_IK_ATTR_TYPE_REF_FRAME__WORLD);
 }
 
 bool rkIKRegSelect_select_sub_link_frame(void* instance){
+  rkIKCell* cell;
   if( rkIKRegSelect_com( instance ) ) return false; /* validation. but maybe change */
   if( rkIKRegSelect_am( instance ) ) return false; /* validation */
-  rkIKCell* cell = (rkIKCell*)(instance);
+  cell = (rkIKCell*)(instance);
   cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_REF_FRAME);
   cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_REF_FRAME__SUB_LINK;
   return true;
 }
 
 bool rkIKRegSelect_sub_link_frame(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
-  int ref_frame = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_REF_FRAME;
+  rkIKCell* cell;
+  int ref_frame;
+  cell = (rkIKCell*)(instance);
+  ref_frame = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_REF_FRAME;
   return (ref_frame == RK_IK_ATTR_TYPE_REF_FRAME__SUB_LINK);
 }
 
 bool rkIKRegSelect_select_force(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.priority = RK_IK_MAX_PRIORITY;
   return true;
 }
 
 bool rkIKRegSelect_unselect_force(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.priority = 0;
   return true;
 }
 
 bool rkIKRegSelect_force(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   return cell->data.priority == RK_IK_MAX_PRIORITY;
 }
 
 /**/
 
 void rkIKRegSelect_set_name(void* instance, const char* name){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   zNameFree( &cell->data );
   zNameSet( &cell->data, name );
 }
 
 const char* rkIKRegSelect_get_name(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   return cell->data.name;
 }
 
 void rkIKRegSelect_set_priority(void* instance, int priority){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   if( priority < 0 )
     priority = 0; /* validation */
   if( priority >= RK_IK_MAX_PRIORITY )
@@ -320,59 +335,69 @@ void rkIKRegSelect_set_priority(void* instance, int priority){
 }
 
 int rkIKRegSelect_get_priority(void *instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   return cell->data.priority;
 }
 
 void rkIKRegSelect_set_link_id(void* instance, int link_id){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.attr.id = link_id;
 }
 
 int rkIKRegSelect_get_link_id(void *instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   return cell->data.attr.id;
 }
 
 void rkIKRegSelect_set_ap(void* instance, double v1, double v2, double v3){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   rkIKAttrSetAttentionPoint( &cell->data.attr, v1, v2, v3 );
 }
 
 void rkIKRegSelect_get_ap(void *instance, double *v1, double *v2, double *v3){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   *v1 = cell->data.attr.attention_point.c.x;
   *v2 = cell->data.attr.attention_point.c.y;
   *v3 = cell->data.attr.attention_point.c.z;
 }
 
 void rkIKRegSelect_set_weight(void* instance, double w1, double w2, double w3){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   rkIKAttrSetWeight( &cell->data.attr, w1, w2, w3 );
 }
 
 void rkIKRegSelect_get_weight(void *instance, double *w1, double *w2, double *w3){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   *w1 = cell->data.attr.weight.c.x;
   *w2 = cell->data.attr.weight.c.y;
   *w3 = cell->data.attr.weight.c.z;
 }
 
 void rkIKRegSelect_set_sub_link_frame_id(void* instance, int sub_link_id){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   cell->data.attr.id_sub = sub_link_id;
 }
 
 int rkIKRegSelect_get_sub_link_frame_id(void *instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   return cell->data.attr.id_sub;
 }
 
 /**/
 
 void rkIKRegSelect_reset(void *instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
   rkIKAttr blank_attr;
+  cell = (rkIKCell*)(instance);
   rkIKAttrInit( &blank_attr );
   blank_attr.user_defined_type = 0;
   zCopy( rkIKAttr, &blank_attr, &cell->data.attr );
@@ -382,7 +407,8 @@ void rkIKRegSelect_reset(void *instance){
 }
 
 const rkIKConstraint* constraint_factory(void* instance){
-  rkIKCell* cell = (rkIKCell*)(instance);
+  rkIKCell* cell;
+  cell = (rkIKCell*)(instance);
   if( cell->data.attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_LINK_POS ){
     return rkIKConstraintFind( "world_pos" );
   } else
@@ -430,9 +456,8 @@ const int32_t get_user_defined_type(const char* type)
   } else
   if( strcmp( type, "angular_momentum_about_com" ) == 0 ){
     return RK_IK_ATTR_TYPE__WORLD_COM_AM;
-  } else{
-    return 0;
   }
+  return 0;
 }
 
 
@@ -448,20 +473,21 @@ ubyte mask_factory(void* instance){
 }
 
 void* rkIKRegSelect_call_reg_api(void* instance, void* chain){
-  rkIKCell* cell = (rkIKCell*)( instance );
-  if( cell == NULL )
+  rkIKCell* cell;
+  rkIKCell* ret_cell;
+  const rkIKConstraint *constraint;
+  ubyte mask;
+  if( !( cell = (rkIKCell*)( instance ) ) )
     return NULL;
-  if( cell->data.constraint == NULL ||
+  if( !cell->data.constraint ||
       get_user_defined_type( cell->data.constraint->typestr ) == 0 ){
-    const rkIKConstraint *constraint = constraint_factory( instance );
-    if( constraint == NULL )
+    if( !( constraint = constraint_factory( instance ) ) )
       return NULL;
     cell->data.constraint = constraint;
   }
-  ubyte mask = mask_factory( instance );
+  mask = mask_factory( instance );
   cell->data.attr.mask = mask;
-  rkIKCell* ret_cell = rkChainRegIKCellDefault( (rkChain*)(chain), cell );
-  if( ret_cell == NULL ){
+  if( !( ret_cell = rkChainAddIKCell( (rkChain*)(chain), cell ) ) ){
     eprintf( "Invalid rkIKAttr Setting Pattern \n" );
     ZRUNERROR( RK_ERR_IK_CELL_NOTFOUND, cell->data.constraint->typestr );
   }
@@ -471,29 +497,25 @@ void* rkIKRegSelect_call_reg_api(void* instance, void* chain){
 
 void* rkIKRegSelect_from_cell_name(void* chain, const char* name)
 {
-  rkIKCell* cell = rkChainFindIKCellByName( (rkChain*)(chain), name );
-  if( cell == NULL )
-    return NULL;
-  return (void*)(cell);
+  return (void*)rkChainFindIKCellByName( (rkChain*)(chain), name );
 }
 
 /* just wrapper for encapsulating types */
 bool rkIKRegSelect_unreg_by_cell(void *chain, void *cell){
-  if( cell == NULL )
-    return false;
-  return rkChainUnregIKCellDefault( (rkChain*)(chain), (rkIKCell*)(cell) );
+  return rkChainAddIKCell( (rkChain*)(chain), (rkIKCell*)(cell) ) ? true : false;
 }
 
 bool rkIKRegSelect_unreg_by_name(void *chain, const char* name)
 {
-  rkIKCell* cell = rkChainFindIKCellByName( (rkChain*)(chain), name );
-  if( cell == NULL )
+  rkIKCell* cell;
+  if( !( cell = rkChainFindIKCellByName( (rkChain*)(chain), name ) ) )
     return false;
-  return rkChainUnregIKCellDefault( (rkChain*)(chain), (rkIKCell*)(cell) );
+  return rkChainUnregisterIKCell( (rkChain*)(chain), (rkIKCell*)(cell) );
 }
 
 void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
 {
+  rkIKCell* cell;
   const rkIKConstraint *constraint;
   rkIKAttr attr;
   ubyte mask = RK_IK_ATTR_MASK_NONE;
@@ -512,7 +534,6 @@ void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
     return NULL;
   }
   /* set */
-  rkIKCell* cell;
   rkIKRegSelect_init( (void**)(&cell) );
   rkIKRegSelect_set_name( (void*)cell, nameptr );
   zCopy( rkIKAttr, &attr, &cell->data.attr );
@@ -525,17 +546,18 @@ void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
 
 bool rkIKRegSelect_fprintZTK_as_constraint_key(FILE *fp, void* chain, void* instance)
 {
-  rkIKCell* cell = (rkIKCell*)( instance );
-  if( cell == NULL )
+  rkIKCell* cell;
+  const rkIKConstraint *constraint;
+  ubyte mask;
+  if( !( cell = (rkIKCell*)( instance ) ) )
     return false;
-  if( cell->data.constraint == NULL ||
+  if( !cell->data.constraint ||
       get_user_defined_type( cell->data.constraint->typestr ) == 0 ){
-    const rkIKConstraint *constraint = constraint_factory( instance );
-    if( constraint == NULL )
+    if( !( constraint = constraint_factory( instance ) ) )
       return false;
     cell->data.constraint = constraint;
   }
-  ubyte mask = mask_factory( instance );
+  mask = mask_factory( instance );
   cell->data.attr.mask = mask;
   fprintf( fp, "constraint: %d %s %s", rkIKCellPriority(cell), rkIKCellName(cell), cell->data.constraint->typestr );
   cell->data.constraint->fprintZTK( fp, (rkChain*)chain, cell );
@@ -676,7 +698,7 @@ int main(int argc, char *argv[])
   chain = &instance_chain;
   rkChainReadZTK( (rkChain*)(chain), H5_ZTK );
   rkChainCreateIK( (rkChain*)(chain) );
-  rkChainRegIKJointAll( (rkChain*)(chain), 0.001 ); /* joint weight = 0.01 */
+  rkChainRegisterIKJointAll( (rkChain*)(chain), 0.001 ); /* joint weight = 0.01 */
   /**/
   test->reset( instance );
   test->select_link( instance );

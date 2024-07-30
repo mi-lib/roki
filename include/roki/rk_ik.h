@@ -25,28 +25,28 @@ __BEGIN_DECLS
      rkChainCreateIK( &chain );
 
  2. Register cooperating joints by
-     rkChainRegIKJoint( &chain, name, weight );
+     rkChainRegisterIKJoint( &chain, name, weight );
      ...
      \a name : name of a link which the joint is associated with.
-    rkChainRegIKJoint() is also available for changing the weight
-    on the joint displacement. rkChainRegIKJoint( &ik, name, weight2 )
+    rkChainRegisterIKJoint() is also available for changing the weight
+    on the joint displacement. rkChainRegisterIKJoint( &ik, name, weight2 )
     changes the weight from \a weight to \a weight2.
 
  3. Register constraint cell of the inverse kinematics as
-     entry = rkChainRegIKCell*( &chain, name, priority, &attr, mask );
+     entry = rkChainRegisterIKCell*( &chain, name, priority, &attr, mask );
     where
      \a name : name of the constraint
      \a priority: priority of the constraint (The larger the number becomes, the higher the priority is.)
      \a attr : attributes of the inverse kinematics constraint (see 'rk_ik_cell.h')
      \a mask : mask for an attribute to be specified
-    The following functions are avaible for the above rkChainRegIKCell*:
-     rkChainRegIKCellWldPos : position of a point on a link in the world frame
-     rkChainRegIKCellWldAtt : attitude of a link in the world frame
-     rkChainRegIKCellL2LPos : relative position of a point on a link with respect to a frame of another link
-     rkChainRegIKCellL2LAtt : relative attitude of a link with respect to a frame of another link
-     rkChainRegIKCellCOM : position of the center of mass in the world frame
-     rkChainRegIKCellAM : angular momentum about the origin of the world frame
-     rkChainRegIKCellAMCOM : angular momentum about the center of mass
+    The following functions are avaible for the above rkChainRegisterIKCell*:
+     rkChainRegisterIKCellWldPos : position of a point on a link in the world frame
+     rkChainRegisterIKCellWldAtt : attitude of a link in the world frame
+     rkChainRegisterIKCellL2LPos : relative position of a point on a link with respect to a frame of another link
+     rkChainRegisterIKCellL2LAtt : relative attitude of a link with respect to a frame of another link
+     rkChainRegisterIKCellCOM : position of the center of mass in the world frame
+     rkChainRegisterIKCellAM : angular momentum about the origin of the world frame
+     rkChainRegisterIKCellAMCOM : angular momentum about the center of mass
 
  4. Initialize the posture of \a chain.
 
@@ -123,29 +123,29 @@ __ROKI_EXPORT bool rkChainCloneIK(rkChain *src, rkChain *dest);
 
 /*! \brief register/unregister cooperating joints of the inverse kinematics.
  *
- * rkChainRegIKJointID() registers a joint assigned to \a id th link of a
+ * rkChainRegisterIKJointID() registers a joint assigned to \a id th link of a
  * kinematic chain \a chain as one of the cooperating joints.
  * \a weight is the weighting value to the joint displacement.
- * rkChainUnregIKJointID() unregisters the joint \a id from the cooperating
+ * rkChainUnregisterIKJointID() unregisters the joint \a id from the cooperating
  * joints.
  * \return
- * rkChainRegIKJointID() returns the boolean value.
+ * rkChainRegisterIKJointID() returns the boolean value.
  * If \a id is a valid link identifier, it returns the true value.
  * Otherwise, the false value is returned.
  */
-__ROKI_EXPORT bool rkChainRegIKJointID(rkChain *chain, int id, double weight);
-__ROKI_EXPORT bool rkChainUnregIKJointID(rkChain *chain, int id);
+__ROKI_EXPORT bool rkChainRegisterIKJointID(rkChain *chain, int id, double weight);
+__ROKI_EXPORT bool rkChainUnregisterIKJointID(rkChain *chain, int id);
 
-#define rkChainRegIKJoint(chain,name,weight) \
-  rkChainRegIKJointID( chain, rkChainFindLinkID( chain, name ), weight )
-#define rkChainUnregIKJoint(chain,name) \
-  rkChainUnregIKJointID( chain, rkChainFindLinkID( chain, name ) )
+#define rkChainRegisterIKJoint(chain,name,weight) \
+  rkChainRegisterIKJointID( chain, rkChainFindLinkID( chain, name ), weight )
+#define rkChainUnregisterIKJoint(chain,name) \
+  rkChainUnregisterIKJointID( chain, rkChainFindLinkID( chain, name ) )
 
-__ROKI_EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
+__ROKI_EXPORT bool rkChainRegisterIKJointAll(rkChain *chain, double weight);
 
 /*! \brief register/unregister a constraint cell of the inverse kinematics.
  *
- * rkChainRegIKCell() registers a constraint cell denoted by \a priority, \a attr, and \a constraint
+ * rkChainRegisterIKCell() registers a constraint cell denoted by \a priority, \a attr, and \a constraint
  * to the list of the inverse kinematics constraint cells of a kinematic chain \a chain.
  * \a priority is the priority of the constraint.
  * \a attr contains attributes of the attention property (link or point to be constrained). See
@@ -154,25 +154,25 @@ __ROKI_EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
  * the constraint vector, the reference bound to the current posture, and the accumulated error.
  * \a util is available for programmers' conveniences, which points any type of data chunk.
  *
- * rkChainUnregIKCell() unregisters a constraint cell \a cell of the inverse kinematics solver of \a chain.
+ * rkChainUnregisterIKCell() unregisters a constraint cell \a cell of the inverse kinematics solver of \a chain.
  * \return
- * rkChainRegIKCell() returns a pointer to the registered cell, or the null pointer if it fails.
- * rkChainUnregIKCell() returns the true value if it succeeds, or the false value if it fails to
+ * rkChainRegisterIKCell() returns a pointer to the registered cell, or the null pointer if it fails.
+ * rkChainUnregisterIKCell() returns the true value if it succeeds, or the false value if it fails to
  * reallocate internal memory for the inverse kinematics.
  */
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellDefault(rkChain *chain, rkIKCell *cell);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
-__ROKI_EXPORT bool rkChainUnregIKCellDefault(rkChain *chain, rkIKCell *cell);
-__ROKI_EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
+__ROKI_EXPORT rkIKCell *rkChainAddIKCell(rkChain *chain, rkIKCell *cell);
+__ROKI_EXPORT rkIKCell *rkChainRegisterIKCell(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+__ROKI_EXPORT bool rkChainUnregisterIKCell(rkChain *chain, rkIKCell *cell);
+__ROKI_EXPORT bool rkChainUnregisterAndDestroyIKCell(rkChain *chain, rkIKCell *cell);
 
 /*! \brief register a constraint cell of the inverse kinematics. */
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellAM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
-__ROKI_EXPORT rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegisterIKCellWldPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegisterIKCellWldAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegisterIKCellL2LPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegisterIKCellL2LAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegisterIKCellCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegisterIKCellAM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
+__ROKI_EXPORT rkIKCell *rkChainRegisterIKCellAMCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask);
 
 /*! \brief find a constraint cell.
  *

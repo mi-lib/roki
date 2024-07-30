@@ -38,11 +38,11 @@ void init(rkChain *puma, rkChain *puma_v, const rkIKConstraint *constraint_lin, 
   if( !rkChainReadZTK( puma, "../model/puma.ztk" ) ) exit( 1 );
   rkChainClone( puma, puma_v );
   rkChainCreateIK( puma_v );
-  rkChainRegIKJointAll( puma_v, 0.001 );
+  rkChainRegisterIKJointAll( puma_v, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCell( puma_v, NULL, 0, &attr, RK_IK_ATTR_MASK_ID, constraint_ang, NULL );
-  cell[1] = rkChainRegIKCell( puma_v, NULL, 0, &attr, RK_IK_ATTR_MASK_ID, constraint_lin, NULL );
+  cell[0] = rkChainRegisterIKCell( puma_v, NULL, 0, &attr, RK_IK_ATTR_MASK_ID, constraint_ang, NULL );
+  cell[1] = rkChainRegisterIKCell( puma_v, NULL, 0, &attr, RK_IK_ATTR_MASK_ID, constraint_lin, NULL );
 
   rkIKSetEquationSolver( puma_v->_ik, rkIKSolveEquationSR );
   rkChainBindIK( puma_v );

@@ -71,11 +71,11 @@ int main(int argc, char *argv[])
   rkChainFK( &chain, dis );
 
   rkChainCreateIK( &chain );
-  rkChainRegIKJointAll( &chain, 0.01 );
+  rkChainRegisterIKJointAll( &chain, 0.01 );
 
   for( i=0; i<BRANCH_NUM; i++ ){
     attr.id = i*4+5;
-    cell[i] = rkChainRegIKCellWldPos( &chain, NULL, BRANCH_NUM-i, &attr, RK_IK_ATTR_MASK_ID );
+    cell[i] = rkChainRegisterIKCellWldPos( &chain, NULL, BRANCH_NUM-i, &attr, RK_IK_ATTR_MASK_ID );
     rkIKCellSetActiveComponent( cell[i], RK_IK_CELL_MODE_Y | RK_IK_CELL_MODE_Z );
   }
   zVec3DCreate( &ref[0], 0, 0.2, 0.2 );
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
     rkChainIK( &chain, dis, zTOL, 0 );
     rkChainFK( &chain, dis );
     for( j=0; j<BRANCH_NUM; j++ ){
-      printf( "[#%d] %g %g", j,
+      printf( "[#%d] %g %g ", j,
         ref[j].c.y - rkChainLinkWldPos(&chain,rkIKCellLinkID(cell[j]))->c.y,
         ref[j].c.z - rkChainLinkWldPos(&chain,rkIKCellLinkID(cell[j]))->c.z );
     }
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     rkChainIK( &chain, dis, zTOL, 0 );
     rkChainFK( &chain, dis );
     for( j=0; j<BRANCH_NUM; j++ ){
-      printf( "[#%d] %g %g", j,
+      printf( "[#%d] %g %g ", j,
         ref[j].c.y - rkChainLinkWldPos(&chain,rkIKCellLinkID(cell[j]))->c.y,
         ref[j].c.z - rkChainLinkWldPos(&chain,rkIKCellLinkID(cell[j]))->c.z );
     }

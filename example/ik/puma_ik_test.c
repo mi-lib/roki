@@ -16,11 +16,11 @@ int main(int argc, char *argv[])
   rkChainFK( &chain, dis );
 
   rkChainCreateIK( &chain );
-  rkChainRegIKJointAll( &chain, 0.001 );
+  rkChainRegisterIKJointAll( &chain, 0.001 );
 
   attr.id = 6;
-  cell[0] = rkChainRegIKCellWldAtt( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
-  cell[1] = rkChainRegIKCellWldPos( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
+  cell[0] = rkChainRegisterIKCellWldAtt( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
+  cell[1] = rkChainRegisterIKCellWldPos( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
 
   rkChainBindIK( &chain );
   rkIKCellSetRef( cell[0],

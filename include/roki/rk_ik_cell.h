@@ -126,11 +126,12 @@ zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 
 #define RK_IK_MAX_PRIORITY           INT_MAX
 
-#define RK_IK_CELL_MODE_X            0x01
-#define RK_IK_CELL_MODE_Y            0x02
-#define RK_IK_CELL_MODE_Z            0x04
+#define RK_IK_CELL_MODE_NONE         0x0
+#define RK_IK_CELL_MODE_X            0x1
+#define RK_IK_CELL_MODE_Y            0x2
+#define RK_IK_CELL_MODE_Z            0x4
 #define RK_IK_CELL_MODE_XYZ          ( RK_IK_CELL_MODE_X | RK_IK_CELL_MODE_Y | RK_IK_CELL_MODE_Z )
-#define RK_IK_CELL_MODE_ENABLE       0x08
+#define RK_IK_CELL_MODE_ENABLE       0x8
 
 /* set constraint mode */
 
@@ -145,12 +146,16 @@ zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 #define rkIKCellRefPos(cell)         ( &rkIKCellRef(cell)->pos )
 #define rkIKCellRefAtt(cell)         ( &rkIKCellRef(cell)->att )
 
-/*! \brief intialize an IK cell */
-__ROKI_EXPORT void rkIKCellInitDefault(rkIKCell *cell);
-__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+/*! \brief intialize an IK cell. */
+__ROKI_EXPORT void rkIKCellInit(rkIKCell *cell);
+
+/*! \brief assign priority, attributes and a constraint to an IK cell. */
+__ROKI_EXPORT void rkIKCellAssign(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+
+/*! \brief allocate an empty IK cell. */
+__ROKI_EXPORT rkIKCell *rkIKCellAlloc(void);
 
 /*! \brief create an IK cell. */
-__ROKI_EXPORT rkIKCell *rkIKCellCreateDefault(void);
 __ROKI_EXPORT rkIKCell *rkIKCellCreate(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief clone an IK cell. */
@@ -158,9 +163,6 @@ __ROKI_EXPORT rkIKCell *rkIKCellClone(rkIKCell *src);
 
 /*! \brief destroy an IK cell. */
 __ROKI_EXPORT void rkIKCellDestroy(rkIKCell *cell);
-
-/*! \brief set name of an IK cell.  */
-__ROKI_EXPORT char* rkIKCellSetName(rkIKCell *cell, const char* name);
 
 /*! set weight on a constraint of an IK cell */
 __ROKI_EXPORT void rkIKCellSetWeight(rkIKCell *cell, double w1, double w2, double w3);

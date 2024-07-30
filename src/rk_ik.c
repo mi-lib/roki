@@ -189,7 +189,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
   return _rkIKAllocCMat( ik );
 }
 
-static bool _rkIKRegJointID(rkIK *ik, rkChain *chain, int id, bool sw, double weight)
+static bool _rkIKRegisterJointID(rkIK *ik, rkChain *chain, int id, bool sw, double weight)
 {
   if( id < 0 || id >= rkChainLinkNum(chain) ){
     ZRUNERROR( RK_ERR_LINK_INVALID_ID, id );
@@ -199,21 +199,21 @@ static bool _rkIKRegJointID(rkIK *ik, rkChain *chain, int id, bool sw, double we
   ik->joint_weight[id] = weight;
   return _rkIKAllocJointIndex( ik, chain );
 }
-bool rkChainRegIKJointID(rkChain *chain, int id, double weight){
-  return _rkIKRegJointID( chain->_ik, chain, id, true, weight );
+bool rkChainRegisterIKJointID(rkChain *chain, int id, double weight){
+  return _rkIKRegisterJointID( chain->_ik, chain, id, true, weight );
 }
-bool rkChainUnregIKJointID(rkChain *chain, int id){
-  return _rkIKRegJointID( chain->_ik, chain, id, false, 0.0 );
+bool rkChainUnregisterIKJointID(rkChain *chain, int id){
+  return _rkIKRegisterJointID( chain->_ik, chain, id, false, 0.0 );
 }
 
 /* register all joints to an inverse kinematics solver. */
-bool rkChainRegIKJointAll(rkChain *chain, double weight)
+bool rkChainRegisterIKJointAll(rkChain *chain, double weight)
 {
   int i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     if( rkChainLinkJointDOF(chain,i) > 0 )
-      if( !rkChainRegIKJointID( chain, i, weight ) ) return false;
+      if( !rkChainRegisterIKJointID( chain, i, weight ) ) return false;
   return true;
 }
 
@@ -229,9 +229,10 @@ static bool _rkIKAllocCVec(rkIK *ik)
   return ( !ik->_c_vec || !ik->_c_we || !ik->__c ) ? false : _rkIKAllocCMat( ik );
 }
 
-static rkIKCell *_rkIKRegCellDefault(rkIK *ik, rkIKCell *cell){
+static rkIKCell *_rkIKAddCell(rkIK *ik, rkIKCell *cell){
   rkIKCell *cp;
 
+  if( !cell ) return NULL;
   rkIKCellEnable( cell );
   zListForEach( &ik->_c_list, cp )
     if( rkIKCellPriority(cp) < rkIKCellPriority(cell) ) break;
@@ -239,83 +240,83 @@ static rkIKCell *_rkIKRegCellDefault(rkIK *ik, rkIKCell *cell){
   return _rkIKAllocCVec( ik ) ? cell : NULL;
 }
 
-static rkIKCell *_rkIKRegCell(rkIK *ik, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
+static rkIKCell *_rkIKRegisterCell(rkIK *ik, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
-  rkIKCell *cell, *cp;
+  rkIKCell *cell;
 
   if( !( cell = rkIKCellCreate( name, priority, attr, mask, constraint, util ) ) ) return NULL;
-  rkIKCellEnable( cell );
-  zListForEach( &ik->_c_list, cp )
-    if( rkIKCellPriority(cp) < rkIKCellPriority(cell) ) break;
-  zListInsertPrev( &ik->_c_list, cp, cell );
-  return _rkIKAllocCVec( ik ) ? cell : NULL;
+  return _rkIKAddCell( ik, cell );
 }
-static bool _rkIKUnregCellDefault(rkIK *ik, rkIKCell *cell)
+
+static bool _rkIKUnregisterCell(rkIK *ik, rkIKCell *cell)
 {
   zListPurge( &ik->_c_list, cell );
   return _rkIKAllocCVec( ik );
 }
-static bool _rkIKUnregCell(rkIK *ik, rkIKCell *cell)
+
+static bool _rkIKUnregisterAndDestroyCell(rkIK *ik, rkIKCell *cell)
 {
-  zListPurge( &ik->_c_list, cell );
+  bool result;
+
+  result = _rkIKUnregisterCell( ik, cell );
   rkIKCellDestroy( cell );
   zFree( cell );
-  return _rkIKAllocCVec( ik );
+  return result;
 }
 
-rkIKCell *rkChainRegIKCellDefault(rkChain *chain, rkIKCell *cell)
+rkIKCell *rkChainAddIKCell(rkChain *chain, rkIKCell *cell)
 {
-  return _rkIKRegCellDefault( chain->_ik, cell );
+  return _rkIKAddCell( chain->_ik, cell );
 }
 
-rkIKCell *rkChainRegIKCell(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
+rkIKCell *rkChainRegisterIKCell(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
-  return _rkIKRegCell( chain->_ik, name, priority, attr, mask, constraint, util );
+  return _rkIKRegisterCell( chain->_ik, name, priority, attr, mask, constraint, util );
 }
 
-bool rkChainUnregIKCellDefault(rkChain *chain, rkIKCell *cell)
+bool rkChainUnregisterIKCell(rkChain *chain, rkIKCell *cell)
 {
-  return _rkIKUnregCellDefault( chain->_ik, cell );
+  return _rkIKUnregisterCell( chain->_ik, cell );
 }
 
-bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell)
+bool rkChainUnregisterAndDestroyIKCell(rkChain *chain, rkIKCell *cell)
 {
-  return _rkIKUnregCell( chain->_ik, cell );
+  return _rkIKUnregisterAndDestroyCell( chain->_ik, cell );
 }
 
 /* register constraint cell for world position to an inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellWldPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
-  return rkChainRegIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_link_world_pos, NULL );
+rkIKCell *rkChainRegisterIKCellWldPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
+  return rkChainRegisterIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_link_world_pos, NULL );
 }
 
 /* register constraint cell for world attitude to an inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellWldAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
-  return rkChainRegIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_link_world_att, NULL );
+rkIKCell *rkChainRegisterIKCellWldAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
+  return rkChainRegisterIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_link_world_att, NULL );
 }
 
 /* register constraint cell for link-to-link position to an inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellL2LPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
-  return rkChainRegIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_link2link_pos, NULL );
+rkIKCell *rkChainRegisterIKCellL2LPos(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
+  return rkChainRegisterIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_link2link_pos, NULL );
 }
 
 /* register constraint cell for link-to-link attitude to an inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellL2LAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
-  return rkChainRegIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_link2link_att, NULL );
+rkIKCell *rkChainRegisterIKCellL2LAtt(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
+  return rkChainRegisterIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_link2link_att, NULL );
 }
 
 /* register constraint cell for center of mass to an inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
-  return rkChainRegIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_world_com, NULL );
+rkIKCell *rkChainRegisterIKCellCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
+  return rkChainRegisterIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_world_com, NULL );
 }
 
 /* register constraint cell for angular momentum to an inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellAM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
-  return rkChainRegIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_world_angular_momentum, NULL );
+rkIKCell *rkChainRegisterIKCellAM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
+  return rkChainRegisterIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_world_angular_momentum, NULL );
 }
 
 /* register constraint cell for angular momentum about center of mass to an inverse kinematics solver. */
-rkIKCell *rkChainRegIKCellAMCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
-  return rkChainRegIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_world_angular_momentum_about_com, NULL );
+rkIKCell *rkChainRegisterIKCellAMCOM(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask){
+  return rkChainRegisterIKCell( chain, name, priority, attr, mask, &rk_ik_constraint_world_angular_momentum_about_com, NULL );
 }
 
 /* find a constraint cell of an inverse kinematics solver by name. */
@@ -584,7 +585,7 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   linkname = ZTKVal(ztk);
   if( ZTKValNext(ztk) ) w = ZTKDouble(ztk);
   if( strcmp( linkname, "all" ) == 0 )
-    return rkChainRegIKJointAll( (rkChain*)obj, w ) ? obj : NULL;
+    return rkChainRegisterIKJointAll( (rkChain*)obj, w ) ? obj : NULL;
   if( !( link = rkChainFindLink( (rkChain*)obj, linkname ) ) ){
     ZRUNERROR( RK_ERR_LINK_UNKNOWN, linkname );
     return NULL;
@@ -593,7 +594,7 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   if( ZTKValPtr(ztk) )
     rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link), 0, NULL, ztk );
   if( w == 0 ) return obj;
-  return rkChainRegIKJointID( (rkChain*)obj, link - rkChainRoot((rkChain*)obj), w ) ? obj : NULL;
+  return rkChainRegisterIKJointID( (rkChain*)obj, link - rkChainRoot((rkChain*)obj), w ) ? obj : NULL;
 }
 
 static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk)
@@ -614,7 +615,7 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk)
     ZRUNERROR( "in persing constraint %s", nameptr );
     return NULL;
   }
-  return rkChainRegIKCell( (rkChain *)obj, nameptr, priority, &attr, mask, constraint, NULL ) ? obj : NULL;
+  return rkChainRegisterIKCell( (rkChain *)obj, nameptr, priority, &attr, mask, constraint, NULL ) ? obj : NULL;
 }
 
 static void _rkChainIKConfJointFPrintZTK(FILE *fp, rkChain *chain)
