@@ -160,7 +160,9 @@ __ROKI_EXPORT bool rkChainRegIKJointAll(rkChain *chain, double weight);
  * rkChainUnregIKCell() returns the true value if it succeeds, or the false value if it fails to
  * reallocate internal memory for the inverse kinematics.
  */
+__ROKI_EXPORT rkIKCell *rkChainRegIKCellDefault(rkChain *chain, rkIKCell *cell);
 __ROKI_EXPORT rkIKCell *rkChainRegIKCell(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
+__ROKI_EXPORT bool rkChainUnregIKCellDefault(rkChain *chain, rkIKCell *cell);
 __ROKI_EXPORT bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell);
 
 /*! \brief register a constraint cell of the inverse kinematics. */

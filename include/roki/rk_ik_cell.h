@@ -146,9 +146,11 @@ zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
 #define rkIKCellRefAtt(cell)         ( &rkIKCellRef(cell)->att )
 
 /*! \brief intialize an IK cell */
+__ROKI_EXPORT void rkIKCellInitDefault(rkIKCell *cell);
 __ROKI_EXPORT void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief create an IK cell. */
+__ROKI_EXPORT rkIKCell *rkIKCellCreateDefault(void);
 __ROKI_EXPORT rkIKCell *rkIKCellCreate(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util);
 
 /*! \brief clone an IK cell. */
@@ -156,6 +158,9 @@ __ROKI_EXPORT rkIKCell *rkIKCellClone(rkIKCell *src);
 
 /*! \brief destroy an IK cell. */
 __ROKI_EXPORT void rkIKCellDestroy(rkIKCell *cell);
+
+/*! \brief set name of an IK cell.  */
+__ROKI_EXPORT char* rkIKCellSetName(rkIKCell *cell, const char* name);
 
 /*! set weight on a constraint of an IK cell */
 __ROKI_EXPORT void rkIKCellSetWeight(rkIKCell *cell, double w1, double w2, double w3);

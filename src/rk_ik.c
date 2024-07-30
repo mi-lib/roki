@@ -228,6 +228,17 @@ static bool _rkIKAllocCVec(rkIK *ik)
   ik->__c = zVecAlloc( zListSize(&ik->_c_list)*3 );
   return ( !ik->_c_vec || !ik->_c_we || !ik->__c ) ? false : _rkIKAllocCMat( ik );
 }
+
+static rkIKCell *_rkIKRegCellDefault(rkIK *ik, rkIKCell *cell){
+  rkIKCell *cp;
+
+  rkIKCellEnable( cell );
+  zListForEach( &ik->_c_list, cp )
+    if( rkIKCellPriority(cp) < rkIKCellPriority(cell) ) break;
+  zListInsertPrev( &ik->_c_list, cp, cell );
+  return _rkIKAllocCVec( ik ) ? cell : NULL;
+}
+
 static rkIKCell *_rkIKRegCell(rkIK *ik, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
   rkIKCell *cell, *cp;
@@ -239,6 +250,11 @@ static rkIKCell *_rkIKRegCell(rkIK *ik, const char *name, int priority, rkIKAttr
   zListInsertPrev( &ik->_c_list, cp, cell );
   return _rkIKAllocCVec( ik ) ? cell : NULL;
 }
+static bool _rkIKUnregCellDefault(rkIK *ik, rkIKCell *cell)
+{
+  zListPurge( &ik->_c_list, cell );
+  return _rkIKAllocCVec( ik );
+}
 static bool _rkIKUnregCell(rkIK *ik, rkIKCell *cell)
 {
   zListPurge( &ik->_c_list, cell );
@@ -247,9 +263,19 @@ static bool _rkIKUnregCell(rkIK *ik, rkIKCell *cell)
   return _rkIKAllocCVec( ik );
 }
 
+rkIKCell *rkChainRegIKCellDefault(rkChain *chain, rkIKCell *cell)
+{
+  return _rkIKRegCellDefault( chain->_ik, cell );
+}
+
 rkIKCell *rkChainRegIKCell(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
   return _rkIKRegCell( chain->_ik, name, priority, attr, mask, constraint, util );
+}
+
+bool rkChainUnregIKCellDefault(rkChain *chain, rkIKCell *cell)
+{
+  return _rkIKUnregCellDefault( chain->_ik, cell );
 }
 
 bool rkChainUnregIKCell(rkChain *chain, rkIKCell *cell)

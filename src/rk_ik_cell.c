@@ -23,6 +23,21 @@ rkIKAttr* rkIKAttrInit(rkIKAttr *attr)
  * inverse kinematics cell class
  * ********************************************************** */
 
+/* initialize cell. name & constraint & util are NULL */
+void rkIKCellInitDefault(rkIKCell *cell)
+{
+  zNameSetPtr( &cell->data, NULL );
+  rkIKAttrInit( &cell->data.attr );
+  cell->data.priority = 0;
+  cell->data.mode = RK_IK_CELL_MODE_XYZ;
+  rkIKRefClear( rkIKCellRef(cell) );
+  rkIKCellAcmZero( cell );
+  rkIKCellDisable( cell );
+  cell->data.constraint = NULL;
+  cell->data._eval = 0;
+  cell->data._util = NULL;
+}
+
 /* initialize constraint cell. */
 void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
@@ -65,6 +80,18 @@ void rkIKCellInit(rkIKCell *cell, int priority, rkIKAttr *attr, ubyte mask, cons
   } \
   return cell
 
+/* create an default IK cell. name & constraint & util are NULL */
+rkIKCell *rkIKCellCreateDefault(void)
+{
+  rkIKCell *cell;
+  if( !( cell = zAlloc( rkIKCell, 1 ) ) ){
+    ZALLOCERROR();
+    return NULL;
+  }
+  rkIKCellInitDefault( cell );
+  return cell;
+}
+
 /* create an IK cell. */
 rkIKCell *rkIKCellCreate(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
@@ -82,6 +109,20 @@ void rkIKCellDestroy(rkIKCell *cell)
 {
   zNameFree( &cell->data );
   rkIKCellInit( cell, 0, NULL, 0x0, NULL, NULL );
+}
+
+/* set name of an IK cell */
+char* rkIKCellSetName(rkIKCell *cell, const char* name)
+{
+  if( name ){
+    zNameSet( &cell->data, name );
+    if( !zNamePtr( &cell->data ) ){
+      ZALLOCERROR();
+      zFree( cell );
+      return NULL;
+    }
+  }
+  return zNamePtr( &cell->data );
 }
 
 /* set weight on a constraint of an IK cell */
