@@ -535,6 +535,8 @@ bool rkIKRegSelect_fprintZTK_as_constraint_key(FILE *fp, void* chain, void* inst
       return false;
     cell->data.constraint = constraint;
   }
+  ubyte mask = mask_factory( instance );
+  cell->data.attr.mask = mask;
   fprintf( fp, "constraint: %d %s %s", rkIKCellPriority(cell), rkIKCellName(cell), cell->data.constraint->typestr );
   cell->data.constraint->fprintZTK( fp, (rkChain*)chain, cell );
 
