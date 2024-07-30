@@ -888,37 +888,37 @@ inline zVec rkChain::InverseKinematicsConstraintVec(){ return rkChainIKConstrain
 inline zIndex rkChain::InverseKinematicsJointIndex(){ return rkChainIKJointIndex( this ); }
 inline rkChain *rkChain::createInverseKinematics(){ return rkChainCreateIK( this ); }
 inline void rkChain::destroyInverseKinematics(){ rkChainDestroyIK( this ); }
-inline bool rkChain::registerInverseKinematicsJointID(int id, double weight){ return rkChainRegIKJointID( this, id, weight ); }
-inline bool rkChain::unregisterInverseKinematicsJointID(int id){ return rkChainUnregIKJointID( this, id ); }
-inline bool rkChain::registerInverseKinematicsJoint(const char *name, double weight){ return rkChainRegIKJoint( this, name, weight ); }
-inline bool rkChain::unregisterInverseKinematicsJoint(const char *name){ return rkChainUnregIKJoint( this, name ); }
-inline bool rkChain::registerInverseKinematicsJointAll(double weight){ return rkChainRegIKJointAll( this, weight ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCell(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegIKCell( this, name, priority, attr, mask, constraint, util ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCell(int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegIKCell( this, NULL, priority, attr, mask, constraint, util ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCell(rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegIKCell( this, NULL, 0, attr, mask, constraint, util ); }
-inline bool rkChain::unregisterInverseKinematicsCell(rkIKCell *cell){ return rkChainUnregIKCell( this, cell ); }
+inline bool rkChain::registerInverseKinematicsJointID(int id, double weight){ return rkChainRegisterIKJointID( this, id, weight ); }
+inline bool rkChain::unregisterInverseKinematicsJointID(int id){ return rkChainUnregisterIKJointID( this, id ); }
+inline bool rkChain::registerInverseKinematicsJoint(const char *name, double weight){ return rkChainRegisterIKJoint( this, name, weight ); }
+inline bool rkChain::unregisterInverseKinematicsJoint(const char *name){ return rkChainUnregisterIKJoint( this, name ); }
+inline bool rkChain::registerInverseKinematicsJointAll(double weight){ return rkChainRegisterIKJointAll( this, weight ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCell(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegisterIKCell( this, name, priority, attr, mask, constraint, util ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCell(int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegisterIKCell( this, NULL, priority, attr, mask, constraint, util ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCell(rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegisterIKCell( this, NULL, 0, attr, mask, constraint, util ); }
+inline bool rkChain::unregisterInverseKinematicsCell(rkIKCell *cell){ return rkChainUnregisterAndDestroyIKCell( this, cell ); }
 
-inline rkIKCell *rkChain::registerInverseKinematicsCellWorldPos(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellWldPos( this, name, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellWorldPos(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellWldPos( this, NULL, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellWorldPos(rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellWldPos( this, NULL, 0, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellWorldAtt(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellWldAtt( this, name, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellWorldAtt(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellWldAtt( this, NULL, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellWorldAtt(rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellWldAtt( this, NULL, 0, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkPos(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellL2LPos( this, name, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkPos(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellL2LPos( this, NULL, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkPos(rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellL2LPos( this, NULL, 0, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkAtt(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellL2LAtt( this, name, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkAtt(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellL2LAtt( this, NULL, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkAtt(rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellL2LAtt( this, NULL, 0, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellCOM(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellCOM( this, name, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellCOM(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellCOM( this, NULL, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellCOM(rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellCOM( this, NULL, 0, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentum(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellAM( this, name, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentum(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellAM( this, NULL, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentum(rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellAM( this, NULL, 0, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentumCOM(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellAMCOM( this, name, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentumCOM(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellAMCOM( this, NULL, priority, attr, mask ); }
-inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentumCOM(rkIKAttr *attr, ubyte mask){ return rkChainRegIKCellAMCOM( this, NULL, 0, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellWorldPos(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellWldPos( this, name, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellWorldPos(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellWldPos( this, NULL, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellWorldPos(rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellWldPos( this, NULL, 0, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellWorldAtt(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellWldAtt( this, name, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellWorldAtt(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellWldAtt( this, NULL, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellWorldAtt(rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellWldAtt( this, NULL, 0, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkPos(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellL2LPos( this, name, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkPos(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellL2LPos( this, NULL, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkPos(rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellL2LPos( this, NULL, 0, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkAtt(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellL2LAtt( this, name, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkAtt(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellL2LAtt( this, NULL, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellLinkToLinkAtt(rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellL2LAtt( this, NULL, 0, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellCOM(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellCOM( this, name, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellCOM(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellCOM( this, NULL, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellCOM(rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellCOM( this, NULL, 0, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentum(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellAM( this, name, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentum(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellAM( this, NULL, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentum(rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellAM( this, NULL, 0, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentumCOM(const char *name, int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellAMCOM( this, name, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentumCOM(int priority, rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellAMCOM( this, NULL, priority, attr, mask ); }
+inline rkIKCell *rkChain::registerInverseKinematicsCellAngularMomentumCOM(rkIKAttr *attr, ubyte mask){ return rkChainRegisterIKCellAMCOM( this, NULL, 0, attr, mask ); }
 
 inline rkIKCell *rkChain::findInverseKinematicsByName(const char *name){ return rkChainFindIKCellByName( this, name ); }
 inline bool rkChain::setCellPriority(rkIKCell *cell, int priority){ return rkChainSetIKCellPriority( this, cell, priority ); }

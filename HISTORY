@@ -1,3 +1,4 @@
+2024. 7.31. Reflected new specifications of rkChaintRegister/UnregisterIK* in C++ extentions. [rk_chain]
 2024. 7.31. Modified _rkIKAddCell. [rk_ik]
 2024. 7.31. Renamed _rkIKRegisterCellDefault and rkChainRegisterIKCellDefault to _rkIKAddCell and rkChainAddIKCell, respectively. [rk_ik]
 2024. 7.31. Reimplemented _rkIKUnregisterAndDestroyCell to use _rkIKUnregisterCell. [rk_ik]
