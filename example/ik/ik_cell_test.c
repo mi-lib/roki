@@ -180,8 +180,7 @@ void rkIKRegSelect_copy(void* src, void* dest)
 void rkIKRegSelect_free(void **instance)
 {
   rkIKCell* cell = (rkIKCell*)(*instance);
-  if( zNamePtr( &cell->data ) != NULL )
-    zNameFree( &cell->data );
+  rkIKCellDestroy( cell );
   zFree( cell );
   *instance = NULL;
 }

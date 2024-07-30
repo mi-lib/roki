@@ -118,7 +118,6 @@ char* rkIKCellSetName(rkIKCell *cell, const char* name)
     zNameSet( &cell->data, name );
     if( !zNamePtr( &cell->data ) ){
       ZALLOCERROR();
-      zFree( cell );
       return NULL;
     }
   }
