@@ -137,11 +137,13 @@ static const int32_t RK_IK_ATTR_TYPE__WORLD_LINK_POS     = 0x010101;
 static const int32_t RK_IK_ATTR_TYPE__WORLD_LINK_ATT     = 0x010102;
 static const int32_t RK_IK_ATTR_TYPE__WORLD_LINK_AM      = 0x010103;
 static const int32_t RK_IK_ATTR_TYPE__WORLD_COM_POS      = 0x010201;
+/* static const int32_t RK_IK_ATTR_TYPE__WORLD_COM_ATT      = 0x010202; */
 static const int32_t RK_IK_ATTR_TYPE__WORLD_COM_AM       = 0x010203;
 static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_LINK_POS  = 0x020101;
 static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_LINK_ATT  = 0x020102;
 /* static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_LINK_AM   = 0x020103; */
 /* static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_COM_POS   = 0x020201; */
+/* static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_COM_ATT   = 0x020202; */
 /* static const int32_t RK_IK_ATTR_TYPE__SUB_LINK_COM_AM    = 0x020203; */
 /* Reference Frame Type for Selecting */
 static const int32_t RK_IK_ATTR_TYPE_REF_FRAME           = 0xff0000;
@@ -157,10 +159,65 @@ static const int32_t RK_IK_ATTR_TYPE_QUANTITY__POS      = 0x0000001;
 static const int32_t RK_IK_ATTR_TYPE_QUANTITY__ATT      = 0x0000002;
 static const int32_t RK_IK_ATTR_TYPE_QUANTITY__AM       = 0x0000003;
 
+const int32_t get_constraint_typeval(const char* typestr)
+{
+  if( strcmp( typestr, "world_pos" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_LINK_POS;
+  } else
+  if( strcmp( typestr, "world_att" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_LINK_ATT;
+  } else
+  if( strcmp( typestr, "l2l_pos" ) == 0 ){
+    return RK_IK_ATTR_TYPE__SUB_LINK_LINK_POS;
+  } else
+  if( strcmp( typestr, "l2l_att" ) == 0 ){
+    return RK_IK_ATTR_TYPE__SUB_LINK_LINK_ATT;
+  } else
+  if( strcmp( typestr, "com" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_COM_POS;
+  } else
+  if( strcmp( typestr, "angular_momentum" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_LINK_AM;
+  } else
+  if( strcmp( typestr, "angular_momentum_about_com" ) == 0 ){
+    return RK_IK_ATTR_TYPE__WORLD_COM_AM;
+  }
+  return 0;
+}
+
+const rkIKConstraint* constraint_factory(int32_t typeval){
+  if( typeval == RK_IK_ATTR_TYPE__WORLD_LINK_POS ){
+    return rkIKConstraintFind( "world_pos" );
+  } else
+  if( typeval == RK_IK_ATTR_TYPE__WORLD_LINK_ATT ){
+    return rkIKConstraintFind( "world_att" );
+  } else
+  if( typeval == RK_IK_ATTR_TYPE__SUB_LINK_LINK_POS ){
+    return rkIKConstraintFind( "l2l_pos" );
+  } else
+  if( typeval == RK_IK_ATTR_TYPE__SUB_LINK_LINK_ATT ){
+    return rkIKConstraintFind( "l2l_att" );
+  } else
+  if( typeval == RK_IK_ATTR_TYPE__WORLD_COM_POS ) {
+    return rkIKConstraintFind( "com" );
+  } else
+  if( typeval == RK_IK_ATTR_TYPE__WORLD_LINK_AM ) {
+    return rkIKConstraintFind( "angular_momentum" );
+  } else
+  if( typeval == RK_IK_ATTR_TYPE__WORLD_COM_AM ) {
+    return rkIKConstraintFind( "angular_momentum_about_com" );
+  } else {
+    return NULL;
+  }
+}
 
 void* rkIKRegSelect_init(void** instance)
 {
+  rkIKCell* cell;
   *instance = (void*)rkIKCellAlloc();
+  cell = (rkIKCell*)(*instance);
+  /* initial constraint */
+  cell->data.constraint = rkIKConstraintFind( "world_pos" );
   return instance;
 }
 
@@ -179,140 +236,169 @@ void rkIKRegSelect_free(void **instance)
 }
 
 bool rkIKRegSelect_select_link(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_TARGET);
-  cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_TARGET__LINK;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  if( typeval == 0 )
+    return false; /* unknown constraint type */
+  typeval &= (~RK_IK_ATTR_TYPE_TARGET);
+  typeval |= RK_IK_ATTR_TYPE_TARGET__LINK;
+  const rkIKConstraint* new_constraint = constraint_factory( typeval );
+  if( new_constraint == NULL )
+    return false; /* invalid setting combination */
+  cell->data.constraint = new_constraint;
   return true;
 }
 
 bool rkIKRegSelect_link(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  int target = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_TARGET;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  int32_t target = typeval & RK_IK_ATTR_TYPE_TARGET;
   return (target == RK_IK_ATTR_TYPE_TARGET__LINK);
 }
 
 bool rkIKRegSelect_select_com(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_TARGET);
-  cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_TARGET__COM;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  if( typeval == 0 )
+    return false; /* unknown constraint type */
+  typeval &= (~RK_IK_ATTR_TYPE_TARGET);
+  typeval |= RK_IK_ATTR_TYPE_TARGET__COM;
+  const rkIKConstraint* new_constraint = constraint_factory( typeval );
+  if( new_constraint == NULL )
+    return false; /* invalid setting combination */
+  cell->data.constraint = new_constraint;
   return true;
 }
 
 bool rkIKRegSelect_com(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  int target = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_TARGET;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  int32_t target = typeval & RK_IK_ATTR_TYPE_TARGET;
   return (target == RK_IK_ATTR_TYPE_TARGET__COM);
 }
 
 bool rkIKRegSelect_select_pos(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
-  cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__POS;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  if( typeval == 0 )
+    return false; /* unknown constraint type */
+  typeval &= (~RK_IK_ATTR_TYPE_QUANTITY);
+  typeval |= RK_IK_ATTR_TYPE_QUANTITY__POS;
+  const rkIKConstraint* new_constraint = constraint_factory( typeval );
+  if( new_constraint == NULL )
+    return false; /* invalid setting combination */
+  cell->data.constraint = new_constraint;
   return true;
 }
 
 bool rkIKRegSelect_pos(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  int quantity = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  int32_t quantity = typeval & RK_IK_ATTR_TYPE_QUANTITY;
   return (quantity == RK_IK_ATTR_TYPE_QUANTITY__POS);
 }
 
 bool rkIKRegSelect_select_att(void* instance){
-  rkIKCell* cell;
-  if( rkIKRegSelect_com( instance ) ) return false; /* validation */
-  cell = (rkIKCell*)(instance);
-  cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
-  cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__ATT;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  if( typeval == 0 )
+    return false; /* unknown constraint type */
+  typeval &= (~RK_IK_ATTR_TYPE_QUANTITY);
+  typeval |= RK_IK_ATTR_TYPE_QUANTITY__ATT;
+  const rkIKConstraint* new_constraint = constraint_factory( typeval );
+  if( new_constraint == NULL )
+    return false; /* invalid setting combination */
+  cell->data.constraint = new_constraint;
   return true;
 }
 
 bool rkIKRegSelect_att(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  int quantity = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  int32_t quantity = typeval & RK_IK_ATTR_TYPE_QUANTITY;
   return (quantity == RK_IK_ATTR_TYPE_QUANTITY__ATT);
 }
 
 bool rkIKRegSelect_select_am(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_QUANTITY);
-  cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_QUANTITY__AM;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  if( typeval == 0 )
+    return false; /* unknown constraint type */
+  typeval &= (~RK_IK_ATTR_TYPE_QUANTITY);
+  typeval |= RK_IK_ATTR_TYPE_QUANTITY__AM;
+  const rkIKConstraint* new_constraint = constraint_factory( typeval );
+  if( new_constraint == NULL )
+    return false; /* invalid setting combination */
+  cell->data.constraint = new_constraint;
   return true;
 }
 
 bool rkIKRegSelect_am(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  int quantity = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_QUANTITY;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  int32_t quantity = typeval & RK_IK_ATTR_TYPE_QUANTITY;
   return (quantity == RK_IK_ATTR_TYPE_QUANTITY__AM);
 }
 
 bool rkIKRegSelect_select_wld_frame(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_REF_FRAME);
-  cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_REF_FRAME__WORLD;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  typeval &= (~RK_IK_ATTR_TYPE_REF_FRAME);
+  typeval |= RK_IK_ATTR_TYPE_REF_FRAME__WORLD;
+  const rkIKConstraint* new_constraint = constraint_factory( typeval );
+  if( new_constraint == NULL )
+    return false; /* invalid setting combination */
+  cell->data.constraint = new_constraint;
   return true;
 }
 
 bool rkIKRegSelect_wld_frame(void* instance){
-  rkIKCell* cell;
-  int ref_frame;
-  cell = (rkIKCell*)(instance);
-  ref_frame = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_REF_FRAME;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  int32_t ref_frame = typeval & RK_IK_ATTR_TYPE_REF_FRAME;
   return (ref_frame == RK_IK_ATTR_TYPE_REF_FRAME__WORLD);
 }
 
 bool rkIKRegSelect_select_sub_link_frame(void* instance){
-  rkIKCell* cell;
-  if( rkIKRegSelect_com( instance ) ) return false; /* validation. but maybe change */
-  if( rkIKRegSelect_am( instance ) ) return false; /* validation */
-  cell = (rkIKCell*)(instance);
-  cell->data.attr.user_defined_type &= (~RK_IK_ATTR_TYPE_REF_FRAME);
-  cell->data.attr.user_defined_type |= RK_IK_ATTR_TYPE_REF_FRAME__SUB_LINK;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  typeval &= (~RK_IK_ATTR_TYPE_REF_FRAME);
+  typeval |= RK_IK_ATTR_TYPE_REF_FRAME__SUB_LINK;
+  const rkIKConstraint* new_constraint = constraint_factory( typeval );
+  if( new_constraint == NULL )
+    return false; /* invalid setting combination */
+  cell->data.constraint = new_constraint;
   return true;
 }
 
 bool rkIKRegSelect_sub_link_frame(void* instance){
-  rkIKCell* cell;
-  int ref_frame;
-  cell = (rkIKCell*)(instance);
-  ref_frame = cell->data.attr.user_defined_type & RK_IK_ATTR_TYPE_REF_FRAME;
+  rkIKCell* cell = (rkIKCell*)(instance);
+  int32_t typeval = get_constraint_typeval( cell->data.constraint->typestr );
+  int32_t ref_frame = typeval & RK_IK_ATTR_TYPE_REF_FRAME;
   return (ref_frame == RK_IK_ATTR_TYPE_REF_FRAME__SUB_LINK);
 }
 
 bool rkIKRegSelect_select_force(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
+  rkIKCell* cell = (rkIKCell*)(instance);
   cell->data.priority = RK_IK_MAX_PRIORITY;
   return true;
 }
 
 bool rkIKRegSelect_unselect_force(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
+  rkIKCell* cell = (rkIKCell*)(instance);
   cell->data.priority = 0;
   return true;
 }
 
 bool rkIKRegSelect_force(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
+  rkIKCell* cell = (rkIKCell*)(instance);
   return cell->data.priority == RK_IK_MAX_PRIORITY;
 }
 
 /**/
 
 void rkIKRegSelect_set_name(void* instance, const char* name){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
+  rkIKCell* cell = (rkIKCell*)(instance);
   zNameFree( &cell->data );
   zNameSet( &cell->data, name );
 }
@@ -399,67 +485,11 @@ void rkIKRegSelect_reset(void *instance){
   rkIKAttr blank_attr;
   cell = (rkIKCell*)(instance);
   rkIKAttrInit( &blank_attr );
-  blank_attr.user_defined_type = 0;
   zCopy( rkIKAttr, &blank_attr, &cell->data.attr );
-  cell->data.constraint = NULL;
+  cell->data.constraint = rkIKConstraintFind( "world_pos" );;
   cell->data.priority = 0;
   cell->data.mode = RK_IK_CELL_MODE_XYZ;
 }
-
-const rkIKConstraint* constraint_factory(void* instance){
-  rkIKCell* cell;
-  cell = (rkIKCell*)(instance);
-  if( cell->data.attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_LINK_POS ){
-    return rkIKConstraintFind( "world_pos" );
-  } else
-  if( cell->data.attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_LINK_ATT ){
-    return rkIKConstraintFind( "world_att" );
-  } else
-  if( cell->data.attr.user_defined_type == RK_IK_ATTR_TYPE__SUB_LINK_LINK_POS ){
-    return rkIKConstraintFind( "l2l_pos" );
-  } else
-  if( cell->data.attr.user_defined_type == RK_IK_ATTR_TYPE__SUB_LINK_LINK_ATT ){
-    return rkIKConstraintFind( "l2l_att" );
-  } else
-  if( cell->data.attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_COM_POS ) {
-    return rkIKConstraintFind( "com" );
-  } else
-  if( cell->data.attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_LINK_AM ) {
-    return rkIKConstraintFind( "angular_momentum" );
-  } else
-  if( cell->data.attr.user_defined_type == RK_IK_ATTR_TYPE__WORLD_COM_AM ) {
-    return rkIKConstraintFind( "angular_momentum_about_com" );
-  } else {
-    return NULL;
-  }
-}
-
-const int32_t get_user_defined_type(const char* type)
-{
-  if( strcmp( type, "world_pos" ) == 0 ){
-    return RK_IK_ATTR_TYPE__WORLD_LINK_POS;
-  } else
-  if( strcmp( type, "world_att" ) == 0 ){
-    return RK_IK_ATTR_TYPE__WORLD_LINK_ATT;
-  } else
-  if( strcmp( type, "l2l_pos" ) == 0 ){
-    return RK_IK_ATTR_TYPE__SUB_LINK_LINK_POS;
-  } else
-  if( strcmp( type, "l2l_att" ) == 0 ){
-    return RK_IK_ATTR_TYPE__SUB_LINK_LINK_ATT;
-  } else
-  if( strcmp( type, "com" ) == 0 ){
-    return RK_IK_ATTR_TYPE__WORLD_COM_POS;
-  } else
-  if( strcmp( type, "angular_momentum" ) == 0 ){
-    return RK_IK_ATTR_TYPE__WORLD_LINK_AM;
-  } else
-  if( strcmp( type, "angular_momentum_about_com" ) == 0 ){
-    return RK_IK_ATTR_TYPE__WORLD_COM_AM;
-  }
-  return 0;
-}
-
 
 ubyte mask_factory(void* instance){
   ubyte mask = RK_IK_ATTR_MASK_NONE;
@@ -475,15 +505,12 @@ ubyte mask_factory(void* instance){
 void* rkIKRegSelect_call_reg_api(void* instance, void* chain){
   rkIKCell* cell;
   rkIKCell* ret_cell;
-  const rkIKConstraint *constraint;
   ubyte mask;
   if( !( cell = (rkIKCell*)( instance ) ) )
     return NULL;
   if( !cell->data.constraint ||
-      get_user_defined_type( cell->data.constraint->typestr ) == 0 ){
-    if( !( constraint = constraint_factory( instance ) ) )
-      return NULL;
-    cell->data.constraint = constraint;
+      get_constraint_typeval( cell->data.constraint->typestr ) == 0 ){
+    return NULL;
   }
   mask = mask_factory( instance );
   cell->data.attr.mask = mask;
@@ -516,20 +543,18 @@ bool rkIKRegSelect_unreg_by_name(void *chain, const char* name)
 void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
 {
   rkIKCell* cell;
-  const rkIKConstraint *constraint;
   rkIKAttr attr;
   ubyte mask = RK_IK_ATTR_MASK_NONE;
-  int priority;
-  const char *nameptr;
-  const char *typestr;
-  priority = ZTKInt((ZTK*)ztk);
-  nameptr = ZTKVal((ZTK*)ztk);
+  int priority        = ZTKInt((ZTK*)ztk);
+  const char *nameptr = ZTKVal((ZTK*)ztk);
   rkIKAttrInit( &attr );
   ZTKValNext( (ZTK*)ztk );
-  typestr = ZTKVal((ZTK*)ztk);
-  if( !( constraint = rkIKConstraintFind( typestr ) ) ) return NULL;
+  const char *typestr = ZTKVal((ZTK*)ztk);
+  const rkIKConstraint *new_constraint = rkIKConstraintFind( typestr );
+  if( new_constraint == NULL )
+    return NULL;
   ZTKValNext( (ZTK*)ztk );
-  if( !constraint->fromZTK( (rkChain*)chain, &attr, &mask, (ZTK*)ztk ) ){
+  if( !new_constraint->fromZTK( (rkChain*)chain, &attr, &mask, (ZTK*)ztk ) ){
     ZRUNERROR( "in persing constraint %s", nameptr );
     return NULL;
   }
@@ -537,9 +562,8 @@ void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
   rkIKRegSelect_init( (void**)(&cell) );
   rkIKRegSelect_set_name( (void*)cell, nameptr );
   zCopy( rkIKAttr, &attr, &cell->data.attr );
-  cell->data.attr.user_defined_type = get_user_defined_type( typestr );
   rkIKRegSelect_set_priority( (void*)cell, priority );
-  cell->data.constraint = constraint;
+  cell->data.constraint = new_constraint;
 
   return (void*)(cell);
 }
@@ -547,15 +571,12 @@ void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
 bool rkIKRegSelect_fprintZTK_as_constraint_key(FILE *fp, void* chain, void* instance)
 {
   rkIKCell* cell;
-  const rkIKConstraint *constraint;
   ubyte mask;
   if( !( cell = (rkIKCell*)( instance ) ) )
     return false;
   if( !cell->data.constraint ||
-      get_user_defined_type( cell->data.constraint->typestr ) == 0 ){
-    if( !( constraint = constraint_factory( instance ) ) )
-      return false;
-    cell->data.constraint = constraint;
+      get_constraint_typeval( cell->data.constraint->typestr ) == 0 ){
+    return false;
   }
   mask = mask_factory( instance );
   cell->data.attr.mask = mask;
@@ -708,20 +729,23 @@ int main(int argc, char *argv[])
   /* test ztk I/O */
   const char name_wld_pos[] = "test_wld_pos";
   test->set_name( instance, name_wld_pos );
-  printf("test ZTK I/O: %s\n  ", name_wld_pos );
+  printf("test ZTK I/O: %s\n", name_wld_pos );
   const char ztk_filepath[] = "ik_cell_test.ztk";
   /* fprint_ztk file */
   FILE* fp = fopen( ztk_filepath, "w" );
-  test->fprint_ztk( fp, chain, instance );
+  bool is_fprint = test->fprint_ztk( fp, chain, instance );
+  printf( "  to_ztk() : %s\n", (is_fprint ? "OK" : "NG") );
   fclose( fp );
   /* from_ztk file */
   ZTK ztk;
   ZTKParse( &ztk, ztk_filepath );
   ZTKKeyRewind( &ztk );
-  printf( "find constraint key : %s\n  ", ZTKKeyCmp( &ztk, "constraint" ) ? "OK" : "NG" );
+  printf( "  find constraint key : %s\n", ZTKKeyCmp( &ztk, "constraint" ) ? "OK" : "NG" );
   void* instance_02 = test->from_ztk( chain, &ztk );
+  printf( "  from_ztk() : %s\n  ", (instance_02!=NULL) ? "OK" : "NG" );
   /* fprint_ztk as stdout */
-  test->fprint_ztk( stdout, chain, instance_02 );
+  is_fprint = test->fprint_ztk( stdout, chain, instance_02 );
+  printf( "  to_ztk() : %s\n", (is_fprint ? "OK" : "NG") );
   test->free( &instance_02 );
   /**/
   printf("call reg_api_world_pos : ");
