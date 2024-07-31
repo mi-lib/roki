@@ -502,7 +502,7 @@ void* rkIKRegSelect_from_cell_name(void* chain, const char* name)
 
 /* just wrapper for encapsulating types */
 bool rkIKRegSelect_unreg_by_cell(void *chain, void *cell){
-  return rkChainAddIKCell( (rkChain*)(chain), (rkIKCell*)(cell) ) ? true : false;
+  return rkChainUnregisterIKCell( (rkChain*)(chain), (rkIKCell*)(cell) ) ? true : false;
 }
 
 bool rkIKRegSelect_unreg_by_name(void *chain, const char* name)
@@ -510,7 +510,7 @@ bool rkIKRegSelect_unreg_by_name(void *chain, const char* name)
   rkIKCell* cell;
   if( !( cell = rkChainFindIKCellByName( (rkChain*)(chain), name ) ) )
     return false;
-  return rkChainUnregisterIKCell( (rkChain*)(chain), (rkIKCell*)(cell) );
+  return rkChainUnregisterIKCell( (rkChain*)(chain), (rkIKCell*)(cell) ) ? true : false;
 }
 
 void* rkIKRegSelect_fromZTK_constraint_key(void* chain, void* ztk)
