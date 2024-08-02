@@ -146,9 +146,9 @@ bool rkChainCloneIK(rkChain *src, rkChain *dest)
 /* allocate working memory for constraint coefficient matrix of an inverse kinematics solver. */
 static bool _rkIKAllocCMat(rkIK *ik)
 {
+  zMatFree( ik->_c_mat );
   if( zListSize(&ik->_c_list) == 0 || zArraySize(ik->_j_idx) == 0 )
     return true;
-  zMatFree( ik->_c_mat );
   return ( ik->_c_mat = zMatAlloc( zListSize(&ik->_c_list)*3, zVecSizeNC(ik->_j_vec) ) ) ?
     true : false;
 }
@@ -160,13 +160,16 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
   int j;
   double *wp;
 
+  zIndexFree( ik->_j_idx );
+  zVecFree( ik->_j_vec );
+  zVecFree( ik->_j_wn );
+  zLEWorkspaceFree( &ik->__le );
   for( count=0, i=0; i<rkChainLinkNum(chain); i++ ){
     if( rkChainLinkJointDOF(chain,i) == 0 )
       ik->joint_is_enabled[i] = false;
     if( ik->joint_is_enabled[i] ) count++;
   }
   if( count == 0 ) return true;
-  zIndexFree( ik->_j_idx );
   if( !( ik->_j_idx = zIndexCreate(count) ) ) return false;
   for( count=0, ofs=0, i=0; i<rkChainLinkNum(chain); i++ )
     if( ik->joint_is_enabled[i] ){
@@ -176,9 +179,6 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
     } else
       zIndexSetElemNC( ik->_j_ofs, i, -1 );
   /* allocate joint vector */
-  zVecFree( ik->_j_vec );
-  zVecFree( ik->_j_wn );
-  zLEWorkspaceFree( &ik->__le );
   count = rkChainJointIndexSize( chain, ik->_j_idx );
   if( !( ik->_j_vec = zVecAlloc(count) ) ||
       !( ik->_j_wn = zVecAlloc(count) ) ||
@@ -220,9 +220,9 @@ bool rkChainRegisterIKJointAll(rkChain *chain, double weight)
 /* register constraint cell to an inverse kinematics solver. */
 static bool _rkIKAllocCVec(rkIK *ik)
 {
-  if( zListSize(&ik->_c_list) == 0 ) return true;
   zVecFree( ik->_c_vec );
   zVecFree( ik->_c_we );
+  if( zListSize(&ik->_c_list) == 0 ) return true;
   ik->_c_vec = zVecAlloc( zListSize(&ik->_c_list)*3 );
   ik->_c_we = zVecAlloc( zListSize(&ik->_c_list)*3 );
   ik->__c = zVecAlloc( zListSize(&ik->_c_list)*3 );

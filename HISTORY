@@ -1,3 +1,4 @@
+2024. 8. 2. Debugged _rkIKAllocCMat, _rkIKAllocJointIndex, and _rkIKAllocCVec. [rk_ik]
 2024. 8. 2. Modified rkLinkConnectivityFPrint to visualize branches. [rk_link]
 2024. 8. 2. Modified rkLinkConnectivityFPrint not to display joint ID offset of fixed joints. [rk_link]
 2024. 8. 2. Renamed rkLinkConnectionFPrint and rkChainConnectionFPrint to rkLinkConnectivityFPrint and rkChainConnectivityFPrint, respectively. [rk_link, rk_chain]
