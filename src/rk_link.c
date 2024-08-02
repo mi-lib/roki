@@ -537,7 +537,7 @@ void rkLinkFPrintZTK(FILE *fp, rkLink *link)
   fprintf( fp, "\n" );
 }
 
-/* print link posture out to a file. */
+/* print current 6D posture of a link out to a file. */
 void rkLinkPostureFPrint(FILE *fp, rkLink *link)
 {
   fprintf( fp, "Link(name:%s joint ID offset:%d)\n", zName(link), rkLinkJointIDOffset(link) );
@@ -547,20 +547,32 @@ void rkLinkPostureFPrint(FILE *fp, rkLink *link)
   zFrame3DFPrint( fp, rkLinkWldFrame( link ) );
 }
 
-/* print link connectivity out to a file. */
-#define RK_LINK_CONNECTION_INDENT 2
-void rkLinkConnectionFPrint(FILE *fp, rkLink *link, int n)
+/* visualize branches of a kinematic chain in a text file. */
+static void _rkLinkConnectivityBranchFPrint(FILE *fp, ulong branch_bit, int depth)
 {
-  zFIndent( fp, n );
-  fprintf( fp, "|-%s (%s:%d)\n", zName(link), rkJointTypeStr(rkLinkJoint(link)), rkLinkJointIDOffset(link) );
-
-  if( rkLinkChild( link ) )
-    rkLinkConnectionFPrint( fp, rkLinkChild(link), n+RK_LINK_CONNECTION_INDENT );
-  if( rkLinkSibl( link ) )
-    rkLinkConnectionFPrint( fp, rkLinkSibl(link), n );
+  for( ; depth>0; depth--, branch_bit>>=1 )
+    fprintf( fp, "%c ", branch_bit & 0x1 ? '|' : ' ' );
 }
 
-/* print external wrenches applied to a link out to a file. */
+/* print connectivity of a link of a kinematic chain out to a file. */
+void rkLinkConnectivityFPrint(FILE *fp, rkLink *link, rkLink *root, ulong branch_bit, int depth)
+{
+  _rkLinkConnectivityBranchFPrint( fp, branch_bit, depth );
+  fprintf( fp, "|-[%ld] %s (%s", (long)( link - root ), zName(link), rkJointTypeStr(rkLinkJoint(link)) );
+  if( rkLinkJointIDOffset(link) >= 0 )
+    fprintf( fp, ":%d", rkLinkJointIDOffset(link) );
+  fprintf( fp, ")\n" );
+  if( rkLinkChild( link ) ){
+    if( rkLinkSibl( link ) )
+      branch_bit |= ( 0x1 << depth );
+    rkLinkConnectivityFPrint( fp, rkLinkChild(link), root, branch_bit, depth+1 );
+    branch_bit &= ~( 0x1 << depth );
+  }
+  if( rkLinkSibl( link ) )
+    rkLinkConnectivityFPrint( fp, rkLinkSibl(link), root, branch_bit, depth );
+}
+
+/* print external wrench applied to a link out to a file. */
 void rkLinkExtWrenchFPrint(FILE *fp, rkLink *link)
 {
   rkWrench *c;

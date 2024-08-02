@@ -476,7 +476,7 @@ __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
  *
  * rkLinkConnectionFPrint() prints out the connectivity of
  * a link \a link to the current position of a file \a fp.
- * \a n is a width of indent.
+ * \a n is a width of indentation.
  * rkLinkConnectionPrint() prints out the connectivity to
  * the standard output.
  *
@@ -497,12 +497,17 @@ __ROKI_EXPORT rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZT
 
 __ROKI_EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *link);
 
+/* print current 6D posture of a link out to a file. */
 __ROKI_EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *link);
-__ROKI_EXPORT void rkLinkConnectionFPrint(FILE *fp, rkLink *link, int n);
-__ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *link);
 #define rkLinkPosturePrint(link)      rkLinkPostureFPrint( stdout, (link) )
-#define rkLinkConnectionPrint(link,n) rkLinkConnectionFPrint( stdout, (link), (n) )
-#define rkLinkExtWrenchPrint(link)     rkLinkExtWrenchFPrint( stdout, (link) )
+
+/* print connectivity of a link of a kinematic chain out to a file. */
+__ROKI_EXPORT void rkLinkConnectivityFPrint(FILE *fp, rkLink *link, rkLink *root, ulong branch_bit, int depth);
+#define rkLinkConnectivityPrint(link,root,branch_bit,depth) rkLinkConnectivityFPrint( stdout, (link), (root), (branch_bit), (depth) )
+
+/* print external wrench applied to a link out to a file. */
+__ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *link);
+#define rkLinkExtWrenchPrint(link)    rkLinkExtWrenchFPrint( stdout, (link) )
 
 __END_DECLS
 

@@ -763,12 +763,16 @@ __ROKI_EXPORT void rkChainInitFPrintZTK(FILE *fp, rkChain *chain);
 __ROKI_EXPORT rkChain *rkChainInitReadZTK(rkChain *chain, const char *filename);
 __ROKI_EXPORT bool rkChainInitWriteZTK(rkChain *chain, const char *filename);
 
+/* print current 6D postures of all links of a kinematic chain out to a file. */
 __ROKI_EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *chain);
-__ROKI_EXPORT void rkChainConnectionFPrint(FILE *fp, rkChain *chain);
-__ROKI_EXPORT void rkChainExtWrenchFPrint(FILE *fp, rkChain *chain);
-
 #define rkChainPosturePrint(chain)    rkChainPostureFPrint( stdout, (chain) )
-#define rkChainConnectionPrint(chain) rkChainConnectionFPrint( stdout, (chain) )
+
+/* print connectivity of a kinematic chain out to a file. */
+__ROKI_EXPORT void rkChainConnectivityFPrint(FILE *fp, rkChain *chain);
+#define rkChainConnectivityPrint(chain) rkChainConnectivityFPrint( stdout, (chain) )
+
+/* print external wrenches applied to a kinematic chain out to a file. */
+__ROKI_EXPORT void rkChainExtWrenchFPrint(FILE *fp, rkChain *chain);
 #define rkChainExtWrenchPrint(chain)  rkChainExtWrenchFPrint( stdout, (chain) )
 
 __END_DECLS

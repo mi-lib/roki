@@ -72,7 +72,7 @@ int main(void)
   int i;
 
   chain_init( &chain );
-  rkChainConnectionFPrint( stderr, &chain );
+  rkChainConnectivityFPrint( stderr, &chain );
   rkChainUpdateID( &chain );
   zVec3DCopy( rkChainWldCOM(&chain), &com );
   zVec3DCopy( rkChainCOMVel(&chain), &vel );

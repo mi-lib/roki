@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
   if( !rkChainReadZTK( &chain, argc > 1 ? argv[1] : "../model/H5.ztk" ) )
     return 1;
   index = rkChainCreateDefaultJointIndex( &chain );
-  rkChainConnectionPrint( &chain );
+  rkChainConnectivityPrint( &chain );
   printf( "total joint size = %d\n", rkChainJointSize( &chain ) );
   zIndexPrint( index );
   rkChainDestroy( &chain );

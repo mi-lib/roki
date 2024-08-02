@@ -1076,7 +1076,7 @@ bool rkChainInitWriteZTK(rkChain *chain, const char *filename)
   return true;
 }
 
-/* print current posture of a kinematic chain out to a file. */
+/* print current 6D postures of all links of a kinematic chain out to a file. */
 void rkChainPostureFPrint(FILE *fp, rkChain *chain)
 {
   int i;
@@ -1086,11 +1086,11 @@ void rkChainPostureFPrint(FILE *fp, rkChain *chain)
     rkLinkPostureFPrint( fp, rkChainLink(chain,i) );
 }
 
-/* print connection of a kinematic chain out to a file. */
-void rkChainConnectionFPrint(FILE *fp, rkChain *chain)
+/* print connectivity of a kinematic chain out to a file. */
+void rkChainConnectivityFPrint(FILE *fp, rkChain *chain)
 {
   fprintf( fp, "Chain : %s\n", zName(chain) );
-  rkLinkConnectionFPrint( fp, rkChainRoot(chain), 0 );
+  rkLinkConnectivityFPrint( fp, rkChainRoot(chain), rkChainRoot(chain), 0, 0 );
 }
 
 /* print external wrench exerted to a kinematic chain out to a file. */
