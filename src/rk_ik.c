@@ -17,12 +17,11 @@ static void _rkIKInit(rkIK *ik)
   ik->joint_is_enabled = NULL;
   ik->joint_weight = NULL;
   ik->joint_vec = NULL;
-  ik->eval = 0;
+  zListInit( &ik->cell_list );
 
-  zListInit( &ik->_c_list );
+  ik->_eval = 0;
   ik->_c_mat_cell = NULL;
   zVec3DZero( &ik->_c_vec_cell );
-
   ik->_j_idx = NULL;
   ik->_j_ofs = NULL;
   ik->_j_vec = NULL;
@@ -67,10 +66,10 @@ static void _rkIKDestroy(rkIK *ik)
   zFree( ik->joint_is_enabled );
   zFree( ik->joint_weight );
   zVecFree( ik->joint_vec );
-  ik->eval = 0;
-  rkIKCellListDestroy( &ik->_c_list );
-  zMatFree( ik->_c_mat_cell );
+  ik->_eval = 0;
+  rkIKCellListDestroy( &ik->cell_list );
 
+  zMatFree( ik->_c_mat_cell );
   zIndexFree( ik->_j_idx );
   zIndexFree( ik->_j_ofs );
   zVecFree( ik->_j_vec );
@@ -109,7 +108,7 @@ static rkIK *_rkIKClone(rkIK *src)
     goto FAILURE;
   }
   cln->joint_vec = zVecClone( src->joint_vec );
-  cln->eval = src->eval;
+  cln->_eval = src->_eval;
   cln->_c_mat_cell = zMatClone( src->_c_mat_cell );
   zVec3DCopy( &src->_c_vec_cell, &cln->_c_vec_cell );
   cln->_j_idx = zIndexClone( src->_j_idx );
@@ -125,8 +124,8 @@ static rkIK *_rkIKClone(rkIK *src)
       !cln->_j_vec || !cln->_j_wn || !cln->_c_mat || !cln->_c_vec || !cln->_c_we || !cln->__c ||
       !zLEWorkspaceClone( &src->__le, &cln->__le ) )
     goto FAILURE;
-  if( !rkIKCellListClone( &src->_c_list, &cln->_c_list ) ) goto FAILURE;
-  if( zListSize( &cln->_c_list ) != zListSize( &src->_c_list ) ) goto FAILURE;
+  if( !rkIKCellListClone( &src->cell_list, &cln->cell_list ) ) goto FAILURE;
+  if( zListSize( &cln->cell_list ) != zListSize( &src->cell_list ) ) goto FAILURE;
   return cln;
 
  FAILURE:
@@ -147,9 +146,9 @@ bool rkChainCloneIK(rkChain *src, rkChain *dest)
 static bool _rkIKAllocCMat(rkIK *ik)
 {
   zMatFree( ik->_c_mat );
-  if( zListSize(&ik->_c_list) == 0 || zArraySize(ik->_j_idx) == 0 )
+  if( zListSize(&ik->cell_list) == 0 || zArraySize(ik->_j_idx) == 0 )
     return true;
-  return ( ik->_c_mat = zMatAlloc( zListSize(&ik->_c_list)*3, zVecSizeNC(ik->_j_vec) ) ) ?
+  return ( ik->_c_mat = zMatAlloc( zListSize(&ik->cell_list)*3, zVecSizeNC(ik->_j_vec) ) ) ?
     true : false;
 }
 
@@ -222,10 +221,10 @@ static bool _rkIKAllocCVec(rkIK *ik)
 {
   zVecFree( ik->_c_vec );
   zVecFree( ik->_c_we );
-  if( zListSize(&ik->_c_list) == 0 ) return true;
-  ik->_c_vec = zVecAlloc( zListSize(&ik->_c_list)*3 );
-  ik->_c_we = zVecAlloc( zListSize(&ik->_c_list)*3 );
-  ik->__c = zVecAlloc( zListSize(&ik->_c_list)*3 );
+  if( zListSize(&ik->cell_list) == 0 ) return true;
+  ik->_c_vec = zVecAlloc( zListSize(&ik->cell_list)*3 );
+  ik->_c_we = zVecAlloc( zListSize(&ik->cell_list)*3 );
+  ik->__c = zVecAlloc( zListSize(&ik->cell_list)*3 );
   return ( !ik->_c_vec || !ik->_c_we || !ik->__c ) ? false : _rkIKAllocCMat( ik );
 }
 
@@ -234,9 +233,9 @@ static rkIKCell *_rkIKAddCell(rkIK *ik, rkIKCell *cell){
 
   if( !cell ) return NULL;
   rkIKCellEnable( cell );
-  zListForEach( &ik->_c_list, cp )
+  zListForEach( &ik->cell_list, cp )
     if( rkIKCellPriority(cp) < rkIKCellPriority(cell) ) break;
-  zListInsertPrev( &ik->_c_list, cp, cell );
+  zListInsertPrev( &ik->cell_list, cp, cell );
   return _rkIKAllocCVec( ik ) ? cell : NULL;
 }
 
@@ -250,7 +249,7 @@ static rkIKCell *_rkIKRegisterCell(rkIK *ik, const char *name, int priority, rkI
 
 static bool _rkIKUnregisterCell(rkIK *ik, rkIKCell *cell)
 {
-  zListPurge( &ik->_c_list, cell );
+  zListPurge( &ik->cell_list, cell );
   return _rkIKAllocCVec( ik );
 }
 
@@ -324,7 +323,7 @@ rkIKCell *rkChainFindIKCellByName(rkChain *chain, const char *name)
 {
   rkIKCell *cp;
 
-  zListForEach( &chain->_ik->_c_list, cp )
+  zListForEach( &chain->_ik->cell_list, cp )
     if( strcmp( zNamePtr(&cp->data), name ) == 0 ) return cp;
   return NULL;
 }
@@ -340,14 +339,14 @@ static bool _rkIKCellSetPriority(rkIK *ik, rkIKCell *cell, int priority)
   }
   if( priority > rkIKCellPriority(cell) ){
     for( cp = zListCellPrev(cell);
-         cp != zListRoot(&ik->_c_list) && rkIKCellPriority(cp) < priority;
+         cp != zListRoot(&ik->cell_list) && rkIKCellPriority(cp) < priority;
          cp = zListCellPrev(cp) );
     zListCellPurge( cell );
     zListCellInsertNext( cp, cell );
   } else
   if( priority < rkIKCellPriority(cell) ){
     for( cp = zListCellNext(cell);
-         cp != zListRoot(&ik->_c_list) && rkIKCellPriority(cp) > priority;
+         cp != zListRoot(&ik->cell_list) && rkIKCellPriority(cp) > priority;
          cp = zListCellNext(cp) );
     zListCellPurge( cell );
     zListCellInsertPrev( cp, cell );
@@ -365,7 +364,7 @@ void rkChainDisableIK(rkChain *chain)
 {
   rkIKCell *cp;
 
-  zListForEach( &chain->_ik->_c_list, cp )
+  zListForEach( &chain->_ik->cell_list, cp )
     rkIKCellDisable( cp );
 }
 
@@ -374,7 +373,7 @@ void rkChainBindIK(rkChain *chain)
 {
   rkIKCell *cp;
 
-  zListForEach( &chain->_ik->_c_list, cp )
+  zListForEach( &chain->_ik->cell_list, cp )
     rkIKCellBind( cp, chain );
 }
 
@@ -383,7 +382,7 @@ static void _rkIKAcmZero(rkIK *ik)
 {
   rkIKCell *cp;
 
-  zListForEach( &ik->_c_list, cp )
+  zListForEach( &ik->cell_list, cp )
     rkIKCellAcmZero( cp );
 }
 void rkChainZeroIKAcm(rkChain *chain)
@@ -420,21 +419,21 @@ static void _rkIKCreateEquation(rkIK *ik, rkChain *chain, int min_priority, rkIK
   rkIKCell *cell;
   int row = 0;
 
-  ik->eval = 0;
-  zListForEach( &ik->_c_list, cell ){
+  ik->_eval = 0;
+  zListForEach( &ik->cell_list, cell ){
     if( cell == terminator ) break;
     if( !rkIKCellIsEnabled( cell ) ) continue;
     rkIKCellGetCMat( cell, chain, ik->_c_mat_cell );
     rkIKCellGetCVec( cell, chain, &ik->_c_vec_cell );
     cell->data._eval = zVec3DWSqrNorm( &ik->_c_vec_cell, rkIKCellWeight(cell) );
-    ik->eval += cell->data._eval;
+    ik->_eval += cell->data._eval;
     cell->data._eval = sqrt( cell->data._eval );
     if( rkIKCellPriority(cell) > min_priority )
       rkIKCellGetAcm( cell, chain, &ik->_c_vec_cell );
     for( i=0; i<3; i++ )
       row += _rkIKCellGetEquation( ik, chain, cell, i, row );
   }
-  ik->eval = sqrt( ik->eval );
+  ik->_eval = sqrt( ik->_eval );
   zMatSetRowSize( ik->_c_mat, row );
   zVecSetSize( ik->_c_vec, row );
   zVecSetSize( ik->__c, row );
@@ -542,22 +541,22 @@ static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*
   _get_joint_dis( chain, dis );
   ZITERINIT( iter );
   rkChainZeroIKAcm( chain );
-  terminator_prev = zListTail(&chain->_ik->_c_list);
+  terminator_prev = zListTail(&chain->_ik->cell_list);
   current_min_priority = rkIKCellPriority( terminator_prev );
   for( terminator=terminator_prev; ; current_min_priority=rkIKCellPriority(terminator) ){
-    while( terminator != zListRoot(&chain->_ik->_c_list) &&
+    while( terminator != zListRoot(&chain->_ik->cell_list) &&
            rkIKCellPriority(terminator) >= current_min_priority )
       terminator = zListCellNext(terminator);
     for( rest=HUGE_VAL, i=0; i<iter; i++ ){
       _rkIKCreateEquation( chain->_ik, chain, current_min_priority, terminator );
       _solve_ik_one( chain, dis, 1.0 );
-      if( zIsTol( chain->_ik->eval - rest, tol ) ){
+      if( zIsTol( chain->_ik->_eval - rest, tol ) ){
         iter_count += i;
         break; /* further decrease not expected */
       }
-      rest = chain->_ik->eval;
+      rest = chain->_ik->_eval;
     }
-    if( terminator == zListRoot(&chain->_ik->_c_list) ) break;
+    if( terminator == zListRoot(&chain->_ik->cell_list) ) break;
     for( ; terminator_prev!=terminator; terminator_prev=zListCellNext(terminator_prev) )
       rkIKCellBind( terminator_prev, chain );
   }
@@ -644,7 +643,7 @@ static void _rkIKConstraintFPrintZTK(FILE *fp, rkChain *chain)
 {
   rkIKCell *cp;
 
-  zListForEach( &chain->_ik->_c_list, cp ){
+  zListForEach( &chain->_ik->cell_list, cp ){
     fprintf( fp, "constraint: %d %s %s", rkIKCellPriority(cp), rkIKCellName(cp), cp->data.constraint->typestr );
     cp->data.constraint->fprintZTK( fp, chain, cp );
   }

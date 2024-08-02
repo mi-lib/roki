@@ -70,10 +70,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
   bool *joint_is_enabled;   /*!< flag to check if each joint is enabled to cooperate */
   double *joint_weight;     /*!< joint cooperating weight */
   zVec joint_vec;           /*!< joint vector */
-  double eval;              /*!< evaluation function */
+  rkIKCellList cell_list;   /*!< list of constraint cells */
 
   /*! \cond */
-  rkIKCellList _c_list;     /* list of constraint cells */
+  double _eval;             /* evaluation value for optimization */
   zMat _c_mat_cell;         /* cellular workspace for constraint matrix */
   zVec3D _c_vec_cell;       /* cellular workspace for constraint vector */
 

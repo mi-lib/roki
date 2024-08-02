@@ -159,7 +159,7 @@ bool assert_cell_register_one(void)
     cell[i] = reg_ik_cell[zRandI(0,cellcount-1)]( &chain, dummy_name, zRandI(0,max_priority), NULL, RK_IK_ATTR_MASK_NONE );
   }
   priority_prev = max_priority + 1;
-  zListForEach( &chain._ik->_c_list, cp ){
+  zListForEach( &chain._ik->cell_list, cp ){
     if( rkIKCellPriority(cp) > priority_prev ){
       eprintf( "priority flipped (%d <-> %d).\n", priority_prev, rkIKCellPriority(cp) );
       result = false;
@@ -207,7 +207,7 @@ bool check_priority(rkChain *chain, int p1, int p2, int p3, int p4, int p5)
 {
   rkIKCell *cp;
 
-  cp = zListTail(&chain->_ik->_c_list);
+  cp = zListTail(&chain->_ik->cell_list);
   if( rkIKCellPriority(cp) != p1 ) return false;
   cp = zListCellNext(cp);
   if( rkIKCellPriority(cp) != p2 ) return false;

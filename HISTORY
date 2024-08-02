@@ -1,3 +1,5 @@
+2024. 8. 2. Renamed eval of rkIK to _eval. [rk_ik]
+2024. 8. 2. Renamed _c_list of rkIK to cell_list. [rk_ik]
 2024. 8. 2. Debugged _rkIKAllocCMat, _rkIKAllocJointIndex, and _rkIKAllocCVec. [rk_ik]
 2024. 8. 2. Modified rkLinkConnectivityFPrint to visualize branches. [rk_link]
 2024. 8. 2. Modified rkLinkConnectivityFPrint not to display joint ID offset of fixed joints. [rk_link]
