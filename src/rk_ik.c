@@ -146,8 +146,10 @@ bool rkChainCloneIK(rkChain *src, rkChain *dest)
 static bool _rkIKAllocCMat(rkIK *ik)
 {
   zMatFree( ik->_c_mat );
-  if( zListSize(&ik->cell_list) == 0 || zArraySize(ik->_j_idx) == 0 )
+  if( zListSize(&ik->cell_list) == 0 || zArraySize(ik->_j_idx) == 0 ){
+    ik->_c_mat = NULL;
     return true;
+  }
   return ( ik->_c_mat = zMatAlloc( zListSize(&ik->cell_list)*3, zVecSizeNC(ik->_j_vec) ) ) ?
     true : false;
 }
@@ -221,7 +223,11 @@ static bool _rkIKAllocCVec(rkIK *ik)
 {
   zVecFree( ik->_c_vec );
   zVecFree( ik->_c_we );
-  if( zListSize(&ik->cell_list) == 0 ) return true;
+  zVecFree( ik->__c );
+  if( zListSize(&ik->cell_list) == 0 ){
+    ik->_c_vec = ik->_c_we = ik->__c = NULL;
+    return true;
+  }
   ik->_c_vec = zVecAlloc( zListSize(&ik->cell_list)*3 );
   ik->_c_we = zVecAlloc( zListSize(&ik->cell_list)*3 );
   ik->__c = zVecAlloc( zListSize(&ik->cell_list)*3 );
@@ -413,7 +419,7 @@ static int _rkIKCellGetEquation(rkIK *ik, rkChain *chain, rkIKCell *cell, int s,
 }
 
 /* create a motion constraint equation of an inverse kinematics solver. */
-static void _rkIKCreateEquation(rkIK *ik, rkChain *chain, int min_priority, rkIKCell *terminator)
+static bool _rkIKCreateEquation(rkIK *ik, rkChain *chain, int min_priority, rkIKCell *terminator)
 {
   int i;
   rkIKCell *cell;
@@ -434,10 +440,12 @@ static void _rkIKCreateEquation(rkIK *ik, rkChain *chain, int min_priority, rkIK
       row += _rkIKCellGetEquation( ik, chain, cell, i, row );
   }
   ik->_eval = sqrt( ik->_eval );
+  if( row == 0 ) return false; /* the list of constraint cells is empty. */
   zMatSetRowSize( ik->_c_mat, row );
   zVecSetSize( ik->_c_vec, row );
   zVecSetSize( ik->__c, row );
   zVecSetSize( ik->_c_we, row );
+  return true;
 }
 
 /* solve the motion constraint equation with MP-inverse matrix. */
@@ -502,7 +510,7 @@ static zVec _rkChainIKOne(rkChain *chain, zVec dis, double dt)
 /* solve one-step inverse kinematics based on Newton=Raphson's method. */
 zVec rkChainIKOne(rkChain *chain, zVec dis, double dt)
 {
-  _rkIKCreateEquation( chain->_ik, chain, 0, NULL );
+  if( !_rkIKCreateEquation( chain->_ik, chain, 0, NULL ) ) return NULL;
   return _rkChainIKOne( chain, dis, dt );
 }
 
@@ -548,7 +556,7 @@ static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*
            rkIKCellPriority(terminator) >= current_min_priority )
       terminator = zListCellNext(terminator);
     for( rest=HUGE_VAL, i=0; i<iter; i++ ){
-      _rkIKCreateEquation( chain->_ik, chain, current_min_priority, terminator );
+      if( !_rkIKCreateEquation( chain->_ik, chain, current_min_priority, terminator ) ) break;
       _solve_ik_one( chain, dis, 1.0 );
       if( zIsTol( chain->_ik->_eval - rest, tol ) ){
         iter_count += i;
@@ -558,7 +566,8 @@ static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*
     }
     if( terminator == zListRoot(&chain->_ik->cell_list) ) break;
     for( ; terminator_prev!=terminator; terminator_prev=zListCellNext(terminator_prev) )
-      rkIKCellBind( terminator_prev, chain );
+      if( rkIKCellIsEnabled( terminator_prev ) )
+        rkIKCellBind( terminator_prev, chain );
   }
   return iter_count;
 }
