@@ -147,6 +147,6 @@ int main(void)
   assert_invpend( &invpend, q, dq, ddq );
 
   rkChainDestroy( &invpend );
-  zVecFreeAO( 3, q, dq, ddq );
+  zVecFreeAtOnce( 3, q, dq, ddq );
   return 0;
 }

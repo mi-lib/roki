@@ -1,3 +1,4 @@
+2024. 8. 6. Reflect renaming of zVecFreeAtOnce and zMatFreeAtOnce. [rk_chain, example, test]
 2024. 8. 4. Debugged _rkIKAllocCVec and _rkIKAllocCMat to nullify internal matrices and vectors if the list of constraint cells is empty. [rk_ik]
 2024. 8. 4. Modified _rkChainIK not to bind references of disabled cells. [rk_ik]
 2024. 8. 4. Modified _rkChainIK to check if the constraint equation is created. [rk_ik]

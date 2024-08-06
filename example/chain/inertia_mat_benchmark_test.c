@@ -98,7 +98,7 @@ void test_inertia_mat(rkChain *chain, int n)
   }
   eprintf( "clock (CRB/UV/MJ): %ld %ld %ld\n", l1, l2, l3 );
   eprintf( "success (CRB/UV/MJ) %d/%d/%d\n", count_im, count_ij, N );
-  zMatFreeAO( 2, h, hc );
+  zMatFreeAtOnce( 2, h, hc );
   zVecFree( dis );
   zAssert( rkChainInertiaMatCRB, count_im == N );
   zAssert( rkChainInertiaMatMJ, count_ij == N );

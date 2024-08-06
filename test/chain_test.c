@@ -69,7 +69,7 @@ bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec vel, double tol)
   zVecAddDRC( trq_fd, bias );
   /* check */
   ret = zVecIsEqual( trq_fd, trq_id, tol );
-  zVecFreeAO( 3, acc, trq_fd, trq_id );
+  zVecFreeAtOnce( 3, acc, trq_fd, trq_id );
   return ret;
 }
 
@@ -258,7 +258,7 @@ void assert_inertia_mat(rkChain *chain, int n)
   zAssert( rkChainInertiaMatCRB, count_icrb == N );
 
   zMatFree( h );
-  zVecFreeAO( 3, b, dis, vel );
+  zVecFreeAtOnce( 3, b, dis, vel );
 }
 
 /* only works with torque-controlled robot models. */

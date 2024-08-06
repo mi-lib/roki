@@ -76,6 +76,6 @@ int main(void)
   check_test( &pend, dis, vel, acc );
 
   rkChainDestroy( &pend );
-  zVecFreeAO( 3, dis, vel, acc );
+  zVecFreeAtOnce( 3, dis, vel, acc );
   return 0;
 }

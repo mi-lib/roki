@@ -628,7 +628,7 @@ zMat rkChainInertiaMatMJ(rkChain *chain, zMat inertia)
     zMulMatTMatNC( jacobi, tmp, inertia_tmp );
     zMatAddNCDRC( inertia, inertia_tmp );
   }
-  zMatFreeAO( 3, inertia_tmp, jacobi, tmp );
+  zMatFreeAtOnce( 3, inertia_tmp, jacobi, tmp );
   return inertia;
 }
 
