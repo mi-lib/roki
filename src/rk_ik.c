@@ -201,9 +201,13 @@ static bool _rkIKRegisterJointID(rkIK *ik, rkChain *chain, int id, bool sw, doub
   return _rkIKAllocJointIndex( ik, chain );
 }
 bool rkChainRegisterIKJointID(rkChain *chain, int id, double weight){
+  if( !chain->_ik )
+    if( !rkChainCreateIK( chain ) ) return false;
   return _rkIKRegisterJointID( chain->_ik, chain, id, true, weight );
 }
 bool rkChainUnregisterIKJointID(rkChain *chain, int id){
+  if( !chain->_ik )
+    if( !rkChainCreateIK( chain ) ) return false;
   return _rkIKRegisterJointID( chain->_ik, chain, id, false, 0.0 );
 }
 
@@ -276,16 +280,22 @@ rkIKCell *rkChainAddIKCell(rkChain *chain, rkIKCell *cell)
 
 rkIKCell *rkChainRegisterIKCell(rkChain *chain, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
 {
+  if( !chain->_ik )
+    if( !rkChainCreateIK( chain ) ) return NULL;
   return _rkIKRegisterCell( chain->_ik, name, priority, attr, mask, constraint, util );
 }
 
 bool rkChainUnregisterIKCell(rkChain *chain, rkIKCell *cell)
 {
+  if( !chain->_ik )
+    if( !rkChainCreateIK( chain ) ) return false;
   return _rkIKUnregisterCell( chain->_ik, cell );
 }
 
 bool rkChainUnregisterAndDestroyIKCell(rkChain *chain, rkIKCell *cell)
 {
+  if( !chain->_ik )
+    if( !rkChainCreateIK( chain ) ) return false;
   return _rkIKUnregisterAndDestroyCell( chain->_ik, cell );
 }
 

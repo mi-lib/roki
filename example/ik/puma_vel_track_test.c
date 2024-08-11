@@ -37,7 +37,6 @@ void init(rkChain *puma, rkChain *puma_v, const rkIKConstraint *constraint_lin, 
 
   if( !rkChainReadZTK( puma, "../model/puma.ztk" ) ) exit( 1 );
   rkChainClone( puma, puma_v );
-  rkChainCreateIK( puma_v );
   rkChainRegisterIKJointAll( puma_v, 0.001 );
 
   attr.id = 6;

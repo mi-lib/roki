@@ -13,9 +13,6 @@ int main(int argc, char *argv[])
   if( !rkChainReadZTK( &chain, "../model/puma.ztk" ) )
     exit( 1 );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
-  rkChainFK( &chain, dis );
-
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.001 );
 
   attr.id = 6;

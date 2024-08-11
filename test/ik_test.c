@@ -38,7 +38,6 @@ void chain_ik_init(rkChain *chain)
       rkLinkAddChild( rkChainLink(chain,i-1), rkChainLink(chain,i) );
   }
   rkChainSetJointIDOffset( chain );
-  rkChainCreateIK( chain );
 }
 
 void assert_ik_constraint_find(void)
@@ -227,7 +226,6 @@ void assert_set_priority(void)
 
   zRandInit();
   rkChainReadZTK( &chain, "../example/model/arm.ztk" );
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.001 );
 
   cell[0] = rkChainRegisterIKCellWldPos( &chain, NULL, 1, NULL, RK_IK_ATTR_MASK_NONE );
@@ -275,7 +273,6 @@ void assert_ik_revol(void)
   rkChainUpdateID( &chain );
 
   dis = zVecAlloc( rkChainJointSize(&chain) );
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.01 );
 
   attr.id = rkChainLinkNum(&chain)-1;
@@ -333,8 +330,6 @@ void assert_ik_spher(void)
 
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainGetJointDisAll( &chain, dis );
-
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointID( &chain, 1, 0.01 );
   rkChainRegisterIKJointID( &chain, 2, 0.00001 );
 
@@ -395,8 +390,6 @@ void assert_ik_float(void)
 
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainGetJointDisAll( &chain, dis );
-
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointID( &chain, 1, 0.001 );
   rkChainRegisterIKJointID( &chain, 2, 0.001 );
 
@@ -461,8 +454,6 @@ void assert_ik_l2l(void)
   rkChainUpdateID( &chain );
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainGetJointDisAll( &chain, dis );
-
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.001 );
 
   attr.id = NL;
@@ -517,7 +508,6 @@ void assert_ik_arm(void)
   const char *dummy_name = "dummy";
 
   rkChainReadZTK( &chain, "../example/model/arm.ztk" );
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.001 );
   attr.id = 5;
   cell = rkChainRegisterIKCellWldPos( &chain, dummy_name, 0, &attr, RK_IK_ATTR_MASK_ID );
@@ -548,7 +538,6 @@ void assert_ik_componentwise(void)
   bool result = true;
 
   rkChainReadZTK( &chain, "../example/model/arm.ztk" );
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.001 );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
   rkChainFK( &chain, dis );
@@ -583,7 +572,6 @@ void assert_puma_arm(void)
   const char *dummy_name = "dummy";
 
   rkChainReadZTK( &chain, "../example/model/puma.ztk" );
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.001 );
   attr.id = 6;
   cell[0] = rkChainRegisterIKCellWldAtt( &chain, dummy_name, 0, &attr, RK_IK_ATTR_MASK_ID );
@@ -634,7 +622,6 @@ void assert_ik_rjo(void)
   const char *dummy_name = "dummy";
 
   rkChainReadZTK( &chain, "../example/model/H5.ztk" );
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJoint( &chain, "left_hip_rotation",    wn );
   rkChainRegisterIKJoint( &chain, "left_hip_abduction",   wn );
   rkChainRegisterIKJoint( &chain, "left_hip_flexion",     wn );

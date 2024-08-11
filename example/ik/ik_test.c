@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
 
   zRandInit();
   rkChainReadZTK( &chain, "../model/arm.ztk" );
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.001 );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
 

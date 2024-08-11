@@ -21,25 +21,23 @@ __BEGIN_DECLS
 
  Suppose \a chain is a kinematic chain.
 
- 1. Create the inverse kinematics solver by
-     rkChainCreateIK( &chain );
-
- 2. Register cooperating joints by
+ 1. Register cooperating joints by
      rkChainRegisterIKJoint( &chain, name, weight );
      ...
      \a name : name of a link which the joint is associated with.
-    rkChainRegisterIKJoint() is also available for changing the weight
-    on the joint displacement. rkChainRegisterIKJoint( &ik, name, weight2 )
-    changes the weight from \a weight to \a weight2.
+    rkChainRegisterIKJoint() is also available for changing the weight on the
+    joint displacement. rkChainRegisterIKJoint( &chain, name, weight2 ) changes
+    the weight from \a weight to \a weight2.
 
- 3. Register constraint cell of the inverse kinematics as
-     entry = rkChainRegisterIKCell*( &chain, name, priority, &attr, mask );
+ 2. Register constraint cell of the inverse kinematics as
+     cell = rkChainRegisterIKCell*( &chain, name, priority, &attr, mask );
     where
      \a name : name of the constraint
-     \a priority: priority of the constraint (The larger the number becomes, the higher the priority is.)
+     \a priority: priority of the constraint (A larger number means higher priority.)
      \a attr : attributes of the inverse kinematics constraint (see 'rk_ik_cell.h')
      \a mask : mask for an attribute to be specified
-    The following functions are avaible for the above rkChainRegisterIKCell*:
+    Note that * of the above rkChainRegisterIKCell* is the wild card.
+    The following functions are avaible for real implementations of rkChainRegisterIKCell*:
      rkChainRegisterIKCellWldPos : position of a point on a link in the world frame
      rkChainRegisterIKCellWldAtt : attitude of a link in the world frame
      rkChainRegisterIKCellL2LPos : relative position of a point on a link with respect to a frame of another link
@@ -48,21 +46,17 @@ __BEGIN_DECLS
      rkChainRegisterIKCellAM : angular momentum about the origin of the world frame
      rkChainRegisterIKCellAMCOM : angular momentum about the center of mass
 
- 4. Initialize the posture of \a chain.
+ 3. Initialize the posture of \a chain.
 
- 5. Set the referential values of the constraints by rkIKCellSetRef() and so forth.
+ 4. Set the referential values of the constraints by rkIKCellSetRef() and so forth.
     rkChainBindIK() is also available to set the references for the current values.
 
- 6. Solve the inverse kinematics by
+ 5. Solve the inverse kinematics by
      rkChainIK( &chain, dis, tol, iter );
+    where
      \a dis : a vector to store the solution of inverse kinematics
      \a tol : tolerance of error
-     \a iter : the maximum number of iteration (if 0, Z_MAX_ITER_NUM is applied).
-
- 7. (optional) Destroy the inverse kinematics solver if necessary after the computation by
-     rkChainDestroyIK( &chain );
-    Note that rkChainDestroyIK() is internally called by rkChainDestroy(). So,
-    it is not necessary to call it explicitly in many cases.
+     \a iter : the maximum number of iterations (if 0, Z_MAX_ITER_NUM is applied).
 
  * ***********************************************************/
 

@@ -69,8 +69,6 @@ int main(int argc, char *argv[])
   chain_init( &chain );
   dis = zVecAlloc( rkChainJointSize(&chain) );
   rkChainFK( &chain, dis );
-
-  rkChainCreateIK( &chain );
   rkChainRegisterIKJointAll( &chain, 0.01 );
 
   for( i=0; i<BRANCH_NUM; i++ ){
