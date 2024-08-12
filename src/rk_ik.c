@@ -146,7 +146,7 @@ bool rkChainCloneIK(rkChain *src, rkChain *dest)
 static bool _rkIKAllocCMat(rkIK *ik)
 {
   zMatFree( ik->_c_mat );
-  if( zListSize(&ik->cell_list) == 0 || zArraySize(ik->_j_idx) == 0 ){
+  if( zListSize(&ik->cell_list) == 0 || !ik->_j_idx || zArraySize(ik->_j_idx) == 0 ){
     ik->_c_mat = NULL;
     return true;
   }
@@ -435,6 +435,10 @@ static bool _rkIKCreateEquation(rkIK *ik, rkChain *chain, int min_priority, rkIK
   rkIKCell *cell;
   int row = 0;
 
+  if( !ik->_j_idx ){ /* joints are not registered. */
+    ZRUNERROR( RK_ERR_IK_JOINT_UNREGISTERED );
+    return false;
+  }
   ik->_eval = 0;
   zListForEach( &ik->cell_list, cell ){
     if( cell == terminator ) break;
@@ -556,6 +560,7 @@ static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*
   rkIKCell *terminator, *terminator_prev;
   int current_min_priority;
 
+  if( !chain->_ik ) return -1;
   _get_joint_dis( chain, dis );
   ZITERINIT( iter );
   rkChainZeroIKAcm( chain );
@@ -566,7 +571,7 @@ static int _rkChainIK(rkChain *chain, zVec dis, zVec (* _get_joint_dis)(rkChain*
            rkIKCellPriority(terminator) >= current_min_priority )
       terminator = zListCellNext(terminator);
     for( rest=HUGE_VAL, i=0; i<iter; i++ ){
-      if( !_rkIKCreateEquation( chain->_ik, chain, current_min_priority, terminator ) ) break;
+      if( !_rkIKCreateEquation( chain->_ik, chain, current_min_priority, terminator ) ) return -1;
       _solve_ik_one( chain, dis, 1.0 );
       if( zIsTol( chain->_ik->_eval - rest, tol ) ){
         iter_count += i;

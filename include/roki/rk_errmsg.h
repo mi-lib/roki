@@ -51,6 +51,7 @@
 
 #define RK_ERR_SHAPE_UNKNOWN            "%s: unknown shape"
 
+#define RK_ERR_IK_JOINT_UNREGISTERED    "joint not registered"
 #define RK_ERR_IK_CONSTRAINT_NOTFOUND   "constraint %s of the inverse kinematics not found"
 #define RK_ERR_IK_CONSTRAINT_PREDEFINED "constraint %s of the inverse kinematics predefined"
 #define RK_ERR_IK_CELL_IS_NULL          "null pointer specified for IK cell"
