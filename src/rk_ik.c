@@ -651,7 +651,7 @@ static void _rkChainIKConfJointFPrintZTK(FILE *fp, rkChain *chain)
       fprintf( fp, "joint: %s\t%g", zName(rkChainLink(chain,i)), chain->_ik->joint_weight[i] );
       if( !dis_is_zero ){
         fputc( ' ', fp );
-        rkChainLinkJoint(chain,i)->com->_dis_fprintZTK( fp, i, rkChainLinkJoint(chain,i) );
+        rkJointDisFPrintZTK( fp, rkChainLinkJoint(chain,i) );
       } else
         fprintf( fp, "\n" );
     }

@@ -1,3 +1,5 @@
+2024. 8.12. Modified _rkChainInitFPrintZTK and _rkChainIKConfJointFPrintZTK to use rkJointDisFPrintZTK. [rk_chain, rk_ik]
+2024. 8.12. Added rkJointDisFPrintZTK. [rk_joint]
 2024. 8.11. Modified rkChainRegisterIKJointID, rkChainUnregisterIKJointID, rkChainRegisterIKCell, rkChainUnregisterIKCell, and rkChainUnregisterAndDestroyIKCell to automatically create the IK solver of a specified kinematic chain. [rk_ik, test, example]
 2024. 8. 6. Reflect renaming of zVecFreeAtOnce and zMatFreeAtOnce. [rk_chain, example, test]
 2024. 8. 4. Debugged _rkIKAllocCVec and _rkIKAllocCMat to nullify internal matrices and vectors if the list of constraint cells is empty. [rk_ik]

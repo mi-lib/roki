@@ -386,6 +386,7 @@ __ROKI_EXPORT rkJoint *rkJointAssignMotorByStr(rkJoint *joint, rkMotorSpecArray 
 
 __ROKI_EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk);
 
+#define rkJointDisFPrintZTK(fp,joint)   (joint)->com->_dis_fprintZTK( fp, 0, joint )
 #define rkJointFPrintZTK(fp,joint,name) ( (name) ? (joint)->com->_fprintZTK( fp, joint, name ) : (joint)->com->_fprintZTK( fp, joint, (char *)"dis" ) )
 
 __END_DECLS

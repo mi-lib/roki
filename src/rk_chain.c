@@ -921,7 +921,7 @@ static void _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
     link = rkChainLink((rkChain*)obj,k);
     if( rkLinkJointDOF(link) == 0 || rkJointIsNeutral( rkLinkJoint(link) ) ) continue;
     fprintf( fp, "joint: %s ", zName(link) );
-    rkLinkJoint(link)->com->_dis_fprintZTK( fp, 0, rkLinkJoint(link) );
+    rkJointDisFPrintZTK( fp, rkLinkJoint(link) );
   }
 }
 
