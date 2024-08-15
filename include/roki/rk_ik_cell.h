@@ -62,8 +62,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
 __ROKI_EXPORT rkIKAttr* rkIKAttrInit(rkIKAttr *attr);
 
 /*! \brief set attributes of an IK cell */
-#define rkIKAttrSetLinkID(attr,chain,i)       ( (attr)->id = rkChainFindLinkID( chain, i ) )
-#define rkIKAttrSetLinkID2(attr,chain,i)      ( (attr)->id_sub = rkChainFindLinkID( chain, i ) )
+#define rkIKAttrSetLinkID(attr,chain,name)    ( (attr)->id = rkChainFindLinkID( chain, name ) )
+#define rkIKAttrSetLinkID2(attr,chain,name)   ( (attr)->id_sub = rkChainFindLinkID( chain, name ) )
 #define rkIKAttrSetAttentionPoint(attr,x,y,z) zVec3DCreate( &(attr)->attention_point, (x), (y), (z) )
 #define rkIKAttrCopyAttentionPoint(attr,pos)  zVec3DCopy( pos, &(attr)->attention_point )
 

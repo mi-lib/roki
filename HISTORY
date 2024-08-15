@@ -1,3 +1,4 @@
+2024. 8.15. Debugged rkIKAttrSetLinkID and rkIKAttrSetLinkID2. [rk_ik_cell]
 2024. 8.12. Debugged _rkChainIK to cope with an eccentric case where _ik member of rkChain is not initialized. [rk_ik]
 2024. 8.12. Debugged _rkIKAllocCMat and _rkIKCreateEquation to cope with an irregular situation where joints are not registered. [rk_errmsg, rk_ik]
 2024. 8.12. Modified _rkChainInitFPrintZTK and _rkChainIKConfJointFPrintZTK to use rkJointDisFPrintZTK. [rk_chain, rk_ik]
