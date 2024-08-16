@@ -156,21 +156,21 @@ double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t)
 }
 
 /* for ABI */
-zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m)
+zMat6D *rkJointXformMat6D(zFrame3D *frame, zMat6D *i, zMat6D *m)
 {
   zMat3D tmpm, tmpm2;
 
-  zRotMat3D( zFrame3DAtt(f), &i->e[0][0], &m->e[0][0] );
-  zRotMat3D( zFrame3DAtt(f), &i->e[0][1], &m->e[0][1] );
-  zRotMat3D( zFrame3DAtt(f), &i->e[1][1], &m->e[1][1] );
+  zRotMat3D( zFrame3DAtt(frame), &i->e[0][0], &m->e[0][0] );
+  zRotMat3D( zFrame3DAtt(frame), &i->e[0][1], &m->e[0][1] );
+  zRotMat3D( zFrame3DAtt(frame), &i->e[1][1], &m->e[1][1] );
 
-  zMulVec3DOuterProdMat3D( zFrame3DPos(f), &m->e[0][0], &tmpm );
+  zMulVec3DOuterProdMat3D( zFrame3DPos(frame), &m->e[0][0], &tmpm );
   zMat3DT( &m->e[0][1], &tmpm2 );
   zMat3DAddDRC( &m->e[0][1], &tmpm );
   zMat3DT( &m->e[0][1], &m->e[1][0] );
-  zMulVec3DOuterProdMat3D( zFrame3DPos(f), &m->e[1][0], &tmpm );
+  zMulVec3DOuterProdMat3D( zFrame3DPos(frame), &m->e[1][0], &tmpm );
   zMat3DAddDRC( &m->e[1][1], &tmpm );
-  zMulVec3DOuterProdMat3D( zFrame3DPos(f), &tmpm2, &tmpm );
+  zMulVec3DOuterProdMat3D( zFrame3DPos(frame), &tmpm2, &tmpm );
   zMat3DT( &tmpm, &tmpm );
   zMat3DAddDRC( &m->e[1][1], &tmpm );
   return m;

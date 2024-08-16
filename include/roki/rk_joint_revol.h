@@ -12,13 +12,13 @@
 __BEGIN_DECLS
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointRevolPrp ){
-  double min;       /* minimum joint displacement */
-  double max;       /* maximum joint displacement */
-  double stiffness; /* joint stiffness */
-  double viscosity; /* joint viscosity */
-  double coulomb;   /* joint coulomb friction */
-  double tf;  /* friction */
-  double sf;  /* static friction */
+  double min;       /*!< minimum joint displacement */
+  double max;       /*!< maximum joint displacement */
+  double stiffness; /*!< joint stiffness */
+  double viscosity; /*!< joint viscosity */
+  double coulomb;   /*!< joint coulomb friction */
+  double tf;        /*!< friction */
+  double sf;        /*!< static friction */
 };
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointRevolState ){

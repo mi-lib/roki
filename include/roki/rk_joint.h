@@ -102,7 +102,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   /* I/O */
   void *(*_dis_fromZTK)(void*,int,void*,ZTK*);
   rkJoint *(*_fromZTK)(rkJoint*,rkMotorSpecArray*,ZTK*);
-  void (*_dis_fprintZTK)(FILE*,int,void*);
+  bool (*_dis_fprintZTK)(FILE*,int,void*);
   void (*_fprintZTK)(FILE*,rkJoint*,char*);  /* print */
 };
 
@@ -294,9 +294,9 @@ __ROKI_EXPORT zVec3D *_rkJointAxisZ(rkJoint *joint, zFrame3D *f, zVec3D *a);
 #define rkJointCRBWrench(joint,m,w) (joint)->com->_crb_wrench( (joint), m, w )
 #define rkJointCRBXform(joint,f,s)  (joint)->com->_crb_xform( (joint), f, s )
 
-/* NOTE: The following macros and functions are for sharing
- * some operation codes. Do not use them in users programs. */
-#define _rkJointRestTrq(s,v,c,dis,vel) ( -s*dis -v*vel -c*zSgn(vel) )
+/* NOTE: The following macros and functions are for sharing some operation codes.
+ * Do not use them in users programs. */
+#define _rkJointRestTrq(stiffness,viscosity,coulomb,dis,vel) ( -(stiffness)*(dis) -(viscosity)*(vel) -(coulomb)*zSgn(vel) )
 
 /* Composite Rigid Body */
 /* The following macros are supposed to be used only in internal methods for
@@ -347,7 +347,7 @@ __ROKI_EXPORT zVec3D *_rkJointAxisZ(rkJoint *joint, zFrame3D *f, zVec3D *a);
 #define rkJointABIQAcc(joint,i,b,c,h,a)     (joint)->com->_qacc( (joint), i, b, c, h, a )
 #define rkJointUpdateWrench(joint,i,b,a)    (joint)->com->_wrench( (joint), i, b, a )
 
-__ROKI_EXPORT zMat6D *rkJointXformMat6D(zFrame3D *f, zMat6D *i, zMat6D *m);
+__ROKI_EXPORT zMat6D *rkJointXformMat6D(zFrame3D *frame, zMat6D *i, zMat6D *m);
 __ROKI_EXPORT void _rkJointUpdateWrench(rkJoint *joint, zMat6D *i, zVec6D *b, zVec6D *acc);
 
 /* dummy functions for motorless joints */

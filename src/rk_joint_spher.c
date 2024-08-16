@@ -268,8 +268,9 @@ static void *_rkJointSpherMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return rkJointAssignMotorByStr( (rkJoint *)joint, (rkMotorSpecArray *)arg, ZTKVal(ztk) );
 }
 
-static void _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
   zVec3DDataNLFPrint( fp, &_rks(joint)->aa );
+  return true;
 }
 
 static ZTKPrp __ztk_prp_rkjoint_spher[] = {

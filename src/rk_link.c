@@ -419,29 +419,43 @@ static void *_rkLinkShapeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return obj;
 }
 
-static void _rkLinkNameFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkLinkNameFPrintZTK(FILE *fp, int i, void *obj){
   fprintf( fp, "%s\n", zName((rkLink*)obj) );
+  return true;
 }
-static void _rkLinkJointTypeFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkLinkJointTypeFPrintZTK(FILE *fp, int i, void *obj){
   fprintf( fp, "%s\n", rkLinkJointTypeStr((rkLink*)obj) );
+  return true;
 }
-static void _rkLinkMassFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkLinkMassFPrintZTK(FILE *fp, int i, void *obj){
+  if( zIsTiny( rkLinkMass((rkLink*)obj) ) ) return false;
   fprintf( fp, "%.10g\n", rkLinkMass((rkLink*)obj) );
+  return true;
 }
-static void _rkLinkStuffFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkLinkStuffFPrintZTK(FILE *fp, int i, void *obj){
+  if( !rkLinkStuff((rkLink*)obj) ) return false;
   fprintf( fp, "%s\n", rkLinkStuff((rkLink*)obj) );
+  return true;
 }
-static void _rkLinkCOMFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkLinkCOMFPrintZTK(FILE *fp, int i, void *obj){
+  if( zVec3DIsTiny( rkLinkCOM((rkLink*)obj) ) ) return false;
   zVec3DFPrint( fp, rkLinkCOM((rkLink*)obj) );
+  return true;
 }
-static void _rkLinkInertiaFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkLinkInertiaFPrintZTK(FILE *fp, int i, void *obj){
+  if( zMat3DIsTiny( rkLinkInertia((rkLink*)obj) ) ) return false;
   zMat3DFPrint( fp, rkLinkInertia((rkLink*)obj) );
+  return true;
 }
-static void _rkLinkPosFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkLinkPosFPrintZTK(FILE *fp, int i, void *obj){
+  if( zVec3DIsTiny( rkLinkOrgPos((rkLink*)obj) ) ) return false;
   zVec3DFPrint( fp, rkLinkOrgPos((rkLink*)obj) );
+  return true;
 }
-static void _rkLinkAttFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkLinkAttFPrintZTK(FILE *fp, int i, void *obj){
+  if( zMat3DIsIdent( rkLinkOrgAtt((rkLink*)obj) ) ) return false;
   zMat3DFPrint( fp, rkLinkOrgAtt((rkLink*)obj) );
+  return true;
 }
 
 static ZTKPrp __ztk_prp_rklink[] = {

@@ -270,8 +270,9 @@ static void *_rkJointFloatDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return joint;
 }
 
-static void _rkJointFloatDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointFloatDisFPrintZTK(FILE *fp, int i, void *joint){
   zVec6DDataNLFPrint( fp, &_rks(joint)->dis );
+  return true;
 }
 
 static ZTKPrp __ztk_prp_rkjoint_float[] = {

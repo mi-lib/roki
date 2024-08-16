@@ -308,14 +308,17 @@ static void *_rkJointBrFloatTorqueThFromZTK(void *joint, int i, void *arg, ZTK *
   return joint;
 }
 
-static void _rkJointBrFloatDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointBrFloatDisFPrintZTK(FILE *fp, int i, void *joint){
   zVec6DDataNLFPrint( fp, &_rks(joint)->dis );
+  return true;
 }
-static void _rkJointBrFloatForceThFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointBrFloatForceThFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g\n", _rkp(joint)->ep_f );
+  return true;
 }
-static void _rkJointBrFloatTorqueThFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointBrFloatTorqueThFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g\n", _rkp(joint)->ep_t );
+  return true;
 }
 
 static ZTKPrp __ztk_prp_rkjoint_brfloat[] = {

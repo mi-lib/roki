@@ -301,26 +301,39 @@ static void *_rkJointRevolMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return rkJointAssignMotorByStr( (rkJoint *)joint, (rkMotorSpecArray *)arg, ZTKVal(ztk) );
 }
 
-static void _rkJointRevolDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolDisFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g\n", zRad2Deg(_rks(joint)->dis) );
+  return true;
 }
-static void _rkJointRevolMinFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolMinFPrintZTK(FILE *fp, int i, void *joint){
+  if( zIsInf( -_rkp(joint)->min ) ) return false;
   fprintf( fp, "%.10g\n", zRad2Deg(_rkp(joint)->min) );
+  return true;
 }
-static void _rkJointRevolMaxFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolMaxFPrintZTK(FILE *fp, int i, void *joint){
+  if( zIsInf( _rkp(joint)->max ) ) return false;
   fprintf( fp, "%.10g\n", zRad2Deg(_rkp(joint)->max) );
+  return true;
 }
-static void _rkJointRevolStiffnessFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolStiffnessFPrintZTK(FILE *fp, int i, void *joint){
+  if( zIsTiny( _rkp(joint)->stiffness ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->stiffness );
+  return true;
 }
-static void _rkJointRevolViscosityFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolViscosityFPrintZTK(FILE *fp, int i, void *joint){
+  if( zIsTiny( _rkp(joint)->viscosity ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->viscosity );
+  return true;
 }
-static void _rkJointRevolCoulombFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolCoulombFPrintZTK(FILE *fp, int i, void *joint){
+  if( zIsTiny( _rkp(joint)->coulomb ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->coulomb );
+  return true;
 }
-static void _rkJointRevolStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
+  if( zIsTiny( _rkp(joint)->sf ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->sf );
+  return true;
 }
 
 static ZTKPrp __ztk_prp_rkjoint_revol[] = {
