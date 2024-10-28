@@ -31,6 +31,9 @@
 #define RK_WARN_IK_CONSTRAINT_ALREADY_REGISTERED "constraint %s already registered, replaced"
 #define RK_WARN_IK_CONSTRAINT_DUALLYDEFINED_LINK "duplicate specification of a link %s"
 
+#define RK_WARN_URDF_UNNAMED_SHAPE      "Unnamed shape. Skipped"
+#define RK_WARN_URDF_UNKNOWN_SHAPETYPE  "Unknown type of a shape: %s"
+
 /* error messages */
 
 #define RK_ERR_CONTACT_UNBOUND          "unbound contact info"
@@ -56,6 +59,11 @@
 #define RK_ERR_IK_CONSTRAINT_PREDEFINED "constraint %s of the inverse kinematics predefined"
 #define RK_ERR_IK_CELL_IS_NULL          "null pointer specified for IK cell"
 #define RK_ERR_IK_CELL_NOTFOUND         "IK cell %s not found"
+
+#define RK_ERR_URDF_UNCONNECTED_JOINT   "unconnected joint %s"
+#define RK_ERR_URDF_ROOT_LINK_NOTFOUND  "root link not found"
+#define RK_ERR_URDF_UNKNOWN_JOINTTYPE   "Unknown type of a joint %s"
+#define RK_ERR_URDF_INVALID             "invalid URDF file"
 
 #define RK_ERR_FATAL                    "fatal error! - please report to the author"
 

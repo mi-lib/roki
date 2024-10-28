@@ -957,10 +957,21 @@ static ZTKPrp __ztk_prp_tag_rkchain[] = {
 
 rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
 {
-  int num_motor, num_link;
+  int num_motor, num_link, i;
 
+  rkChainInit( chain );
+  /* optical infos and shapes */
+  if( ZTKCountTag( ztk, ZTK_TAG_SHAPE ) > 0 ){
+    if( !( rkChainShape(chain) = zAlloc( zMShape3D, 1 ) ) ){
+      ZALLOCERROR();
+      return NULL;
+    }
+    if( !zMShape3DFromZTK( rkChainShape(chain), ztk ) ) return NULL;
+  }
+  /* motors */
   if( ( num_motor = ZTKCountTag( ztk, ZTK_TAG_RKMOTOR ) ) > 0 )
     if( !rkMotorSpecArrayAlloc( rkChainMotorSpecArray(chain), num_motor ) ) return NULL;
+  /* links */
   if( ( num_link = ZTKCountTag( ztk, ZTK_TAG_RKLINK ) ) > 0 ){
     if( !rkLinkArrayAlloc( rkChainLinkArray(chain), num_link ) ) return NULL;
     ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_optic ); /* to skip [optic] fields */
@@ -972,7 +983,6 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     rkChainSetJointIDOffset( chain ); /* joint identifier offset value */
     rkChainUpdateCRBMass( chain );
   } else{
-    int i;
     if( !rkChainShape(chain) ){
       ZRUNWARN( RK_WARN_CHAIN_EMPTY );
       return NULL;
@@ -1013,20 +1023,7 @@ rkChain *rkChainReadZTK(rkChain *chain, const char *filename)
   ZTK ztk;
 
   ZTKInit( &ztk );
-  if( ZTKParse( &ztk, (char *)filename ) ){
-    /* read optical infos and shapes */
-    rkChainInit( chain );
-    if( ZTKCountTag( &ztk, ZTK_TAG_SHAPE ) > 0 ){
-      if( !( rkChainShape(chain) = zAlloc( zMShape3D, 1 ) ) ){
-        ZALLOCERROR();
-        return NULL;
-      }
-      if( !zMShape3DFromZTK( rkChainShape(chain), &ztk ) ) return NULL;
-    }
-    /* read robot name, motors and links */
-    chain = rkChainFromZTK( chain, &ztk );
-  } else
-    chain = NULL;
+  chain = ZTKParse( &ztk, filename ) ? rkChainFromZTK( chain, &ztk ) : NULL;
   ZTKDestroy( &ztk );
   return chain;
 }
@@ -1036,7 +1033,7 @@ bool rkChainWriteZTK(rkChain *c, const char *filename)
 {
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( (char *)filename, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( filename, "w" ) ) ) return false;
   rkChainFPrintZTK( fp, c );
   fclose(fp);
   return true;

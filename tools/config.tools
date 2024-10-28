@@ -3,3 +3,7 @@ LIB+=`zeo-config -L`
 DEF+=`zeo-config -D`
 LINK+=`zeo-config -l`
 LINKCPP+=`zeo-config -lcpp`
+
+ifeq ($(CONFIG_USE_URDF),y)
+	DEF += -D__ROKI_USE_URDF
+endif

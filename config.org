@@ -1,2 +1,6 @@
 PREFIX=${HOME}/usr
 STD=c89
+
+# URDF
+# (libxml2 required)
+CONFIG_USE_URDF=y
