@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : inverted_pendulum
 
-[optic]
+[zeo::optic]
 name: brown
 ambient: 0.4, 0.3, 0.2
 diffuse: 0.4, 0.2, 0.0
@@ -9,7 +9,7 @@ specular: 0.0, 0.0, 0.0
 esr: 0.7
 alpha: 1
 
-[optic]
+[zeo::optic]
 name: silver
 ambient: 0.8, 0.8, 0.8
 diffuse: 0.4, 0.4, 0.4
@@ -17,7 +17,7 @@ specular: 0.0, 0.0, 0.0
 esr: 0.8
 alpha: 1
 
-[shape]
+[zeo::shape]
 type : cylinder
 name : base
 optic: brown
@@ -25,7 +25,7 @@ center: { 0.0, 0.0, 0.0 }
 center: { 0.0, 0.0, 0.29 }
 radius: 0.2
 
-[shape]
+[zeo::shape]
 type : box
 name : arm
 optic: silver
@@ -34,7 +34,7 @@ width: 0.01
 height: 0.01
 depth: 0.49
 
-[shape]
+[zeo::shape]
 type : cylinder
 name : pendulum
 optic: silver
@@ -42,7 +42,7 @@ center: { 0.0, 0.0, 0.0 }
 center: { 0.39, 0.0, 0.0 }
 radius: 0.01
 
-[link]
+[roki::link]
 name: base
 jointtype: fixed
 frame: {
@@ -52,7 +52,7 @@ frame: {
 }
 shape: base
 
-[link]
+[roki::link]
 name: arm
 jointtype: revolute
 stiffness: 0
@@ -72,7 +72,7 @@ frame: {
 shape: arm
 parent: base
 
-[link]
+[roki::link]
 name: pendulum
 jointtype: revolute
 stiffness: 0
@@ -92,7 +92,7 @@ COM: { 0.195, 0, 0 }
 shape: pendulum
 parent: arm
 
-[link]
+[roki::link]
 name: tip
 jointtype: fixed
 frame: {

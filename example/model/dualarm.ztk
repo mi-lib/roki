@@ -1,28 +1,28 @@
-[chain]
+[roki::chain]
 name : dualarm
 
-[optic]
+[zeo::optic]
 name: white
 ambient:  1.0, 1.0, 1.0
 diffuse:  1.0, 1.0, 1.0
 specular: 0.0, 0.0, 0.0
 esr: 1.0
 
-[optic]
+[zeo::optic]
 name: green
 ambient:  0.0, 1.0, 0.0
 diffuse:  0.0, 1.0, 0.0
 specular: 0.0, 0.0, 0.0
 esr: 1.0
 
-[optic]
+[zeo::optic]
 name: red
 ambient:  1.0, 0.0, 0.0
 diffuse:  1.0, 0.0, 0.0
 specular: 0.0, 0.0, 0.0
 esr: 1.0
 
-[shape]
+[zeo::shape]
 name: base
 type: cylinder
 optic: white
@@ -30,7 +30,7 @@ center: 0, 0, 0
 center: 0, 0, 0.06
 radius: 0.05
 
-[shape]
+[zeo::shape]
 name: shaft
 type: cylinder
 optic: white
@@ -38,14 +38,14 @@ center: 0, 0, 0.02
 center: 0, 0, 0.13
 radius: 0.01
 
-[shape]
+[zeo::shape]
 name: joint
 type: sphere
 optic: green
 center: 0, 0, 0
 radius: 0.02
 
-[shape]
+[zeo::shape]
 name: wrist
 type: cylinder
 optic: white
@@ -53,7 +53,7 @@ center: 0, 0, 0.0
 center: 0, 0,-0.03
 radius: 0.01
 
-[shape]
+[zeo::shape]
 name: hand
 type: cone
 optic: red
@@ -62,7 +62,7 @@ vert: 0, 0, 0.05
 radius: 0.02
 
 % 0:base
-[link]
+[roki::link]
 name : base
 mass : 1.0
 jointtype : fixed
@@ -73,7 +73,7 @@ frame: {
 }
 shape: base
 
-[link]
+[roki::link]
 name : link11
 jointtype : spherical
 frame: {
@@ -85,7 +85,7 @@ parent : base
 shape: joint
 shape: shaft
 
-[link]
+[roki::link]
 name : link12
 jointtype : spherical
 frame: {
@@ -97,7 +97,7 @@ parent : link11
 shape: joint
 shape: shaft
 
-[link]
+[roki::link]
 name : hand1
 jointtype : spherical
 frame: {
@@ -109,7 +109,7 @@ parent : link12
 shape: wrist
 shape: hand
 
-[link]
+[roki::link]
 name : link21
 jointtype : spherical
 frame: {
@@ -121,7 +121,7 @@ parent : base
 shape: joint
 shape: shaft
 
-[link]
+[roki::link]
 name : link22
 jointtype : spherical
 frame: {
@@ -133,7 +133,7 @@ parent : link21
 shape: joint
 shape: shaft
 
-[link]
+[roki::link]
 name : hand2
 jointtype : spherical
 frame: {
@@ -145,6 +145,6 @@ parent : link22
 shape: wrist
 shape: hand
 
-[init]
+[roki::chain::init]
 link11: 1.5707963267948966 0 0
 link21: 1.5707963267948966 0 0

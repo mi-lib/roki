@@ -1,3 +1,6 @@
+2024.10.29. Renamed ZTK_TAG_RKCONTACTINFO, ZTK_TAG_RKMOTOR, ZTK_TAG_RKLINK, ZTK_TAG_RKCHAIN, ZTK_TAG_RKCHAIN_INIT, and ZTK_TAG_RKCHAIN_IK to ZTK_TAG_ROKI_CONTACTINFO, ZTK_TAG_ROKI_MOTOR, ZTK_TAG_ROKI_LINK, ZTK_TAG_ROKI_CHAIN, ZTK_TAG_ROKI_CHAIN_INIT, and ZTK_TAG_ROKI_CHAIN_IK, respectively. [rk_contact, rk_motor, rk_link, rk_chain, rk_chain_urdf, rk_ik]
+2024.10.29. Redefined ZTK_TAG_RKCONTACTINFO, ZTK_TAG_RKMOTOR, ZTK_TAG_RKLINK, ZTK_TAG_RKCHAIN, ZTK_TAG_RKCHAIN_INIT, and ZTK_TAG_RKCHAIN_IK as "roki::contact", "roki::motor", "roki::link", "roki::chain", "roki::chain::init", and "roki::chain::ik", respectively. [rk_contact, rk_motor, rk_link, rk_chain, rk_ik, example]
+2024.10.29. Renamed ZTK_TAG_INIT and ZTK_TAG_RKIK to ZTK_TAG_RKCHAIN_INIT and ZTK_TAG_RKCHAIN_IK, respectively. [rk_chain, rk_ik]
 2024.10.28. Added rkChainReadURDF and rkURDF2ZTK, and reimplemented urdf2ztk. [config, rk_errmsg, rk_chain_urdf, app]
 2024.10.28. Modified rkChainFromZTK to compose a shaped rkChain, and simplified rkChainReadZTK. [rk_chain]
 2024. 8.16. Modified _rkJointRestTrq. [rk_joint]

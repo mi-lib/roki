@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : crawler
 
-[optic]
+[zeo::optic]
 name: green
 ambient: 0.1 0.2 0.1
 diffuse: 0.1 0.3 0.1
@@ -10,7 +10,7 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[optic]
+[zeo::optic]
 name: black
 ambient: 0.1 0.1 0.1
 diffuse: 0.3 0.3 0.3
@@ -19,7 +19,7 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[shape]
+[zeo::shape]
 type : box
 name : shape##body
 optic : green
@@ -28,7 +28,7 @@ depth : 0.2
 width : 0.2
 height : 0.1
 
-[shape]
+[zeo::shape]
 type : polyhedron
 name : shape##crawler_left
 optic : black
@@ -89,7 +89,7 @@ face: 19 8 11
 face: 19 11 15
 face: 19 15 6
 
-[shape]
+[zeo::shape]
 type : polyhedron
 name : shape##crawler_right
 optic : black
@@ -150,7 +150,7 @@ face: 19 8 11
 face: 19 11 15
 face: 19 15 6
 
-[link]
+[roki::link]
 name: link##body
 jointtype: float
 mass: 1.0
@@ -168,7 +168,7 @@ frame: {
 }
 shape: shape##body
 
-[link]
+[roki::link]
 name: link##crawler_left
 jointtype: fixed
 mass: 1.4
@@ -187,7 +187,7 @@ frame: {
 shape: shape##crawler_left
 parent: link##body
 
-[link]
+[roki::link]
 name: link##crawler_right
 jointtype: fixed
 mass: 1.4

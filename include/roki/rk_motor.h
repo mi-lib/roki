@@ -74,7 +74,7 @@ __ROKI_EXPORT void rkMotorSpecFPrintZTK(FILE *fp, rkMotorSpec *ms);
  * \brief array of motor specifications
  * ********************************************************** */
 
-#define ZTK_TAG_RKMOTOR "motor"
+#define ZTK_TAG_ROKI_MOTOR "roki::motor"
 zArrayClass( rkMotorSpecArray, rkMotorSpec );
 
 __ROKI_EXPORT rkMotorSpecArray *rkMotorSpecArrayAlloc(rkMotorSpecArray *msarray, int size);

@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : box
 
-[optic]
+[zeo::optic]
 name: green
 ambient: 0.2 0.8 0.2
 diffuse: 0.3 1 0.3
@@ -10,29 +10,22 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[shape]
+[zeo::shape]
 type : box
 name : shape
 optic : green
-center : 0, 0, 0
 depth : 0.1
 width : 0.1
 height : 0.1
 
-[link]
+[roki::link]
 name: link#00
 jointtype: float
 mass: 0.5
 stuff: body
-COM: { 0, 0, 0 }
 inertia: {
  8.33e-4, 0, 0
  0, 8.33e-4, 0
  0, 0, 8.33e-4
-}
-frame: {
- 1, 0, 0, 0
- 0, 1, 0, 0
- 0, 0, 1, 0
 }
 shape: shape

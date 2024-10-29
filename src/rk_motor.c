@@ -141,7 +141,7 @@ void rkMotorSpecArrayFPrintZTK(FILE *fp, rkMotorSpecArray *msarray)
   int i;
 
   for( i=0; i<zArraySize(msarray); i++ ){
-    fprintf( fp, "[%s]\n", ZTK_TAG_RKMOTOR );
+    fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_MOTOR );
     rkMotorSpecFPrintZTK( fp, zArrayElemNC(msarray,i) );
   }
 }

@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : 2DOF_arm
 
-[optic]
+[zeo::optic]
 name: white
 ambient: 0.8 0.8 0.8
 diffuse: 1 1 1
@@ -10,7 +10,7 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[optic]
+[zeo::optic]
 name: white2
 ambient: 0.5 0.5 0.5
 diffuse: 0.7 0.7 0.7
@@ -19,7 +19,7 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[optic]
+[zeo::optic]
 name: gray
 ambient: 0.2 0.1 0.1
 diffuse: 0.4 0.2 0.1
@@ -28,7 +28,7 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[optic]
+[zeo::optic]
 name: gray2
 ambient: 0.3 0.2 0.1
 diffuse: 0.5 0.3 0.2
@@ -37,7 +37,7 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[shape]
+[zeo::shape]
 type : polyhedron
 name : shape_base
 optic: gray
@@ -62,7 +62,7 @@ face: 3 4 0
 face: 7 6 5
 face: 7 5 4
 
-[shape]
+[zeo::shape]
 type : polyhedron
 name : shape#01
 optic: white
@@ -87,7 +87,7 @@ face: 3 4 0
 face: 7 6 5
 face: 7 5 4
 
-[shape]
+[zeo::shape]
 type : polyhedron
 name : shape#02
 optic: white2
@@ -112,7 +112,7 @@ face: 3 4 0
 face: 7 6 5
 face: 7 5 4
 
-[shape]
+[zeo::shape]
 type : cylinder
 name : shape_motor_base
 optic : gray2
@@ -120,7 +120,7 @@ center : 0.15, 0, -0.05
 center : 0.15, 0, 0.05
 radius : 0.05
 
-[shape]
+[zeo::shape]
 type : cylinder
 name : shape_motor
 optic : white2
@@ -128,7 +128,7 @@ center : 0.4, 0, -0.05
 center : 0.4, 0, 0.05
 radius : 0.05
 
-[motor]
+[roki::motor]
 name : motor1
 type: dc
 motorconstant : 2.58e-2
@@ -139,7 +139,7 @@ gearratio : 120.0
 rotorinertia : 1.65e-6
 gearinertia : 5.38e-6
 
-[link]
+[roki::link]
 name: link#00
 jointtype: fixed
 mass: 1.5
@@ -158,7 +158,7 @@ frame: {
 shape: shape_base
 shape: shape_motor_base
 
-[link]
+[roki::link]
 name: link#01
 jointtype: revolute
 min: -180
@@ -185,7 +185,7 @@ shape: shape#02
 shape: shape_motor
 parent: link#00
 
-[link]
+[roki::link]
 name: link#02
 jointtype: revolute
 min: -180

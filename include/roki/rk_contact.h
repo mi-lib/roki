@@ -95,7 +95,7 @@ __ROKI_EXPORT rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, doubl
  */
 __ROKI_EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, const char *stf1, const char *stf2);
 
-#define ZTK_TAG_RKCONTACTINFO "contact"
+#define ZTK_TAG_ROKI_CONTACTINFO "roki::contact"
 
 /*! \brief print information of a contact model out to the current position of a ZTK file.
  *

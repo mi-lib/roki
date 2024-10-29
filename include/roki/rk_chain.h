@@ -507,30 +507,25 @@ __ROKI_EXPORT void rkChainNeutralize(rkChain *chain);
 
 /*! \brief inverse dynamics of kinematic chain.
  *
- * rkChainUpdateID() computes the inverse dynamics of a kinematic chain \a chain
+ * rkChainUpdateID_G() computes the inverse dynamics of a kinematic chain \a chain
  * under an acceleration of field \a g by the Newton-Euler's method. It supposes
  * that the joint displacements, velocities, and accelerations of \a chain are
  * updated in advance.
- * rkChainUpdateIDGravity() computes the inverse dynamics of \a chain in the
- * gravitational field.
- * rkChainUpdateIDZeroGravity() computes the inverse dynamics of \a chain in the
- * gravity-free field.
+ * rkChainUpdateID() computes the inverse dynamics of \a chain in the gravitational field.
+ * rkChainUpdateID0G() computes the inverse dynamics of \a chain in the gravity-free field.
  *
- * rkChainID() computes the inverse dynamics of \a chain, provided the joint
- * velocity \a vel, the acceleration \a acc, and an acceleration of field
- * \a g.
- * rkChainIDGravity() and rkChainIDZeroGravity() compute the inverse dynamics
- * of \a chain in the gravitational field and the gravity-free field, respectively,
- * provided \a vel and \a acc.
+ * rkChainID_G() computes the inverse dynamics of \a chain, provided the joint velocity
+ * \a vel, the acceleration \a acc, and an acceleration of field \a g.
+ * rkChainID() and rkChainID0G() compute the inverse dynamics of \a chain in the
+ * gravitational field and the gravity-free field, respectively, provided \a vel and \a acc.
  *
  * rkChainFKCNT() continuously updates the joint displacement for \a dis over
  * the time step \a dt, and then, computes the inverse dynamics in the graviational
  * field. All the joint velocities and accelerations of \a chain will be updated
  * in accordance with a simple numerical differentiation.
  * \return
- * rkChainUpdateID(), rkChainUpdateIDGravity(), rkChainUpdateIDZeroGravity(),
- * rkChainID(), rkChainIDGravity(), rkChainIDZeroGravity(), and rkChainFKCNT()
- * do not return any values.
+ * rkChainUpdateID_G(), rkChainUpdateID(), rkChainUpdateID0G(), rkChainID_G(), rkChainID(),
+ * rkChainID0G(), and rkChainFKCNT() do not return any values.
  */
 __ROKI_EXPORT void rkChainUpdateID_G(rkChain *chain, zVec6D *g);
 #define rkChainUpdateID(chain)     rkChainUpdateID_G( chain, RK_GRAVITY6D )
@@ -542,26 +537,22 @@ __ROKI_EXPORT void rkChainFKCNT(rkChain *chain, zVec dis, double dt);
 
 /*! \brief link acceleration at zero joint acceleration.
  *
- * rkChainLinkZeroAcc() computes 6D acceleration of a point \a p on the
- * \a id th link of a kinematic chain \a chain at zero-joint acceleration.
- * This corresponds to the multiplication of the rate of Jacobian matrix and
- * the joint velocity vector.
+ * rkChainLinkZeroAccG() computes 6D acceleration of a point \a p on the \a id th link of
+ * a kinematic chain \a chain at zero-joint acceleration. This corresponds to the multiplication
+ * of the rate of Jacobian matrix and the joint velocity vector.
  * \a g is an acceleration of the field.
  * The result is put into \a a0.
  *
- * rkChainLinkZeroAccGravity() and rkChainLinkZeroAccZeroGravity() compute
- * 6D acceleration of a point \a p on the \a id th link of \a chain at zero-joint
- * acceleration.
- * The difference between rkChainLinkZeroAccGravity() and rkChainLinkZeroAccZeroGravity()
- * are that \a a0 includes the acceleration due to the gravity in the
- * former, while it does not in the latter.
+ * rkChainLinkZeroAcc() and rkChainLinkZeroAcc0G() compute 6D acceleration of a point \a p
+ * on the \a id th link of \a chain at zero-joint acceleration.
+ * The difference between rkChainLinkZeroAcc() and rkChainLinkZeroAcc0G() are that \a a0
+ * includes the acceleration due to the gravity in the former, while it does not in the latter.
  * For both functions, the result is put into \a a0.
  * \notes
- * rkChainLinkZeroAcc(),rkChainLinkZeroAccGravity(), and rkChainLinkZeroAccZeroGravity()
- * internally zero the joint acceleration of \a chain.
+ * rkChainLinkZeroAccG(),rkChainLinkZeroAcc(), and rkChainLinkZeroAcc0G() internally zero the
+ * joint acceleration of \a chain.
  * \return
- * rkChainLinkZeroAcc(),rkChainLinkZeroAccGravity(), and rkChainLinkZeroAccZeroGravity()
- * return a pointer \a a0.
+ * rkChainLinkZeroAccG(),rkChainLinkZeroAcc(), and rkChainLinkZeroAcc0G() return a pointer \a a0.
  */
 __ROKI_EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, zVec3D *p, zVec6D *g, zVec6D *a0);
 #define rkChainLinkZeroAcc(chain,i,p,a0)   rkChainLinkZeroAccG( (chain), (i), (p), RK_GRAVITY6D, (a0) )
@@ -569,20 +560,18 @@ __ROKI_EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, zVec3D *p, zVe
 
 /*! \brief calculate the center of mass of kinematic chain.
  *
- * rkChainUpdateCOM() computes the center of mass of kinematic
- * chain \a chain with respect to the world frame. The kinematics
- * should be calculated in advance.
+ * rkChainUpdateCOM() computes the center of mass of kinematic chain \a chain with respect to
+ * the world frame. The kinematics should be calculated in advance.
  *
- * rkChainUpdateCOMVel() and rkChainUpdateCOMAcc() compute the
- * velocity and acceleration of the center of mass of \a chain with
- * respect to the inertia frame, respectively. The motion rate
+ * rkChainUpdateCOMVel() and rkChainUpdateCOMAcc() compute the velocity and acceleration of the
+ * center of mass of \a chain with respect to the inertia frame, respectively. The motion rate
  * of the whole links should be updated in advance.
  * \return
- * These functions return a pointer to the internal 3D vector
- * which stores the position, velocity or acceleration of COM.
+ * These functions return a pointer to the internal 3D vector which stores the position, velocity
+ * or acceleration of COM.
  * \notes
- * rkChainUpdateCOMAcc() includes the acceleration of gravity,
- * except one explicitly sets the zero gravity to the root link.
+ * rkChainUpdateCOMAcc() includes the acceleration of gravity, except one explicitly sets the
+ * zero gravity to the root link.
  */
 __ROKI_EXPORT zVec3D *rkChainUpdateCOM(rkChain *chain);
 __ROKI_EXPORT zVec3D *rkChainUpdateCOMVel(rkChain *chain);
@@ -594,32 +583,28 @@ __ROKI_EXPORT zVec3D *rkChainUpdateCOMAcc(rkChain *chain);
 
 /*! \brief zero moment point of kinematic chain.
  *
- * rkChainZMP() computes the Zero Moment Point(ZMP) proposed by
- * Vukobratovic et al.(1972) of the kinematic chain \a chain with
- * respect to the world frame.
+ * rkChainZMP() computes the Zero Moment Point(ZMP) proposed by Vukobratovic et al.(1972) of the
+ * kinematic chain \a chain with respect to the world frame.
  *
- * \a z is the height of the VHP proposed by Sugihara et al.
- * (2002) in the direction of gravity.
+ * \a z is the height of the VHP proposed by Sugihara et al. (2002) in the direction of gravity.
  *
  * The result is put into \a zmp.
  *
- * rkChainYawTorque() computes the torque about the vertical axis
- * (parallel to the acceleration of gravity) on which ZMP exists.
+ * rkChainYawTorque() computes the torque about the vertical axis (parallel to the acceleration
+ * of gravity) on which ZMP exists.
  * \notes
- * In any cases of the three, inverse dynamics has to be computed
- * in advance.
+ * In any cases of the three, inverse dynamics has to be computed in advance.
  */
 __ROKI_EXPORT zVec3D *rkChainZMP(rkChain *chain, double z, zVec3D *zmp);
 __ROKI_EXPORT double rkChainYawTorque(rkChain *chain);
 
 /*! \brief angular momentum and kinematic energy of kinematic chain.
  *
- * rkChainAM() calculates angular momentum of a kinematic chain
- * \a chain around the point \a p with respect to the world frame.
- * The result is put into \a am.
+ * rkChainAM() calculates angular momentum of a kinematic chain \a chain around the point \a p
+ * with respect to the world frame. The result is put into \a am.
  *
- * rkChainKE() calculates kinematic energy of \a chain, originating
- * from linear and angular velocity of each link.
+ * rkChainKE() calculates kinematic energy of \a chain, originating from linear and angular
+ * velocity of each link.
  * \return
  * rkChainAM() returns a pointer \a am.
  * rkChainKE() returns a value calculated.
@@ -748,8 +733,8 @@ __ROKI_EXPORT zSphere3D *rkChainBoundingBall(rkChain *chain, zSphere3D *bb);
 
 /* ZTK */
 
-#define ZTK_TAG_RKCHAIN "chain"
-#define ZTK_TAG_INIT "init"
+#define ZTK_TAG_ROKI_CHAIN      "roki::chain"
+#define ZTK_TAG_ROKI_CHAIN_INIT "roki::chain::init"
 
 __ROKI_EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
 __ROKI_EXPORT void rkChainFPrintZTK(FILE *fp, rkChain *chain);

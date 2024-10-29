@@ -1,4 +1,4 @@
-[optic]
+[zeo::optic]
 name: white
 ambient: 0.8 0.8 0.8
 diffuse: 1.0 1.0 1.0
@@ -6,7 +6,7 @@ specular: 0.4 0.4 0.4
 alpha: 0.8
 esr: 1
 
-[shape]
+[zeo::shape]
 name: cube
 optic: white
 type: polyhedron
@@ -31,7 +31,9 @@ face: 0 3 1
 face: 4 5 7
 face: 4 7 6
 
-[body]
+[roki::link]
+name: cube
+jointtype: float
 mass: 0.1
 inertia:
 0.01666666667 0 0

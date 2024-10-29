@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : simple_pendulum
 
-[optic]
+[zeo::optic]
 name: white
 ambient: 0.8, 0.8, 0.8
 diffuse: 0.4, 0.4, 0.4
@@ -9,7 +9,7 @@ specular: 0.0, 0.0, 0.0
 esr: 0.8
 alpha: 1
 
-[shape]
+[zeo::shape]
 type : box
 name : base
 optic: white
@@ -18,11 +18,11 @@ width:  0.1
 height: 0.1
 depth:  0.5
 
-[motor]
+[roki::motor]
 name : motor1
 type: trq
 
-[link]
+[roki::link]
 name: link1
 jointtype: revolute
 motor: motor1

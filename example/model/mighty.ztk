@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : mighty
 
-[optic]
+[zeo::optic]
 name: black
 ambient: 0.1, 0.1, 0.1
 diffuse: 0.0, 0.0, 0.0
@@ -9,7 +9,7 @@ specular: 0.1, 0.1, 0.1
 esr: 0.6
 alpha: 1.0
 
-[optic]
+[zeo::optic]
 name: white
 ambient: 1.0, 1.0, 1.0
 diffuse: 1.0, 1.0, 1.0
@@ -17,7 +17,7 @@ specular: 0.6, 0.6, 0.6
 esr: 1.0
 alpha: 1.0
 
-[optic]
+[zeo::optic]
 name: brown
 ambient: 0.7, 0.5, 0.5
 diffuse: 0.7, 0.5, 0.5
@@ -25,7 +25,7 @@ specular: 0.1, 0.1, 0.1
 esr: 1.0
 alpha: 1.0
 
-[optic]
+[zeo::optic]
 name: cream
 ambient: 1.0, 1.0, 0.9
 diffuse: 1.0, 1.0, 0.9
@@ -33,7 +33,7 @@ specular: 0.4, 0.4, 0.3
 esr: 1.0
 alpha: 1.0
 
-[shape]
+[zeo::shape]
 name: body
 type: polyhedron
 optic: brown
@@ -447,7 +447,7 @@ face: 159 166 165
 face: 160 155 161
 face: 160 161 166
 
-[shape]
+[zeo::shape]
 name: back
 type: polyhedron
 optic: black
@@ -498,7 +498,7 @@ face: 22 25 24
 face: 22 26 25
 face: 22 27 26
 
-[shape]
+[zeo::shape]
 name: backpack
 type: polyhedron
 optic: white
@@ -591,7 +591,7 @@ face: 19 25 26
 face: 21 22 23
 face: 21 23 24
 
-[shape]
+[zeo::shape]
 name: left_shoulder
 type: polyhedron
 optic: brown
@@ -646,7 +646,7 @@ face: 0 2 12
 face: 0 12 11
 face: 0 11 10
 
-[shape]
+[zeo::shape]
 name: right_shoulder
 type: polyhedron
 optic: brown
@@ -701,7 +701,7 @@ face: 0 2 12
 face: 0 12 11
 face: 0 11 10
 
-[shape]
+[zeo::shape]
 name: left_upperarm
 type: polyhedron
 optic: cream
@@ -782,7 +782,7 @@ face: 24 33 32
 face: 25 18 26
 face: 25 26 33
 
-[shape]
+[zeo::shape]
 name: right_upperarm
 type: polyhedron
 optic: cream
@@ -863,7 +863,7 @@ face: 24 33 32
 face: 25 18 26
 face: 25 26 33
 
-[shape]
+[zeo::shape]
 name: left_forearm
 type: polyhedron
 optic: brown
@@ -912,7 +912,7 @@ face: 8 16 7
 face: 7 16 15
 face: 7 15 6
 
-[shape]
+[zeo::shape]
 name: right_forearm
 type: polyhedron
 optic: brown
@@ -961,7 +961,7 @@ face: 8 16 7
 face: 7 16 15
 face: 7 15 6
 
-[shape]
+[zeo::shape]
 name: left_hand
 type: polyhedron
 optic: white
@@ -996,7 +996,7 @@ face: 4 11 10
 face: 0 6 11
 face: 0 11 5
 
-[shape]
+[zeo::shape]
 name: right_hand
 type: polyhedron
 optic: white
@@ -1031,7 +1031,7 @@ face: 4 11 10
 face: 0 6 11
 face: 0 11 5
 
-[shape]
+[zeo::shape]
 name: left_thigh
 type: polyhedron
 optic: cream
@@ -1135,7 +1135,7 @@ face: 36 45 37
 face: 37 45 38
 face: 37 38 30
 
-[shape]
+[zeo::shape]
 name: right_thigh
 type: polyhedron
 optic: cream
@@ -1239,7 +1239,7 @@ face: 36 45 37
 face: 37 45 38
 face: 37 38 30
 
-[shape]
+[zeo::shape]
 name: left_shin
 type: polyhedron
 optic: brown
@@ -1300,7 +1300,7 @@ face: 4 17 5
 face: 3 8 20
 face: 3 20 15
 
-[shape]
+[zeo::shape]
 name: right_shin
 type: polyhedron
 optic: brown
@@ -1361,7 +1361,7 @@ face: 4 17 5
 face: 3 8 20
 face: 3 20 15
 
-[shape]
+[zeo::shape]
 name: left_foot
 type: polyhedron
 optic: brown
@@ -1524,7 +1524,7 @@ face: 60 69 68
 face: 61 54 62
 face: 61 62 69
 
-[shape]
+[zeo::shape]
 name: right_foot
 type: polyhedron
 optic: brown
@@ -1687,7 +1687,7 @@ face: 60 69 68
 face: 61 54 62
 face: 61 62 69
 
-[shape]
+[zeo::shape]
 name: left_sole
 type: polyhedron
 optic: black
@@ -1712,7 +1712,7 @@ face: 3 4 7
 face: 4 5 6
 face: 4 6 7
 
-[shape]
+[zeo::shape]
 name: right_sole
 type: polyhedron
 optic: black
@@ -1763,7 +1763,7 @@ face: 4 7 6
 %23: right_ankle_abduction
 %24: right_foot (option)
 
-[motor]
+[roki::motor]
 name : RE-max17
 type: dc
 motorconstant : 2.17e-2
@@ -1774,7 +1774,7 @@ gearratio : 100.0
 rotorinertia : 1.69e-7
 gearinertia : 3.0e-7
 
-[motor]
+[roki::motor]
 name : RE-max21
 type: dc
 motorconstant : 2.53e-2
@@ -1785,7 +1785,7 @@ gearratio : 100.0
 rotorinertia : 2.97e-7
 gearinertia : 3.0e-7
 
-[motor]
+[roki::motor]
 name : RE-max21-belt
 type: dc
 motorconstant : 2.53e-2
@@ -1796,7 +1796,7 @@ gearratio : 120.0
 rotorinertia : 3.0e-7
 gearinertia : 4.27e-7
 
-[motor]
+[roki::motor]
 name : RE-max24-belt
 type: dc
 motorconstant : 3.01e-2
@@ -1807,7 +1807,7 @@ gearratio : 120.0
 rotorinertia : 4.99e-7
 gearinertia : 4.27e-7
 
-[link]
+[roki::link]
 name: body
 jointtype: float
 mass: 2.2450703
@@ -1827,7 +1827,7 @@ shape: body
 shape: back
 shape: backpack
 
-[link]
+[roki::link]
 name: left_shoulder_flexion
 jointtype: revolute
 max: 90
@@ -1853,7 +1853,7 @@ frame: {
 shape: left_shoulder
 parent: body
 
-[link]
+[roki::link]
 name: left_shoulder_abduction
 jointtype: revolute
 max: 90
@@ -1879,7 +1879,7 @@ frame: {
 shape: left_upperarm
 parent: left_shoulder_flexion
 
-[link]
+[roki::link]
 name: left_elbow_rotation
 jointtype: revolute
 max: 90
@@ -1904,7 +1904,7 @@ frame: {
 }
 parent: left_shoulder_abduction
 
-[link]
+[roki::link]
 name: left_elbow_flexion
 jointtype: revolute
 max: 90
@@ -1930,7 +1930,7 @@ frame: {
 shape: left_forearm
 parent: left_elbow_rotation
 
-[link]
+[roki::link]
 name: left_hand
 jointtype: fixed
 stuff: body
@@ -1942,7 +1942,7 @@ frame: {
 shape: left_hand
 parent: left_elbow_flexion
 
-[link]
+[roki::link]
 name: left_hip_flexion
 jointtype: revolute
 max: 90
@@ -1967,7 +1967,7 @@ frame: {
 }
 parent: body
 
-[link]
+[roki::link]
 name: left_hip_abduction
 jointtype: revolute
 max: 90
@@ -1993,7 +1993,7 @@ frame: {
 shape: left_thigh
 parent: left_hip_flexion
 
-[link]
+[roki::link]
 name: left_knee_rotation
 jointtype: revolute
 max: 90
@@ -2018,7 +2018,7 @@ frame: {
 }
 parent: left_hip_abduction
 
-[link]
+[roki::link]
 name: left_knee_flexion
 jointtype: revolute
 max: 100
@@ -2044,7 +2044,7 @@ frame: {
 shape: left_shin
 parent: left_knee_rotation
 
-[link]
+[roki::link]
 name: left_ankle_flexion
 jointtype: revolute
 max: 90
@@ -2069,7 +2069,7 @@ frame: {
 }
 parent: left_knee_flexion
 
-[link]
+[roki::link]
 name: left_ankle_abduction
 jointtype: revolute
 max: 20
@@ -2095,7 +2095,7 @@ frame: {
 shape: left_foot
 parent: left_ankle_flexion
 
-[link]
+[roki::link]
 name: left_foot
 jointtype: fixed
 stuff: body
@@ -2107,7 +2107,7 @@ frame: {
 shape: left_sole
 parent: left_ankle_abduction
 
-[link]
+[roki::link]
 name: right_shoulder_flexion
 jointtype: revolute
 max: 90
@@ -2133,7 +2133,7 @@ frame: {
 shape: right_shoulder
 parent: body
 
-[link]
+[roki::link]
 name: right_shoulder_abduction
 jointtype: revolute
 max: 90
@@ -2159,7 +2159,7 @@ frame: {
 shape: right_upperarm
 parent: right_shoulder_flexion
 
-[link]
+[roki::link]
 name: right_elbow_rotation
 jointtype: revolute
 max: 90
@@ -2184,7 +2184,7 @@ frame: {
 }
 parent: right_shoulder_abduction
 
-[link]
+[roki::link]
 name: right_elbow_flexion
 jointtype: revolute
 max: 90
@@ -2210,7 +2210,7 @@ frame: {
 shape: right_forearm
 parent: right_elbow_rotation
 
-[link]
+[roki::link]
 name: right_hand
 jointtype: fixed
 stuff: body
@@ -2222,7 +2222,7 @@ frame: {
 shape: right_hand
 parent: right_elbow_flexion
 
-[link]
+[roki::link]
 name: right_hip_flexion
 jointtype: revolute
 max: 90
@@ -2247,7 +2247,7 @@ frame: {
 }
 parent: body
 
-[link]
+[roki::link]
 name: right_hip_abduction
 jointtype: revolute
 max: 90
@@ -2273,7 +2273,7 @@ frame: {
 shape: right_thigh
 parent: right_hip_flexion
 
-[link]
+[roki::link]
 name: right_knee_rotation
 jointtype: revolute
 max: 90
@@ -2298,7 +2298,7 @@ frame: {
 }
 parent: right_hip_abduction
 
-[link]
+[roki::link]
 name: right_knee_flexion
 jointtype: revolute
 max: 100
@@ -2324,7 +2324,7 @@ frame: {
 shape: right_shin
 parent: right_knee_rotation
 
-[link]
+[roki::link]
 name: right_ankle_flexion
 jointtype: revolute
 max: 90
@@ -2349,7 +2349,7 @@ frame: {
 }
 parent: right_knee_flexion
 
-[link]
+[roki::link]
 name: right_ankle_abduction
 jointtype: revolute
 max: 20
@@ -2375,7 +2375,7 @@ frame: {
 shape: right_foot
 parent: right_ankle_flexion
 
-[link]
+[roki::link]
 name: right_foot
 jointtype: fixed
 stuff: body
@@ -2390,7 +2390,7 @@ parent: right_ankle_abduction
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % initial positions and attitudes
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[init]
+[roki::chain::init]
 frame : {
  1, 0, 0, 0
  0, 1, 0, 0

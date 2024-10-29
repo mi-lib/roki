@@ -1,18 +1,18 @@
-[contact]
+[roki::contact]
 bind: stf1 stf2
 elasticity: 5000
 viscosity: 100
 staticfriction: 1.0
 kineticfriction: 0.5
 
-[contact]
+[roki::contact]
 bind: stf3 stf4
 compensation: 100
 relaxation: 1.0
 staticfriction: 1.0
 kineticfriction: 0.5
 
-[contact]
+[roki::contact]
 bind: stf1 stf2
 compensation: 200
 relaxation: 1.5

@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : magnum
 
-[optic]
+[zeo::optic]
 name: black
 ambient: 0.1, 0.1, 0.1
 diffuse: 0.0, 0.0, 0.0
@@ -9,7 +9,7 @@ specular: 0.1, 0.1, 0.1
 esr: 0.6
 alpha: 1.0
 
-[optic]
+[zeo::optic]
 name: wildblue
 ambient: 0.35, 0.2, 0.6
 diffuse: 0.25, 0.1, 0.6
@@ -17,7 +17,7 @@ specular: 0.1, 0.1, 0.1
 esr: 1.0
 alpha: 1.0
 
-[optic]
+[zeo::optic]
 name: white
 ambient: 1.0, 0.9, 0.7
 diffuse: 1.0, 0.9, 0.7
@@ -25,7 +25,7 @@ specular: 0.6, 0.6, 0.4
 esr: 1.0
 alpha: 1.0
 
-[shape]
+[zeo::shape]
 name: body_blue
 type: polyhedron
 optic: wildblue
@@ -262,7 +262,7 @@ face: 93 91 92
 face: 90 95 91
 face: 95 94 91
 
-[shape]
+[zeo::shape]
 name: body_white
 type: polyhedron
 optic: white
@@ -393,7 +393,7 @@ face: 49 55 56
 face: 49 56 57
 face: 49 57 50
 
-[shape]
+[zeo::shape]
 name: body_black
 type: polyhedron
 optic: black
@@ -481,7 +481,7 @@ face: 30 33 32
 face: 30 34 33
 face: 30 35 34
 
-[shape]
+[zeo::shape]
 name: left_shoulder_guard_blue
 type: polyhedron
 optic: wildblue
@@ -522,12 +522,12 @@ face: 2 3 11
 face: 3 12 11
 face: 3 4 12
 
-[shape]
+[zeo::shape]
 name: right_shoulder_guard_blue
 mirror: left_shoulder_guard_blue z
 optic: wildblue
 
-[shape]
+[zeo::shape]
 name: left_shoulder_guard_white
 type: polyhedron
 optic: white
@@ -548,12 +548,12 @@ face: 0 1 5
 face: 1 6 5
 face: 1 2 6
 
-[shape]
+[zeo::shape]
 name: right_shoulder_guard_white
 mirror: left_shoulder_guard_white z
 optic: white
 
-[shape]
+[zeo::shape]
 name: left_upperarm
 type: polyhedron
 optic: white
@@ -608,12 +608,12 @@ face: 18 23 19
 face: 19 23 20
 face: 19 20 16
 
-[shape]
+[zeo::shape]
 name: right_upperarm
 mirror: left_upperarm z
 optic: white
 
-[shape]
+[zeo::shape]
 name: left_forearm_blue
 type: polyhedron
 optic: wildblue
@@ -668,12 +668,12 @@ face: 13 15 14
 face: 13 17 15
 face: 17 16 15
 
-[shape]
+[zeo::shape]
 name: right_forearm_blue
 mirror: left_forearm_blue z
 optic: wildblue
 
-[shape]
+[zeo::shape]
 name: left_forearm_white
 type: polyhedron
 optic: white
@@ -692,12 +692,12 @@ face: 0 5 1
 face: 4 6 5
 face: 4 7 6
 
-[shape]
+[zeo::shape]
 name: right_forearm_white
 mirror: left_forearm_white z
 optic: white
 
-[shape]
+[zeo::shape]
 name: left_manifer
 type: polyhedron
 optic: wildblue
@@ -730,12 +730,12 @@ face: 6 9 8
 face: 6 10 9
 face: 6 11 10
 
-[shape]
+[zeo::shape]
 name: right_manifer
 mirror: left_manifer y
 optic: wildblue
 
-[shape]
+[zeo::shape]
 name: left_hand
 type: polyhedron
 optic: white
@@ -770,12 +770,12 @@ face: 7 11 10
 face: 10 8 7
 face: 10 9 8
 
-[shape]
+[zeo::shape]
 name: right_hand
 mirror: left_hand y
 optic: white
 
-[shape]
+[zeo::shape]
 name: left_thigh
 type: polyhedron
 optic: white
@@ -840,12 +840,12 @@ face: 23 28 24
 face: 24 28 25
 face: 24 25 21
 
-[shape]
+[zeo::shape]
 name: right_thigh
 mirror: left_thigh z
 optic: white
 
-[shape]
+[zeo::shape]
 name: left_shin
 type: polyhedron
 optic: wildblue
@@ -944,12 +944,12 @@ face: 42 40 39
 face: 41 24 40
 face: 41 40 42
 
-[shape]
+[zeo::shape]
 name: right_shin
 mirror: left_shin z
 optic: wildblue
 
-[shape]
+[zeo::shape]
 name: left_ankle
 type: polyhedron
 optic: white
@@ -975,12 +975,12 @@ face: 2 9 3
 face: 3 9 6
 face: 3 6 0
 
-[shape]
+[zeo::shape]
 name: right_ankle
 mirror: left_ankle z
 optic: white
 
-[shape]
+[zeo::shape]
 name: left_foot_cover
 type: polyhedron
 optic: wildblue
@@ -1047,12 +1047,12 @@ face: 24 26 25
 face: 24 27 26
 face: 24 28 27
 
-[shape]
+[zeo::shape]
 name: right_foot_cover
 mirror: left_foot_cover z
 optic: wildblue
 
-[shape]
+[zeo::shape]
 name: left_sole
 type: polyhedron
 optic: black
@@ -1075,12 +1075,12 @@ face: 2 7 6
 face: 3 0 4
 face: 3 4 7
 
-[shape]
+[zeo::shape]
 name: right_sole
 mirror: left_sole y
 optic: black
 
-[link]
+[roki::link]
 name: body
 jointtype: float
 mass: 2.983032
@@ -1099,7 +1099,7 @@ shape: body_blue
 shape: body_white
 shape: body_black
 
-[link]
+[roki::link]
 name: left_shoulder_flexion
 jointtype: revolute
 max: 180
@@ -1120,7 +1120,7 @@ parent: body
 shape: left_shoulder_guard_blue
 shape: left_shoulder_guard_white
 
-[link]
+[roki::link]
 name: left_shoulder_abduction
 jointtype: revolute
 max: 90
@@ -1140,7 +1140,7 @@ COM: { 0.002341, -0.033864, 0.003333 }
 shape: left_upperarm
 parent: left_shoulder_flexion
 
-[link]
+[roki::link]
 name: left_elbow_rotation
 jointtype: revolute
 max: 90
@@ -1159,7 +1159,7 @@ frame: {
 COM: { 1.1e-05, 0.001119, -0.02598 }
 parent: left_shoulder_abduction
 
-[link]
+[roki::link]
 name: left_elbow_flexion
 jointtype: revolute
 max: 90
@@ -1180,7 +1180,7 @@ shape: left_forearm_blue
 shape: left_forearm_white
 parent: left_elbow_rotation
 
-[link]
+[roki::link]
 name: left_hand
 jointtype: fixed
 frame: {
@@ -1192,7 +1192,7 @@ shape: left_manifer
 shape: left_hand
 parent: left_elbow_flexion
 
-[link]
+[roki::link]
 name: left_hip_flexion
 jointtype: revolute
 max: 100
@@ -1211,7 +1211,7 @@ frame: {
 COM: { 1e-05, -0.001533, -0.025129 }
 parent: body
 
-[link]
+[roki::link]
 name: left_hip_abduction
 jointtype: revolute
 max: 90
@@ -1231,7 +1231,7 @@ COM: { 0.006225, 0.041239, 0.008906 }
 shape: left_thigh
 parent: left_hip_flexion
 
-[link]
+[roki::link]
 name: left_knee_rotation
 jointtype: revolute
 max: 90
@@ -1250,7 +1250,7 @@ frame: {
 COM: { -6.3e-05, 0.001114, -0.026101 }
 parent: left_hip_abduction
 
-[link]
+[roki::link]
 name: left_knee_flexion
 jointtype: revolute
 max: 110
@@ -1270,7 +1270,7 @@ COM: { -0.002346, 0.048179, -0.0007 }
 shape: left_shin
 parent: left_knee_rotation
 
-[link]
+[roki::link]
 name: left_ankle_flexion
 jointtype: revolute
 max: 180
@@ -1289,7 +1289,7 @@ frame: {
 COM: { 1.1e-05, -0.003433, 0.001456 }
 parent: left_knee_flexion
 
-[link]
+[roki::link]
 name: left_ankle_abduction
 jointtype: revolute
 max: 90
@@ -1310,7 +1310,7 @@ shape: left_ankle
 shape: left_foot_cover
 parent: left_ankle_flexion
 
-[link]
+[roki::link]
 name: left_foot
 jointtype: fixed
 frame: {
@@ -1321,7 +1321,7 @@ frame: {
 shape: left_sole
 parent: left_ankle_abduction
 
-[link]
+[roki::link]
 name: right_shoulder_flexion
 jointtype: revolute
 max: 180
@@ -1341,7 +1341,7 @@ shape: right_shoulder_guard_blue
 shape: right_shoulder_guard_white
 parent: body
 
-[link]
+[roki::link]
 name: right_shoulder_abduction
 jointtype: revolute
 max: 90
@@ -1361,7 +1361,7 @@ COM: { 0.002341, -0.033864, -0.003333 }
 shape: right_upperarm
 parent: right_shoulder_flexion
 
-[link]
+[roki::link]
 name: right_elbow_rotation
 jointtype: revolute
 max: 90
@@ -1380,7 +1380,7 @@ frame: {
 COM: { 1.1e-05, 0.001119, 0.02598 }
 parent: right_shoulder_abduction
 
-[link]
+[roki::link]
 name: right_elbow_flexion
 jointtype: revolute
 max: 90
@@ -1401,7 +1401,7 @@ shape: right_forearm_blue
 shape: right_forearm_white
 parent: right_elbow_rotation
 
-[link]
+[roki::link]
 name: right_hand
 jointtype: fixed
 frame: {
@@ -1413,7 +1413,7 @@ shape: right_manifer
 shape: right_hand
 parent: right_elbow_flexion
 
-[link]
+[roki::link]
 name: right_hip_flexion
 jointtype: revolute
 max: 100
@@ -1432,7 +1432,7 @@ frame: {
 COM: { 1e-05, -0.001533, 0.025129 }
 parent: body
 
-[link]
+[roki::link]
 name: right_hip_abduction
 jointtype: revolute
 max: 90
@@ -1452,7 +1452,7 @@ COM: { 0.006225, 0.041239, -0.008906 }
 shape: right_thigh
 parent: right_hip_flexion
 
-[link]
+[roki::link]
 name: right_knee_rotation
 jointtype: revolute
 max: 90
@@ -1471,7 +1471,7 @@ frame: {
 COM: { -6.3e-05, 0.001114, 0.026101 }
 parent: right_hip_abduction
 
-[link]
+[roki::link]
 name: right_knee_flexion
 jointtype: revolute
 max: 110
@@ -1491,7 +1491,7 @@ COM: { -0.002346, 0.048179, 0.0007 }
 shape: right_shin
 parent: right_knee_rotation
 
-[link]
+[roki::link]
 name: right_ankle_flexion
 jointtype: revolute
 max: 180
@@ -1510,7 +1510,7 @@ frame: {
 COM: { 1.1e-05, -0.003433, -0.001456 }
 parent: right_knee_flexion
 
-[link]
+[roki::link]
 name: right_ankle_abduction
 jointtype: revolute
 max: 90
@@ -1531,7 +1531,7 @@ shape: right_ankle
 shape: right_foot_cover
 parent: right_ankle_flexion
 
-[link]
+[roki::link]
 name: right_foot
 jointtype: fixed
 frame: {
@@ -1542,5 +1542,5 @@ frame: {
 shape: right_sole
 parent: right_ankle_abduction
 
-[init]
+[roki::chain::init]
 joint: body 0, 0, 0.4022, 0, 0, 0

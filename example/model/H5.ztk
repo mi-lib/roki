@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : H5
 
-[optic]
+[zeo::optic]
 name: silver-metalic
 ambient: 0.6, 0.6, 0.6
 diffuse: 1.0, 1.0, 1.0
@@ -9,7 +9,7 @@ specular: 0.8, 0.8, 0.8
 esr: 0.0
 alpha: 1
 
-[shape]
+[zeo::shape]
 name : torso
 type : polyhedron
 optic: silver-metalic
@@ -108,7 +108,7 @@ face: 39 42 43
 face: 41 42 38
 face: 41 38 37
 
-[shape]
+[zeo::shape]
 name : left_shoulder_flexion
 type : polyhedron
 optic: silver-metalic
@@ -133,7 +133,7 @@ face: 0 9 4
 face: 4 9 8
 face: 4 8 3
 
-[shape]
+[zeo::shape]
 name : right_shoulder_flexion
 type : polyhedron
 optic: silver-metalic
@@ -158,7 +158,7 @@ face: 0 9 4
 face: 4 9 8
 face: 4 8 3
 
-[shape]
+[zeo::shape]
 name : left_shoulder_rotation
 type : polyhedron
 optic: silver-metalic
@@ -195,7 +195,7 @@ face: 4 11 5
 face: 5 11 6
 face: 5 6 0
 
-[shape]
+[zeo::shape]
 name : right_shoulder_rotation
 type : polyhedron
 optic: silver-metalic
@@ -232,7 +232,7 @@ face: 4 11 5
 face: 5 11 6
 face: 5 6 0
 
-[shape]
+[zeo::shape]
 name : left_elbow_flexion
 type : polyhedron
 optic: silver-metalic
@@ -293,7 +293,7 @@ face: 18 27 19
 face: 19 27 20
 face: 19 20 12
 
-[shape]
+[zeo::shape]
 name : right_elbow_flexion
 type : polyhedron
 optic: silver-metalic
@@ -354,7 +354,7 @@ face: 18 27 19
 face: 19 27 20
 face: 19 20 12
 
-[shape]
+[zeo::shape]
 name : left_elbow_rotation
 type : polyhedron
 optic: silver-metalic
@@ -391,7 +391,7 @@ face: 4 11 5
 face: 5 11 6
 face: 5 6 0
 
-[shape]
+[zeo::shape]
 name : right_elbow_rotation
 type : polyhedron
 optic: silver-metalic
@@ -428,7 +428,7 @@ face: 4 11 5
 face: 5 11 6
 face: 5 6 0
 
-[shape]
+[zeo::shape]
 name : left_wrist
 type : polyhedron
 optic: silver-metalic
@@ -457,7 +457,7 @@ face: 0 7 1
 face: 5 4 10
 face: 5 10 11
 
-[shape]
+[zeo::shape]
 name : right_wrist
 type : polyhedron
 optic: silver-metalic
@@ -486,7 +486,7 @@ face: 0 7 1
 face: 5 4 10
 face: 5 10 11
 
-[shape]
+[zeo::shape]
 name : gripper
 type : polyhedron
 optic: silver-metalic
@@ -497,7 +497,7 @@ vert: 3 { 0.06, 0.05, 0 }
 face: 0 1 2
 face: 0 2 3
 
-[shape]
+[zeo::shape]
 name : left_hip_rotation
 type : polyhedron
 optic: silver-metalic
@@ -532,7 +532,7 @@ face: 0 9 8
 face: 6 7 15
 face: 6 15 14
 
-[shape]
+[zeo::shape]
 name : right_hip_rotation
 type : polyhedron
 optic: silver-metalic
@@ -567,7 +567,7 @@ face: 0 9 8
 face: 6 7 15
 face: 6 15 14
 
-[shape]
+[zeo::shape]
 name : hip_flexion
 type : polyhedron
 optic: silver-metalic
@@ -608,7 +608,7 @@ face: 19 11 10
 face: 2 12 13
 face: 2 13 3
 
-[shape]
+[zeo::shape]
 name : knee_flexion
 type : polyhedron
 optic: silver-metalic
@@ -637,7 +637,7 @@ face: 13 9 7
 face: 0 7 8
 face: 0 8 1
 
-[shape]
+[zeo::shape]
 name : left_ankle_abduction
 type : polyhedron
 optic: silver-metalic
@@ -684,7 +684,7 @@ face: 23 21 20
 face: 24 27 26
 face: 24 26 25
 
-[shape]
+[zeo::shape]
 name : right_ankle_abduction
 type : polyhedron
 optic: silver-metalic
@@ -731,7 +731,7 @@ face: 23 21 20
 face: 24 27 26
 face: 24 26 25
 
-[shape]
+[zeo::shape]
 name : foot
 type : polyhedron
 optic: silver-metalic
@@ -742,7 +742,7 @@ vert: 3 { -0.078, 0.062, 0 }
 face: 0 1 2
 face: 0 2 3
 
-[shape]
+[zeo::shape]
 name : pan
 type : polyhedron
 optic: silver-metalic
@@ -769,7 +769,7 @@ face: 11 7 6
 face: 3 2 8
 face: 3 8 9
 
-[shape]
+[zeo::shape]
 name : tilt
 type : polyhedron
 optic: silver-metalic
@@ -812,7 +812,7 @@ face: 14 19 18
 face: 15 12 16
 face: 15 16 19
 
-[shape]
+[zeo::shape]
 name : left_camera
 type : polyhedron
 optic: silver-metalic
@@ -845,7 +845,7 @@ face: 15 13 12
 face: 8 11 15
 face: 8 15 12
 
-[shape]
+[zeo::shape]
 name : right_camera
 type : polyhedron
 optic: silver-metalic
@@ -915,7 +915,7 @@ face: 8 15 12
 % 32: left_eye
 % 33: right_eye
 
-[link]
+[roki::link]
 name: torso
 jointtype: float
 mass: 11.8798
@@ -927,13 +927,13 @@ inertia: {
 COM: { -0.04509, 0.000494762, -0.0593372 }
 shape: torso
 
-[link]
+[roki::link]
 name: waist
 jointtype: fixed
 pos: { 0, 0, -0.3495 }
 parent: torso
 
-[link]
+[roki::link]
 name: left_shoulder_flexion
 jointtype: revolute
 min: -180
@@ -955,7 +955,7 @@ COM: { -0.0306699, -0.00530463, 0.041788 }
 shape: left_shoulder_flexion
 parent: torso
 
-[link]
+[roki::link]
 name: left_shoulder_abduction
 jointtype: revolute
 min: -180
@@ -976,7 +976,7 @@ frame: {
 COM: { -0.000159668, 0.00057196, -0.000701019 }
 parent: left_shoulder_flexion
 
-[link]
+[roki::link]
 name: left_shoulder_rotation
 jointtype: revolute
 min: -180
@@ -998,7 +998,7 @@ COM: { -2.502e-06, 0.00180597, -0.114822 }
 shape: left_shoulder_rotation
 parent: left_shoulder_abduction
 
-[link]
+[roki::link]
 name: left_elbow_flexion
 jointtype: revolute
 min: -180
@@ -1020,7 +1020,7 @@ COM: { 0.037769, -0.00215042, -0.004229 }
 shape: left_elbow_flexion
 parent: left_shoulder_rotation
 
-[link]
+[roki::link]
 name: left_elbow_rotation
 jointtype: revolute
 min: -180
@@ -1042,7 +1042,7 @@ COM: { 2.6001e-05, 0.002026, -0.147461 }
 shape: left_elbow_rotation
 parent: left_elbow_flexion
 
-[link]
+[roki::link]
 name: left_wrist
 jointtype: revolute
 min: -180
@@ -1064,7 +1064,7 @@ COM: { 0.0408343, -0.00185356, -0.000836945 }
 shape: left_wrist
 parent: left_elbow_rotation
 
-[link]
+[roki::link]
 name: left_gripper
 jointtype: fixed
 frame: {
@@ -1075,7 +1075,7 @@ frame: {
 shape: gripper
 parent: left_wrist
 
-[link]
+[roki::link]
 name: left_hip_rotation
 jointtype: revolute
 min: -180
@@ -1097,7 +1097,7 @@ COM: { -0.0348853, -6.1e-07, 0.043709 }
 shape: left_hip_rotation
 parent: waist
 
-[link]
+[roki::link]
 name: left_hip_abduction
 jointtype: revolute
 min: -90
@@ -1118,7 +1118,7 @@ frame: {
 COM: { 2.197e-06, -0.00207281, -0.00217142 }
 parent: left_hip_rotation
 
-[link]
+[roki::link]
 name: left_hip_flexion
 jointtype: revolute
 min: -90
@@ -1140,7 +1140,7 @@ COM: { 0.141293, 0.00878699, -0.00101968 }
 shape: hip_flexion
 parent: left_hip_abduction
 
-[link]
+[roki::link]
 name: left_knee_flexion
 jointtype: revolute
 min: 0
@@ -1162,7 +1162,7 @@ COM: { 0.109716, -0.00375848, -0.0074971 }
 shape: knee_flexion
 parent: left_hip_flexion
 
-[link]
+[roki::link]
 name: left_ankle_flexion
 jointtype: revolute
 min: -90
@@ -1183,7 +1183,7 @@ frame: {
 COM: { 1.923e-06, -0.00222491, -0.000114197 }
 parent: left_knee_flexion
 
-[link]
+[roki::link]
 name: left_ankle_abduction
 jointtype: revolute
 min: -90
@@ -1205,7 +1205,7 @@ COM: { 0.0423186, 6.104e-06, -0.00626962 }
 shape: left_ankle_abduction
 parent: left_ankle_flexion
 
-[link]
+[roki::link]
 name: left_foot
 jointtype: fixed
 frame: {
@@ -1216,7 +1216,7 @@ frame: {
 shape: foot
 parent: left_ankle_abduction
 
-[link]
+[roki::link]
 name: right_shoulder_flexion
 jointtype: revolute
 min: -180
@@ -1238,7 +1238,7 @@ COM: { -0.0306699, -0.00530463, -0.041788 }
 shape: right_shoulder_flexion
 parent: torso
 
-[link]
+[roki::link]
 name: right_shoulder_abduction
 jointtype: revolute
 min: -180
@@ -1259,7 +1259,7 @@ frame: {
 COM: { -0.000159668, 0.00057196, 0.000701019 }
 parent: right_shoulder_flexion
 
-[link]
+[roki::link]
 name: right_shoulder_rotation
 jointtype: revolute
 min: -180
@@ -1281,7 +1281,7 @@ COM: { -2.502e-06, 0.00180597, 0.114822 }
 shape: right_shoulder_rotation
 parent: right_shoulder_abduction
 
-[link]
+[roki::link]
 name: right_elbow_flexion
 jointtype: revolute
 min: -180
@@ -1303,7 +1303,7 @@ COM: { 0.037769, -0.00215042, 0.004229 }
 shape: right_elbow_flexion
 parent: right_shoulder_rotation
 
-[link]
+[roki::link]
 name: right_elbow_rotation
 jointtype: revolute
 min: -180
@@ -1325,7 +1325,7 @@ COM: { 2.6001e-05, 0.002026, 0.147461 }
 shape: right_elbow_rotation
 parent: right_elbow_flexion
 
-[link]
+[roki::link]
 name: right_wrist
 jointtype: revolute
 min: -180
@@ -1347,7 +1347,7 @@ COM: { 0.0408343, -0.00185356, 0.000836945 }
 shape: right_wrist
 parent: right_elbow_rotation
 
-[link]
+[roki::link]
 name: right_gripper
 jointtype: fixed
 frame: {
@@ -1358,7 +1358,7 @@ frame: {
 shape: gripper
 parent: right_wrist
 
-[link]
+[roki::link]
 name: right_hip_rotation
 jointtype: revolute
 min: -180
@@ -1380,7 +1380,7 @@ COM: { -0.0348853, -6.1e-07, -0.043709 }
 shape: right_hip_rotation
 parent: waist
 
-[link]
+[roki::link]
 name: right_hip_abduction
 jointtype: revolute
 min: -90
@@ -1401,7 +1401,7 @@ frame: {
 COM: { 2.197e-06, -0.00207281, 0.00217142 }
 parent: right_hip_rotation
 
-[link]
+[roki::link]
 name: right_hip_flexion
 jointtype: revolute
 min: -90
@@ -1423,7 +1423,7 @@ COM: { 0.141293, 0.00878699, 0.00101968 }
 shape: hip_flexion
 parent: right_hip_abduction
 
-[link]
+[roki::link]
 name: right_knee_flexion
 jointtype: revolute
 min: 0
@@ -1445,7 +1445,7 @@ COM: { 0.109716, -0.00375848, 0.0074971 }
 shape: knee_flexion
 parent: right_hip_flexion
 
-[link]
+[roki::link]
 name: right_ankle_flexion
 jointtype: revolute
 min: -90
@@ -1466,7 +1466,7 @@ frame: {
 COM: { 1.923e-06, -0.00222491, 0.000114197 }
 parent: right_knee_flexion
 
-[link]
+[roki::link]
 name: right_ankle_abduction
 jointtype: revolute
 min: -90
@@ -1488,7 +1488,7 @@ COM: { 0.0423186, 6.104e-06, 0.00626962 }
 shape: right_ankle_abduction
 parent: right_ankle_flexion
 
-[link]
+[roki::link]
 name: right_foot
 jointtype: fixed
 frame: {
@@ -1499,7 +1499,7 @@ frame: {
 shape: foot
 parent: right_ankle_abduction
 
-[link]
+[roki::link]
 name: pan
 jointtype: revolute
 min: -180
@@ -1521,7 +1521,7 @@ COM: { 0, 0.000579651, -0.00962012 }
 shape: pan
 parent: torso
 
-[link]
+[roki::link]
 name: tilt
 jointtype: revolute
 min: -180
@@ -1543,7 +1543,7 @@ COM: { -1.22e-07, -0.04127, 0.000425778 }
 shape: tilt
 parent: pan
 
-[link]
+[roki::link]
 name: left_eye
 jointtype: revolute
 min: -180
@@ -1565,7 +1565,7 @@ COM: { -0.000286102, 0, 0.0411299 }
 shape: left_camera
 parent: tilt
 
-[link]
+[roki::link]
 name: right_eye
 jointtype: revolute
 min: -180
@@ -1588,10 +1588,10 @@ shape: right_camera
 parent: tilt
 
 % initial root position and pivot link
-[init]
+[roki::chain::init]
 joint: torso 0 0 1.029 0 0 0
 
-[ik]
+[roki::chain::ik]
 joint: torso                 0.001
 joint: left_shoulder_flexion     0 -30
 joint: left_shoulder_abduction   0  15

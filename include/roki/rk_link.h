@@ -419,7 +419,7 @@ __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
 
 /* ***** ZTK ***** */
 
-#define ZTK_TAG_RKLINK "link"
+#define ZTK_TAG_ROKI_LINK "roki::link"
 
 /*! \brief read link properties from a ZTK file and print link properties.
  *

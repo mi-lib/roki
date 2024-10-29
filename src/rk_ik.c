@@ -684,14 +684,14 @@ static void *_rkIKFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   return obj;
 }
 
-static ZTKPrp __ztk_prp_tag_rkik[] = {
-  { ZTK_TAG_RKIK, 1, _rkIKFromZTK, NULL },
+static ZTKPrp __ztk_prp_tag_roki_chain_ik[] = {
+  { ZTK_TAG_ROKI_CHAIN_IK, 1, _rkIKFromZTK, NULL },
 };
 
 /* read the inverse kinematics configuration of a kinematic chain from ZTK. */
 rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk)
 {
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkik );
+  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_ik );
   return chain;
 }
 
@@ -702,7 +702,7 @@ rkChain *rkChainIKConfReadZTK(rkChain *chain, const char *filename)
 
   if( !rkChainCreateIK( chain ) ) return NULL;
   ZTKInit( &ztk );
-  if( ZTKParse( &ztk, (char *)filename ) )
+  if( ZTKParse( &ztk, filename ) )
     chain = rkChainIKConfFromZTK( chain, &ztk );
   ZTKDestroy( &ztk );
   return chain;
@@ -711,7 +711,7 @@ rkChain *rkChainIKConfReadZTK(rkChain *chain, const char *filename)
 /* print the inverse kinematics configuration of a kinematic chain out to the current position of a file. */
 void rkChainIKConfFPrintZTK(FILE *fp, rkChain *chain)
 {
-  fprintf( fp, "[%s]\n", ZTK_TAG_RKIK );
+  fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_CHAIN_IK );
   _rkChainIKConfJointFPrintZTK( fp, chain );
   _rkIKConstraintFPrintZTK( fp, chain );
   fprintf( fp, "\n" );
@@ -722,7 +722,7 @@ bool rkChainIKConfWriteZTK(rkChain *chain, const char *filename)
 {
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( (char *)filename, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( filename, "w" ) ) ) return false;
   rkChainIKConfFPrintZTK( fp, chain );
   fclose( fp );
   return true;

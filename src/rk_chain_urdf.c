@@ -130,7 +130,7 @@ static bool _rkURDFEvalOrigin(xmlNode *node, zFrame3D *f)
 
 static void _rkURDFReadRGBA(char *str, zOpticalInfoListCell *mc)
 {
-  sscanf( str, "%f %f %f %lf", &mc->data.dif.r, &mc->data.dif.g, &mc->data.dif.b, &mc->data.alpha );
+  sscanf( str, "%f %f %f %lf", &mc->data.diffuse.r, &mc->data.diffuse.g, &mc->data.diffuse.b, &mc->data.alpha );
 }
 
 static bool _rkURDFEvalColor(xmlNode *node, zOpticalInfoListCell *mc)
@@ -149,7 +149,7 @@ static bool _rkURDFEvalMaterial(xmlNode *node, rkURDFRobotInfo *robot_info)
     return false;
   }
   zOpticalInfoInit( &mc->data );
-  zRGBSet( &mc->data.amb, 0.5, 0.5, 0.5 );
+  zRGBSet( &mc->data.ambient, 0.5, 0.5, 0.5 );
   zListInsertHead( &robot_info->material_list, mc );
   zNameSetPtr( &mc->data, zXMLFindNodeAttr( node, "name" ) );
   zXMLForEachNode( node->children, np ){
@@ -574,7 +574,7 @@ static bool _rkURDF2ZTKMaterial(ZTK *ztk, zOpticalInfoList *material_list)
   zOpticalInfoListCell *mc;
 
   zListForEach( material_list, mc ){
-    if( !ZTKAddTag( ztk, ZTK_TAG_OPTIC ) ) return false;
+    if( !ZTKAddTag( ztk, ZTK_TAG_ZEO_OPTIC ) ) return false;
     if( !zOpticalInfoToZTK( &mc->data, ztk ) ) return false;
   }
   return true;
@@ -646,7 +646,7 @@ static bool _rkURDF2ZTKShape(ZTK *ztk, rkURDFShapeList *shape_list)
       ZRUNWARN( RK_WARN_URDF_UNNAMED_SHAPE );
       continue;
     }
-    if( !ZTKAddTag( ztk, ZTK_TAG_SHAPE ) ) return false;
+    if( !ZTKAddTag( ztk, ZTK_TAG_ZEO_SHAPE ) ) return false;
     if( !ZTKAddKey( ztk, "name" ) ) return false;
     if( !ZTKAddVal( ztk, zName(&sc->data) ) ) return false;
     if( !zVec3DIsTiny( zFrame3DPos(&sc->data.fl) ) ){
@@ -731,7 +731,7 @@ static bool _rkURDF2ZTKLink(ZTK *ztk, rkURDFLinkList *link_list)
   rkURDFShapePListCell *spc;
 
   zListForEach( link_list, lc ){
-    if( !ZTKAddTag( ztk, ZTK_TAG_RKLINK ) ) return false;
+    if( !ZTKAddTag( ztk, ZTK_TAG_ROKI_LINK ) ) return false;
     if( lc->data.name ){
       if( !ZTKAddKey( ztk, "name" ) ) return false;
       if( !ZTKAddVal( ztk, zName(&lc->data) ) ) return false;
@@ -764,7 +764,7 @@ static bool _rkURDF2ZTKLink(ZTK *ztk, rkURDFLinkList *link_list)
 
 static bool _rkURDF2ZTK(ZTK *ztk, rkURDFRobotInfo *robot_info)
 {
-  if( !ZTKAddTag( ztk, ZTK_TAG_RKCHAIN ) ) return false;
+  if( !ZTKAddTag( ztk, ZTK_TAG_ROKI_CHAIN ) ) return false;
   if( !ZTKAddKey( ztk, "name" ) ) return false;
   if( !ZTKAddVal( ztk, robot_info->name ) ) return false;
 
@@ -813,7 +813,7 @@ static void _rkURDFOutputMaterialZTK(FILE *fp, zOpticalInfoList *material_list)
   zOpticalInfoListCell *mc;
 
   zListForEach( material_list, mc ){
-    fprintf( fp, "[%s]\n", ZTK_TAG_OPTIC );
+    fprintf( fp, "[%s]\n", ZTK_TAG_ZEO_OPTIC );
     zOpticalInfoFPrintZTK( fp, &mc->data );
   }
 }
@@ -867,7 +867,7 @@ static void _rkURDFOutputShapeZTK(FILE *fp, rkURDFShapeList *shape_list)
       ZRUNWARN( RK_WARN_URDF_UNNAMED_SHAPE );
       continue;
     }
-    fprintf( fp, "[%s]\n", ZTK_TAG_SHAPE );
+    fprintf( fp, "[%s]\n", ZTK_TAG_ZEO_SHAPE );
     fprintf( fp, "name: %s\n", sc->data.name );
     if( !zVec3DIsTiny( zFrame3DPos(&sc->data.fl) ) ){
       fprintf( fp, "pos: " );
@@ -934,7 +934,7 @@ static void _rkURDFOutputLinkZTK(FILE *fp, rkURDFLinkList *link_list)
   rkURDFShapePListCell *spc;
 
   zListForEach( link_list, lc ){
-    fprintf( fp, "[%s]\n", ZTK_TAG_RKLINK );
+    fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_LINK );
     if( lc->data.name ) fprintf( fp, "name: %s\n", lc->data.name );
     if( lc->data.joint )
       _rkURDFOutputJointZTK( fp, lc->data.joint );
@@ -958,7 +958,7 @@ static void _rkURDFOutputLinkZTK(FILE *fp, rkURDFLinkList *link_list)
 
 static void _rkURDFOutputZTK(FILE *fp, rkURDFRobotInfo *robot_info)
 {
-  fprintf( fp, "[%s]\n", ZTK_TAG_RKCHAIN );
+  fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_CHAIN );
   fprintf( fp, "name: %s\n\n", robot_info->name );
   if( !zListIsEmpty( &robot_info->material_list ) )
     _rkURDFOutputMaterialZTK( fp, &robot_info->material_list );

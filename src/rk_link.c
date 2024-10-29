@@ -311,7 +311,7 @@ void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray)
   int i;
 
   for( i=0; i<zArraySize(linkarray); i++ ){
-    fprintf( fp, "[%s]\n", ZTK_TAG_RKLINK );
+    fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_LINK );
     rkLinkFPrintZTK( fp, zArrayElemNC(linkarray,i) );
   }
 }
@@ -545,7 +545,7 @@ void rkLinkFPrintZTK(FILE *fp, rkLink *link)
   rkJointFPrintZTK( fp, rkLinkJoint(link), zName(link) );
   if( !rkLinkShapeIsEmpty(link) )
     zListForEach( rkLinkShapeList(link), cp )
-      fprintf( fp, "%s: %s\n", ZTK_TAG_SHAPE, zName( zShapeListCellShape(cp) ) );
+      fprintf( fp, "%s: %s\n", ZTK_TAG_ZEO_SHAPE, zName( zShapeListCellShape(cp) ) );
   if( rkLinkParent(link) )
     fprintf( fp, "parent: %s\n", zName(rkLinkParent(link)) );
   fprintf( fp, "\n" );

@@ -930,29 +930,29 @@ static bool _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
   return true;
 }
 
-static ZTKPrp __ztk_prp_tag_rkchain_optic[] = {
-  { ZTK_TAG_OPTIC, -1, NULL, NULL },
+static ZTKPrp __ztk_prp_tag_roki_chain_optic[] = {
+  { ZTK_TAG_ZEO_OPTIC, -1, NULL, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_rkchain_shape[] = {
-  { ZTK_TAG_SHAPE, -1, NULL, NULL },
+static ZTKPrp __ztk_prp_tag_roki_chain_shape[] = {
+  { ZTK_TAG_ZEO_SHAPE, -1, NULL, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_rkchain_motor[] = {
-  { ZTK_TAG_RKMOTOR, -1, _rkChainMotorSpecFromZTK, NULL },
+static ZTKPrp __ztk_prp_tag_roki_chain_motor[] = {
+  { ZTK_TAG_ROKI_MOTOR, -1, _rkChainMotorSpecFromZTK, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_rkchain_link[] = {
-  { ZTK_TAG_RKLINK, -1, _rkChainLinkFromZTK, NULL },
+static ZTKPrp __ztk_prp_tag_roki_chain_link[] = {
+  { ZTK_TAG_ROKI_LINK, -1, _rkChainLinkFromZTK, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_rkchain_connection[] = {
-  { ZTK_TAG_RKLINK, -1, _rkChainLinkConnectFromZTK, NULL },
+static ZTKPrp __ztk_prp_tag_roki_chain_connection[] = {
+  { ZTK_TAG_ROKI_LINK, -1, _rkChainLinkConnectFromZTK, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_rkchain[] = {
-  { ZTK_TAG_RKCHAIN, 1, _rkChainChainFromZTK, _rkChainChainFPrintZTK },
-  { ZTK_TAG_INIT, 1, _rkChainInitFromZTK, NULL },
+static ZTKPrp __ztk_prp_tag_roki_chain[] = {
+  { ZTK_TAG_ROKI_CHAIN, 1, _rkChainChainFromZTK, _rkChainChainFPrintZTK },
+  { ZTK_TAG_ROKI_CHAIN_INIT, 1, _rkChainInitFromZTK, NULL },
 };
 
 rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
@@ -961,7 +961,7 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
 
   rkChainInit( chain );
   /* optical infos and shapes */
-  if( ZTKCountTag( ztk, ZTK_TAG_SHAPE ) > 0 ){
+  if( ZTKCountTag( ztk, ZTK_TAG_ZEO_SHAPE ) > 0 ){
     if( !( rkChainShape(chain) = zAlloc( zMShape3D, 1 ) ) ){
       ZALLOCERROR();
       return NULL;
@@ -969,17 +969,17 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     if( !zMShape3DFromZTK( rkChainShape(chain), ztk ) ) return NULL;
   }
   /* motors */
-  if( ( num_motor = ZTKCountTag( ztk, ZTK_TAG_RKMOTOR ) ) > 0 )
+  if( ( num_motor = ZTKCountTag( ztk, ZTK_TAG_ROKI_MOTOR ) ) > 0 )
     if( !rkMotorSpecArrayAlloc( rkChainMotorSpecArray(chain), num_motor ) ) return NULL;
   /* links */
-  if( ( num_link = ZTKCountTag( ztk, ZTK_TAG_RKLINK ) ) > 0 ){
+  if( ( num_link = ZTKCountTag( ztk, ZTK_TAG_ROKI_LINK ) ) > 0 ){
     if( !rkLinkArrayAlloc( rkChainLinkArray(chain), num_link ) ) return NULL;
-    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_optic ); /* to skip [optic] fields */
-    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_shape ); /* to skip [shape] fields */
-    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_motor );
-    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_link );
-    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_connection );
-    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_optic ); /* to skip [optic] fields */
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_shape ); /* to skip [shape] fields */
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_motor );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_link );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_connection );
+    ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain );
     rkChainSetJointIDOffset( chain ); /* joint identifier offset value */
     rkChainUpdateCRBMass( chain );
   } else{
@@ -1004,7 +1004,7 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
 /* print information of a kinematic chain out to the current position of a file. */
 void rkChainFPrintZTK(FILE *fp, rkChain *chain)
 {
-  ZTKPrpTagFPrint( fp, chain, __ztk_prp_tag_rkchain );
+  ZTKPrpTagFPrint( fp, chain, __ztk_prp_tag_roki_chain );
   fprintf( fp, "\n" );
   if( rkChainShape(chain) )
     zMShape3DFPrintZTK( fp, rkChainShape(chain) );
@@ -1012,7 +1012,7 @@ void rkChainFPrintZTK(FILE *fp, rkChain *chain)
     rkMotorSpecArrayFPrintZTK( fp, rkChainMotorSpecArray(chain) );
   if( rkChainLinkNum(chain) > 0 ){
     rkLinkArrayFPrintZTK( fp, rkChainLinkArray(chain) );
-    fprintf( fp, "[%s]\n", ZTK_TAG_INIT );
+    fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_CHAIN_INIT );
     _rkChainInitFPrintZTK( fp, 0, chain );
   }
 }
@@ -1039,13 +1039,13 @@ bool rkChainWriteZTK(rkChain *c, const char *filename)
   return true;
 }
 
-static ZTKPrp __ztk_prp_tag_rkchain_init[] = {
-  { ZTK_TAG_INIT, 1, _rkChainInitFromZTK, _rkChainInitFPrintZTK },
+static ZTKPrp __ztk_prp_tag_roki_chain_init[] = {
+  { ZTK_TAG_ROKI_CHAIN_INIT, 1, _rkChainInitFromZTK, _rkChainInitFPrintZTK },
 };
 
 rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk)
 {
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_rkchain_init );
+  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_init );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
   return chain;
@@ -1053,7 +1053,7 @@ rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk)
 
 void rkChainInitFPrintZTK(FILE *fp, rkChain *chain)
 {
-  ZTKPrpTagFPrint( fp, chain, __ztk_prp_tag_rkchain_init );
+  ZTKPrpTagFPrint( fp, chain, __ztk_prp_tag_roki_chain_init );
   fprintf( fp, "\n" );
 }
 

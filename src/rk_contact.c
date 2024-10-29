@@ -166,8 +166,8 @@ rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *carray, const cha
 
 /* ZTK */
 
-static ZTKPrp __ztk_prp_tag_rkcontactinfo[] = {
-  { ZTK_TAG_RKCONTACTINFO, -1, _rkContactInfoFromZTK, NULL },
+static ZTKPrp __ztk_prp_tag_roki_contactinfo[] = {
+  { ZTK_TAG_ROKI_CONTACTINFO, -1, _rkContactInfoFromZTK, NULL },
 };
 
 /* scan contact information array from a ZTK format processor. */
@@ -176,12 +176,12 @@ rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *z
   int n;
 
   zArrayInit( carray );
-  if( ( n = ZTKCountTag( ztk, ZTK_TAG_RKCONTACTINFO ) ) == 0 ){
+  if( ( n = ZTKCountTag( ztk, ZTK_TAG_ROKI_CONTACTINFO ) ) == 0 ){
     ZRUNWARN( RK_WARN_CONTACT_EMPTY );
     return NULL;
   }
   zArrayAlloc( carray, rkContactInfo, n );
-  ZTKEvalTag( carray, carray, ztk, __ztk_prp_tag_rkcontactinfo );
+  ZTKEvalTag( carray, carray, ztk, __ztk_prp_tag_roki_contactinfo );
   return carray;
 }
 
@@ -191,7 +191,7 @@ void rkContactInfoArrayFPrintZTK(FILE *fp, rkContactInfoArray *carray)
   int i;
 
   for( i=0; i<zArraySize(carray); i++ ){
-    fprintf( fp, "[%s]\n", ZTK_TAG_RKCONTACTINFO );
+    fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_CONTACTINFO );
     rkContactInfoFPrintZTK( fp, zArrayElemNC(carray,i) );
   }
 }

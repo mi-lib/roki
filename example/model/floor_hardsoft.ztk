@@ -1,7 +1,7 @@
-[chain]
+[roki::chain]
 name : floor
 
-[optic]
+[zeo::optic]
 name: blue
 ambient: 0.1 0.1 0.3
 diffuse: 0.2 0.2 0.4
@@ -10,7 +10,7 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[optic]
+[zeo::optic]
 name: light
 ambient: 0.4 0.4 0.7
 diffuse: 0.6 0.6 1.0
@@ -19,7 +19,7 @@ esr: 1
 shininess: 0
 alpha: 1
 
-[shape]
+[zeo::shape]
 type : box
 name : shape
 optic : blue
@@ -28,7 +28,7 @@ depth : 5.0
 width : 2.5
 height : 0.4
 
-[shape]
+[zeo::shape]
 type : box
 name : shape2
 optic : light
@@ -37,7 +37,7 @@ depth : 5.0
 width : 2.5
 height : 0.4
 
-[link]
+[roki::link]
 name: link#00
 jointtype: fixed
 mass: 99.9
@@ -55,7 +55,7 @@ frame: {
 }
 shape: shape
 
-[link]
+[roki::link]
 name: link#01
 jointtype: fixed
 mass: 99.9
