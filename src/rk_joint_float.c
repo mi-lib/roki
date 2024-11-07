@@ -271,6 +271,7 @@ static void *_rkJointFloatDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
 }
 
 static bool _rkJointFloatDisFPrintZTK(FILE *fp, int i, void *joint){
+  if( zVec6DIsTiny( &_rks(joint)->dis ) ) return false;
   zVec6DDataNLFPrint( fp, &_rks(joint)->dis );
   return true;
 }

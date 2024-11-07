@@ -294,6 +294,7 @@ static void *_rkJointPrismMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
 }
 
 static bool _rkJointPrismDisFPrintZTK(FILE *fp, int i, void *joint){
+  if( zIsTiny( _rks(joint)->dis ) ) return false;
   fprintf( fp, "%.10g\n", _rks(joint)->dis );
   return true;
 }

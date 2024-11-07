@@ -309,6 +309,7 @@ static void *_rkJointBrFloatTorqueThFromZTK(void *joint, int i, void *arg, ZTK *
 }
 
 static bool _rkJointBrFloatDisFPrintZTK(FILE *fp, int i, void *joint){
+  if( zVec6DIsTiny( &_rks(joint)->dis ) ) return false;
   zVec6DDataNLFPrint( fp, &_rks(joint)->dis );
   return true;
 }

@@ -317,6 +317,7 @@ static void *_rkJointCylinStaticFrictionFromZTK(void *joint, int i, void *arg, Z
 }
 
 static bool _rkJointCylinDisFPrintZTK(FILE *fp, int i, void *joint){
+  if( zIsTiny( _rks(joint)->dis[0] ) && zIsTiny( _rks(joint)->dis[1] ) ) return false;
   fprintf( fp, "%.10g %.10g\n",
     _rks(joint)->dis[0],
     zRad2Deg(_rks(joint)->dis[1]) );

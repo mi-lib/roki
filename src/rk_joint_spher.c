@@ -269,6 +269,7 @@ static void *_rkJointSpherMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
 }
 
 static bool _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
+  if( zVec3DIsTiny( &_rks(joint)->aa ) ) return false;
   zVec3DDataNLFPrint( fp, &_rks(joint)->aa );
   return true;
 }
