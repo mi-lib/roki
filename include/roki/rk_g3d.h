@@ -12,16 +12,10 @@
 
 __BEGIN_DECLS
 
-/* OBJECT:
- * RK_GRAVITY3D, RK_GRAVITY6D
- * acceleration vector of gravity.
- */
-__ROKI_EXPORT zVec6D rk_gravity6D;
+/*! \brief acceleration vector due to gravity. */
+__ROKI_EXPORT const zVec6D rk_gravity6D;
 #define RK_GRAVITY6D ( &rk_gravity6D )
 #define RK_GRAVITY3D zVec6DLin( RK_GRAVITY6D )
-
-#define rkGravitySet(g)  ( RK_GRAVITY6D->e[zZ] = (g) )
-#define rkGravityReset() rkGravitySet( RK_G )
 
 __END_DECLS
 

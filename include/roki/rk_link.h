@@ -365,10 +365,10 @@ __ROKI_EXPORT zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i);
  * Be careful when coding inverse dynamics. Use them in
  * correct ways, considering the purpose of the computation.
  */
-__ROKI_EXPORT void rkLinkUpdateFrame(rkLink *link, zFrame3D *pwf);
-__ROKI_EXPORT void rkLinkUpdateVel(rkLink *link, zVec6D *pvel);
-__ROKI_EXPORT void rkLinkUpdateAcc(rkLink *link, zVec6D *pvel, zVec6D *pacc);
-__ROKI_EXPORT void rkLinkUpdateRate(rkLink *link, zVec6D *pvel, zVec6D *pacc);
+__ROKI_EXPORT void rkLinkUpdateFrame(rkLink *link, const zFrame3D *pwf);
+__ROKI_EXPORT void rkLinkUpdateVel(rkLink *link, const zVec6D *pvel);
+__ROKI_EXPORT void rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pacc);
+__ROKI_EXPORT void rkLinkUpdateRate(rkLink *link, const zVec6D *pvel, const zVec6D *pacc);
 __ROKI_EXPORT void rkLinkUpdateWrench(rkLink *link);
 
 /*! \brief update mass of the composite rigit body of a link. */

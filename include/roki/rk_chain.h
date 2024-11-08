@@ -527,10 +527,10 @@ __ROKI_EXPORT void rkChainNeutralize(rkChain *chain);
  * rkChainUpdateID_G(), rkChainUpdateID(), rkChainUpdateID0G(), rkChainID_G(), rkChainID(),
  * rkChainID0G(), and rkChainFKCNT() do not return any values.
  */
-__ROKI_EXPORT void rkChainUpdateID_G(rkChain *chain, zVec6D *g);
+__ROKI_EXPORT void rkChainUpdateID_G(rkChain *chain, const zVec6D *g);
 #define rkChainUpdateID(chain)     rkChainUpdateID_G( chain, RK_GRAVITY6D )
 #define rkChainUpdateID0G(chain)   rkChainUpdateID_G( chain, ZVEC6DZERO )
-__ROKI_EXPORT void rkChainID_G(rkChain *chain, zVec vel, zVec acc, zVec6D *g);
+__ROKI_EXPORT void rkChainID_G(rkChain *chain, zVec vel, zVec acc, const zVec6D *g);
 #define rkChainID(chain,vel,acc)   rkChainID_G( chain, vel, acc, RK_GRAVITY6D )
 #define rkChainID0G(chain,vel,acc) rkChainID_G( chain, vel, acc, ZVEC6DZERO )
 __ROKI_EXPORT void rkChainFKCNT(rkChain *chain, zVec dis, double dt);
@@ -554,7 +554,7 @@ __ROKI_EXPORT void rkChainFKCNT(rkChain *chain, zVec dis, double dt);
  * \return
  * rkChainLinkZeroAccG(),rkChainLinkZeroAcc(), and rkChainLinkZeroAcc0G() return a pointer \a a0.
  */
-__ROKI_EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, zVec3D *p, zVec6D *g, zVec6D *a0);
+__ROKI_EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, zVec3D *p, const zVec6D *g, zVec6D *a0);
 #define rkChainLinkZeroAcc(chain,i,p,a0)   rkChainLinkZeroAccG( (chain), (i), (p), RK_GRAVITY6D, (a0) )
 #define rkChainLinkZeroAcc0G(chain,i,p,a0) rkChainLinkZeroAccG( (chain), (i), (p), ZVEC6DZERO, (a0) )
 

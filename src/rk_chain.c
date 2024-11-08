@@ -445,7 +445,7 @@ void rkChainNeutralize(rkChain *chain)
 }
 
 /* update link states and joint torques of a kinematic chain via inverse dynamics. */
-void rkChainUpdateID_G(rkChain *chain, zVec6D *g)
+void rkChainUpdateID_G(rkChain *chain, const zVec6D *g)
 {
   rkChainUpdateRateG( chain, g );
   rkChainUpdateWrench( chain );
@@ -454,7 +454,7 @@ void rkChainUpdateID_G(rkChain *chain, zVec6D *g)
 }
 
 /* solve inverse dynamics of a kinematic chain. */
-void rkChainID_G(rkChain *chain, zVec vel, zVec acc, zVec6D *g)
+void rkChainID_G(rkChain *chain, zVec vel, zVec acc, const zVec6D *g)
 {
   rkChainSetJointRateAll( chain, vel, acc );
   rkChainUpdateID_G( chain, g );
@@ -469,7 +469,7 @@ void rkChainFKCNT(rkChain *chain, zVec dis, double dt)
 }
 
 /* link acceleration at zero joint acceleration. */
-zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, zVec3D *p, zVec6D *g, zVec6D *a0)
+zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, zVec3D *p, const zVec6D *g, zVec6D *a0)
 {
   zVec3D tmp;
 

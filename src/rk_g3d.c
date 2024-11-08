@@ -6,8 +6,5 @@
 
 #include <roki/rk_g3d.h>
 
-/* OBJECT:
- * rk_gravity6D
- * acceleration vector of gravity.
- */
-zVec6D rk_gravity6D = { { 0, 0, RK_G, 0, 0, 0 } };
+/* acceleration vector due to gravity. */
+const zVec6D rk_gravity6D = { { 0, 0, RK_G, 0, 0, 0 } };

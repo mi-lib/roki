@@ -114,7 +114,7 @@ zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i)
 }
 
 /* update link frame with respect to the world frame. */
-void rkLinkUpdateFrame(rkLink *link, zFrame3D *pwf)
+void rkLinkUpdateFrame(rkLink *link, const zFrame3D *pwf)
 {
   rkJointXform( rkLinkJoint(link), rkLinkOrgFrame(link), rkLinkAdjFrame(link) );
   zFrame3DCascade( pwf, rkLinkAdjFrame(link), rkLinkWldFrame(link) );
@@ -126,7 +126,7 @@ void rkLinkUpdateFrame(rkLink *link, zFrame3D *pwf)
     rkLinkUpdateFrame( rkLinkSibl(link), rkLinkWldFrame(rkLinkParent(link)) );
 }
 
-void _rkLinkUpdateVel(rkLink *link, zVec6D *pvel)
+static void _rkLinkUpdateVel(rkLink *link, const zVec6D *pvel)
 {
   /* velocity */
   zXform6DLin( rkLinkAdjFrame(link), pvel, rkLinkVel(link) );
@@ -136,7 +136,7 @@ void _rkLinkUpdateVel(rkLink *link, zVec6D *pvel)
   rkBodyUpdateCOMVel( rkLinkBody(link) );
 }
 
-void rkLinkUpdateVel(rkLink *link, zVec6D *pvel)
+void rkLinkUpdateVel(rkLink *link, const zVec6D *pvel)
 {
   _rkLinkUpdateVel( link, pvel );
   if( rkLinkChild(link) )
@@ -145,7 +145,7 @@ void rkLinkUpdateVel(rkLink *link, zVec6D *pvel)
     rkLinkUpdateVel( rkLinkSibl(link), rkLinkVel(rkLinkParent(link)) );
 }
 
-void _rkLinkUpdateAcc(rkLink *link, zVec6D *pvel, zVec6D *pacc)
+static void _rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pacc)
 {
   zVec3D wp, tmp;
 
@@ -163,7 +163,7 @@ void _rkLinkUpdateAcc(rkLink *link, zVec6D *pvel, zVec6D *pacc)
   rkBodyUpdateCOMAcc( rkLinkBody(link) );
 }
 
-void rkLinkUpdateAcc(rkLink *link, zVec6D *pvel, zVec6D *pacc)
+void rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pacc)
 {
   _rkLinkUpdateAcc( link, pvel, pacc );
   if( rkLinkChild(link) )
@@ -173,7 +173,7 @@ void rkLinkUpdateAcc(rkLink *link, zVec6D *pvel, zVec6D *pacc)
 }
 
 /* update link motion rate with respect to the inertial frame. */
-void rkLinkUpdateRate(rkLink *link, zVec6D *pvel, zVec6D *pacc)
+void rkLinkUpdateRate(rkLink *link, const zVec6D *pvel, const zVec6D *pacc)
 {
   _rkLinkUpdateVel( link, pvel );
   _rkLinkUpdateAcc( link, pvel, pacc );
