@@ -419,7 +419,22 @@ __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
 
 /* ***** ZTK ***** */
 
-#define ZTK_TAG_ROKI_LINK "roki::link"
+#define ZTK_TAG_ROKI_LINK           "roki::link"
+
+#define ZTK_KEY_ROKI_LINK_NAME      "name"
+#define ZTK_KEY_ROKI_LINK_JOINTTYPE "jointtype"
+#define ZTK_KEY_ROKI_LINK_MASS      "mass"
+#define ZTK_KEY_ROKI_LINK_DENSITY   "density"
+#define ZTK_KEY_ROKI_LINK_STUFF     "stuff"
+#define ZTK_KEY_ROKI_LINK_COM       "COM"
+#define ZTK_KEY_ROKI_LINK_INERTIA   "inertia"
+#define ZTK_KEY_ROKI_LINK_POS       "pos"
+#define ZTK_KEY_ROKI_LINK_ATT       "att"
+#define ZTK_KEY_ROKI_LINK_ROT       "rot"
+#define ZTK_KEY_ROKI_LINK_FRAME     "frame"
+#define ZTK_KEY_ROKI_LINK_DH        "DH"
+#define ZTK_KEY_ROKI_LINK_SHAPE     "shape"
+#define ZTK_KEY_ROKI_LINK_PARENT    "parent"
 
 /*! \brief read link properties from a ZTK file and print link properties.
  *

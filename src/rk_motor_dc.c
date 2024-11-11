@@ -56,15 +56,15 @@ RK_MOTOR_SPEC_DC_DEF_ZTKFUNC( CompK, _comp_k )
 RK_MOTOR_SPEC_DC_DEF_ZTKFUNC( CompL, _comp_l )
 
 static ZTKPrp __ztk_prp_rkmotor_dc[] = {
-  { "motorconstant", 1, _rkMotorSpecDCMotorConstantFromZTK, _rkMotorSpecDCMotorConstantFPrintZTK },
-  { "admittance", 1, _rkMotorSpecDCAdmittanceFromZTK, _rkMotorSpecDCAdmittanceFPrintZTK },
-  { "maxvoltage", 1, _rkMotorSpecDCMaxVoltageFromZTK, _rkMotorSpecDCMaxVoltageFPrintZTK },
-  { "minvoltage", 1, _rkMotorSpecDCMinVoltageFromZTK, _rkMotorSpecDCMinVoltageFPrintZTK },
-  { "gearratio", 1, _rkMotorSpecDCGearRatioFromZTK, _rkMotorSpecDCGearRatioFPrintZTK },
-  { "rotorinertia", 1, _rkMotorSpecDCRotorInertiaFromZTK, _rkMotorSpecDCRotorInertiaFPrintZTK },
-  { "gearinertia", 1, _rkMotorSpecDCGearInertiaFromZTK, _rkMotorSpecDCGearInertiaFPrintZTK },
-  { "compk", 1, _rkMotorSpecDCCompKFromZTK, _rkMotorSpecDCCompKFPrintZTK },
-  { "compl", 1, _rkMotorSpecDCCompLFromZTK, _rkMotorSpecDCCompLFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_MOTORCONSTANT, 1, _rkMotorSpecDCMotorConstantFromZTK, _rkMotorSpecDCMotorConstantFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_ADMITTANCE,    1, _rkMotorSpecDCAdmittanceFromZTK, _rkMotorSpecDCAdmittanceFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_MAXVOLTAGE,    1, _rkMotorSpecDCMaxVoltageFromZTK, _rkMotorSpecDCMaxVoltageFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_MINVOLTAGE,    1, _rkMotorSpecDCMinVoltageFromZTK, _rkMotorSpecDCMinVoltageFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_GEARRATIO,     1, _rkMotorSpecDCGearRatioFromZTK, _rkMotorSpecDCGearRatioFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_ROTERINERTIA,  1, _rkMotorSpecDCRotorInertiaFromZTK, _rkMotorSpecDCRotorInertiaFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_GEARINERTIA,   1, _rkMotorSpecDCGearInertiaFromZTK, _rkMotorSpecDCGearInertiaFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_COMPK,         1, _rkMotorSpecDCCompKFromZTK, _rkMotorSpecDCCompKFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_COMPL,         1, _rkMotorSpecDCCompLFromZTK, _rkMotorSpecDCCompLFPrintZTK },
 };
 
 static rkMotorSpec *_rkMotorSpecDCFromZTK(rkMotorSpec *ms, ZTK *ztk)

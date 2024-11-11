@@ -459,23 +459,23 @@ static bool _rkLinkAttFPrintZTK(FILE *fp, int i, void *obj){
 }
 
 static ZTKPrp __ztk_prp_rklink[] = {
-  { "name", 1, _rkLinkNameFromZTK, _rkLinkNameFPrintZTK },
-  { "jointtype", 1, _rkLinkJointTypeFromZTK, _rkLinkJointTypeFPrintZTK },
-  { "mass", 1, _rkLinkMassFromZTK, _rkLinkMassFPrintZTK },
-  { "density", 1, _rkLinkDensityFromZTK, NULL },
-  { "stuff", 1, _rkLinkStuffFromZTK, _rkLinkStuffFPrintZTK },
-  { "COM", 1, _rkLinkCOMFromZTK, _rkLinkCOMFPrintZTK },
-  { "inertia", 1, _rkLinkInertiaFromZTK, _rkLinkInertiaFPrintZTK },
-  { "pos", 1, _rkLinkPosFromZTK, _rkLinkPosFPrintZTK },
-  { "att", 1, _rkLinkAttFromZTK, _rkLinkAttFPrintZTK },
-  { "rot", -1, _rkLinkRotFromZTK, NULL },
-  { "frame", 1, _rkLinkFrameFromZTK, NULL },
-  { "DH", 1, _rkLinkDHFromZTK, NULL },
-  { "shape", -1, _rkLinkShapeFromZTK, NULL },
+  { ZTK_KEY_ROKI_LINK_NAME,      1, _rkLinkNameFromZTK, _rkLinkNameFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_JOINTTYPE, 1, _rkLinkJointTypeFromZTK, _rkLinkJointTypeFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_MASS,      1, _rkLinkMassFromZTK, _rkLinkMassFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_DENSITY,   1, _rkLinkDensityFromZTK, NULL },
+  { ZTK_KEY_ROKI_LINK_STUFF,     1, _rkLinkStuffFromZTK, _rkLinkStuffFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_COM,       1, _rkLinkCOMFromZTK, _rkLinkCOMFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_INERTIA,   1, _rkLinkInertiaFromZTK, _rkLinkInertiaFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_POS,       1, _rkLinkPosFromZTK, _rkLinkPosFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_ATT,       1, _rkLinkAttFromZTK, _rkLinkAttFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_ROT,      -1, _rkLinkRotFromZTK, NULL },
+  { ZTK_KEY_ROKI_LINK_FRAME,     1, _rkLinkFrameFromZTK, NULL },
+  { ZTK_KEY_ROKI_LINK_DH,        1, _rkLinkDHFromZTK, NULL },
+  { ZTK_KEY_ROKI_LINK_SHAPE,    -1, _rkLinkShapeFromZTK, NULL },
 };
 
 static ZTKPrp __ztk_prp_rklink_parent[] = {
-  { "parent", 1, _rkLinkParentFromZTK, NULL },
+  { ZTK_KEY_ROKI_LINK_PARENT,    1, _rkLinkParentFromZTK, NULL },
 };
 
 rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorSpecArray *msarray, ZTK *ztk)
@@ -545,9 +545,9 @@ void rkLinkFPrintZTK(FILE *fp, rkLink *link)
   rkJointFPrintZTK( fp, rkLinkJoint(link), zName(link) );
   if( !rkLinkShapeIsEmpty(link) )
     zListForEach( rkLinkShapeList(link), cp )
-      fprintf( fp, "%s: %s\n", ZTK_TAG_ZEO_SHAPE, zName( zShapeListCellShape(cp) ) );
+      fprintf( fp, "%s: %s\n", ZTK_KEY_ROKI_LINK_SHAPE, zName( zShapeListCellShape(cp) ) );
   if( rkLinkParent(link) )
-    fprintf( fp, "parent: %s\n", zName(rkLinkParent(link)) );
+    fprintf( fp, "%s: %s\n", ZTK_KEY_ROKI_LINK_PARENT, zName(rkLinkParent(link)) );
   fprintf( fp, "\n" );
 }
 

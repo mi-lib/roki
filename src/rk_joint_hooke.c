@@ -349,13 +349,13 @@ static bool _rkJointHookeStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
 }
 
 static ZTKPrp __ztk_prp_rkjoint_hooke[] = {
-  { "dis", 1, _rkJointHookeDisFromZTK, _rkJointHookeDisFPrintZTK },
-  { "min", 1, _rkJointHookeMinFromZTK, _rkJointHookeMinFPrintZTK },
-  { "max", 1, _rkJointHookeMaxFromZTK, _rkJointHookeMaxFPrintZTK },
-  { "stiffness", 1, _rkJointHookeStiffnessFromZTK, _rkJointHookeStiffnessFPrintZTK },
-  { "viscosity", 1, _rkJointHookeViscosityFromZTK, _rkJointHookeViscosityFPrintZTK },
-  { "coulomb", 1, _rkJointHookeCoulombFromZTK, _rkJointHookeCoulombFPrintZTK },
-  { "staticfriction", 1, _rkJointHookeStaticFrictionFromZTK, _rkJointHookeStaticFrictionFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_DIS,            1, _rkJointHookeDisFromZTK, _rkJointHookeDisFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_MIN,            1, _rkJointHookeMinFromZTK, _rkJointHookeMinFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_MAX,            1, _rkJointHookeMaxFromZTK, _rkJointHookeMaxFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_STIFFNESS,      1, _rkJointHookeStiffnessFromZTK, _rkJointHookeStiffnessFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_VISCOSITY,      1, _rkJointHookeViscosityFromZTK, _rkJointHookeViscosityFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_COULOMB,        1, _rkJointHookeCoulombFromZTK, _rkJointHookeCoulombFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_STATICFRICTION, 1, _rkJointHookeStaticFrictionFromZTK, _rkJointHookeStaticFrictionFPrintZTK },
 };
 
 static rkJoint *_rkJointHookeFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)

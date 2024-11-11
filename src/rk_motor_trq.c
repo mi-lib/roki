@@ -37,8 +37,8 @@ static bool _rkMotorSpecTrqMinFPrintZTK(FILE *fp, int i, void *obj){
 }
 
 static ZTKPrp __ztk_prp_rkmotor_trq[] = {
-  { "max", 1, _rkMotorSpecTrqMaxFromZTK, _rkMotorSpecTrqMaxFPrintZTK },
-  { "min", 1, _rkMotorSpecTrqMinFromZTK, _rkMotorSpecTrqMinFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_TORQUEMAX, 1, _rkMotorSpecTrqMaxFromZTK, _rkMotorSpecTrqMaxFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_TORQUEMIN, 1, _rkMotorSpecTrqMinFromZTK, _rkMotorSpecTrqMinFPrintZTK },
 };
 
 static rkMotorSpec *_rkMotorSpecTrqFromZTK(rkMotorSpec *ms, ZTK *ztk)

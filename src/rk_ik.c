@@ -641,6 +641,11 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   return rkChainRegisterIKCell( (rkChain *)obj, nameptr, priority, &attr, mask, constraint, NULL ) ? obj : NULL;
 }
 
+static ZTKPrp __ztk_prp_rkik[] = {
+  { ZTK_KEY_ROKI_CHAIN_IK_JOINT,      -1, _rkIKJointFromZTK, NULL },
+  { ZTK_KEY_ROKI_CHAIN_IK_CONSTRAINT, -1, _rkIKConstraintFromZTK, NULL },
+};
+
 static void _rkChainIKConfJointFPrintZTK(FILE *fp, rkChain *chain)
 {
   zVec6D dis;
@@ -653,7 +658,7 @@ static void _rkChainIKConfJointFPrintZTK(FILE *fp, rkChain *chain)
     rkChainLinkJointGetDis( chain, i, dis.e );
     dis_is_zero = _zVec6DIsTiny( &dis );
     if( chain->_ik->joint_is_enabled[i] || ( !chain->_ik->joint_is_enabled[i] && !dis_is_zero ) ){
-      fprintf( fp, "joint: %s\t%g", zName(rkChainLink(chain,i)), chain->_ik->joint_weight[i] );
+      fprintf( fp, "%s: %s\t%g", ZTK_KEY_ROKI_CHAIN_IK_JOINT, zName(rkChainLink(chain,i)), chain->_ik->joint_weight[i] );
       if( !dis_is_zero ){
         fputc( ' ', fp );
         rkJointDisFPrintZTK( fp, rkChainLinkJoint(chain,i) );
@@ -668,15 +673,10 @@ static void _rkIKConstraintFPrintZTK(FILE *fp, rkChain *chain)
   rkIKCell *cp;
 
   zListForEach( &chain->_ik->cell_list, cp ){
-    fprintf( fp, "constraint: %d %s %s", rkIKCellPriority(cp), rkIKCellName(cp), cp->data.constraint->typestr );
+    fprintf( fp, "%s: %d %s %s", ZTK_KEY_ROKI_CHAIN_IK_CONSTRAINT, rkIKCellPriority(cp), rkIKCellName(cp), cp->data.constraint->typestr );
     cp->data.constraint->fprintZTK( fp, chain, cp );
   }
 }
-
-static ZTKPrp __ztk_prp_rkik[] = {
-  { "joint", -1, _rkIKJointFromZTK, NULL },
-  { "constraint", -1, _rkIKConstraintFromZTK, NULL },
-};
 
 static void *_rkIKFromZTK(void *obj, int i, void *arg, ZTK *ztk)
 {

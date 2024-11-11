@@ -323,9 +323,9 @@ static bool _rkJointBrFloatTorqueThFPrintZTK(FILE *fp, int i, void *joint){
 }
 
 static ZTKPrp __ztk_prp_rkjoint_brfloat[] = {
-  { "dis", 1, _rkJointBrFloatDisFromZTK, _rkJointBrFloatDisFPrintZTK },
-  { "forcethreshold", 1, _rkJointBrFloatForceThFromZTK, _rkJointBrFloatForceThFPrintZTK },
-  { "torquethreshold", 1, _rkJointBrFloatTorqueThFromZTK, _rkJointBrFloatTorqueThFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_DIS,       1, _rkJointBrFloatDisFromZTK, _rkJointBrFloatDisFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_TH_FORCE,  1, _rkJointBrFloatForceThFromZTK, _rkJointBrFloatForceThFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_TH_TORQUE, 1, _rkJointBrFloatTorqueThFromZTK, _rkJointBrFloatTorqueThFPrintZTK },
 };
 
 static rkJoint *_rkJointBrFloatFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)

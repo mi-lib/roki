@@ -844,7 +844,7 @@ static bool _rkChainNameFPrintZTK(FILE *fp, int i, void *obj){
 }
 
 static ZTKPrp __ztk_prp_rkchain_chain[] = {
-  { "name", 1, _rkChainNameFromZTK, _rkChainNameFPrintZTK },
+  { ZTK_KEY_ROKI_CHAIN_NAME, 1, _rkChainNameFromZTK, _rkChainNameFPrintZTK },
 };
 
 static void *_rkChainChainFromZTK(void *obj, int i, void *arg, ZTK *ztk){
@@ -902,10 +902,10 @@ static bool _rkChainInitAttFPrintZTK(FILE *fp, int i, void *obj){
 }
 
 static ZTKPrp __ztk_prp_rkchain_initkey[] = {
-  { "pos", 1, _rkChainInitPosFromZTK, _rkChainInitPosFPrintZTK },
-  { "att", 1, _rkChainInitAttFromZTK, _rkChainInitAttFPrintZTK },
-  { "frame", 1, _rkChainInitFrameFromZTK, NULL },
-  { "joint", -1, _rkChainInitJointFromZTK, NULL },
+  { ZTK_KEY_ROKI_CHAIN_INIT_POS,    1, _rkChainInitPosFromZTK, _rkChainInitPosFPrintZTK },
+  { ZTK_KEY_ROKI_CHAIN_INIT_ATT,    1, _rkChainInitAttFromZTK, _rkChainInitAttFPrintZTK },
+  { ZTK_KEY_ROKI_CHAIN_INIT_FRAME,  1, _rkChainInitFrameFromZTK, NULL },
+  { ZTK_KEY_ROKI_CHAIN_INIT_JOINT, -1, _rkChainInitJointFromZTK, NULL },
 };
 
 static void *_rkChainInitFromZTK(void *obj, int i, void *arg, ZTK *ztk)
@@ -924,7 +924,7 @@ static bool _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
   for( k=0; k<rkChainLinkNum((rkChain*)obj); k++ ){
     link = rkChainLink((rkChain*)obj,k);
     if( rkLinkJointDOF(link) == 0 || rkJointIsNeutral( rkLinkJoint(link) ) ) continue;
-    fprintf( fp, "joint: %s ", zName(link) );
+    fprintf( fp, "%s: %s ", ZTK_KEY_ROKI_CHAIN_INIT_JOINT, zName(link) );
     rkJointDisFPrintZTK( fp, rkLinkJoint(link) );
   }
   return true;
@@ -990,7 +990,7 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     ZRUNWARN( RK_WARN_CHAIN_SHAPE_ONLY );
     if( !rkLinkArrayAlloc( rkChainLinkArray(chain), 1 ) ) return NULL;
     rkLinkInit( rkChainRoot(chain) );
-    if( !rkJointAssignByStr(rkLinkJoint(rkChainRoot(chain)), "float" ) ) return NULL;
+    if( !rkJointAssignByStr(rkLinkJoint(rkChainRoot(chain)), rk_joint_float.typestr ) ) return NULL;
     for( i=0; i<zMShape3DShapeNum(rkChainShape(chain)); i++ )
       rkLinkShapePush( rkChainRoot(chain), zMShape3DShape(rkChainShape(chain),i) );
   }

@@ -367,13 +367,13 @@ static bool _rkJointCylinStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
 }
 
 static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
-  { "dis", 1, _rkJointCylinDisFromZTK, _rkJointCylinDisFPrintZTK },
-  { "min", 1, _rkJointCylinMinFromZTK, _rkJointCylinMinFPrintZTK },
-  { "max", 1, _rkJointCylinMaxFromZTK, _rkJointCylinMaxFPrintZTK },
-  { "stiffness", 1, _rkJointCylinStiffnessFromZTK, _rkJointCylinStiffnessFPrintZTK },
-  { "viscosity", 1, _rkJointCylinViscosityFromZTK, _rkJointCylinViscosityFPrintZTK },
-  { "coulomb", 1, _rkJointCylinCoulombFromZTK, _rkJointCylinCoulombFPrintZTK },
-  { "staticfriction", 1, _rkJointCylinStaticFrictionFromZTK, _rkJointCylinStaticFrictionFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_DIS,            1, _rkJointCylinDisFromZTK, _rkJointCylinDisFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_MIN,            1, _rkJointCylinMinFromZTK, _rkJointCylinMinFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_MAX,            1, _rkJointCylinMaxFromZTK, _rkJointCylinMaxFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_STIFFNESS,      1, _rkJointCylinStiffnessFromZTK, _rkJointCylinStiffnessFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_VISCOSITY,      1, _rkJointCylinViscosityFromZTK, _rkJointCylinViscosityFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_COULOMB,        1, _rkJointCylinCoulombFromZTK, _rkJointCylinCoulombFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_STATICFRICTION, 1, _rkJointCylinStaticFrictionFromZTK, _rkJointCylinStaticFrictionFPrintZTK },
 };
 
 static rkJoint *_rkJointCylinFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)

@@ -95,7 +95,15 @@ __ROKI_EXPORT rkContactInfo *rkContactInfoElasticCreate(rkContactInfo *ci, doubl
  */
 __ROKI_EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, const char *stf1, const char *stf2);
 
-#define ZTK_TAG_ROKI_CONTACTINFO "roki::contact"
+#define ZTK_TAG_ROKI_CONTACTINFO             "roki::contact"
+
+#define ZTK_KEY_ROKI_CONTACT_BIND            "bind"
+#define ZTK_KEY_ROKI_CONTACT_STATICFRICTION  "staticfriction"
+#define ZTK_KEY_ROKI_CONTACT_KINETICFRICTION "kineticfriction"
+#define ZTK_KEY_ROKI_CONTACT_COMPENSATION    "compensation"
+#define ZTK_KEY_ROKI_CONTACT_RELAXATION      "relaxation"
+#define ZTK_KEY_ROKI_CONTACT_ELASTICITY      "elasticity"
+#define ZTK_KEY_ROKI_CONTACT_VISCOSITY       "viscosity"
 
 /*! \brief print information of a contact model out to the current position of a ZTK file.
  *

@@ -277,7 +277,7 @@ static bool _rkJointFloatDisFPrintZTK(FILE *fp, int i, void *joint){
 }
 
 static ZTKPrp __ztk_prp_rkjoint_float[] = {
-  { "dis", 1, _rkJointFloatDisFromZTK, _rkJointFloatDisFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_DIS, 1, _rkJointFloatDisFromZTK, _rkJointFloatDisFPrintZTK },
 };
 
 static rkJoint *_rkJointFloatFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)

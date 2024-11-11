@@ -89,13 +89,13 @@ static void *_rkContactInfoViscosityFromZTK(void *obj, int i, void *arg, ZTK *zt
 }
 
 static ZTKPrp __ztk_prp_rkcontactinfo[] = {
-  { "bind", 1, _rkContactInfoBindFromZTK, NULL },
-  { "staticfriction", 1, _rkContactInfoStaticFricFromZTK, NULL },
-  { "kineticfriction", 1, _rkContactInfoKineticFricFromZTK, NULL },
-  { "compensation", 1, _rkContactInfoCompensationFromZTK, NULL },
-  { "relaxation", 1, _rkContactInfoRelaxationFromZTK, NULL },
-  { "elasticity", 1, _rkContactInfoElasticityFromZTK, NULL },
-  { "viscosity", 1, _rkContactInfoViscosityFromZTK, NULL },
+  { ZTK_KEY_ROKI_CONTACT_BIND,            1, _rkContactInfoBindFromZTK, NULL },
+  { ZTK_KEY_ROKI_CONTACT_STATICFRICTION,  1, _rkContactInfoStaticFricFromZTK, NULL },
+  { ZTK_KEY_ROKI_CONTACT_KINETICFRICTION, 1, _rkContactInfoKineticFricFromZTK, NULL },
+  { ZTK_KEY_ROKI_CONTACT_COMPENSATION,    1, _rkContactInfoCompensationFromZTK, NULL },
+  { ZTK_KEY_ROKI_CONTACT_RELAXATION,      1, _rkContactInfoRelaxationFromZTK, NULL },
+  { ZTK_KEY_ROKI_CONTACT_ELASTICITY,      1, _rkContactInfoElasticityFromZTK, NULL },
+  { ZTK_KEY_ROKI_CONTACT_VISCOSITY,       1, _rkContactInfoViscosityFromZTK, NULL },
 };
 
 static void *_rkContactInfoFromZTK(void *obj, int i, void *arg, ZTK *ztk)
@@ -107,20 +107,20 @@ static void *_rkContactInfoFromZTK(void *obj, int i, void *arg, ZTK *ztk)
 /* print information of a contact model. */
 void rkContactInfoFPrintZTK(FILE *fp, rkContactInfo *ci)
 {
-  fprintf( fp, "bind: %s %s\n", ci->__stf[0], ci->__stf[1] );
+  fprintf( fp, "%s: %s %s\n", ZTK_KEY_ROKI_CONTACT_BIND, ci->__stf[0], ci->__stf[1] );
   switch( rkContactInfoType(ci) ){
   case RK_CONTACT_RIGID:
-    fprintf( fp, "compensation: %.10g\n", rkContactInfoK(ci) );
-    fprintf( fp, "relaxation: %.10g\n", rkContactInfoL(ci) );
+    fprintf( fp, "%s: %.10g\n", ZTK_KEY_ROKI_CONTACT_COMPENSATION, rkContactInfoK(ci) );
+    fprintf( fp, "%s: %.10g\n", ZTK_KEY_ROKI_CONTACT_RELAXATION, rkContactInfoL(ci) );
     break;
   case RK_CONTACT_ELASTIC:
-    fprintf( fp, "elasticity: %.10g\n", rkContactInfoE(ci) );
-    fprintf( fp, "viscosity: %.10g\n", rkContactInfoV(ci) );
+    fprintf( fp, "%s: %.10g\n", ZTK_KEY_ROKI_CONTACT_ELASTICITY, rkContactInfoE(ci) );
+    fprintf( fp, "%s: %.10g\n", ZTK_KEY_ROKI_CONTACT_VISCOSITY, rkContactInfoV(ci) );
     break;
   default: ;
   }
-  fprintf( fp, "staticfriction: %.10g\n", rkContactInfoSF(ci) );
-  fprintf( fp, "kineticfriction: %.10g\n", rkContactInfoKF(ci) );
+  fprintf( fp, "%s: %.10g\n", ZTK_KEY_ROKI_CONTACT_STATICFRICTION, rkContactInfoSF(ci) );
+  fprintf( fp, "%s: %.10g\n", ZTK_KEY_ROKI_CONTACT_KINETICFRICTION, rkContactInfoKF(ci) );
   fprintf( fp, "\n" );
 }
 

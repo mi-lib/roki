@@ -274,9 +274,15 @@ static bool _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
   return true;
 }
 
+static bool _rkJointSpherMotorFPrintZTK(FILE *fp, int i, void *joint){
+  if( !((rkJoint *)joint)->motor ) return false;
+  fprintf( fp, "%s\n", rkMotorName( ((rkJoint *)joint)->motor ) );
+  return true;
+}
+
 static ZTKPrp __ztk_prp_rkjoint_spher[] = {
-  { "dis", 1, _rkJointSpherDisFromZTK, _rkJointSpherDisFPrintZTK },
-  { "motor", 1, _rkJointSpherMotorFromZTK, NULL },
+  { ZTK_KEY_ROKI_JOINT_DIS,   1, _rkJointSpherDisFromZTK, _rkJointSpherDisFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_MOTOR, 1, _rkJointSpherMotorFromZTK, _rkJointSpherMotorFPrintZTK },
 };
 
 static rkJoint *_rkJointSpherFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
@@ -287,8 +293,6 @@ static rkJoint *_rkJointSpherFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
 static void _rkJointSpherFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_spher );
-  if( rkJointMotor( joint ) )
-    fprintf( fp, "motor: %s\n", rkMotorName( rkJointMotor(joint) ) );
 }
 
 rkJointCom rk_joint_spher = {

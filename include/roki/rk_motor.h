@@ -66,6 +66,22 @@ __ROKI_EXPORT rkMotorSpec *rkMotorSpecClone(rkMotorSpec *org, rkMotorSpec *cln);
 
 /* ZTK */
 
+#define ZTK_TAG_ROKI_MOTOR               "roki::motor"
+
+#define ZTK_KEY_ROKI_MOTOR_NAME          "name"
+#define ZTK_KEY_ROKI_MOTOR_TYPE          "type"
+#define ZTK_KEY_ROKI_MOTOR_TORQUEMIN     "min"
+#define ZTK_KEY_ROKI_MOTOR_TORQUEMAX     "max"
+#define ZTK_KEY_ROKI_MOTOR_MOTORCONSTANT "motorconstant"
+#define ZTK_KEY_ROKI_MOTOR_ADMITTANCE    "admittance"
+#define ZTK_KEY_ROKI_MOTOR_MAXVOLTAGE    "maxvoltage"
+#define ZTK_KEY_ROKI_MOTOR_MINVOLTAGE    "minvoltage"
+#define ZTK_KEY_ROKI_MOTOR_GEARRATIO     "gearratio"
+#define ZTK_KEY_ROKI_MOTOR_ROTERINERTIA  "rotorinertia"
+#define ZTK_KEY_ROKI_MOTOR_GEARINERTIA   "gearinertia"
+#define ZTK_KEY_ROKI_MOTOR_COMPK         "compk"
+#define ZTK_KEY_ROKI_MOTOR_COMPL         "compl"
+
 __ROKI_EXPORT rkMotorSpec *rkMotorSpecFromZTK(rkMotorSpec *ms, ZTK *ztk);
 __ROKI_EXPORT void rkMotorSpecFPrintZTK(FILE *fp, rkMotorSpec *ms);
 
@@ -74,7 +90,6 @@ __ROKI_EXPORT void rkMotorSpecFPrintZTK(FILE *fp, rkMotorSpec *ms);
  * \brief array of motor specifications
  * ********************************************************** */
 
-#define ZTK_TAG_ROKI_MOTOR "roki::motor"
 zArrayClass( rkMotorSpecArray, rkMotorSpec );
 
 __ROKI_EXPORT rkMotorSpecArray *rkMotorSpecArrayAlloc(rkMotorSpecArray *msarray, int size);

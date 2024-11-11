@@ -69,8 +69,8 @@ static bool _rkMotorSpecTypeFPrintZTK(FILE *fp, int i, void *obj){
 }
 
 static ZTKPrp __ztk_prp_rkmotorspec[] = {
-  { "name", 1, _rkMotorSpecNameFromZTK, _rkMotorSpecNameFPrintZTK },
-  { "type", 1, _rkMotorSpecTypeFromZTK, _rkMotorSpecTypeFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_NAME, 1, _rkMotorSpecNameFromZTK, _rkMotorSpecNameFPrintZTK },
+  { ZTK_KEY_ROKI_MOTOR_TYPE, 1, _rkMotorSpecTypeFromZTK, _rkMotorSpecTypeFPrintZTK },
 };
 
 rkMotorSpec *rkMotorSpecFromZTK(rkMotorSpec *ms, ZTK *ztk)

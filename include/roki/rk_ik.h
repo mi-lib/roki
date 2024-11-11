@@ -254,7 +254,10 @@ __ROKI_EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
 
 /* ZTK */
 
-#define ZTK_TAG_ROKI_CHAIN_IK "roki::chain::ik"
+#define ZTK_TAG_ROKI_CHAIN_IK            "roki::chain::ik"
+
+#define ZTK_KEY_ROKI_CHAIN_IK_JOINT      "joint"
+#define ZTK_KEY_ROKI_CHAIN_IK_CONSTRAINT "constraint"
 
 /* read the inverse kinematics configuration of a kinematic chain from ZTK. */
 __ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk);

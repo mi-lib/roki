@@ -328,16 +328,21 @@ static bool _rkJointPrismStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
   fprintf( fp, "%.10g\n", _rkp(joint)->sf );
   return true;
 }
+static bool _rkJointPrismMotorFPrintZTK(FILE *fp, int i, void *joint){
+  if( !((rkJoint *)joint)->motor ) return false;
+  fprintf( fp, "%s\n", rkMotorName( ((rkJoint *)joint)->motor ) );
+  return true;
+}
 
 static ZTKPrp __ztk_prp_rkjoint_prism[] = {
-  { "dis", 1, _rkJointPrismDisFromZTK, _rkJointPrismDisFPrintZTK },
-  { "min", 1, _rkJointPrismMinFromZTK, _rkJointPrismMinFPrintZTK },
-  { "max", 1, _rkJointPrismMaxFromZTK, _rkJointPrismMaxFPrintZTK },
-  { "stiffness", 1, _rkJointPrismStiffnessFromZTK, _rkJointPrismStiffnessFPrintZTK },
-  { "viscosity", 1, _rkJointPrismViscosityFromZTK, _rkJointPrismViscosityFPrintZTK },
-  { "coulomb", 1, _rkJointPrismCoulombFromZTK, _rkJointPrismCoulombFPrintZTK },
-  { "staticfriction", 1, _rkJointPrismStaticFrictionFromZTK, _rkJointPrismStaticFrictionFPrintZTK },
-  { "motor", 1, _rkJointPrismMotorFromZTK, NULL },
+  { ZTK_KEY_ROKI_JOINT_DIS,            1, _rkJointPrismDisFromZTK, _rkJointPrismDisFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_MIN,            1, _rkJointPrismMinFromZTK, _rkJointPrismMinFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_MAX,            1, _rkJointPrismMaxFromZTK, _rkJointPrismMaxFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_STIFFNESS,      1, _rkJointPrismStiffnessFromZTK, _rkJointPrismStiffnessFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_VISCOSITY,      1, _rkJointPrismViscosityFromZTK, _rkJointPrismViscosityFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_COULOMB,        1, _rkJointPrismCoulombFromZTK, _rkJointPrismCoulombFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_STATICFRICTION, 1, _rkJointPrismStaticFrictionFromZTK, _rkJointPrismStaticFrictionFPrintZTK },
+  { ZTK_KEY_ROKI_JOINT_MOTOR,          1, _rkJointPrismMotorFromZTK, _rkJointPrismMotorFPrintZTK },
 };
 
 static rkJoint *_rkJointPrismFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk)
@@ -348,8 +353,6 @@ static rkJoint *_rkJointPrismFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
 static void _rkJointPrismFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
   ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_prism );
-  if( rkJointMotor( joint ) )
-    fprintf( fp, "motor: %s\n", rkMotorName( rkJointMotor(joint) ) );
 }
 
 rkJointCom rk_joint_prism = {

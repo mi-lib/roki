@@ -356,6 +356,19 @@ __ROKI_EXPORT void rkJointMotorGetValDummy(rkJoint *joint, double *val);
 
 __ROKI_EXPORT rkJoint *rkJointAssignMotorByStr(rkJoint *joint, rkMotorSpecArray *msarray, const char *str);
 
+/* ZTK */
+
+#define ZTK_KEY_ROKI_JOINT_DIS            "dis"
+#define ZTK_KEY_ROKI_JOINT_MIN            "min"
+#define ZTK_KEY_ROKI_JOINT_MAX            "max"
+#define ZTK_KEY_ROKI_JOINT_STIFFNESS      "stiffness"
+#define ZTK_KEY_ROKI_JOINT_VISCOSITY      "viscosity"
+#define ZTK_KEY_ROKI_JOINT_COULOMB        "coulomb"
+#define ZTK_KEY_ROKI_JOINT_STATICFRICTION "staticfriction"
+#define ZTK_KEY_ROKI_JOINT_MOTOR          "motor"
+#define ZTK_KEY_ROKI_JOINT_TH_FORCE       "forcethreshold"
+#define ZTK_KEY_ROKI_JOINT_TH_TORQUE      "torquethreshold"
+
 /*! \brief scan and print out joint displacement and properties.
  *
  * The candidates of \a key are listed as follows:

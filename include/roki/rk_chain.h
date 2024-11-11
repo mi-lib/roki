@@ -736,6 +736,12 @@ __ROKI_EXPORT zSphere3D *rkChainBoundingBall(rkChain *chain, zSphere3D *bb);
 #define ZTK_TAG_ROKI_CHAIN      "roki::chain"
 #define ZTK_TAG_ROKI_CHAIN_INIT "roki::chain::init"
 
+#define ZTK_KEY_ROKI_CHAIN_NAME       "name"
+#define ZTK_KEY_ROKI_CHAIN_INIT_POS   "pos"
+#define ZTK_KEY_ROKI_CHAIN_INIT_ATT   "att"
+#define ZTK_KEY_ROKI_CHAIN_INIT_FRAME "frame"
+#define ZTK_KEY_ROKI_CHAIN_INIT_JOINT "joint"
+
 __ROKI_EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
 __ROKI_EXPORT void rkChainFPrintZTK(FILE *fp, rkChain *chain);
 
