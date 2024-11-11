@@ -843,7 +843,7 @@ static bool _rkChainNameFPrintZTK(FILE *fp, int i, void *obj){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkchain_chain[] = {
+static const ZTKPrp __ztk_prp_rkchain_chain[] = {
   { ZTK_KEY_ROKI_CHAIN_NAME, 1, _rkChainNameFromZTK, _rkChainNameFPrintZTK },
 };
 
@@ -901,7 +901,7 @@ static bool _rkChainInitAttFPrintZTK(FILE *fp, int i, void *obj){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkchain_initkey[] = {
+static const ZTKPrp __ztk_prp_rkchain_initkey[] = {
   { ZTK_KEY_ROKI_CHAIN_INIT_POS,    1, _rkChainInitPosFromZTK, _rkChainInitPosFPrintZTK },
   { ZTK_KEY_ROKI_CHAIN_INIT_ATT,    1, _rkChainInitAttFromZTK, _rkChainInitAttFPrintZTK },
   { ZTK_KEY_ROKI_CHAIN_INIT_FRAME,  1, _rkChainInitFrameFromZTK, NULL },
@@ -930,27 +930,27 @@ static bool _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
   return true;
 }
 
-static ZTKPrp __ztk_prp_tag_roki_chain_optic[] = {
+static const ZTKPrp __ztk_prp_tag_roki_chain_optic[] = {
   { ZTK_TAG_ZEO_OPTIC, -1, NULL, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_roki_chain_shape[] = {
+static const ZTKPrp __ztk_prp_tag_roki_chain_shape[] = {
   { ZTK_TAG_ZEO_SHAPE, -1, NULL, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_roki_chain_motor[] = {
+static const ZTKPrp __ztk_prp_tag_roki_chain_motor[] = {
   { ZTK_TAG_ROKI_MOTOR, -1, _rkChainMotorSpecFromZTK, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_roki_chain_link[] = {
+static const ZTKPrp __ztk_prp_tag_roki_chain_link[] = {
   { ZTK_TAG_ROKI_LINK, -1, _rkChainLinkFromZTK, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_roki_chain_connection[] = {
+static const ZTKPrp __ztk_prp_tag_roki_chain_connection[] = {
   { ZTK_TAG_ROKI_LINK, -1, _rkChainLinkConnectFromZTK, NULL },
 };
 
-static ZTKPrp __ztk_prp_tag_roki_chain[] = {
+static const ZTKPrp __ztk_prp_tag_roki_chain[] = {
   { ZTK_TAG_ROKI_CHAIN, 1, _rkChainChainFromZTK, _rkChainChainFPrintZTK },
   { ZTK_TAG_ROKI_CHAIN_INIT, 1, _rkChainInitFromZTK, NULL },
 };
@@ -1039,7 +1039,7 @@ bool rkChainWriteZTK(rkChain *c, const char *filename)
   return true;
 }
 
-static ZTKPrp __ztk_prp_tag_roki_chain_init[] = {
+static const ZTKPrp __ztk_prp_tag_roki_chain_init[] = {
   { ZTK_TAG_ROKI_CHAIN_INIT, 1, _rkChainInitFromZTK, _rkChainInitFPrintZTK },
 };
 

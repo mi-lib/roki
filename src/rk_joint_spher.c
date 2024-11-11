@@ -280,7 +280,7 @@ static bool _rkJointSpherMotorFPrintZTK(FILE *fp, int i, void *joint){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkjoint_spher[] = {
+static const ZTKPrp __ztk_prp_rkjoint_spher[] = {
   { ZTK_KEY_ROKI_JOINT_DIS,   1, _rkJointSpherDisFromZTK, _rkJointSpherDisFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MOTOR, 1, _rkJointSpherMotorFromZTK, _rkJointSpherMotorFPrintZTK },
 };

@@ -276,7 +276,7 @@ static bool _rkJointFloatDisFPrintZTK(FILE *fp, int i, void *joint){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkjoint_float[] = {
+static const ZTKPrp __ztk_prp_rkjoint_float[] = {
   { ZTK_KEY_ROKI_JOINT_DIS, 1, _rkJointFloatDisFromZTK, _rkJointFloatDisFPrintZTK },
 };
 

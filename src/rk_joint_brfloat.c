@@ -322,7 +322,7 @@ static bool _rkJointBrFloatTorqueThFPrintZTK(FILE *fp, int i, void *joint){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkjoint_brfloat[] = {
+static const ZTKPrp __ztk_prp_rkjoint_brfloat[] = {
   { ZTK_KEY_ROKI_JOINT_DIS,       1, _rkJointBrFloatDisFromZTK, _rkJointBrFloatDisFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_TH_FORCE,  1, _rkJointBrFloatForceThFromZTK, _rkJointBrFloatForceThFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_TH_TORQUE, 1, _rkJointBrFloatTorqueThFromZTK, _rkJointBrFloatTorqueThFPrintZTK },

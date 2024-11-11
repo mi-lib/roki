@@ -342,7 +342,7 @@ static bool _rkJointRevolMotorFPrintZTK(FILE *fp, int i, void *joint){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkjoint_revol[] = {
+static const ZTKPrp __ztk_prp_rkjoint_revol[] = {
   { ZTK_KEY_ROKI_JOINT_DIS,            1, _rkJointRevolDisFromZTK, _rkJointRevolDisFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MIN,            1, _rkJointRevolMinFromZTK, _rkJointRevolMinFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MAX,            1, _rkJointRevolMaxFromZTK, _rkJointRevolMaxFPrintZTK },

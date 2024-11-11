@@ -366,7 +366,7 @@ static bool _rkJointCylinStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkjoint_cylin[] = {
+static const ZTKPrp __ztk_prp_rkjoint_cylin[] = {
   { ZTK_KEY_ROKI_JOINT_DIS,            1, _rkJointCylinDisFromZTK, _rkJointCylinDisFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MIN,            1, _rkJointCylinMinFromZTK, _rkJointCylinMinFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MAX,            1, _rkJointCylinMaxFromZTK, _rkJointCylinMaxFPrintZTK },

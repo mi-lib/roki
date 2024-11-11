@@ -334,7 +334,7 @@ static bool _rkJointPrismMotorFPrintZTK(FILE *fp, int i, void *joint){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkjoint_prism[] = {
+static const ZTKPrp __ztk_prp_rkjoint_prism[] = {
   { ZTK_KEY_ROKI_JOINT_DIS,            1, _rkJointPrismDisFromZTK, _rkJointPrismDisFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MIN,            1, _rkJointPrismMinFromZTK, _rkJointPrismMinFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MAX,            1, _rkJointPrismMaxFromZTK, _rkJointPrismMaxFPrintZTK },

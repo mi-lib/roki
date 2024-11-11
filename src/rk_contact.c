@@ -88,7 +88,7 @@ static void *_rkContactInfoViscosityFromZTK(void *obj, int i, void *arg, ZTK *zt
   return obj;
 }
 
-static ZTKPrp __ztk_prp_rkcontactinfo[] = {
+static const ZTKPrp __ztk_prp_rkcontactinfo[] = {
   { ZTK_KEY_ROKI_CONTACT_BIND,            1, _rkContactInfoBindFromZTK, NULL },
   { ZTK_KEY_ROKI_CONTACT_STATICFRICTION,  1, _rkContactInfoStaticFricFromZTK, NULL },
   { ZTK_KEY_ROKI_CONTACT_KINETICFRICTION, 1, _rkContactInfoKineticFricFromZTK, NULL },
@@ -166,7 +166,7 @@ rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *carray, const cha
 
 /* ZTK */
 
-static ZTKPrp __ztk_prp_tag_roki_contactinfo[] = {
+static const ZTKPrp __ztk_prp_tag_roki_contactinfo[] = {
   { ZTK_TAG_ROKI_CONTACTINFO, -1, _rkContactInfoFromZTK, NULL },
 };
 

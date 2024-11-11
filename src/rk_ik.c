@@ -641,7 +641,7 @@ static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   return rkChainRegisterIKCell( (rkChain *)obj, nameptr, priority, &attr, mask, constraint, NULL ) ? obj : NULL;
 }
 
-static ZTKPrp __ztk_prp_rkik[] = {
+static const ZTKPrp __ztk_prp_rkik[] = {
   { ZTK_KEY_ROKI_CHAIN_IK_JOINT,      -1, _rkIKJointFromZTK, NULL },
   { ZTK_KEY_ROKI_CHAIN_IK_CONSTRAINT, -1, _rkIKConstraintFromZTK, NULL },
 };
@@ -684,7 +684,7 @@ static void *_rkIKFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   return obj;
 }
 
-static ZTKPrp __ztk_prp_tag_roki_chain_ik[] = {
+static const ZTKPrp __ztk_prp_tag_roki_chain_ik[] = {
   { ZTK_TAG_ROKI_CHAIN_IK, 1, _rkIKFromZTK, NULL },
 };
 

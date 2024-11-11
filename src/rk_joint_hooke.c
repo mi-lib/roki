@@ -348,7 +348,7 @@ static bool _rkJointHookeStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
   return true;
 }
 
-static ZTKPrp __ztk_prp_rkjoint_hooke[] = {
+static const ZTKPrp __ztk_prp_rkjoint_hooke[] = {
   { ZTK_KEY_ROKI_JOINT_DIS,            1, _rkJointHookeDisFromZTK, _rkJointHookeDisFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MIN,            1, _rkJointHookeMinFromZTK, _rkJointHookeMinFPrintZTK },
   { ZTK_KEY_ROKI_JOINT_MAX,            1, _rkJointHookeMaxFromZTK, _rkJointHookeMaxFPrintZTK },
