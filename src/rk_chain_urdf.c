@@ -543,7 +543,7 @@ static bool _rkURDFJointIsPrism(rkURDFJoint *joint)
 
 static bool _rkURDFJointIsFloat(rkURDFJoint *joint)
 {
-  return strcmp( joint->type, "float" ) == 0;
+  return strcmp( joint->type, "floating" ) == 0;
 }
 
 static bool _rkURDFCorrectFrame(rkURDFRobotInfo *robot_info)
