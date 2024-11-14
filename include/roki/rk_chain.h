@@ -18,6 +18,7 @@ __BEGIN_DECLS
  * ********************************************************** */
 
 ZDECL_STRUCT( rkIK );
+ZDECL_STRUCT( rkFDEquation );
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   Z_NAMED_CLASS;
@@ -31,7 +32,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 
   /*! \cond */
   bool _iscol; /* flag for collision check */
-  rkIK *_ik; /* IK solver */
+  rkIK *_ik; /* inverse kinematics solver */
+  rkFDEquation *_fdequation; /* forward dynamics solver */
   /*! \endcond */
 #ifdef __cplusplus
   int getLinkNum() const;
@@ -670,6 +672,15 @@ __ROKI_EXPORT zVec rkChainBiasVec(rkChain *chain, zVec bias);
 __ROKI_EXPORT bool rkChainInertiaMatBiasVecUV(rkChain *chain, zMat inertia, zVec bias);
 __ROKI_EXPORT bool rkChainInertiaMatBiasVecCRB(rkChain *chain, zMat inertia, zVec bias);
 __ROKI_EXPORT bool (* rkChainInertiaMatBiasVec)(rkChain*,zMat,zVec);
+
+/* forward dynamics */
+
+/*! \brief create internal workspace for forward dynamics equation. */
+__ROKI_EXPORT rkChain *rkChainCreateFDEquation(rkChain *chain);
+/*! \brief destroy internal workspace for forward dynamics equation. */
+__ROKI_EXPORT void rkChainDestroyFDEquation(rkChain *chain);
+/*! \brief forward dynamics of a kinematic chain by directly solving equation of motion. */
+__ROKI_EXPORT zVec rkChainFD(rkChain *chain, const zVec dis, const zVec vel, const zVec trq, zVec acc);
 
 /*! \brief external force applied to kinematic chain.
  *

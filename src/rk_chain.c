@@ -22,6 +22,7 @@ void rkChainInit(rkChain *chain)
   rkChainSetCOMVel( chain, ZVEC3DZERO );
   rkChainSetCOMAcc( chain, ZVEC3DZERO );
   chain->_ik = NULL;
+  chain->_fdequation = NULL;
 }
 
 /* destroy a kinematic chain. */
@@ -34,6 +35,7 @@ void rkChainDestroy(rkChain *chain)
   zFree( rkChainShape(chain) );
   rkMotorSpecArrayDestroy( rkChainMotorSpecArray(chain) );
   rkChainDestroyIK( chain );
+  rkChainDestroyFDEquation( chain );
   rkChainInit( chain );
 }
 
@@ -715,6 +717,7 @@ zMat rkChainInertiaMatCRB(rkChain *chain, zMat inertia)
 
   rkChainUpdateCRB( chain );
   zMatBufNC(&hij) = _e;
+  zMatZero( inertia );
   _rkChainLinkInertiaMatCRB( rkChainRoot(chain), wi, si, &hij, inertia );
   return inertia;
 }
@@ -748,6 +751,81 @@ bool rkChainInertiaMatBiasVecCRB(rkChain *chain, zMat inertia, zVec bias)
 }
 
 bool (* rkChainInertiaMatBiasVec)(rkChain*,zMat,zVec) = rkChainInertiaMatBiasVecCRB;
+
+/* forward dynamics */
+
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkFDEquation ){
+  zMat fd_mat;
+  zVec fd_vec;
+  zVec _le_s;
+  zIndex _le_index;
+};
+
+/* free workspace for forward dynamics equation */
+static void _rkFDEquationFree(rkFDEquation *fdequation)
+{
+  zMatFree( fdequation->fd_mat );
+  zVecFree( fdequation->fd_vec );
+  zVecFree( fdequation->_le_s );
+  zIndexFree( fdequation->_le_index );
+}
+
+/* allocate workspace for forward dynamics equation */
+static rkFDEquation *_rkFDEquationAlloc(rkFDEquation *fdequation, rkChain *chain)
+{
+  int size;
+
+  if( ( size = rkChainJointSize( chain ) ) < 1 ){
+    ZRUNWARN( "cannot compute forward dynamics of a zero-DOF kinematic chain" );
+    return NULL;
+  }
+  fdequation->fd_mat = zMatAllocSqr( size );
+  fdequation->fd_vec = zVecAlloc( size );
+  fdequation->_le_s = zVecAlloc( size );
+  fdequation->_le_index = zIndexCreate( size );
+  if( !fdequation->fd_mat || !fdequation->fd_vec || !fdequation->_le_s || !fdequation->_le_index ){
+    ZALLOCERROR();
+    return NULL;
+  }
+  return fdequation;
+}
+
+/* create internal workspace for forward dynamics equation */
+rkChain *rkChainCreateFDEquation(rkChain *chain)
+{
+  if( !( chain->_fdequation = zAlloc( rkFDEquation, 1 ) ) ){
+    ZALLOCERROR();
+    return NULL;
+  }
+  if( !_rkFDEquationAlloc( chain->_fdequation, chain ) ){
+    rkChainDestroyFDEquation( chain );
+    return NULL;
+  }
+  return chain;
+}
+
+/* destroy internal workspace for forward dynamics equation */
+void rkChainDestroyFDEquation(rkChain *chain)
+{
+  if( !chain->_fdequation ) return;
+  _rkFDEquationFree( chain->_fdequation );
+  zFree( chain->_fdequation );
+}
+
+/* forward dynamics of a kinematic chain by directly solving equation of motion. */
+zVec rkChainFD(rkChain *chain, const zVec dis, const zVec vel, const zVec trq, zVec acc)
+{
+  if( !chain->_fdequation )
+    if( !rkChainCreateFDEquation( chain ) ) return NULL;
+  rkChainFK( chain, dis );
+  rkChainSetJointVelAll( chain, vel );
+  rkChainInertiaMatBiasVec( chain, chain->_fdequation->fd_mat, chain->_fdequation->fd_vec );
+  zVecSub( trq, chain->_fdequation->fd_vec, chain->_fdequation->fd_vec );
+  zIndexOrder( chain->_fdequation->_le_index, 0 );
+  zLESolveGaussDST( chain->_fdequation->fd_mat, chain->_fdequation->fd_vec, acc,
+    chain->_fdequation->_le_index, chain->_fdequation->_le_s );
+  return acc;
+}
 
 /* net external wrench applied to a kinematic chain. */
 zVec6D *rkChainNetExtWrench(rkChain *chain, zVec6D *w)

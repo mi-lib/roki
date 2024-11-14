@@ -261,8 +261,39 @@ void assert_inertia_mat(rkChain *chain, int n)
   zVecFreeAtOnce( 3, b, dis, vel );
 }
 
+void assert_fd_id(rkChain *chain)
+{
+  zVec dis, vel, acc, trq, trq_id;
+  int i, size, count_success = 0;
+
+  size = rkChainJointSize( chain );
+  dis = zVecAlloc( size );
+  vel = zVecAlloc( size );
+  acc = zVecAlloc( size );
+  trq = zVecAlloc( size );
+  trq_id = zVecAlloc( size );
+
+  for( i=0; i<N; i++ ){
+    zVecRandUniform( dis, -1.0, 1.0 );
+    zVecRandUniform( vel, -1.0, 1.0 );
+    zVecRandUniform( trq, -1.0, 1.0 );
+    rkChainFD( chain, dis, vel, trq, acc );
+    rkChainID( chain, vel, acc );
+    rkChainGetJointTrqAll( chain, trq_id );
+    if( zVecIsEqual( trq, trq_id, zTOL ) ){
+      count_success++;
+    } else{
+      eprintf( "Failure case : RMSE = %.10g\n", zVecDist( trq, trq_id ) );
+      eprintf( " (error) = " ); zVecPrint( zVecSubDRC( trq_id, trq ) );
+    }
+  }
+  eprintf( "Success rate = %d / %d\n", count_success, N );
+  zVecFreeAtOnce( 5, dis, vel, acc, trq, trq_id );
+  zAssert( rkChainFD + rkChainID, count_success == N );
+}
+
 /* only works with torque-controlled robot models. */
-void assert_fd_id(void)
+void assert_fd_id_abi(void)
 {
   rkChain chain;
   zVec dis, vel, acc, expected, actual, err;
@@ -311,8 +342,9 @@ int main(int argc, char *argv[])
   assert_getsetconf( &chain );
   assert_crb( &chain, n );
   assert_inertia_mat( &chain, n );
+  assert_fd_id( &chain );
   /* termination */
   rkChainDestroy( &chain );
-  assert_fd_id();
+  assert_fd_id_abi();
   return EXIT_SUCCESS;
 }
