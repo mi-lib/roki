@@ -49,7 +49,7 @@ bool check_kinetic_energy(rkChain *chain, zMat inertia, zVec vel, double tol)
   return zIsEqual( rkChainKE( chain ), ke, tol );
 }
 
-bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec vel, double tol)
+bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec dis, zVec vel, double tol)
 {
   zVec acc, trq_fd, trq_id;
   int n;
@@ -62,8 +62,7 @@ bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec vel, double tol)
   trq_id = zVecAlloc( n );
   zVecRandUniform( acc, -1.0, 1.0 );
   /* inverse dynamics */
-  rkChainID( chain, vel, acc );
-  rkChainGetJointTrqAll( chain, trq_id );
+  rkChainID( chain, dis, vel, acc, trq_id );
   /* forward dynamics */
   zMulMatVec( inertia, acc, trq_fd );
   zVecAddDRC( trq_fd, bias );
@@ -239,7 +238,7 @@ void assert_inertia_mat(rkChain *chain, int n)
     /* count success */
     if( check_inertia_matrix( chain, h, TOL ) ) count_icrb++;
     if( check_kinetic_energy( chain, h, vel, TOL ) ) count_ke++;
-    if( check_fd( chain, h, b, vel, TOL ) ) count_fd++;
+    if( check_fd( chain, h, b, dis, vel, TOL ) ) count_fd++;
   }
   zAssert( rkChainInertiaMatBiasVec, count_icrb == N );
   zAssert( rkChainInertiaMatBiasVec + rkChainKE, count_ke == N );
@@ -278,8 +277,7 @@ void assert_fd_id(rkChain *chain)
     zVecRandUniform( vel, -1.0, 1.0 );
     zVecRandUniform( trq, -1.0, 1.0 );
     rkChainFD( chain, dis, vel, trq, acc );
-    rkChainID( chain, vel, acc );
-    rkChainGetJointTrqAll( chain, trq_id );
+    rkChainID( chain, dis, vel, acc, trq_id );
     if( zVecIsEqual( trq, trq_id, zTOL ) ){
       count_success++;
     } else{
@@ -315,8 +313,7 @@ void assert_fd_id_abi(void)
 
     rkChainSetMotorInputAll( &chain, expected );
     rkChainFD_ABI( &chain, dis, vel, acc ); /* forward dynamics (ABI method) */
-    rkChainID( &chain, vel, acc ); /* inverse dynamics (Newton-Euler method) */
-    rkChainGetJointTrqAll( &chain, actual );
+    rkChainID( &chain, dis, vel, acc, actual ); /* inverse dynamics (Newton-Euler method) */
     if( zVecIsEqual( actual, expected, zTOL ) ){
       count_success++;
     } else{

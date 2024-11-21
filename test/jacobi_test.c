@@ -174,7 +174,7 @@ bool assert_zeroacc(rkChain *chain, int id, zVec dis, zVec vel, zVec acc, zMat j
 int main(int argc, char *argv[])
 {
   rkChain chain;
-  zVec dis, vel, acc, ev;
+  zVec dis, vel, acc, trq, ev;
   zMat jacobi;
 
   /* initialization */
@@ -183,13 +183,13 @@ int main(int argc, char *argv[])
   dis = zVecAlloc( rkChainJointSize(&chain) );
   vel = zVecAlloc( rkChainJointSize(&chain) );
   acc = zVecAlloc( rkChainJointSize(&chain) ); /* dummy */
+  trq = zVecAlloc( rkChainJointSize(&chain) ); /* dummy */
   ev = zVecAlloc( 3 );
   jacobi = zMatAlloc( 3, rkChainJointSize(&chain) );
 
   zVecRandUniform( dis, -10.0, 10.0 );
   zVecRandUniform( vel, -10.0, 10.0 );
-  rkChainFK( &chain, dis );
-  rkChainID( &chain, vel, acc );
+  rkChainID( &chain, dis, vel, acc, trq );
 
   zAssert( rkChainLinkWldAngJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, world_ang_test ) );
   zAssert( rkChainLinkWldLinJacobi, assert_jacobi( &chain, jacobi, dis, vel, acc, ev, world_lin_test ) );
@@ -202,10 +202,7 @@ int main(int argc, char *argv[])
   zAssert( rkChainLinkZeroAcc, assert_zeroacc( &chain, TIP, dis, vel, acc, jacobi, ev ) );
 
   /* termination */
-  zVecFree( dis );
-  zVecFree( vel );
-  zVecFree( acc );
-  zVecFree( ev );
+  zVecFreeAtOnce( 5, dis, vel, acc, trq, ev );
   zMatFree( jacobi );
   rkChainDestroy( &chain );
   return EXIT_SUCCESS;

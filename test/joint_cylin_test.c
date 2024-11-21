@@ -56,7 +56,7 @@ void create_cylin2(rkChain *chain)
 int main(void)
 {
   rkChain chain1, chain2;
-  zVec dis, vel, acc;
+  zVec dis, vel, acc, trq;
   zVec6D w, wj, err;
   double u1[2], u2[2];
 
@@ -68,17 +68,15 @@ int main(void)
   dis = zVecAlloc( 2 );
   vel = zVecAlloc( 2 );
   acc = zVecAlloc( 2 );
+  trq = zVecAlloc( 2 );
   zVecRandUniform( dis, -zPI, zPI );
   zVecRandUniform( vel,  -10,  10 );
   zVecRandUniform( acc, -100, 100 );
   /* create wrench */
   zVec6DCreate( &w, zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
 
-  /* FK test */
-  rkChainFK( &chain1, dis );
-  rkChainFK( &chain2, dis );
-  rkChainID( &chain1, vel, acc );
-  rkChainID( &chain2, vel, acc );
+  rkChainID( &chain1, dis, vel, acc, trq );
+  rkChainID( &chain2, dis, vel, acc, trq );
   /* output */
   zFrame3DError( rkChainLinkWldFrame(&chain1,1), rkChainLinkWldFrame(&chain2,2), &err );
   zAssert( rkChainFK (cylindrical joint), zVec6DIsTiny(&err) );
@@ -99,9 +97,7 @@ int main(void)
   zAssert( rkJointCalcTrq (cylindrical joint), zIsTiny( u1[0] - u2[0] ) && zIsTiny( u1[1] - u2[1] ) );
 
   /* terminate */
-  zVecFree( dis );
-  zVecFree( vel );
-  zVecFree( acc );
+  zVecFreeAtOnce( 4, dis, vel, acc, trq );
   rkChainDestroy( &chain1 );
   rkChainDestroy( &chain2 );
   return 0;

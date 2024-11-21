@@ -1,3 +1,4 @@
+
 /* this code is to check if the inverse dynamics, angular momentum and
    kinematic energy computation are correct, comparing with the
    analytical solutions on a cylindrical inverted pendulum.
@@ -74,7 +75,7 @@ void invpend_trq(rkChain *ip, double q1, double q2, double dq1, double dq2, doub
   *u2 = -M2*L1*L2*c2*ddq1 + (M2*L2*L2+I2)*ddq2 - (M2*L2*L2+I2)*s2*c2*dq1*dq1 - M2*RK_G*L2*s2;
 }
 
-void invpend_set_joint_state(rkChain *ip, zVec q, zVec dq, zVec ddq)
+void invpend_set_joint_state(rkChain *ip, zVec q, zVec dq, zVec ddq, zVec trq)
 {
   zVecSetElem( q, 0, zRandF(-zPI,zPI) );
   zVecSetElem( q, 1, zRandF(-zPI,zPI) );
@@ -82,17 +83,16 @@ void invpend_set_joint_state(rkChain *ip, zVec q, zVec dq, zVec ddq)
   zVecSetElem( dq, 1, zRandF(-zPI,zPI) * 0.1 / DT );
   zVecSetElem( ddq, 0, zRandF(-zPI,zPI) * zSqr(0.1/DT) );
   zVecSetElem( ddq, 1, zRandF(-zPI,zPI) * zSqr(0.1/DT) );
-  rkChainFK( ip, q );
-  rkChainID( ip, dq, ddq );
+  rkChainID( ip, q, dq, ddq, trq );
 }
 
-void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq)
+void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq, zVec trq)
 {
   zVec6D v1, v2, a1, a2, ve6, ae6;
   zVec3D am1, am2, e3;
-  double k1, k2, u11, u12, u21, u22;
+  double k1, k2, u11, u12;
 
-  invpend_set_joint_state( invpend, q, dq, ddq );
+  invpend_set_joint_state( invpend, q, dq, ddq, trq );
 
   /* *** velocity test *** */
   /* analytical computation */
@@ -127,26 +127,24 @@ void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq)
   /* *** torque test *** */
   /* analytical computation */
   invpend_trq( invpend, zVecElem(q,0), zVecElem(q,1), zVecElem(dq,0), zVecElem(dq,1), zVecElem(ddq,0), zVecElem(ddq,1), &u11, &u12 );
-  /* recursive computation */
-  rkChainLinkJointGetTrq( invpend, 1, &u21 );
-  rkChainLinkJointGetTrq( invpend, 2, &u22 );
-  zAssert( joint torque (inverted pendulum), zIsTiny( u11 - u21 ) && zIsTiny( u12 - u22 ) );
+  zAssert( joint torque (inverted pendulum), zIsTiny( zVecElemNC(trq,0) - u11 ) && zIsTiny( zVecElemNC(trq,1) - u12 ) );
 }
 
 int main(void)
 {
   rkChain invpend;
-  zVec q, dq, ddq;
+  zVec q, dq, ddq, trq;
 
   zRandInit();
   rkChainReadZTK( &invpend, "invpend.ztk" );
   q   = zVecAlloc( rkChainJointSize(&invpend) );
   dq  = zVecAlloc( rkChainJointSize(&invpend) );
   ddq = zVecAlloc( rkChainJointSize(&invpend) );
+  trq = zVecAlloc( rkChainJointSize(&invpend) );
 
-  assert_invpend( &invpend, q, dq, ddq );
+  assert_invpend( &invpend, q, dq, ddq, trq );
 
   rkChainDestroy( &invpend );
-  zVecFreeAtOnce( 3, q, dq, ddq );
+  zVecFreeAtOnce( 4, q, dq, ddq, trq );
   return 0;
 }

@@ -60,7 +60,7 @@ void create_float(rkChain *chain)
 int main(void)
 {
   rkChain chain;
-  zVec dis, vel, acc;
+  zVec dis, vel, acc, trq;
   zVec3D pos, aa;
   zVec6D vin, ain, vout, aout, err;
   zFrame3D fout;
@@ -74,6 +74,7 @@ int main(void)
   dis = zVecAlloc( n );
   vel = zVecAlloc( n );
   acc = zVecAlloc( n );
+  trq = zVecAlloc( n );
   zVecRandUniform( dis, -0.5*zPI, 0.5*zPI );
   zVecRandUniform( vel, -10, 10 );
   zVecRandUniform( acc, -100, 100 );
@@ -87,9 +88,7 @@ int main(void)
     zVecElem(acc,0), zVecElem(acc,1), zVecElem(acc,2),
     zVecElem(acc,3), zVecElem(acc,4), zVecElem(acc,5) );
 
-  /* FK test */
-  rkChainFK( &chain, dis );
-  rkChainID0G( &chain, vel, acc );
+  rkChainID0G( &chain, dis, vel, acc, trq );
   truth( rkChainLinkOrgAtt(&chain,0), &pos, &aa, &vin, &ain, &fout, &vout, &aout );
 
   /* output */
@@ -103,9 +102,7 @@ int main(void)
   zAssert( rkChainID0G (float joint acceleration), zVec6DIsTiny(&err) );
 
   /* terminate */
-  zVecFree( dis );
-  zVecFree( vel );
-  zVecFree( acc );
+  zVecFreeAtOnce( 4, dis, vel, acc, trq );
   rkChainDestroy( &chain );
   return 0;
 }

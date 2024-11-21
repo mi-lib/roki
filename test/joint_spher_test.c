@@ -62,7 +62,7 @@ void create_sphere(rkChain *chain)
 int main(void)
 {
   rkChain chain;
-  zVec dis, vel, acc;
+  zVec dis, vel, acc, trq;
   zFrame3D f;
   zVec3D aa1, aa2, w1, w2, a1, a2;
   zVec6D v, a, err;
@@ -74,6 +74,7 @@ int main(void)
   dis = zVecAlloc( rkChainJointSize(&chain) );
   vel = zVecAlloc( rkChainJointSize(&chain) );
   acc = zVecAlloc( rkChainJointSize(&chain) );
+  trq = zVecAlloc( rkChainJointSize(&chain) );
   zVecRandUniform( dis, -0.5*zPI, 0.5*zPI );
   zVecRandUniform( vel, -10, 10 );
   zVecRandUniform( acc, -100, 100 );
@@ -85,9 +86,7 @@ int main(void)
   zVec3DCreate( &a1, zVecElem(acc,0), zVecElem(acc,1), zVecElem(acc,2) );
   zVec3DCreate( &a2, zVecElem(acc,3), zVecElem(acc,4), zVecElem(acc,5) );
 
-  /* FK test */
-  rkChainFK( &chain, dis );
-  rkChainID( &chain, vel, acc );
+  rkChainID( &chain, dis, vel, acc, trq );
   truth( &aa1, &w1, &a1, &aa2, &w2, &a2, &f, &v, &a );
   zFrame3DError( &f, rkLinkWldFrame(le), &err );
   zAssert( rkChainFK (spherical joint), zVec6DIsTiny(&err) );
@@ -97,9 +96,7 @@ int main(void)
   zAssert( rkChainID (spherical joint acceleration), zVec6DIsTiny(&err) );
 
   /* terminate */
-  zVecFree( dis );
-  zVecFree( vel );
-  zVecFree( acc );
+  zVecFreeAtOnce( 4, dis, vel, acc, trq );
   rkChainDestroy( &chain );
   return 0;
 }
