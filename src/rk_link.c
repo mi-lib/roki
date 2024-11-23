@@ -90,14 +90,14 @@ rkLink *rkLinkAddChild(rkLink *link, rkLink *child)
 }
 
 /* calculate velocity of a point with respect to the inertial frame. */
-zVec3D *rkLinkPointVel(rkLink *link, zVec3D *p, zVec3D *v)
+zVec3D *rkLinkPointVel(rkLink *link, const zVec3D *p, zVec3D *v)
 {
   zVec3DOuterProd( rkLinkAngVel(link), p, v );
   return zVec3DAddDRC( v, rkLinkLinVel(link) );
 }
 
 /* calculate accerelation of a point with respect to the inertial frame. */
-zVec3D *rkLinkPointAcc(rkLink *link, zVec3D *p, zVec3D *a)
+zVec3D *rkLinkPointAcc(rkLink *link, const zVec3D *p, zVec3D *a)
 {
   zVec3D tmp;
 

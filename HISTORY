@@ -1,3 +1,4 @@
+2024.11.23. Added const qualifiers to rkLinkPointVel, rkLinkPointAcc, rkChainLinkZeroAccG, and rkChainAM. [rk_link, rk_chain]
 2024.11.21. Renamed rkChainCreateFDEquation and rkChainDestroyFDEquation to rkChainAllocFDEquation and rkChainFreeFDEquation, respectively. [rk_chain]
 2024.11.21. Redefined rkChainInertiaMatBiasVecUV, rkChainInertiaMatBiasVecCRB, rkChainInertiaMatBiasVec, rkChainInertiaMatBiasVecUV0G, rkChainInertiaMatBiasVecCRB0G, and rkChainInertiaMatBiasVec0G. [rk_chain]
 2024.11.21. Renamed rkChainInertiaMatBiasVecUV, rkChainInertiaMatBiasVecCRB, and rkChainInertiaMatBiasVec to rkChainInertiaMatBiasVecUV_G, rkChainInertiaMatBiasVecCRB_G, and rkChainInertiaMatBiasVecG, respectively, and modified specifications of to accept the acceleration due to gravity. [rk_chain]

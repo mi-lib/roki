@@ -71,53 +71,53 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   rkLink *findLink(const char *name);
   int findLinkID(const char *name);
   int findLinkJointIDOffset(const char *name);
-  void setJointDis(zIndex idx, zVec dis);
-  void setJointDis(zVec dis);
-  void setJointDisCNT(zIndex idx, zVec dis, double dt);
-  void setJointDisCNT(zVec dis, double dt);
-  void setJointVel(zIndex idx, zVec vel);
-  void setJointVel(zVec vel);
-  void setJointAcc(zIndex idx, zVec acc);
-  void setJointAcc(zVec acc);
-  void setJointRate(zIndex idx, zVec vel, zVec acc);
-  void setJointRate(zVec vel, zVec acc);
-  void setJointTrq(zVec trq);
-  zVec getJointDis(zIndex idx, zVec dis);
+  void setJointDis(const zIndex idx, const zVec dis);
+  void setJointDis(const zVec dis);
+  void setJointDisCNT(const zIndex idx, const zVec dis, double dt);
+  void setJointDisCNT(const zVec dis, double dt);
+  void setJointVel(const zIndex idx, const zVec vel);
+  void setJointVel(const zVec vel);
+  void setJointAcc(const zIndex idx, const zVec acc);
+  void setJointAcc(const zVec acc);
+  void setJointRate(const zIndex idx, const zVec vel, const zVec acc);
+  void setJointRate(const zVec vel, const zVec acc);
+  void setJointTrq(const zVec trq);
+  zVec getJointDis(const zIndex idx, zVec dis);
   zVec getJointDis(zVec dis);
   zVec getJointVel(zVec vel);
   zVec getJointAcc(zVec acc);
   zVec getJointTrq(zVec trq);
 
-  void setConf(zVec conf);
+  void setConf(const zVec conf);
   zVec getConf(zVec conf);
-  void setMotorInput(zVec input);
+  void setMotorInput(const zVec input);
 
   void updateFrame();
   void updateVel();
   void updateAcc();
-  void updateRateG(zVec6D *g);
+  void updateRateG(const zVec6D *g);
   void updateRate();
   void updateRate0G();
   void updateWrench();
 
   zVec3D *gravityDir(zVec3D *v);
-  zVec3D *linkPointPos(int i, zVec3D *p, zVec3D *world_p);
-  zVec3D *linkPointVel(int i, zVec3D *p, zVec3D *vel);
-  zVec3D *linkPointAcc(int i, zVec3D *p, zVec3D *acc);
+  zVec3D *linkPointPos(int i, const zVec3D *p, zVec3D *world_p);
+  zVec3D *linkPointVel(int i, const zVec3D *p, zVec3D *vel);
+  zVec3D *linkPointAcc(int i, const zVec3D *p, zVec3D *acc);
   void updateForwardKinematics();
-  void ForwardKinematics(zVec dis);
+  void ForwardKinematics(const zVec dis);
   void neutralize();
-  void updateInverseDynamicsG(zVec6D *g);
+  void updateInverseDynamicsG(const zVec6D *g);
   void updateInverseDynamics();
   void updateInverseDynamics0G();
-  void InverseDynamicsG(zVec vel, zVec acc, zVec6D *g);
-  void InverseDynamics(zVec vel, zVec acc);
-  void InverseDynamics0G(zVec vel, zVec acc);
-  void ForwardKinematicsCNT(zVec dis, double dt);
+  zVec InverseDynamicsG(const zVec dis, const zVec vel, const zVec acc, const zVec6D *g, zVec trq);
+  zVec InverseDynamics(const zVec dis, const zVec vel, const zVec acc, zVec trq);
+  zVec InverseDynamics0G(const zVec dis, const zVec vel, const zVec acc, zVec trq);
+  void ForwardKinematicsCNT(const zVec dis, double dt);
 
-  zVec6D *linkZeroAccG(int id, zVec3D *p, zVec6D *g, zVec6D *a0);
-  zVec6D *linkZeroAcc(int id, zVec3D *p, zVec6D *a0);
-  zVec6D *linkZeroAcc0G(int id, zVec3D *p, zVec6D *a0);
+  zVec6D *linkZeroAccG(int id, const zVec3D *p, const zVec6D *g, zVec6D *a0);
+  zVec6D *linkZeroAcc(int id, const zVec3D *p, zVec6D *a0);
+  zVec6D *linkZeroAcc0G(int id, const zVec3D *p, zVec6D *a0);
 
   zVec3D *updateCOM();
   zVec3D *updateCOMVel();
@@ -127,12 +127,16 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   void updateCRB();
   zVec3D *ZMP(double z, zVec3D *zmp);
   double yawTorque();
-  zVec3D *angularMomentum(zVec3D *p, zVec3D *am);
+  zVec3D *angularMomentum(const zVec3D *p, zVec3D *am);
   double kineticEnergy();
 
   zMat getInertiaMat(zMat inertia);
+  zVec getBiasVec(zVec bias, const zVec6D *g);
   zVec getBiasVec(zVec bias);
+  zVec getBiasVec0G(zVec bias);
+  bool getInertiaMatBiasVec(zMat inertia, zVec bias, const zVec6D *g);
   bool getInertiaMatBiasVec(zMat inertia, zVec bias);
+  bool getInertiaMatBiasVec0G(zMat inertia, zVec bias);
   zVec6D *netExternalWrench(zVec6D *wrench);
   void destroyExternalWrench();
 
@@ -556,7 +560,7 @@ __ROKI_EXPORT void rkChainFKCNT(rkChain *chain, const zVec dis, double dt);
  * \return
  * rkChainLinkZeroAccG(),rkChainLinkZeroAcc(), and rkChainLinkZeroAcc0G() return a pointer \a a0.
  */
-__ROKI_EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, zVec3D *p, const zVec6D *g, zVec6D *a0);
+__ROKI_EXPORT zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, const zVec3D *p, const zVec6D *g, zVec6D *a0);
 #define rkChainLinkZeroAcc(chain,i,p,a0)   rkChainLinkZeroAccG( (chain), (i), (p), RK_GRAVITY6D, (a0) )
 #define rkChainLinkZeroAcc0G(chain,i,p,a0) rkChainLinkZeroAccG( (chain), (i), (p), ZVEC6DZERO, (a0) )
 
@@ -611,7 +615,7 @@ __ROKI_EXPORT double rkChainYawTorque(rkChain *chain);
  * rkChainAM() returns a pointer \a am.
  * rkChainKE() returns a value calculated.
  */
-__ROKI_EXPORT zVec3D *rkChainAM(rkChain *chain, zVec3D *p, zVec3D *am);
+__ROKI_EXPORT zVec3D *rkChainAM(rkChain *chain, const zVec3D *p, zVec3D *am);
 __ROKI_EXPORT double rkChainKE(rkChain *chain);
 
 /*! \brief inertia matrix and bias force vector of a kinematic chain.
@@ -829,53 +833,53 @@ inline int rkChain::jointIndexSize(zIndex idx){ return rkChainJointIndexSize( th
 inline rkLink *rkChain::findLink(const char *name){ return rkChainFindLink( this, name ); }
 inline int rkChain::findLinkID(const char *name){ return rkChainFindLinkID( this, name ); }
 inline int rkChain::findLinkJointIDOffset(const char *name){ return rkChainFindLinkJointIDOffset( this, name ); }
-inline void rkChain::setJointDis(zIndex idx, zVec dis){ rkChainSetJointDis( this, idx, dis ); }
-inline void rkChain::setJointDis(zVec dis){ rkChainSetJointDisAll( this, dis ); }
-inline void rkChain::setJointDisCNT(zIndex idx, zVec dis, double dt){ rkChainSetJointDisCNT( this, idx, dis, dt ); }
-inline void rkChain::setJointDisCNT(zVec dis, double dt){ rkChainSetJointDisCNTAll( this, dis, dt ); }
-inline void rkChain::setJointVel(zIndex idx, zVec vel){ rkChainSetJointVel( this, idx, vel ); }
-inline void rkChain::setJointVel(zVec vel){ rkChainSetJointVelAll( this, vel ); }
-inline void rkChain::setJointAcc(zIndex idx, zVec acc){ rkChainSetJointAcc( this, idx, acc ); }
-inline void rkChain::setJointAcc(zVec acc){ rkChainSetJointAccAll( this, acc ); }
-inline void rkChain::setJointRate(zIndex idx, zVec vel, zVec acc){ rkChainSetJointRate( this, idx, vel, acc ); }
-inline void rkChain::setJointRate(zVec vel, zVec acc){ rkChainSetJointRateAll( this, vel, acc ); }
-inline void rkChain::setJointTrq(zVec trq){ rkChainSetJointTrqAll( this, trq ); }
-inline zVec rkChain::getJointDis(zIndex idx, zVec dis){ return rkChainGetJointDis( this, idx, dis ); }
+inline void rkChain::setJointDis(const zIndex idx, const zVec dis){ rkChainSetJointDis( this, idx, dis ); }
+inline void rkChain::setJointDis(const zVec dis){ rkChainSetJointDisAll( this, dis ); }
+inline void rkChain::setJointDisCNT(const zIndex idx, const zVec dis, double dt){ rkChainSetJointDisCNT( this, idx, dis, dt ); }
+inline void rkChain::setJointDisCNT(const zVec dis, double dt){ rkChainSetJointDisCNTAll( this, dis, dt ); }
+inline void rkChain::setJointVel(const zIndex idx, const zVec vel){ rkChainSetJointVel( this, idx, vel ); }
+inline void rkChain::setJointVel(const zVec vel){ rkChainSetJointVelAll( this, vel ); }
+inline void rkChain::setJointAcc(const zIndex idx, const zVec acc){ rkChainSetJointAcc( this, idx, acc ); }
+inline void rkChain::setJointAcc(const zVec acc){ rkChainSetJointAccAll( this, acc ); }
+inline void rkChain::setJointRate(const zIndex idx, const zVec vel, const zVec acc){ rkChainSetJointRate( this, idx, vel, acc ); }
+inline void rkChain::setJointRate(const zVec vel, const zVec acc){ rkChainSetJointRateAll( this, vel, acc ); }
+inline void rkChain::setJointTrq(const zVec trq){ rkChainSetJointTrqAll( this, trq ); }
+inline zVec rkChain::getJointDis(const zIndex idx, zVec dis){ return rkChainGetJointDis( this, idx, dis ); }
 inline zVec rkChain::getJointDis(zVec dis){ return rkChainGetJointDisAll( this, dis ); }
 inline zVec rkChain::getJointVel(zVec vel){ return rkChainGetJointVelAll( this, vel ); }
 inline zVec rkChain::getJointAcc(zVec acc){ return rkChainGetJointAccAll( this, acc ); }
 inline zVec rkChain::getJointTrq(zVec trq){ return rkChainGetJointTrqAll( this, trq ); }
 
-inline void rkChain::setConf(zVec conf){ rkChainSetConf( this, conf ); }
+inline void rkChain::setConf(const zVec conf){ rkChainSetConf( this, conf ); }
 inline zVec rkChain::getConf(zVec conf){ return rkChainGetConf( this, conf ); }
-inline void rkChain::setMotorInput(zVec input){ rkChainSetMotorInputAll( this, input ); }
+inline void rkChain::setMotorInput(const zVec input){ rkChainSetMotorInputAll( this, input ); }
 
 inline void rkChain::updateFrame(){ rkChainUpdateFrame( this ); }
 inline void rkChain::updateVel(){ rkChainUpdateVel( this ); }
 inline void rkChain::updateAcc(){ rkChainUpdateAcc( this ); }
-inline void rkChain::updateRateG(zVec6D *g){ rkChainUpdateRateG( this, g ); }
+inline void rkChain::updateRateG(const zVec6D *g){ rkChainUpdateRateG( this, g ); }
 inline void rkChain::updateRate(){ rkChainUpdateRate( this ); }
 inline void rkChain::updateRate0G(){ rkChainUpdateRate0G( this ); }
 inline void rkChain::updateWrench(){ rkChainUpdateWrench( this ); }
 
 inline zVec3D *rkChain::gravityDir(zVec3D *v){ return rkChainGravityDir( this, v ); }
-inline zVec3D *rkChain::linkPointPos(int i, zVec3D *p, zVec3D *world_p){ return rkChainLinkPointWldPos( this, i, p, world_p ); }
-inline zVec3D *rkChain::linkPointVel(int i, zVec3D *p, zVec3D *vel){ return rkChainLinkPointVel( this, i, p, vel ); }
-inline zVec3D *rkChain::linkPointAcc(int i, zVec3D *p, zVec3D *acc){ return rkChainLinkPointAcc( this, i, p, acc ); }
+inline zVec3D *rkChain::linkPointPos(int i, const zVec3D *p, zVec3D *world_p){ return rkChainLinkPointWldPos( this, i, p, world_p ); }
+inline zVec3D *rkChain::linkPointVel(int i, const zVec3D *p, zVec3D *vel){ return rkChainLinkPointVel( this, i, p, vel ); }
+inline zVec3D *rkChain::linkPointAcc(int i, const zVec3D *p, zVec3D *acc){ return rkChainLinkPointAcc( this, i, p, acc ); }
 inline void rkChain::updateForwardKinematics(){ rkChainUpdateFK( this ); }
-inline void rkChain::ForwardKinematics(zVec dis){ rkChainFK( this, dis ); }
+inline void rkChain::ForwardKinematics(const zVec dis){ rkChainFK( this, dis ); }
 inline void rkChain::neutralize(){ rkChainNeutralize( this ); }
-inline void rkChain::updateInverseDynamicsG(zVec6D *g){ rkChainUpdateID_G( this, g ); }
+inline void rkChain::updateInverseDynamicsG(const zVec6D *g){ rkChainUpdateID_G( this, g ); }
 inline void rkChain::updateInverseDynamics(){ rkChainUpdateID( this ); }
 inline void rkChain::updateInverseDynamics0G(){ rkChainUpdateID0G( this ); }
-inline void rkChain::InverseDynamicsG(zVec vel, zVec acc, zVec6D *g){ rkChainID_G( this, vel, acc, g ); }
-inline void rkChain::InverseDynamics(zVec vel, zVec acc){ rkChainID( this, vel, acc ); }
-inline void rkChain::InverseDynamics0G(zVec vel, zVec acc){ rkChainID0G( this, vel, acc ); }
-inline void rkChain::ForwardKinematicsCNT(zVec dis, double dt){ rkChainFKCNT( this, dis, dt ); }
+inline zVec rkChain::InverseDynamicsG(const zVec dis, const zVec vel, const zVec acc, const zVec6D *g, zVec trq){ return rkChainID_G( this, dis, vel, acc, g, trq ); }
+inline zVec rkChain::InverseDynamics(const zVec dis, const zVec vel, const zVec acc, zVec trq){ return rkChainID( this, dis, vel, acc, trq ); }
+inline zVec rkChain::InverseDynamics0G(const zVec dis, const zVec vel, const zVec acc, zVec trq){ return rkChainID0G( this, dis, vel, acc, trq ); }
+inline void rkChain::ForwardKinematicsCNT(const zVec dis, double dt){ rkChainFKCNT( this, dis, dt ); }
 
-inline zVec6D *rkChain::linkZeroAccG(int id, zVec3D *p, zVec6D *g, zVec6D *a0){ return rkChainLinkZeroAccG( this, id, p, g, a0 ); }
-inline zVec6D *rkChain::linkZeroAcc(int id, zVec3D *p, zVec6D *a0){ return rkChainLinkZeroAcc( this, id, p, a0 ); }
-inline zVec6D *rkChain::linkZeroAcc0G(int id, zVec3D *p, zVec6D *a0){ return rkChainLinkZeroAcc0G( this, id, p, a0 ); }
+inline zVec6D *rkChain::linkZeroAccG(int id, const zVec3D *p, const zVec6D *g, zVec6D *a0){ return rkChainLinkZeroAccG( this, id, p, g, a0 ); }
+inline zVec6D *rkChain::linkZeroAcc(int id, const zVec3D *p, zVec6D *a0){ return rkChainLinkZeroAcc( this, id, p, a0 ); }
+inline zVec6D *rkChain::linkZeroAcc0G(int id, const zVec3D *p, zVec6D *a0){ return rkChainLinkZeroAcc0G( this, id, p, a0 ); }
 
 inline zVec3D *rkChain::updateCOM(){ return rkChainUpdateCOM( this ); }
 inline zVec3D *rkChain::updateCOMVel(){ return rkChainUpdateCOMVel( this ); }
@@ -885,12 +889,16 @@ inline void rkChain::updateCRBMass(){ rkChainUpdateCRBMass( this ); }
 inline void rkChain::updateCRB(){ rkChainUpdateCRB( this ); }
 inline zVec3D *rkChain::ZMP(double z, zVec3D *zmp){ return rkChainZMP( this, z, zmp ); }
 inline double rkChain::yawTorque(){ return rkChainYawTorque( this ); }
-inline zVec3D *rkChain::angularMomentum(zVec3D *p, zVec3D *am){ return rkChainAM( this, p, am ); }
+inline zVec3D *rkChain::angularMomentum(const zVec3D *p, zVec3D *am){ return rkChainAM( this, p, am ); }
 inline double rkChain::kineticEnergy(){ return rkChainKE( this ); }
 
 inline zMat rkChain::getInertiaMat(zMat inertia){ return rkChainInertiaMat( this, inertia ); }
+inline zVec rkChain::getBiasVec(zVec bias, const zVec6D *g){ return rkChainBiasVecG( this, bias, g ); }
 inline zVec rkChain::getBiasVec(zVec bias){ return rkChainBiasVec( this, bias ); }
+inline zVec rkChain::getBiasVec0G(zVec bias){ return rkChainBiasVec0G( this, bias ); }
+inline bool rkChain::getInertiaMatBiasVec(zMat inertia, zVec bias, const zVec6D *g){ return rkChainInertiaMatBiasVecG( this, inertia, bias, g ); }
 inline bool rkChain::getInertiaMatBiasVec(zMat inertia, zVec bias){ return rkChainInertiaMatBiasVec( this, inertia, bias ); }
+inline bool rkChain::getInertiaMatBiasVec0G(zMat inertia, zVec bias){ return rkChainInertiaMatBiasVec0G( this, inertia, bias ); }
 inline zVec6D *rkChain::netExternalWrench(zVec6D *wrench){ return rkChainNetExtWrench( this, wrench ); }
 inline void rkChain::destroyExternalWrench(){ rkChainExtWrenchDestroy( this ); }
 

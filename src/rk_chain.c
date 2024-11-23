@@ -474,7 +474,7 @@ void rkChainFKCNT(rkChain *chain, const zVec dis, double dt)
 }
 
 /* link acceleration at zero joint acceleration. */
-zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, zVec3D *p, const zVec6D *g, zVec6D *a0)
+zVec6D *rkChainLinkZeroAccG(rkChain *chain, int id, const zVec3D *p, const zVec6D *g, zVec6D *a0)
 {
   zVec3D tmp;
 
@@ -556,7 +556,7 @@ double rkChainYawTorque(rkChain *chain)
 }
 
 /* angular momentum of a kinematic chain. */
-zVec3D *rkChainAM(rkChain *chain, zVec3D *p, zVec3D *am)
+zVec3D *rkChainAM(rkChain *chain, const zVec3D *p, zVec3D *am)
 {
   int i;
   zVec3D tp, tmp;

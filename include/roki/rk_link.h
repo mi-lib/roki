@@ -287,8 +287,8 @@ __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
  * \notes
  * \a p is with respect to the local frame of \a link.
  */
-__ROKI_EXPORT zVec3D *rkLinkPointVel(rkLink *link, zVec3D *p, zVec3D *v);
-__ROKI_EXPORT zVec3D *rkLinkPointAcc(rkLink *link, zVec3D *p, zVec3D *a);
+__ROKI_EXPORT zVec3D *rkLinkPointVel(rkLink *link, const zVec3D *p, zVec3D *v);
+__ROKI_EXPORT zVec3D *rkLinkPointAcc(rkLink *link, const zVec3D *p, zVec3D *a);
 
 /*! \brief compute inertia tensor of a link with respect to the inertial frame.
  *
