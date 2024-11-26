@@ -117,6 +117,11 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
   rkBodySetInertia( rkLinkBody(link), i );\
   rkMPSetInertia( rkLinkCRB(link), rkLinkInertia(link) );\
 } while(0)
+#define rkLinkSetMP(link,mp)      do{\
+  rkLinkSetMass( link, rkMPMass(mp) );\
+  rkLinkSetCOM( link, rkMPCOM(mp) );\
+  rkLinkSetInertia( link, rkMPInertia(mp) );\
+} while(0)
 #define rkLinkSetVel(link,v)      rkBodySetVel( rkLinkBody(link), v )
 #define rkLinkSetAcc(link,a)      rkBodySetAcc( rkLinkBody(link), a )
 #define rkLinkSetLinVel(link,v)   rkBodySetLinVel( rkLinkBody(link), v )
@@ -142,6 +147,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #define rkLinkSetParent(link,p)   ( rkLinkParent(link) = (p) )
 #define rkLinkSetChild(link,c)    ( rkLinkChild(link) = (c) )
 #define rkLinkSetSibl(link,b)     ( rkLinkSibl(link) = (b) )
+
+#define rkLinkStuffDestroy(link)  rkBodyStuffDestroy( rkLinkBody(link) )
 
 /*! \brief initialization and destruction of link object.
  *
