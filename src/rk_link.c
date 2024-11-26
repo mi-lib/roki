@@ -32,7 +32,7 @@ void rkLinkInit(rkLink *link)
 void rkLinkDestroy(rkLink *link)
 {
   zNameFree( link );
-  rkJointDestroy( rkLinkJoint(link) );
+  rkLinkJointDestroy( link );
   rkLinkStuffDestroy( link );
   rkLinkExtWrenchDestroy( link );
   rkLinkShapeDestroy( link );

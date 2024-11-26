@@ -1,3 +1,4 @@
+2024.11.26. Added rkLinkJointDestroy, and modified rkLinkDestroy to use it. [rk_link]
 2024.11.26. Added rkLinkStuffDestroy, and modified rkLinkDestroy to destroy the stuff identifier (thanks to Daishi Kaneta). [rk_link]
 2024.11.24. Defined rkLinkSetMP. [rk_link]
 2024.11.23. Added const qualifiers to rkLinkPointVel, rkLinkPointAcc, rkChainLinkZeroAccG, and rkChainAM. [rk_link, rk_chain]

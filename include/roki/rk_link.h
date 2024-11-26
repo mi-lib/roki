@@ -148,6 +148,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #define rkLinkSetChild(link,c)    ( rkLinkChild(link) = (c) )
 #define rkLinkSetSibl(link,b)     ( rkLinkSibl(link) = (b) )
 
+#define rkLinkJointDestroy(link)  rkJointDestroy( rkLinkJoint(link) )
 #define rkLinkStuffDestroy(link)  rkBodyStuffDestroy( rkLinkBody(link) )
 
 /*! \brief initialization and destruction of link object.
