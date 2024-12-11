@@ -1,3 +1,8 @@
+2024.12. 9. Modified _rkJointFloatDisFPrintZTK and _rkJointBrFloatDisFPrintZTK to reflect renaming of zVec6DValueNLFPrint. [rk_joint_float, rk_joint_brfloat]
+2024.12. 9. Modified _rkCDCellCreate and _rkCDBREPMergeCH to conform to new specification of zVec3DDataOBB and zVec3DDataConvexHull. [rk_cd]
+2024.12. 9. Modified rkChainBoundingBall to conform to new specification of zVec3DDataBoundingBall. [rk_chain]
+2024.12. 9. Abolished rkChainVertList, and added rkChainVertData. [rk_chain]
+2024.12. 3. Reflected renaming of zVec3DDataFPrint and zVec3DDataNLFPrint to zVec3DValueFPrint and zVec3DValueNLFPrint. [rk_joint_spher, rk_ik_cell]
 2024.11.26. Added rkLinkJointDestroy, and modified rkLinkDestroy to use it. [rk_link]
 2024.11.26. Added rkLinkStuffDestroy, and modified rkLinkDestroy to destroy the stuff identifier (thanks to Daishi Kaneta). [rk_link]
 2024.11.24. Defined rkLinkSetMP. [rk_link]

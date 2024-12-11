@@ -275,7 +275,7 @@ void bvh2ztk_write_joint(FILE *fp, joint_t *joint, joint_t *parent)
   fprintf( fp, "[link]\n" );
   fprintf( fp, "name: %s\n", zName(joint) );
   fprintf( fp, "jointtype: %s\n", joint->num_axis == 6 ? "float" : ( joint->child ? "spherical" : "fixed" ) );
-  fprintf( fp, "pos: " ); zVec3DDataFPrint( fp, zFrame3DPos(&joint->orgframe) ); fprintf( fp, "\n" );
+  fprintf( fp, "pos: " ); zVec3DValueNLFPrint( fp, zFrame3DPos(&joint->orgframe) );
   if( parent )
     fprintf( fp, "parent: %s\n", zName(parent) );
   fprintf( fp, "\n" );
@@ -333,7 +333,7 @@ void bvh2ztk_write_joint_motion(FILE *fp, joint_t *joint)
   zVec6D v;
 
   zFrame3DToVec6DAA( &joint->wldframe, &v );
-  zVec6DDataFPrint( fp, &v );
+  zVec6DValueFPrint( fp, &v );
   if( joint->child )
     bvh2ztk_write_joint_motion( fp, joint->child );
   if( joint->sibl )

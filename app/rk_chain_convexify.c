@@ -2,7 +2,7 @@
  *
  * 2023. 6. 2. Originally developed by Kenta Imanishi.
  * 2023. 6. 4. Modified by Tom Sugihara.
- * 2024. 5.29. Last updated by Tom Sugihara.
+ * 2024.12. 9. Last updated by Tom Sugihara.
  */
 
 #include <roki/roki.h>
@@ -65,7 +65,7 @@ bool rcc_is_fixed_link(rkLink *link)
   return strcmp( rkLinkJointTypeStr(link), "fixed" ) == 0;
 }
 
-int rcc_add_link_vert(rkLink *link, zFrame3D *frame, zVec3DList *vl)
+int rcc_add_link_vert(rkLink *link, zFrame3D *frame, zVec3DData *data)
 {
   zShapeListCell *sp;
   rkLink *l;
@@ -75,30 +75,30 @@ int rcc_add_link_vert(rkLink *link, zFrame3D *frame, zVec3DList *vl)
 
   zListForEach( rkLinkShapeList(link), sp ){
     for( i=0; i<zPH3DVertNum(zShape3DPH(sp->data)); i++ )
-      zVec3DListAdd( vl, zXform3D( frame, zPH3DVert(zShape3DPH(sp->data),i), &v ) );
+      zVec3DDataAdd( data, zXform3D( frame, zPH3DVert(zShape3DPH(sp->data),i), &v ) );
   }
   for( l=rkLinkChild(link); l; l=rkLinkSibl(l) ){
     if( !rcc_is_fixed_link( l ) ) continue;
     if( option[RCC_VERBOSE].flag ) eprintf( "merge %s to %s.\n", zName(l), zName(link) );
     zFrame3DCascade( frame, rkLinkAdjFrame(l), &f );
-    rcc_add_link_vert( l, &f, vl );
+    rcc_add_link_vert( l, &f, data );
   }
-  return zListSize(vl);
+  return zVec3DDataSize( data );
 }
 
 bool rcc_replace_link_shape(rkChain *chain)
 {
   zShape3DArray shape_array;
   zShape3D shape, *sp;
-  zVec3DList vl;
+  zVec3DData data;
   int i;
 
   zArrayInit( &shape_array );
   for( i=0; i<rkChainLinkNum(chain); i++ ){
     if( zListIsEmpty( rkChainLinkShapeList(chain,i) ) ) continue;
     if( rcc_is_fixed_link( rkChainLink(chain,i) ) && i != 0 ) continue;
-    zListInit( &vl );
-    if( rcc_add_link_vert( rkChainLink(chain,i), ZFRAME3DIDENT, &vl ) == 0 ) continue;
+    zVec3DDataInitList( &data );
+    if( rcc_add_link_vert( rkChainLink(chain,i), ZFRAME3DIDENT, &data ) == 0 ) continue;
     /* allocate a shape for the convex hull */
     zShape3DInit( &shape );
     shape.com = &zeo_shape3d_ph_com;
@@ -106,8 +106,8 @@ bool rcc_replace_link_shape(rkChain *chain)
     zNameSet( &shape, rkChainLinkName(chain,i) );
     /* create the convex hull from vertices. */
     if( option[RCC_VERBOSE].flag ) eprintf( "comvexify %s.\n", rkChainLinkName(chain,i) );
-    zConvexHull3DPL( zShape3DPH(&shape), &vl );
-    zVec3DListDestroy( &vl );
+    zVec3DDataConvexHull( &data, zShape3DPH(&shape) );
+    zVec3DDataDestroy( &data );
     zArrayAdd( &shape_array, zShape3D, &shape );
   }
   /* replace the original shape of the link. */

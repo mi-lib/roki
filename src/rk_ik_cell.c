@@ -420,7 +420,7 @@ static bool _rkIKConstraintLinkFromZTK(rkChain *chain, int num, rkIKAttr *attr, 
 static void _rkIKConstraintAttentionPointFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
   if( cell->data.attr.mask & RK_IK_ATTR_MASK_ATTENTION_POINT ){
     fprintf( fp, " at" );
-    zVec3DDataFPrint( fp, rkIKCellAttentionPoint(cell) );
+    zVec3DValueFPrint( fp, rkIKCellAttentionPoint(cell) );
   }
 }
 
@@ -428,7 +428,7 @@ static void _rkIKConstraintAttentionPointFPrintZTK(FILE *fp, rkChain *chain, rkI
 static void _rkIKConstraintWeightFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
   if( cell->data.attr.mask & RK_IK_ATTR_MASK_WEIGHT ){
     fprintf( fp, " w" );
-    zVec3DDataFPrint( fp, rkIKCellWeight(cell) );
+    zVec3DValueFPrint( fp, rkIKCellWeight(cell) );
   }
 }
 

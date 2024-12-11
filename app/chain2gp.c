@@ -11,11 +11,11 @@ void output_shape(zShape3D *s)
   int i;
 
   for( i=0; i<zShape3DFaceNum(s); i++ ){
-    zVec3DDataPrint( zShape3DFaceVert(s,i,0) );
-    zVec3DDataPrint( zShape3DFaceVert(s,i,1) );
+    zVec3DValuePrint( zShape3DFaceVert(s,i,0) );
+    zVec3DValuePrint( zShape3DFaceVert(s,i,1) );
     printf( "\n" );
-    zVec3DDataPrint( zShape3DFaceVert(s,i,2) );
-    zVec3DDataPrint( zShape3DFaceVert(s,i,2) );
+    zVec3DValuePrint( zShape3DFaceVert(s,i,2) );
+    zVec3DValuePrint( zShape3DFaceVert(s,i,2) );
     printf( "\n\n" );
   }
 }

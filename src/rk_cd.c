@@ -23,6 +23,8 @@ static void _rkCDCellInit(rkCDCell *cell)
 /* create a collision detection cell. */
 static rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, zShape3D *shape, rkCDCellType type)
 {
+  zVec3DData data;
+
   _rkCDCellInit( cell );
   cell->data.shape = shape;
   cell->data.link = link;
@@ -36,7 +38,9 @@ static rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, z
   /* convert the original shape to a polyhedron */
   if( !zShape3DToPH( cell->data.shape ) ) return NULL;
   /* create the bounding box of the shape */
-  zOBB3D( &cell->data.bb, zShape3DVertBuf(cell->data.shape), zShape3DVertNum(cell->data.shape) );
+  zVec3DDataAssignArray( &data, &zShape3DPH(cell->data.shape)->vert );
+  zVec3DDataOBB( &data, &cell->data.bb );
+  zVec3DDataDestroy( &data );
 
   if( !zPH3DClone( zShape3DPH(cell->data.shape), &cell->data.ph ) )
     return NULL;
@@ -631,15 +635,15 @@ static void _rkCDIntegrationNormBREP(zBREP *b1, zBREP *b2, zVec3D *norm)
 static zPH3D *_rkCDBREPMergeCH(zBREP *b1, zBREP *b2, zPH3D *ph)
 {
   zBREPVertListCell *vc;
-  zVec3DAddrList vlist;
+  zVec3DData data;
 
-  zListInit( &vlist );
+  zVec3DDataInitAddrList( &data );
   zListForEach( &b1->vlist, vc )
-    zVec3DAddrListAdd( &vlist, &vc->data.p );
+    zVec3DDataAdd( &data, &vc->data.p );
   zListForEach( &b2->vlist, vc )
-    zVec3DAddrListAdd( &vlist, &vc->data.p );
-  zConvexHull3DPL( ph, &vlist );
-  zVec3DAddrListDestroy( &vlist );
+    zVec3DDataAdd( &data, &vc->data.p );
+  zVec3DDataConvexHull( &data, ph );
+  zVec3DDataDestroy( &data );
   return ph;
 }
 

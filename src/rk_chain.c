@@ -869,47 +869,55 @@ void rkChainSetJointIDOffset(rkChain *chain)
       rkLinkSetJointIDOffset( rkChainLink(chain,i), -1 );
 }
 
-/* make a list of vertices of a kinematic chain. */
-zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl)
+/* make a set of vertices of a kinematic chain. */
+zVec3DData *rkChainVertData(rkChain *chain, zVec3DData *data)
 {
   rkLink *l;
   zShapeListCell *sc;
   zShape3D s;
   zVec3D v;
   int i, j;
+  bool result = true;
 
-  zListInit( vl );
+  zVec3DDataInitList( data );
   for( i=0; i<rkChainLinkNum(chain); i++ ){
     l = rkChainLink(chain,i);
     zListForEach( rkLinkShapeList(l), sc ){
       if( sc->data->com == &zeo_shape3d_ph_com ){
         for( j=0; j<zShape3DVertNum(sc->data); j++ ){
           zXform3D( rkLinkWldFrame(l), zShape3DVert(sc->data,j), &v );
-          if( !zVec3DListAdd( vl, &v ) ) return NULL;
+          if( !zVec3DDataAdd( data, &v ) ) goto ERROR;
         }
       } else{
         zShape3DClone( sc->data, &s, NULL );
-        zShape3DXform( sc->data, rkLinkWldFrame(l), &s );
-        if( !zShape3DToPH( &s ) ) return NULL;
-        if( !zVec3DListAppendArray( vl, &zShape3DPH(&s)->vert ) ) vl = NULL;
+        if( !zShape3DToPH( &s ) ){
+          result = false;
+        } else
+        for( j=0; j<zShape3DVertNum(&s); j++ ){
+          if( !zVec3DDataAdd( data, zShape3DVert(&s,j) ) ) result = false;
+        }
         zShape3DDestroy( &s );
-        if( !vl ) return NULL;
+        if( !result ) goto ERROR;
       }
     }
   }
-  return vl;
+  return data;
+
+ ERROR:
+  zVec3DDataDestroy( data );
+  return NULL;
 }
 
 /* generate the bounding ball of a kinematic chain. */
 zSphere3D *rkChainBoundingBall(rkChain *chain, zSphere3D *bb)
 {
-  zVec3DList pl;
+  zVec3DData data;
 
-  if( rkChainVertList( chain, &pl ) )
-    zBoundingBall3DPL( bb, &pl, NULL );
+  if( rkChainVertData( chain, &data ) )
+    zVec3DDataBoundingBall( &data, bb, NULL );
   else
     bb = NULL;
-  zVec3DListDestroy( &pl );
+  zVec3DDataDestroy( &data );
   return bb;
 }
 

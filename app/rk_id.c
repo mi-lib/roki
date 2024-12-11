@@ -123,13 +123,13 @@ void rk_idOutput(double t, zVec trq)
   rkChainAM( &chain, rkChainWldCOM(&chain), &am );
   rkChainGetJointTrqAll( &chain, trq );
 
-  fprintf( fp[0], "%f ", t ); zVec3DDataFPrint( fp[0], rkChainWldCOM(&chain) );
-  fprintf( fp[1], "%f ", t ); zVec3DDataFPrint( fp[1], rkChainCOMVel(&chain) );
-  fprintf( fp[2], "%f ", t ); zVec3DDataFPrint( fp[2], &a );
-  fprintf( fp[3], "%f ", t ); zVec3DDataFPrint( fp[3], &zmp );
-  fprintf( fp[4], "%f ", t ); zVec3DDataFPrint( fp[4], &rpy );
-  fprintf( fp[5], "%f ", t ); zVec3DDataFPrint( fp[5], &am );
-  fprintf( fp[6], "%f ", t ); zVecDataFPrint( fp[6], trq );
+  fprintf( fp[0], "%f ", t ); zVec3DValueFPrint( fp[0], rkChainWldCOM(&chain) );
+  fprintf( fp[1], "%f ", t ); zVec3DValueFPrint( fp[1], rkChainCOMVel(&chain) );
+  fprintf( fp[2], "%f ", t ); zVec3DValueFPrint( fp[2], &a );
+  fprintf( fp[3], "%f ", t ); zVec3DValueFPrint( fp[3], &zmp );
+  fprintf( fp[4], "%f ", t ); zVec3DValueFPrint( fp[4], &rpy );
+  fprintf( fp[5], "%f ", t ); zVec3DValueFPrint( fp[5], &am );
+  fprintf( fp[6], "%f ", t ); zVecValueFPrint( fp[6], trq );
 }
 
 /* ******************************************************* */

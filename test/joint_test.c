@@ -112,13 +112,13 @@ void assert_spher_cat(void)
     rkJointGetAcc( &j, ao.e );
     if( !zVec3DIsTol( zVec3DSub( &vo, &v, &err ), TOL_VEL ) ){
       eprintf( "velocity error = " );
-      zVec3DDataFPrint( stderr, &err );
+      zVec3DValueFPrint( stderr, &err );
       eprintf( "\n" );
       result = false;
     }
     if( !zVec3DIsTol( zVec3DSub( &ao, &a, &err ), TOL_ACC ) ){
       eprintf( "acceleration error = " );
-      zVec3DDataFPrint( stderr, &err );
+      zVec3DValueFPrint( stderr, &err );
       eprintf( "\n" );
       result = false;
     }
@@ -156,13 +156,13 @@ void assert_float_cat(void)
     rkJointGetAcc( &j, an.e );
     if( !zVec6DIsTol( zVec6DSub( &vn, &v, &err ), TOL_VEL ) ){
       eprintf( "velocity error = " );
-      zVec6DDataFPrint( stderr, &err );
+      zVec6DValueFPrint( stderr, &err );
       eprintf( "\n" );
       result = false;
     }
     if( !zVec6DIsTol( zVec6DSub( &an, &a, &err ), TOL_ACC ) ){
       eprintf( "acceleration error = " );
-      zVec6DDataFPrint( stderr, &err );
+      zVec6DValueFPrint( stderr, &err );
       eprintf( "\n" );
       result = false;
     }
@@ -211,7 +211,7 @@ bool assert_joint_torsion_check(rkJoint *joint, zVec6D *t, double dis[], zFrame3
   zFrame3DError( &fc, f, &err );
   if( !zVec6DIsTol( &err, zTOL*10 ) ){
     eprintf( "joint type = %s, error = ", rkJointTypeStr(joint) );
-    zVec6DDataFPrint( stderr, &err );
+    zVec6DValueFPrint( stderr, &err );
     eprintf( "\n" );
     return false;
   }

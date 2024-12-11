@@ -734,19 +734,17 @@ __ROKI_EXPORT void rkChainExtWrenchDestroy(rkChain *chain);
  */
 __ROKI_EXPORT void rkChainSetJointIDOffset(rkChain *chain);
 
-/*! \brief make a list of vertices of a chain.
+/*! \brief make a set of vertices of a chain.
  *
- * rkChainVertList() makes a list of vertices of a chain \a chain
- * with respect to the world coordinate frame. The result is put
- * into \a vl.
- * Non-polyhedral shapes of \a chain are internally converted to
- * polyhedra, whose vertices are added to \a vl.
+ * rkChainVertData() makes a set of vertices of a chain \a chain with respect to the world
+ * coordinate frame. The result is put into \a data.
+ * Non-polyhedral shapes of \a chain are internally converted to polyhedra, whose vertices
+ * are added to \a data.
  * \return
- * rkChainVertList() returns a pointer \a vl if succeeds. If it
- * fails to allocate memory to store vertices, the null pointer is
- * returned.
+ * rkChainVertData() returns a pointer \a data if it succeeds. If it fails to allocate
+ * memory to store vertices, the null pointer is returned.
  */
-__ROKI_EXPORT zVec3DList *rkChainVertList(rkChain *chain, zVec3DList *vl);
+__ROKI_EXPORT zVec3DData *rkChainVertData(rkChain *chain, zVec3DData *data);
 
 /*! \brief generate the bounding ball of a kinematic chain.
  *
