@@ -15,10 +15,10 @@ void init_mp(rkBody *body)
 
 void output(rkBody *body, zVec6D *f)
 {
-  zVec3DDataPrint( rkBodyCOMAcc(body) );
-  zVec3DDataPrint( zVec6DLin(f) );
-  zVec3DDataPrint( rkBodyAngAcc(body) );
-  zVec3DDataPrint( zVec6DAng(f) );
+  zVec3DValuePrint( rkBodyCOMAcc(body) );
+  zVec3DValuePrint( zVec6DLin(f) );
+  zVec3DValuePrint( rkBodyAngAcc(body) );
+  zVec3DValueNLPrint( zVec6DAng(f) );
 }
 
 #define DIV 1000

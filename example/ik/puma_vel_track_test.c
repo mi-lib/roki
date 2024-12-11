@@ -63,15 +63,15 @@ void cmp(rkChain *ra, rkChain *rb)
 {
   zVec3D v, e;
 
-  zVec3DDataPrint( &des_vel );
+  zVec3DValuePrint( &des_vel );
   zMulMat3DVec3D( rkChainLinkWldAtt(ra,6), rkChainLinkLinVel(ra,6), &v );
-  zVec3DDataPrint( &v );
+  zVec3DValuePrint( &v );
   zVec3DSub( &des_vel, &v, &e );
-  zVec3DDataPrint( &e );
+  zVec3DValuePrint( &e );
   zMulMat3DVec3D( rkChainLinkWldAtt(rb,6), rkChainLinkLinVel(rb,6), &v );
-  zVec3DDataPrint( &v );
+  zVec3DValuePrint( &v );
   zVec3DSub( &des_vel, &v, &e );
-  zVec3DDataNLPrint( &e );
+  zVec3DValueNLPrint( &e );
 }
 
 int main(int argc, char *argv[])

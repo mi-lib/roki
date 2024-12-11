@@ -15,13 +15,13 @@ void ik_cell_output(FILE *fp, double dt, rkIKCell *entry[], zVec3D *pg, zVec3D *
 {
   fprintf( fp, "%.10g 6 ", dt );
   fprintf( fp, " %s 1 1 1", rkIKCellName(entry[0]) );
-  zVec3DDataFPrint( fp, pg );
+  zVec3DValueFPrint( fp, pg );
   fprintf( fp, " %s 1 1 1 0 0 0", rkIKCellName(entry[1]) );
   fprintf( fp, " %s 1 1 1", rkIKCellName(entry[2]) );
-  zVec3DDataFPrint( fp, pl );
+  zVec3DValueFPrint( fp, pl );
   fprintf( fp, " %s 1 1 1 0 0 0", rkIKCellName(entry[3]) );
   fprintf( fp, " %s 1 1 1", rkIKCellName(entry[4]) );
-  zVec3DDataFPrint( fp, pr );
+  zVec3DValueFPrint( fp, pr );
   fprintf( fp, " %s 1 1 1 0 0 0\n", rkIKCellName(entry[5]) );
 }
 

@@ -3,16 +3,16 @@
 int main(int argc, char *argv[])
 {
   rkChain chain;
-  zVec3DList vl;
+  zVec3DData point_data;
   zSphere3D bb;
 
   rkChainReadZTK( &chain, "../model/mighty.ztk" );
-  rkChainVertList( &chain, &vl );
-  zVec3DListDataPrint( &vl );
-  zBoundingBall3DPL( &bb, &vl, NULL );
+  rkChainVertData( &chain, &point_data );
+  zVec3DDataValuePrint( &point_data );
+  zVec3DDataBoundingBall( &point_data, &bb, NULL );
   zSphere3DFPrintZTK( stderr, &bb );
 
-  zVec3DListDestroy( &vl );
+  zVec3DDataDestroy( &point_data );
   rkChainDestroy( &chain );
   return 0;
 }

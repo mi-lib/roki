@@ -33,8 +33,8 @@ int main(void)
     zMat3DRotYaw( &ident, theta, rkBodyAtt(&body) );
     rkBodyAM( &body, rkBodyCOM(&body), &am_com );
     rkBodyAM( &body, ZVEC3DZERO, &am );
-    zVec3DDataPrint( &am );
-    zVec3DDataPrint( &am_com );
+    zVec3DValuePrint( &am );
+    zVec3DValueNLPrint( &am_com );
   }
   rkBodyDestroy( &body );
   return 0;

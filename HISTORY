@@ -1,3 +1,4 @@
+2024.12.12. Corrected example programs to conform to new specifications of zVec2D/3DValueFPrint, zVec2D/3DData, new error macros, and abolishment of rkGravitySet and rkGravityReset (thanks to Daishi Kaneta). [example]
 2024.12. 9. Modified _rkJointFloatDisFPrintZTK and _rkJointBrFloatDisFPrintZTK to reflect renaming of zVec6DValueNLFPrint. [rk_joint_float, rk_joint_brfloat]
 2024.12. 9. Modified _rkCDCellCreate and _rkCDBREPMergeCH to conform to new specification of zVec3DDataOBB and zVec3DDataConvexHull. [rk_cd]
 2024.12. 9. Modified rkChainBoundingBall to conform to new specification of zVec3DDataBoundingBall. [rk_chain]

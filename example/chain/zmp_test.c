@@ -1,7 +1,5 @@
 #include <roki/rk_chain.h>
 
-#define CHAIN_FILE "../model/H5.ztk"
-
 #define DT 0.001
 #define DTHETA 0.001
 #define STEP 1000
@@ -21,16 +19,16 @@ void total_zmp_test(void)
 {
   zVec3D zmp;
 
-  zVec3DDataPrint( rkChainWldCOM(&chain) );
+  zVec3DValuePrint( rkChainWldCOM(&chain) );
   rkChainZMP( &chain, 0, &zmp );
-  zVec3DDataNLPrint( &zmp );
+  zVec3DValueNLPrint( &zmp );
 }
 
 int main(void)
 {
   int i;
 
-  rkChainReadZTK( &chain, CHAIN_FILE );
+  rkChainReadZTK( &chain, "../model/H5.ztk" );
   rkChainUpdateID( &chain );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
   rkChainGetJointDisAll( &chain, dis );

@@ -43,10 +43,10 @@ int main(int argc, char *argv[])
     cv2 = zShape3DContigVert( &sc, &p, &d2 );
     dp = (zVec3D*)( (long)zShape3DVertBuf(zMShape3DShape(&ms,0)) + (long)cv2 - (long)zShape3DVertBuf(&sc) );
     if( cv1 != dp ) ZRUNERROR( "might be false" );
-    zVec3DDataNLFPrint( fp1, &p );
-    zVec3DDataNLFPrint( fp1, cv2 );
+    zVec3DValueNLFPrint( fp1, &p );
+    zVec3DValueNLFPrint( fp1, cv2 );
     fprintf( fp1, "\n\n" );
-    zVec3DDataNLFPrint( fp2, cv2 );
+    zVec3DValueNLFPrint( fp2, cv2 );
   }
   fclose( fp1 );
   fclose( fp2 );

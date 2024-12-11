@@ -23,12 +23,12 @@ void output(rkBody *body)
   zMulMat3DVec3D( rkBodyAtt(body), rkBodyCOMAcc(body), &comacc );
   zMulMat3DVec3D( rkBodyAtt(body), rkBodyAngVel(body), &vel );
   zMulMat3DVec3D( rkBodyAtt(body), rkBodyAngAcc(body), &acc );
-  zVec3DDataPrint( rkBodyWldCOM(body) );
-  zVec3DDataPrint( &comvel );
-  zVec3DDataPrint( &comacc );
-  zVec3DDataPrint( &aa );
-  zVec3DDataPrint( &vel );
-  zVec3DDataNLPrint( &acc );
+  zVec3DValuePrint( rkBodyWldCOM(body) );
+  zVec3DValuePrint( &comvel );
+  zVec3DValuePrint( &comacc );
+  zVec3DValuePrint( &aa );
+  zVec3DValuePrint( &vel );
+  zVec3DValueNLPrint( &acc );
 }
 
 #define DIV 1000

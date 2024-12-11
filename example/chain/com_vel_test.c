@@ -26,16 +26,16 @@ void world_com_test(void)
 {
   zVec3D v, a;
 
-  zVec3DDataPrint( rkChainWldCOM(&chain) );
-  zVec3DDataPrint( rkChainCOMVel(&chain) );
-  zVec3DDataPrint( rkChainCOMAcc(&chain) );
+  zVec3DValuePrint( rkChainWldCOM(&chain) );
+  zVec3DValuePrint( rkChainCOMVel(&chain) );
+  zVec3DValuePrint( rkChainCOMAcc(&chain) );
 
   zVec3DSub( rkChainWldCOM(&chain), &com, &v );
   zVec3DDivDRC( &v, DT );
-  zVec3DDataPrint( &v );
+  zVec3DValuePrint( &v );
   zVec3DSub( &v, &vel, &a );
   zVec3DDivDRC( &a, DT );
-  zVec3DDataNLPrint( &a );
+  zVec3DValueNLPrint( &a );
 
   zVec3DCopy( rkChainWldCOM(&chain), &com );
   zVec3DCopy( &v, &vel );

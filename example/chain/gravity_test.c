@@ -32,21 +32,21 @@ int main(void)
     angle = zPI*2*i/STEP;
     zVecSetElem( dis, 3, angle );
     rkChainFK( &chain, dis );
-    zVec3DDataPrint( rkChainGravityDir( &chain, &a ) ); zEndl();
+    zVec3DValuePrint( rkChainGravityDir( &chain, &a ) ); zEndl();
   }
   zVecZero( dis );
   for( i=0; i<=STEP; i++ ){
     angle = zPI*2*i/STEP;
     zVecSetElem( dis, 4, angle );
     rkChainFK( &chain, dis );
-    zVec3DDataPrint( rkChainGravityDir( &chain, &a ) ); zEndl();
+    zVec3DValuePrint( rkChainGravityDir( &chain, &a ) ); zEndl();
   }
   zVecZero( dis );
   for( i=0; i<=STEP; i++ ){
     angle = zPI*2*i/STEP;
     zVecSetElem( dis, 5, angle );
     rkChainFK( &chain, dis );
-    zVec3DDataPrint( rkChainGravityDir( &chain, &a ) ); zEndl();
+    zVec3DValuePrint( rkChainGravityDir( &chain, &a ) ); zEndl();
   }
 
   zVecFree( dis );
