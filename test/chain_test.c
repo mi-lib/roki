@@ -136,6 +136,61 @@ int chain_init(rkChain *chain)
 #define N 1000
 #define TOL (1.0e-10)
 
+bool test_chain_state(rkChain *src, rkChain *dest)
+{
+  int tip;
+
+  tip = rkChainLinkNum(src) - 1;
+  /* frame */
+  if( !zFrame3DMatch( rkChainLinkWldFrame(src,tip), rkChainLinkWldFrame(dest,tip) ) ) return false;
+  /* velocity */
+  if( !zVec6DMatch( rkChainLinkVel(src,tip), rkChainLinkVel(dest,tip) ) ) return false;
+  /* acceleration */
+  if( !zVec6DMatch( rkChainLinkAcc(src,tip), rkChainLinkAcc(dest,tip) ) ) return false;
+  /* wrench */
+  if( !zVec6DMatch( rkChainRootWrench(src), rkChainRootWrench(dest) ) ) return false;
+  /* COM */
+  if( !zVec3DMatch( rkChainLinkWldCOM(src,tip), rkChainLinkWldCOM(dest,tip) ) ) return false;
+  /* COM velocity */
+  if( !zVec3DMatch( rkChainLinkCOMVel(src,tip), rkChainLinkCOMVel(dest,tip) ) ) return false;
+  /* COM acceleration */
+  if( !zVec3DMatch( rkChainLinkCOMAcc(src,tip), rkChainLinkCOMAcc(dest,tip) ) ) return false;
+  /* chain COM */
+  if( !zVec3DMatch( rkChainWldCOM(src), rkChainWldCOM(dest) ) ) return false;
+  /* chain COM velocity */
+  if( !zVec3DMatch( rkChainCOMVel(src), rkChainCOMVel(dest) ) ) return false;
+  /* chain COM acceleration */
+  if( !zVec3DMatch( rkChainCOMAcc(src), rkChainCOMAcc(dest) ) ) return false;
+  return true;
+}
+
+void assert_chain_copy_state(void)
+{
+  rkChain chain, chain_copy;
+  zVec dis, vel;
+  bool result;
+  const double dt = 0.001;
+
+  chain_init( &chain );
+  chain_init( &chain_copy );
+  dis = zVecAlloc( rkChainJointSize(&chain) );
+  vel = zVecAlloc( rkChainJointSize(&chain) );
+
+  zVecRandUniform( dis, -1.0, 1.0 );
+  zVecRandUniform( vel, -0.1, 0.1 );
+  rkChainFK( &chain, dis );
+  zVecCatNCDRC( dis, dt, vel );
+  rkChainFKCNT( &chain, dis, dt );
+  rkChainCopyState( &chain, &chain_copy );
+  result = test_chain_state( &chain, &chain_copy );
+
+  zVecFree( dis );
+  zVecFree( vel );
+  rkChainDestroy( &chain );
+  rkChainDestroy( &chain_copy );
+  zAssert( rkChainCopyState, result );
+}
+
 void assert_getsetconf(rkChain *chain)
 {
   zVec orgdis, orgconf, dis, conf;
@@ -334,6 +389,7 @@ int main(int argc, char *argv[])
 
   zRandInit();
   assert_chain_clone();
+  assert_chain_copy_state();
   /* initialization */
   n = chain_init( &chain );
   assert_getsetconf( &chain );

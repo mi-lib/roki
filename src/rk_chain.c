@@ -450,7 +450,7 @@ void rkChainNeutralize(rkChain *chain)
 void rkChainUpdateID_G(rkChain *chain, const zVec6D *g)
 {
   rkChainUpdateRateG( chain, g );
-  rkChainUpdateWrench( chain );
+  rkChainUpdateJointWrench( chain );
   rkChainUpdateCOMVel( chain );
   rkChainUpdateCOMAcc( chain );
 }
@@ -830,32 +830,6 @@ zVec rkChainFD_G(rkChain *chain, const zVec dis, const zVec vel, const zVec trq,
   return acc;
 }
 
-/* net external wrench applied to a kinematic chain. */
-zVec6D *rkChainNetExtWrench(rkChain *chain, zVec6D *w)
-{
-  int i;
-  zVec6D ew;
-
-  zVec6DZero( w );
-  for( i=0; i<rkChainLinkNum(chain); i++ ){
-    rkLinkNetExtWrench( rkChainLink(chain,i), &ew );
-    if( zVec6DEqual( &ew, ZVEC6DZERO ) ) continue;
-    zMulMat3DVec6DDRC( rkChainLinkWldAtt(chain,i), &ew );
-    zVec6DAngShiftDRC( &ew, rkChainLinkWldPos(chain,i) );
-    zVec6DAddDRC( w, &ew );
-  }
-  return w;
-}
-
-/* destroy external wrench list attached to a kinematic chain. */
-void rkChainExtWrenchDestroy(rkChain *chain)
-{
-  int i;
-
-  for( i=0; i<rkChainLinkNum(chain); i++ )
-    rkLinkExtWrenchDestroy( rkChainLink(chain,i) );
-}
-
 /* set joint identifier offset values of links of a kinematic chain. */
 void rkChainSetJointIDOffset(rkChain *chain)
 {
@@ -1182,16 +1156,4 @@ void rkChainConnectivityFPrint(FILE *fp, rkChain *chain)
 {
   fprintf( fp, "Chain : %s\n", zName(chain) );
   rkLinkConnectivityFPrint( fp, rkChainRoot(chain), rkChainRoot(chain), 0, 0 );
-}
-
-/* print external wrench exerted to a kinematic chain out to a file. */
-void rkChainExtWrenchFPrint(FILE *fp, rkChain *chain)
-{
-  int i;
-
-  for( i=0; i<rkChainLinkNum(chain); i++ )
-    if( zListSize(rkChainLinkExtWrench(chain,i)) != 0 ){
-      fprintf( fp, "[%s]\n", rkChainLinkName(chain,i) );
-      rkLinkExtWrenchFPrint( fp, rkChainLink(chain,i) );
-    }
 }

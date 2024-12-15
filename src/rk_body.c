@@ -102,17 +102,15 @@ void rkBodyInit(rkBody *body)
   rkBodySetWldCOM( body, ZVEC3DZERO );
   rkBodySetCOMVel( body, ZVEC3DZERO );
   rkBodySetCOMAcc( body, ZVEC3DZERO );
+  rkBodySetExtWrench( body, ZVEC6DZERO );
 
-  zListInit( rkBodyExtWrench( body ) );
   zListInit( rkBodyShapeList( body ) );
-
   rkBodyStuff(body) = NULL;
 }
 
 /* destroy a body. */
 void rkBodyDestroy(rkBody *body)
 {
-  rkBodyExtWrenchDestroy( body );
   rkBodyShapeDestroy( body );
   rkBodyStuffDestroy( body );
   rkBodyInit( body );
@@ -121,18 +119,9 @@ void rkBodyDestroy(rkBody *body)
 /* clone a body. */
 rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *shape_org, zMShape3D *shape_cln)
 {
-  rkWrench *wp, *wpc;
   zShapeListCell *sp;
 
   rkMPCopy( &org->mp, &cln->mp );
-  /* wrench list */
-  zListInit( rkBodyExtWrench(cln) );
-  zListForEach( rkBodyExtWrench(org), wp ){
-    if( !( wpc = zAlloc( rkWrench, 1 ) ) ) return NULL;
-    rkWrenchSetW( wpc, rkWrenchW(wp) );
-    rkWrenchSetPos( wpc, rkWrenchPos(wp) );
-    rkBodyExtWrenchPush( cln, wpc );
-  }
   /* shape list */
   zListInit( rkBodyShapeList(cln) );
   zListForEachRew( rkBodyShapeList(org), sp )
@@ -153,43 +142,43 @@ void rkBodyZeroRate(rkBody *body)
 }
 
 /* copy state of a body. */
-rkBody *rkBodyCopyState(rkBody *src, rkBody *dst)
+rkBody *rkBodyCopyState(rkBody *src, rkBody *dest)
 {
-  zFrame3DCopy( rkBodyFrame(src), rkBodyFrame(dst) );
-  zVec6DCopy( rkBodyVel(src), rkBodyVel(dst) );
-  zVec6DCopy( rkBodyAcc(src), rkBodyAcc(dst) );
-  zVec3DCopy( rkBodyWldCOM(src), rkBodyWldCOM(dst) );
-  zVec3DCopy( rkBodyCOMVel(src), rkBodyCOMVel(dst) );
-  zVec3DCopy( rkBodyCOMAcc(src), rkBodyCOMAcc(dst) );
-  return dst;
+  zFrame3DCopy( rkBodyFrame(src), rkBodyFrame(dest) );
+  zVec6DCopy( rkBodyVel(src), rkBodyVel(dest) );
+  zVec6DCopy( rkBodyAcc(src), rkBodyAcc(dest) );
+  zVec3DCopy( rkBodyWldCOM(src), rkBodyWldCOM(dest) );
+  zVec3DCopy( rkBodyCOMVel(src), rkBodyCOMVel(dest) );
+  zVec3DCopy( rkBodyCOMAcc(src), rkBodyCOMAcc(dest) );
+  return dest;
 }
 
 /* combine two bodies. */
-rkBody *rkBodyCombine(rkBody *b1, rkBody *b2, zFrame3D *f, rkBody *b)
+rkBody *rkBodyCombine(rkBody *body1, rkBody *body2, zFrame3D *frame, rkBody *body)
 {
   rkMP mp1, mp2;
   zFrame3D df;
 
-  zFrame3DXform( f, rkBodyFrame(b1), &df );
-  rkMPXform( rkBodyMP(b1), &df, &mp1 );
-  zFrame3DXform( f, rkBodyFrame(b2), &df );
-  rkMPXform( rkBodyMP(b2), &df, &mp2 );
-  rkMPCombine( &mp1, &mp2, rkBodyMP(b) );
-  rkBodySetFrame( b, f );
-  return b;
+  zFrame3DXform( frame, rkBodyFrame(body1), &df );
+  rkMPXform( rkBodyMP(body1), &df, &mp1 );
+  zFrame3DXform( frame, rkBodyFrame(body2), &df );
+  rkMPXform( rkBodyMP(body2), &df, &mp2 );
+  rkMPCombine( &mp1, &mp2, rkBodyMP(body) );
+  rkBodySetFrame( body, frame );
+  return body;
 }
 
 /* combine a body directly to another. */
-rkBody *rkBodyCombineDRC(rkBody *b, rkBody *sb)
+rkBody *rkBodyCombineDRC(rkBody *body, rkBody *subbody)
 {
   rkMP mp1, mp2;
   zFrame3D df;
 
-  rkMPCopy( rkBodyMP(b), &mp1 );
-  zFrame3DXform( rkBodyFrame(b), rkBodyFrame(sb), &df );
-  rkMPXform( rkBodyMP(sb), &df, &mp2 );
-  rkMPCombine( &mp1, &mp2, rkBodyMP(b) );
-  return b;
+  rkMPCopy( rkBodyMP(body), &mp1 );
+  zFrame3DXform( rkBodyFrame(body), rkBodyFrame(subbody), &df );
+  rkMPXform( rkBodyMP(subbody), &df, &mp2 );
+  rkMPCombine( &mp1, &mp2, rkBodyMP(body) );
+  return body;
 }
 
 /* update COM position of a body with respect to the world frame. */
@@ -227,40 +216,59 @@ void rkBodyUpdateCOMRate(rkBody *body)
   rkBodyUpdateCOMAcc( body );
 }
 
-/* net wrench exerted on a body. */
-zVec6D *rkBodyNetWrench(rkBody *body, zVec6D *w)
+/* set an external force of a body. */
+zVec6D *rkBodySetExtForce(rkBody *body, zVec3D *force, zVec3D *pos)
+{
+  zVec3DCopy( force, zVec6DLin(rkBodyExtWrench(body)) );
+  zVec3DOuterProd( pos, force, zVec6DAng(rkBodyExtWrench(body)) );
+  return rkBodyExtWrench(body);
+}
+
+/* add an external force to a body. */
+zVec6D *rkBodyAddExtForce(rkBody *body, zVec3D *force, zVec3D *pos)
 {
   zVec3D tmp;
 
-  zVec3DMul( rkBodyCOMAcc(body), rkBodyMass(body), zVec6DLin(w) );
+  zVec3DAddDRC( zVec6DLin(rkBodyExtWrench(body)), force );
+  zVec3DOuterProd( pos, force, &tmp );
+  zVec3DAddDRC( zVec6DAng(rkBodyExtWrench(body)), &tmp );
+  return rkBodyExtWrench(body);
+}
+
+/* inertial wrench of a body. */
+zVec6D *rkBodyInertialWrench(rkBody *body, zVec6D *wrench)
+{
+  zVec3D tmp;
+
+  zVec3DMul( rkBodyCOMAcc(body), rkBodyMass(body), zVec6DLin(wrench) );
   zMulMat3DVec3D( rkBodyInertia(body), rkBodyAngVel(body), &tmp );
-  zVec3DOuterProd( rkBodyAngVel(body), &tmp, zVec6DAng(w) );
+  zVec3DOuterProd( rkBodyAngVel(body), &tmp, zVec6DAng(wrench) );
   zMulMat3DVec3D( rkBodyInertia(body), rkBodyAngAcc(body), &tmp );
-  zVec3DAddDRC( zVec6DAng(w), &tmp );
-  return w;
+  zVec3DAddDRC( zVec6DAng(wrench), &tmp );
+  return wrench;
 }
 
 /* angular momentum of a body. */
-zVec3D *rkBodyAM(rkBody *b, zVec3D *p, zVec3D *am)
+zVec3D *rkBodyAM(rkBody *body, zVec3D *pos, zVec3D *am)
 {
   zVec3D tmp;
 
-  zVec3DSub( rkBodyCOM(b), p, &tmp );
-  zVec3DOuterProd( &tmp, rkBodyCOMVel(b), am );
-  zVec3DMulDRC( am, rkBodyMass(b) );
-  zMulMat3DVec3D( rkBodyInertia(b), rkBodyAngVel(b), &tmp );
+  zVec3DSub( rkBodyCOM(body), pos, &tmp );
+  zVec3DOuterProd( &tmp, rkBodyCOMVel(body), am );
+  zVec3DMulDRC( am, rkBodyMass(body) );
+  zMulMat3DVec3D( rkBodyInertia(body), rkBodyAngVel(body), &tmp );
   return zVec3DAddDRC( am, &tmp );
 }
 
-/* kinematic energy of a body. */
-double rkBodyKE(rkBody *b)
+/* kinetic energy of a body. */
+double rkBodyKE(rkBody *body)
 {
   zVec3D tmp;
   double result;
 
-  zMulMat3DVec3D( rkBodyInertia(b), rkBodyAngVel(b), &tmp );
-  result = zVec3DInnerProd( rkBodyAngVel(b), &tmp );
-  result += rkBodyMass(b)*zVec3DSqrNorm( rkBodyCOMVel(b) );
+  zMulMat3DVec3D( rkBodyInertia(body), rkBodyAngVel(body), &tmp );
+  result = zVec3DInnerProd( rkBodyAngVel(body), &tmp );
+  result += rkBodyMass(body)*zVec3DSqrNorm( rkBodyCOMVel(body) );
   return ( result *= 0.5 );
 }
 

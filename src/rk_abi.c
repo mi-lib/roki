@@ -97,7 +97,7 @@ void rkLinkInitABI(rkLink *link, zVec6D *pvel)
   zVec6DCopy( &ap->f, &ap->b );
   /* total external forces */
   rkWrenchListNet( &ap->wlist, &ap->w ); /* temporary contact forces */
-  rkLinkNetExtWrench( link, &ap->w0 ); /* external forces */
+  zVec6DCopy( rkLinkExtWrench(link), &ap->w0 ); /* external forces */
   zVec3DCreate( &tmp, 0, 0, -RK_G * rkLinkMass(link) ); /* gravity force */
   zMulMat3DTVec3DDRC( rkLinkWldAtt(link), &tmp );
   zVec3DAddDRC( zVec6DLin(&ap->w0), &tmp );

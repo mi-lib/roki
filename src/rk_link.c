@@ -21,7 +21,7 @@ void rkLinkInit(rkLink *link)
 
   rkLinkSetOrgFrame( link, ZFRAME3DIDENT );
   rkLinkSetAdjFrame( link, ZFRAME3DIDENT );
-  rkLinkSetWrench( link, ZVEC6DZERO );
+  rkLinkSetJointWrench( link, ZVEC6DZERO );
 
   rkLinkSetParent( link, NULL );
   rkLinkSetChild( link, NULL );
@@ -34,7 +34,6 @@ void rkLinkDestroy(rkLink *link)
   zNameFree( link );
   rkLinkJointDestroy( link );
   rkLinkStuffDestroy( link );
-  rkLinkExtWrenchDestroy( link );
   rkLinkShapeDestroy( link );
   rkLinkInit( link );
 }
@@ -71,7 +70,7 @@ rkLink *rkLinkCopyState(rkLink *src, rkLink *dst)
   rkJointCopyState( rkLinkJoint(src), rkLinkJoint(dst) );
   rkBodyCopyState( rkLinkBody(src), rkLinkBody(dst) );
   zFrame3DCopy( rkLinkAdjFrame(src), rkLinkAdjFrame(dst) );
-  zVec6DCopy( rkLinkWrench(src), rkLinkWrench(dst) );
+  zVec6DCopy( rkLinkJointWrench(src), rkLinkJointWrench(dst) );
   return dst;
 }
 
@@ -184,30 +183,29 @@ void rkLinkUpdateRate(rkLink *link, const zVec6D *pvel, const zVec6D *pacc)
     rkLinkUpdateRate( rkLinkSibl(link), rkLinkVel(rkLinkParent(link)), rkLinkAcc(rkLinkParent(link)) );
 }
 
-/* update joint torque of link based on Neuton=Euler's equation. */
-void rkLinkUpdateWrench(rkLink *link)
+/* update joint wrench of a link based on Neuton-Euler's backward computation. */
+void rkLinkUpdateJointWrench(rkLink *link)
 {
   zVec6D w;
   rkLink *child;
 
   /* inertia force */
-  rkBodyNetWrench( rkLinkBody(link), rkLinkWrench(link) );
-  zVec6DAngShiftDRC( rkLinkWrench(link), rkLinkCOM(link) );
+  rkBodyInertialWrench( rkLinkBody(link), rkLinkJointWrench(link) );
+  zVec6DAngShiftDRC( rkLinkJointWrench(link), rkLinkCOM(link) );
   /* reaction force propagation from children */
   if( ( child = rkLinkChild(link) ) ){
-    rkLinkUpdateWrench( child );
+    rkLinkUpdateJointWrench( child );
     for( ; child; child=rkLinkSibl(child) ){
-      zXform6DAng( rkLinkAdjFrame(child), rkLinkWrench(child), &w );
-      zVec6DAddDRC( rkLinkWrench(link), &w );
+      zXform6DAng( rkLinkAdjFrame(child), rkLinkJointWrench(child), &w );
+      zVec6DAddDRC( rkLinkJointWrench(link), &w );
     }
   }
-  rkLinkNetExtWrench( link, &w ); /* external wrench */
-  zVec6DSubDRC( rkLinkWrench(link), &w );
+  zVec6DSubDRC( rkLinkJointWrench(link), rkLinkExtWrench(link) );
   /* joint torque resolution */
-  rkJointCalcTrq( rkLinkJoint(link), rkLinkWrench(link) );
+  rkJointCalcTrq( rkLinkJoint(link), rkLinkJointWrench(link) );
   /* branch */
   if( rkLinkSibl(link) )
-    rkLinkUpdateWrench( rkLinkSibl(link) );
+    rkLinkUpdateJointWrench( rkLinkSibl(link) );
 }
 
 /* update mass of the composite rigit body of a link. */
@@ -597,8 +595,8 @@ void rkLinkConnectivityFPrint(FILE *fp, rkLink *link, rkLink *root, ulong branch
 /* print external wrench applied to a link out to a file. */
 void rkLinkExtWrenchFPrint(FILE *fp, rkLink *link)
 {
-  rkWrench *c;
-
-  zListForEach( rkLinkExtWrench(link), c )
-    rkWrenchFPrint( fp, c );
+  fprintf( fp, " force: " );
+  zVec3DFPrint( fp, zVec6DLin( rkLinkExtWrench(link) ) );
+  fprintf( fp, " torque: " );
+  zVec3DFPrint( fp, zVec6DAng( rkLinkExtWrench(link) ) );
 }

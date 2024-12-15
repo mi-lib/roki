@@ -1,6 +1,7 @@
 OBJ=rk_g3d.o rk_contact.o\
 	rk_motor.o rk_motor_none.o rk_motor_trq.o rk_motor_dc.o\
-	rk_force.o rk_body.o\
+	rk_force.o\
+	rk_body.o\
 	rk_joint.o rk_joint_fixed.o rk_joint_revol.o rk_joint_prism.o rk_joint_cylin.o rk_joint_hooke.o rk_joint_spher.o rk_joint_float.o rk_joint_brfloat.o\
 	rk_link.o rk_chain.o\
 	rk_jacobi.o\

@@ -9,6 +9,9 @@
 
 #include <roki/rk_joint.h>
 
+/* this is only for rkWrenchList in rkABIPrp, and to be removed. */
+#include <roki/rk_force.h>
+
 __BEGIN_DECLS
 
 /* ********************************************************** */
@@ -95,9 +98,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #define rkLinkWldPos(link)        rkBodyPos( rkLinkBody(link) )
 #define rkLinkWldAtt(link)        rkBodyAtt( rkLinkBody(link) )
 #define rkLinkWldCOM(link)        rkBodyWldCOM( rkLinkBody(link) )
-#define rkLinkWrench(link)        rkJointWrench( rkLinkJoint(link) )
-#define rkLinkForce(link)         zVec6DLin(rkLinkWrench(link))
-#define rkLinkTorque(link)        zVec6DAng(rkLinkWrench(link))
+#define rkLinkJointWrench(link)   rkJointWrench( rkLinkJoint(link) )
+#define rkLinkJointForce(link)    zVec6DLin(rkLinkJointWrench(link))
+#define rkLinkJointTorque(link)   zVec6DAng(rkLinkJointWrench(link))
 #define rkLinkParent(link)        (link)->parent
 #define rkLinkChild(link)         (link)->child
 #define rkLinkSibl(link)          (link)->sibl
@@ -141,9 +144,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #define rkLinkSetWldPos(link,p)   rkBodySetPos( rkLinkBody(link), p )
 #define rkLinkSetWldAtt(link,a)   rkBodySetAtt( rkLinkBody(link), a )
 #define rkLinkSetWldCOM(link,c)   rkBodySetWldCOM( rkLinkBody(link), c )
-#define rkLinkSetWrench(link,f)   zVec6DCopy( f, rkLinkWrench(link) )
-#define rkLinkSetForce(link,f)    zVec3DCopy( f, rkLinkForce(link) )
-#define rkLinkSetTorque(link,n)   zVec3DCopy( n, rkLinkTorque(link) )
+#define rkLinkSetJointWrench(link,f) zVec6DCopy( f, rkLinkJointWrench(link) )
+#define rkLinkSetJointForce(link,f)  zVec3DCopy( f, rkLinkJointForce(link) )
+#define rkLinkSetJointTorque(link,n) zVec3DCopy( n, rkLinkJointTorque(link) )
 #define rkLinkSetParent(link,p)   ( rkLinkParent(link) = (p) )
 #define rkLinkSetChild(link,c)    ( rkLinkChild(link) = (c) )
 #define rkLinkSetSibl(link,b)     ( rkLinkSibl(link) = (b) )
@@ -191,13 +194,12 @@ __ROKI_EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *shape_org
 
 /*! \brief copy state of a link.
  *
- * rkLinkCopyState() copies state of a link \a src to that of another
- * \a dst. The state includes frame, velocity, acceleration, the
- * position, velocity and acceleration of the center of mass, and the
- * net external wrench.
- * \return dst
+ * rkLinkCopyState() copies state of a link \a src to that of another \a dest. The state
+ * includes frame, velocity, acceleration, the position, velocity and acceleration of the
+ * center of mass, and the external wrench.
+ * \retval dest
  */
-__ROKI_EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dst);
+__ROKI_EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dest);
 
 /*! \brief add link branch.
  *
@@ -220,41 +222,23 @@ __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
  */
 #define rkLinkInertiaEllips(link,e) rkBodyInertiaEllips( rkLinkBody(link), e )
 
-/*! \brief push and pop of external force applied to link.
+/*! \brief set and add external wrench or force applied to a link.
  *
- * rkLinkExtForcePush() pushes a new external force list cell
- * \a cell to the list on a link \a link.
+ * rkLinkSetExtWrench() sets an external wrench of a link \a link for \a wrench.
+ * rkLinkAddExtWrench() adds an external wrench \a wrench to a link \a link.
  *
- * rkLinkExtForcePop() pops the latest external force list
- * cell from the list on \a link.
- *
- * rkLinkExtForceDelete() destroys the external force list
- * on \a link, freeing all cells.
- * \notes
- * When the external force list on \a link includes statically-allocated
- * cells, zListExtForceDelete() causes segmentation fault.
+ * rkLinkSetExtForce() sets an external force acting at \a pos of a link \a link for \a force.
+ * rkLinkAddExtForce() adds an external force \a force acting at \a pos to a link \a link.
  * \return
- * rkLinkExtForcePush() returns a pointer to the cell pushed.
- * rkLinkExtForcePop() returns a pointer to the cell poped.
- * rkLinkExtForceDelete() returns no value.
+ * rkLinkSetExtWrench(), rkLinkAddExtWrench(), rkLinkSetExtForce(), and rkLinkAddExtForce() are
+ * macros. See rk_link.h.
  * \sa
- * rkBodyExtForcePush, rkBodyExtForcePop, rkBodyExtForceDelete
+ * rkBodySetExtWrench, rkBodyAddExtWrench, rkBodySetExtForce, rkBodyAddExtForce
  */
-#define rkLinkExtWrenchPush(link,f)  rkBodyExtWrenchPush( rkLinkBody(link), f )
-#define rkLinkExtWrenchPop(link)     rkBodyExtWrenchPop( rkLinkBody(link) )
-#define rkLinkExtWrenchDestroy(link) rkBodyExtWrenchDestroy( rkLinkBody(link) )
-
-/*! \brief calculation of total external wrench acting to link.
- *
- * rkLinkNetExtWrench() calculates the net external wrench acting to
- * a link \a link by summing up individual external forces in the force
- * list. The result is put into \a w.
- * \return
- * rkLinkNetExtWrench() returns a pointer \a w.
- * \sa
- * rkBodyNetExtWrench
- */
-#define rkLinkNetExtWrench(link,w) rkBodyNetExtWrench( rkLinkBody(link), w )
+#define rkLinkSetExtWrench(link,wrench)   rkBodySetExtWrench( rkLinkBody(link), wrench )
+#define rkLinkAddExtWrench(link,wrench)   rkBodyAddExtWrench( rkLinkBody(link), wrench )
+#define rkLinkSetExtForce(link,force,pos) rkBodySetExtForce( rkLinkBody(link), force, pos )
+#define rkLinkAddExtForce(link,force,pos) rkBodyAddExtForce( rkLinkBody(link), force, pos )
 
 /*! \brief push and pop of shape attached to link.
  *
@@ -347,37 +331,26 @@ __ROKI_EXPORT zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i);
 
 /*! \brief update link motion state.
  *
- * rkLinkUpdateFrame() updates the frame and COM of link \a link
- * with respect to the world frame.
+ * rkLinkUpdateFrame() updates the frame and COM of link \a link with respect to the world frame.
  * The children and siblings of \a link are recursively updated.
  *
- * rkLinkUpdateRate() updates the velocity and acceleration
- * of \a link with respect to the inertia frame. Note that the
- * orientation of those velocity and acceleration are with
- * repect to the frame of \a link itself.
+ * rkLinkUpdateVel(), rkLinkUpdateAcc(), and rkLinkUpdateRate() updates the velocity and acceleration
+ * of \a link with respect to the inertia frame. Note that the orientation of those velocity and
+ * acceleration are with repect to the frame of \a link itself.
  *
- * rkLinkUpdateForce() updates the joint force of \a link. It
- * recursively computes the joint forces of the descendants
- * of \a link, accumulating them and subtracting them from the
- * net inertia force. Basically, it is an implementation of
- * Newton=Euler s method proposed by Luh, Walker and Paul(1980).
- * Note that the orientation of those force and torque are
- * with repect to the frame of \a link itself.
+ * rkLinkUpdateJointWrench() updates the joint wrench of \a link. It recursively computes the
+ * joint wrenches of the descendants of \a link, accumulating them and subtracting them from the
+ * net inertial wrench. Basically, it is an implementation of Newton=Euler s method proposed by Luh,
+ * Walker and Paul(1980).
+ * Note that the orientation of the wrench is with repect to the frame of \a link itself.
  * \return
  * All these functions return no values.
- * \notes
- * Before calling rkLinkUpdateForce(), the state of \a link
- * with respect to the world frame has to be updated by
- * rkLinkUpdateRate(). It is not simple in the case of
- * underactuated systems contacting with the environment.
- * Be careful when coding inverse dynamics. Use them in
- * correct ways, considering the purpose of the computation.
  */
 __ROKI_EXPORT void rkLinkUpdateFrame(rkLink *link, const zFrame3D *pwf);
 __ROKI_EXPORT void rkLinkUpdateVel(rkLink *link, const zVec6D *pvel);
 __ROKI_EXPORT void rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pacc);
 __ROKI_EXPORT void rkLinkUpdateRate(rkLink *link, const zVec6D *pvel, const zVec6D *pacc);
-__ROKI_EXPORT void rkLinkUpdateWrench(rkLink *link);
+__ROKI_EXPORT void rkLinkUpdateJointWrench(rkLink *link);
 
 /*! \brief update mass of the composite rigit body of a link. */
 __ROKI_EXPORT double rkLinkUpdateCRBMass(rkLink *link);

@@ -98,7 +98,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   void updateRateG(const zVec6D *g);
   void updateRate();
   void updateRate0G();
-  void updateWrench();
+  void updateJointWrench();
 
   zVec3D *gravityDir(zVec3D *v);
   zVec3D *linkPointPos(int i, const zVec3D *p, zVec3D *world_p);
@@ -137,8 +137,6 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   bool getInertiaMatBiasVec(zMat inertia, zVec bias, const zVec6D *g);
   bool getInertiaMatBiasVec(zMat inertia, zVec bias);
   bool getInertiaMatBiasVec0G(zMat inertia, zVec bias);
-  zVec6D *netExternalWrench(zVec6D *wrench);
-  void destroyExternalWrench();
 
   zSphere3D *getBoundingBall(zSphere3D *bb);
 
@@ -242,9 +240,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainLinkAcc(chain,i)             rkLinkAcc(rkChainLink(chain,i))
 #define rkChainLinkCOMVel(chain,i)          rkLinkCOMVel(rkChainLink(chain,i))
 #define rkChainLinkCOMAcc(chain,i)          rkLinkCOMAcc(rkChainLink(chain,i))
-#define rkChainLinkWrench(chain,i)          rkLinkWrench(rkChainLink(chain,i))
-#define rkChainLinkForce(chain,i)           rkLinkForce(rkChainLink(chain,i))
-#define rkChainLinkTorque(chain,i)          rkLinkTorque(rkChainLink(chain,i))
+#define rkChainLinkJointWrench(chain,i)     rkLinkJointWrench(rkChainLink(chain,i))
+#define rkChainLinkJointForce(chain,i)      rkLinkJointForce(rkChainLink(chain,i))
+#define rkChainLinkJointTorque(chain,i)     rkLinkJointTorque(rkChainLink(chain,i))
 #define rkChainLinkParent(chain,i)          rkLinkParent(rkChainLink(chain,i))
 #define rkChainLinkChild(chain,i)           rkLinkChild(rkChainLink(chain,i))
 #define rkChainLinkSibl(chain,i)            rkLinkSibl(rkChainLink(chain,i))
@@ -263,9 +261,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainRootLinAcc(chain)            rkLinkLinAcc(rkChainRoot(chain))
 #define rkChainRootAngVel(chain)            rkLinkAngVel(rkChainRoot(chain))
 #define rkChainRootAngAcc(chain)            rkLinkAngAcc(rkChainRoot(chain))
-#define rkChainRootWrench(chain)            rkLinkWrench(rkChainRoot(chain))
-#define rkChainRootForce(chain)             rkLinkForce(rkChainRoot(chain))
-#define rkChainRootTorque(chain)            rkLinkTorque(rkChainRoot(chain))
+#define rkChainRootWrench(chain)            rkLinkJointWrench(rkChainRoot(chain))
+#define rkChainRootForce(chain)             rkLinkJointForce(rkChainRoot(chain))
+#define rkChainRootTorque(chain)            rkLinkJointTorque(rkChainRoot(chain))
 
 #define rkChainSetRootFrame(chain,f)        rkLinkSetWldFrame(rkChainRoot(chain),f)
 #define rkChainSetRootPos(chain,p)          rkLinkSetWldPos(rkChainRoot(chain),p)
@@ -276,9 +274,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainSetRootLinAcc(chain,a)       rkLinkSetLinAcc(rkChainRoot(chain),a)
 #define rkChainSetRootAngVel(chain,o)       rkLinkSetAngVel(rkChainRoot(chain),o)
 #define rkChainSetRootAngAcc(chain,a)       rkLinkSetAngAcc(rkChainRoot(chain),a)
-#define rkChainSetRootWrench(chain,f)       rkLinkSetWrench(rkChainRoot(chain),f)
-#define rkChainSetRootForce(chain,f)        rkLinkSetForce(rkChainRoot(chain),f)
-#define rkChainSetRootTorque(chain,n)       rkLinkSetTorque(rkChainRoot(chain),n)
+#define rkChainSetRootWrench(chain,f)       rkLinkSetJointWrench(rkChainRoot(chain),f)
+#define rkChainSetRootForce(chain,f)        rkLinkSetJointForce(rkChainRoot(chain),f)
+#define rkChainSetRootTorque(chain,n)       rkLinkSetJointTorque(rkChainRoot(chain),n)
 
 /*! \brief initialize and destroy a kinematic chain.
  *
@@ -439,31 +437,28 @@ __ROKI_EXPORT void rkChainSetMotorInputAll(rkChain *chain, const zVec input);
 
 /*! \brief update kinematic chain motion state.
  *
- * rkChainUpdateFrame() updates the whole link frames of a kinematic chain
- * \a chain with respect to the world frame.
+ * rkChainUpdateFrame() updates the whole link frames of a kinematic chain \a chain with respect to
+ * the world frame.
  *
- * rkChainUpdateVel() and rkChainUpdateAcc() update velocities and accelerations
- * of the whole link frames of \a chain with respect to the inertia frame, respectively.
+ * rkChainUpdateVel() and rkChainUpdateAcc() update velocities and accelerations of the whole link
+ * frames of \a chain with respect to the inertia frame, respectively.
  *
- * rkChainUpdateRate() updates the rate, namely, the velocities and the accelerations
- * of the whole links of \a chain with respect to the frame that has an acceleration
- * of the field \a g.
- * rkChainUpdateRateGravity() updates the rate of the whole links of \a chain in
- * the gravitational field.
- * rkChainUpdateRateZeroGravity() updates the rate of the whole links of \a chain
- * in the gravity-free field.
+ * rkChainUpdateRate() updates the rate, namely, the velocities and the accelerations of the whole
+ * links of \a chain with respect to the frame that has an acceleration of the field \a g.
+ * rkChainUpdateRateGravity() updates the rate of the whole links of \a chain in the gravitational
+ * field.
+ * rkChainUpdateRateZeroGravity() updates the rate of the whole links of \a chain in the gravity-free
+ * field.
  *
- * rkChainUpdateWrench() computes wrenches, namely, combinations of force and
- * torque acting at the original points of the whole links of \a chain.
+ * rkChainUpdateJointWrench() computes joints wrenches, namely, combinations of force and torque
+ * acting at the original points of the whole links of \a chain.
  * \return
  * rkChainUpdateFrame(), rkChainUpdateVel(), rkChainUpdateAcc(), rkChainUpdateRate(),
- * rkChainUpdateRateGravity(), rkChainUpdateRateZeroGravity(), and rkChainUpdateWrench()
+ * rkChainUpdateRateGravity(), rkChainUpdateRateZeroGravity(), and rkChainUpdateJointWrench()
  * do not return any values.
- * Actually, they are not functions but macros. Refer rk_chain.h for their
- * implementations.
+ * They are defined as macros. See rk_chain.h.
  * \sa
- * rkLinkUpdateFrame, rkLinkUpdateVel, rkLinkUpdateAcc, rkLinkUpdateRate,
- * rkLinkUpdateWrench
+ * rkLinkUpdateFrame, rkLinkUpdateVel, rkLinkUpdateAcc, rkLinkUpdateRate, rkLinkUpdateJointWrench
  */
 #define rkChainUpdateFrame(chain)   rkLinkUpdateFrame( rkChainRoot(chain), ZFRAME3DIDENT )
 #define rkChainUpdateVel(chain)     rkLinkUpdateVel( rkChainRoot(chain), ZVEC6DZERO )
@@ -471,7 +466,7 @@ __ROKI_EXPORT void rkChainSetMotorInputAll(rkChain *chain, const zVec input);
 #define rkChainUpdateRateG(chain,g) rkLinkUpdateRate( rkChainRoot(chain), ZVEC6DZERO, (g) )
 #define rkChainUpdateRate(chain)    rkChainUpdateRateG( chain, RK_GRAVITY6D )
 #define rkChainUpdateRate0G(chain)  rkChainUpdateRateG( chain, ZVEC6DZERO )
-#define rkChainUpdateWrench(chain)  rkLinkUpdateWrench( rkChainRoot(chain) )
+#define rkChainUpdateJointWrench(chain)  rkLinkUpdateJointWrench( rkChainRoot(chain) )
 
 /*! \brief direction vector of gravity with respect to the body frame of a kinematic chain.
  *
@@ -698,24 +693,6 @@ __ROKI_EXPORT zVec rkChainFD_G(rkChain *chain, const zVec dis, const zVec vel, c
 #define rkChainFD(chain,dis,vel,trq,acc) rkChainFD_G( chain, dis, vel, trq, RK_GRAVITY6D, acc )
 #define rkChainFD0G(chain,dis,vel,trq,acc) rkChainFD_G( chain, dis, vel, trq, ZVEC6DZERO, acc )
 
-/*! \brief external force applied to kinematic chain.
- *
- * rkChainNetExtWrench() calculates the net external wrench acting to
- * a kinematic chain \a chain by summing up individual external forces
- * applied to each link. Orientation of the total force is with respect
- * to the body frame of \a chain.
- * The result is put into \a w.
- *
- * rkChainExtWrenchDestroy() destroys the external force list of the
- * kinematic chain \a chain.
- * \return
- * rkChainNetExtWrench() returns a pointer \a w.
- *
- * rkChainExtWrenchDestroy() returns no value.
- */
-__ROKI_EXPORT zVec6D *rkChainNetExtWrench(rkChain *chain, zVec6D *w);
-__ROKI_EXPORT void rkChainExtWrenchDestroy(rkChain *chain);
-
 /*! \brief set joint identifier offset value of each link.
  *
  * rkChainSetJointIDOffset() sets the joint identifier offset values of
@@ -787,10 +764,6 @@ __ROKI_EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *chain);
 __ROKI_EXPORT void rkChainConnectivityFPrint(FILE *fp, rkChain *chain);
 #define rkChainConnectivityPrint(chain) rkChainConnectivityFPrint( stdout, (chain) )
 
-/* print external wrenches applied to a kinematic chain out to a file. */
-__ROKI_EXPORT void rkChainExtWrenchFPrint(FILE *fp, rkChain *chain);
-#define rkChainExtWrenchPrint(chain)  rkChainExtWrenchFPrint( stdout, (chain) )
-
 __END_DECLS
 
 #include <roki/rk_ik.h>
@@ -858,7 +831,7 @@ inline void rkChain::updateAcc(){ rkChainUpdateAcc( this ); }
 inline void rkChain::updateRateG(const zVec6D *g){ rkChainUpdateRateG( this, g ); }
 inline void rkChain::updateRate(){ rkChainUpdateRate( this ); }
 inline void rkChain::updateRate0G(){ rkChainUpdateRate0G( this ); }
-inline void rkChain::updateWrench(){ rkChainUpdateWrench( this ); }
+inline void rkChain::updateJointWrench(){ rkChainUpdateJointWrench( this ); }
 
 inline zVec3D *rkChain::gravityDir(zVec3D *v){ return rkChainGravityDir( this, v ); }
 inline zVec3D *rkChain::linkPointPos(int i, const zVec3D *p, zVec3D *world_p){ return rkChainLinkPointWldPos( this, i, p, world_p ); }
@@ -897,8 +870,6 @@ inline zVec rkChain::getBiasVec0G(zVec bias){ return rkChainBiasVec0G( this, bia
 inline bool rkChain::getInertiaMatBiasVec(zMat inertia, zVec bias, const zVec6D *g){ return rkChainInertiaMatBiasVecG( this, inertia, bias, g ); }
 inline bool rkChain::getInertiaMatBiasVec(zMat inertia, zVec bias){ return rkChainInertiaMatBiasVec( this, inertia, bias ); }
 inline bool rkChain::getInertiaMatBiasVec0G(zMat inertia, zVec bias){ return rkChainInertiaMatBiasVec0G( this, inertia, bias ); }
-inline zVec6D *rkChain::netExternalWrench(zVec6D *wrench){ return rkChainNetExtWrench( this, wrench ); }
-inline void rkChain::destroyExternalWrench(){ rkChainExtWrenchDestroy( this ); }
 
 inline zSphere3D *rkChain::getBoundingBall(zSphere3D *bb){ return rkChainBoundingBall( this, bb ); }
 

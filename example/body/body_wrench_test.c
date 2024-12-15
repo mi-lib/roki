@@ -3,7 +3,7 @@
 void init_mp(rkBody *body)
 {
   rkBodyInit( body );
-  /* 0.1x0.2x0.4[m^3] recutangular solid block
+  /* 0.1x0.2x0.4[m^3] rectangular solid block
      with 1000[kg/m^3] density */
   rkBodySetMass( body, 0.1*0.2*0.4*1000 );
   zMat3DCreate( rkBodyInertia(body),
@@ -13,12 +13,12 @@ void init_mp(rkBody *body)
   zVec3DCreate( rkBodyCOM(body), 0.05, 0.1, 0.2 );
 }
 
-void output(rkBody *body, zVec6D *f)
+void output(rkBody *body, zVec6D *wrench)
 {
   zVec3DValuePrint( rkBodyCOMAcc(body) );
-  zVec3DValuePrint( zVec6DLin(f) );
+  zVec3DValuePrint( zVec6DLin(wrench) );
   zVec3DValuePrint( rkBodyAngAcc(body) );
-  zVec3DValueNLPrint( zVec6DAng(f) );
+  zVec3DValueNLPrint( zVec6DAng(wrench) );
 }
 
 #define DIV 1000
@@ -98,7 +98,7 @@ void pattern4(rkBody *body, double t)
 void test(void (* pat)(rkBody*,double), rkBody *body)
 {
   double dt;
-  zVec6D w;
+  zVec6D wrench;
   int i;
 
   dt = T / DIV;
@@ -106,8 +106,8 @@ void test(void (* pat)(rkBody*,double), rkBody *body)
     pat( body, dt*i );
     rkBodyUpdateCOM( body );
     rkBodyUpdateCOMRate( body );
-    rkBodyNetWrench( body, &w );
-    output( body, &w );
+    rkBodyInertialWrench( body, &wrench );
+    output( body, &wrench );
   }
 }
 

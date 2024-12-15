@@ -9,7 +9,6 @@
 
 #include <roki/rk_g3d.h>
 #include <roki/rk_contact.h>
-#include <roki/rk_force.h>
 
 __BEGIN_DECLS
 
@@ -48,7 +47,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
 #define rkMPSetCOM(mp,c)       zVec3DCopy( c, rkMPCOM(mp) )
 #define rkMPSetInertia(mp,i)   zMat3DCopy( i, rkMPInertia(mp) )
 
-#define rkMPCopy(src,dst)      ( *(dst) = *(src) )
+#define rkMPCopy(src,dest)     ( *(dest) = *(src) )
 
 /*! \brief clear mass property. */
 #define rkMPZero(mp) do{\
@@ -140,59 +139,59 @@ inline rkMP operator*(zFrame3D &f, rkMP &src){
 __BEGIN_DECLS
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
-  rkMP mp;           /*!< \brief mass property */
-  zFrame3D frame;    /*!< \brief absolute transformation frame */
-  zVec6D vel;        /*!< \brief velocity */
-  zVec6D acc;        /*!< \brief acceleration */
-  zVec3D com;        /*!< \brief center of mass (COM) */
-  zVec3D comvel;     /*!< \brief COM velocity */
-  zVec3D comacc;     /*!< \brief COM acceleration */
-  rkWrenchList extw; /*!< \brief external wrench with respect to body frame */
+  rkMP mp;              /*!< \brief mass property */
+  zFrame3D frame;       /*!< \brief absolute transformation frame */
+  zVec6D vel;           /*!< \brief velocity */
+  zVec6D acc;           /*!< \brief acceleration */
+  zVec3D com;           /*!< \brief center of mass (COM) */
+  zVec3D comvel;        /*!< \brief COM velocity */
+  zVec3D comacc;        /*!< \brief COM acceleration */
+  zVec6D extwrench;     /*!< \brief external wrench with respect to body frame */
   zShapeList shapelist; /*!< \brief shapes */
   char *stuff;          /*!< \brief stuff identifier */
 };
 
-#define rkBodyMP(b)           ( &(b)->mp )
-#define rkBodyMass(b)         rkMPMass( rkBodyMP(b) )
-#define rkBodyCOM(b)          rkMPCOM( rkBodyMP(b) )
-#define rkBodyInertia(b)      rkMPInertia( rkBodyMP(b) )
-#define rkBodyFrame(b)        ( &(b)->frame )
-#define rkBodyPos(b)          zFrame3DPos( rkBodyFrame(b) )
-#define rkBodyAtt(b)          zFrame3DAtt( rkBodyFrame(b) )
-#define rkBodyVel(b)          ( &(b)->vel )
-#define rkBodyAcc(b)          ( &(b)->acc )
-#define rkBodyLinVel(b)       zVec6DLin( rkBodyVel(b) )
-#define rkBodyLinAcc(b)       zVec6DLin( rkBodyAcc(b) )
-#define rkBodyAngVel(b)       zVec6DAng( rkBodyVel(b) )
-#define rkBodyAngAcc(b)       zVec6DAng( rkBodyAcc(b) )
-#define rkBodyWldCOM(b)       ( &(b)->com )
-#define rkBodyCOMVel(b)       ( &(b)->comvel )
-#define rkBodyCOMAcc(b)       ( &(b)->comacc )
+#define rkBodyMP(body)           ( &(body)->mp )
+#define rkBodyMass(body)         rkMPMass( rkBodyMP(body) )
+#define rkBodyCOM(body)          rkMPCOM( rkBodyMP(body) )
+#define rkBodyInertia(body)      rkMPInertia( rkBodyMP(body) )
+#define rkBodyFrame(body)        ( &(body)->frame )
+#define rkBodyPos(body)          zFrame3DPos( rkBodyFrame(body) )
+#define rkBodyAtt(body)          zFrame3DAtt( rkBodyFrame(body) )
+#define rkBodyVel(body)          ( &(body)->vel )
+#define rkBodyAcc(body)          ( &(body)->acc )
+#define rkBodyLinVel(body)       zVec6DLin( rkBodyVel(body) )
+#define rkBodyLinAcc(body)       zVec6DLin( rkBodyAcc(body) )
+#define rkBodyAngVel(body)       zVec6DAng( rkBodyVel(body) )
+#define rkBodyAngAcc(body)       zVec6DAng( rkBodyAcc(body) )
+#define rkBodyWldCOM(body)       ( &(body)->com )
+#define rkBodyCOMVel(body)       ( &(body)->comvel )
+#define rkBodyCOMAcc(body)       ( &(body)->comacc )
 
-#define rkBodyExtWrench(b)    ( &(b)->extw )
-#define rkBodyShapeList(b)    ( &(b)->shapelist )
-#define rkBodyShapeNum(b)     zListSize( rkBodyShapeList(b) )
-#define rkBodyShapeIsEmpty(b) zListIsEmpty( rkBodyShapeList(b) )
+#define rkBodyExtWrench(body)    ( &(body)->extwrench )
+#define rkBodyShapeList(body)    ( &(body)->shapelist )
+#define rkBodyShapeNum(body)     zListSize( rkBodyShapeList(body) )
+#define rkBodyShapeIsEmpty(body) zListIsEmpty( rkBodyShapeList(body) )
 
-#define rkBodySetMass(b,m)    rkMPSetMass( rkBodyMP(b), m )
-#define rkBodySetCOM(b,c)     rkMPSetCOM( rkBodyMP(b), c )
-#define rkBodySetInertia(b,i) rkMPSetInertia( rkBodyMP(b), i )
-#define rkBodySetFrame(b,f)   zFrame3DCopy( f, rkBodyFrame(b) )
-#define rkBodySetPos(b,p)     zFrame3DSetPos( rkBodyFrame(b), p )
-#define rkBodySetAtt(b,r)     zFrame3DSetAtt( rkBodyFrame(b), r )
-#define rkBodySetVel(b,v)     zVec6DCopy( v, rkBodyVel(b) )
-#define rkBodySetAcc(b,a)     zVec6DCopy( a, rkBodyAcc(b) )
-#define rkBodySetLinVel(b,v)  zVec6DSetLin( rkBodyVel(b), v )
-#define rkBodySetLinAcc(b,a)  zVec6DSetLin( rkBodyAcc(b), a )
-#define rkBodySetAngVel(b,v)  zVec6DSetAng( rkBodyVel(b), v )
-#define rkBodySetAngAcc(b,a)  zVec6DSetAng( rkBodyAcc(b), a )
-#define rkBodySetWldCOM(b,c)  zVec3DCopy( c, rkBodyWldCOM(b) )
-#define rkBodySetCOMVel(b,v)  zVec3DCopy( v, rkBodyCOMVel(b) )
-#define rkBodySetCOMAcc(b,a)  zVec3DCopy( a, rkBodyCOMAcc(b) )
+#define rkBodySetMass(body,m)    rkMPSetMass( rkBodyMP(body), m )
+#define rkBodySetCOM(body,c)     rkMPSetCOM( rkBodyMP(body), c )
+#define rkBodySetInertia(body,i) rkMPSetInertia( rkBodyMP(body), i )
+#define rkBodySetFrame(body,f)   zFrame3DCopy( f, rkBodyFrame(body) )
+#define rkBodySetPos(body,p)     zFrame3DSetPos( rkBodyFrame(body), p )
+#define rkBodySetAtt(body,r)     zFrame3DSetAtt( rkBodyFrame(body), r )
+#define rkBodySetVel(body,v)     zVec6DCopy( v, rkBodyVel(body) )
+#define rkBodySetAcc(body,a)     zVec6DCopy( a, rkBodyAcc(body) )
+#define rkBodySetLinVel(body,v)  zVec6DSetLin( rkBodyVel(body), v )
+#define rkBodySetLinAcc(body,a)  zVec6DSetLin( rkBodyAcc(body), a )
+#define rkBodySetAngVel(body,v)  zVec6DSetAng( rkBodyVel(body), v )
+#define rkBodySetAngAcc(body,a)  zVec6DSetAng( rkBodyAcc(body), a )
+#define rkBodySetWldCOM(body,c)  zVec3DCopy( c, rkBodyWldCOM(body) )
+#define rkBodySetCOMVel(body,v)  zVec3DCopy( v, rkBodyCOMVel(body) )
+#define rkBodySetCOMAcc(body,a)  zVec3DCopy( a, rkBodyCOMAcc(body) )
 
-#define rkBodyStuff(b)        (b)->stuff
-#define rkBodySetStuff(b,m)   ( rkBodyStuff(b) = zStrClone(m) )
-#define rkBodyStuffDestroy(b) zFree( rkBodyStuff(b) )
+#define rkBodyStuff(body)        (body)->stuff
+#define rkBodySetStuff(body,m)   ( rkBodyStuff(body) = zStrClone(m) )
+#define rkBodyStuffDestroy(body) zFree( rkBodyStuff(body) )
 
 /*! \brief initialize and destroy body object.
  *
@@ -209,7 +208,7 @@ __ROKI_EXPORT void rkBodyDestroy(rkBody *body);
 /*! \brief clone a body.
  *
  * rkBodyClone() clones a body \a org, namely, copies its mass-property,
- * external wrench, material stuff and multishape, to another \a cln.
+ * material stuff and multishape, to another \a cln.
  *
  * The multishapes associated with \a org and \a cln are pointed by
  * \a so and \sc, respectively. It is supposed that the orders of the
@@ -230,32 +229,31 @@ __ROKI_EXPORT void rkBodyZeroRate(rkBody *body);
 
 /*! \brief copy state of a body.
  *
- * rkBodyCopyState() copies state of a body \a src to that of another
- * \a dst. The state includes frame, velocity, acceleration, and the
- * position, velocity and acceleration of the center of mass.
- * \return dst
+ * rkBodyCopyState() copies state of a body \a src to that of another \a dest. The state includes
+ * frame, velocity, acceleration, and the position, velocity and acceleration of the center of mass.
+ * \retval dest
  */
-__ROKI_EXPORT rkBody *rkBodyCopyState(rkBody *src, rkBody *dst);
+__ROKI_EXPORT rkBody *rkBodyCopyState(rkBody *src, rkBody *dest);
 
 /*! \brief combine two bodies.
  *
- * rkBodyCombine() combines mass properties of the two bodies \a b1
- * and \a b2 to one body \a b which is denoted in a frame \a f.
- * \return b
+ * rkBodyCombine() combines mass properties of the two bodies \a body1 and \a body2 to one body \a body
+ * which is denoted in a frame \a frame.
+ * \retval body
  */
-__ROKI_EXPORT rkBody *rkBodyCombine(rkBody *b1, rkBody *b2, zFrame3D *f, rkBody *b);
+__ROKI_EXPORT rkBody *rkBodyCombine(rkBody *body1, rkBody *body2, zFrame3D *frame, rkBody *body);
 
 /*! \brief combine a body directly to another.
  *
  * rkBodyCombineDRC() combines mass properties of a given body \a sb
  * directly to another \a b.
- * \return b
+ * \retval body
  */
-__ROKI_EXPORT rkBody *rkBodyCombineDRC(rkBody *b, rkBody *sb);
+__ROKI_EXPORT rkBody *rkBodyCombineDRC(rkBody *body, rkBody *subbody);
 
 /* \brief compute the inertial ellipsoid from a rigid body.
  */
-#define rkBodyInertiaEllips(b,e) rkMPInertiaEllips( rkBodyMP(b), e )
+#define rkBodyInertiaEllips(body,e) rkMPInertiaEllips( rkBodyMP(body), e )
 
 /*! \brief update body COM state.
  *
@@ -281,64 +279,47 @@ __ROKI_EXPORT void rkBodyUpdateCOMVel(rkBody *body);
 __ROKI_EXPORT void rkBodyUpdateCOMAcc(rkBody *body);
 __ROKI_EXPORT void rkBodyUpdateCOMRate(rkBody *body);
 
-/*! \brief push and pop external force applied to body.
+/*! \brief set and add external wrench or force applied to a body.
  *
- * rkBodyExtForcePush() pushes a new external force list cell \a f to
- * the list on a body object \a b.
+ * rkBodySetExtWrench() sets an external wrench of a body \a body for \a wrench.
+ * rkBodyAddExtWrench() adds an external wrench \a wrench to a body \a body.
  *
- * rkBodyExtForcePop() pops the latest external force list cell from
- * the list on a body object \a b.
- *
- * rkBodyExtForceDestroy() destroys the external force list on a body
- * object \a b by freeing all cells.
- * \notes
- * When the external force list on \a b includes statically-allocated
- * cells, rkBodyExtForceDestroy() causes segmentation fault.
+ * rkBodySetExtForce() sets an external force acting at \a pos of a body \a body for \a force.
+ * rkBodyAddExtForce() adds an external force \a force acting at \a pos to a body \a body.
  * \return
- * rkBodyExtForcePush() returns a pointer to the cell pushed.
- * rkBodyExtForcePop() returns a pointer to the cell poped.
- * rkBodyExtForceDestroy() returns no value.
+ * rkBodySetExtWrench() and rkBodyAddExtWrench() are macros. See rk_body.h.
+ * rkBodySetExtForce() and rkBodyAddExtForce() return a pointer to the external wrench, which is
+ * a member of \a body,
  */
-#define rkBodyExtWrenchPush(b,f)  rkWrenchListPush( rkBodyExtWrench(b), f )
-#define rkBodyExtWrenchPop(b)     rkWrenchListPop( rkBodyExtWrench(b) )
-#define rkBodyExtWrenchDestroy(b) rkWrenchListDestroy( rkBodyExtWrench(b) )
+#define rkBodySetExtWrench(body,wrench) zVec6DCopy( wrench, rkBodyExtWrench(body) )
+#define rkBodyAddExtWrench(body,wrench) zVec6DAddDRC( rkBodyExtWrench(body), wrench )
+__ZEO_EXPORT zVec6D *rkBodySetExtForce(rkBody *body, zVec3D *force, zVec3D *pos);
+__ZEO_EXPORT zVec6D *rkBodyAddExtForce(rkBody *body, zVec3D *force, zVec3D *pos);
 
-/*! \brief calculate total external wrench acting to a body.
+/*! \brief inertial wrench of a body.
  *
- * rkBodyNetExtWrench() calculates the net external wrench acting to a
- * body \a b by summing up individual external forces in the force list.
- * The result is put into \a w.
- * \return
- * rkBodyNetExtWrench() returns a pointer \a w.
- */
-#define rkBodyNetExtWrench(b,w) rkWrenchListNet( rkBodyExtWrench(b), w )
-
-/*! \brief net wrench exerted on a body.
- *
- * rkBodyNetWrench() calculates the net wrench (six-axis force) applied to
- * a body \a body based on the Newton-Euler's equation of motion.
+ * rkBodyInertialWrench() computes the inertial wrench (six-axis force) of a body \a body.
+ * The result is put into \a wrench.
  * \notes
- * It is assumed that the orientation of absolute velocity and acceleration
- * of the body \a body is all with respect to the local frame of \a body
- * itself. Consequently, the result net wrench is also with respect to the
- * local frame in terms of orientation.
+ * The orientation of the resulted wrench \a wrench is with respect to the body frame.
+ * \return
+ * rkBodyInertialWrench() returns a pointer \a wrench.
  */
-__ROKI_EXPORT zVec6D *rkBodyNetWrench(rkBody *body, zVec6D *w);
+__ROKI_EXPORT zVec6D *rkBodyInertialWrench(rkBody *body, zVec6D *wrench);
 
 /*! \brief angular momentum and kinematic energy of body.
  *
- * rkBodyAM() calculates the angular momentum of a body object \a b
- * around a point \a p and stores the result into \a am. Both \a p and
- * \a am are with respect to the body frame.
+ * rkBodyAM() calculates the angular momentum of a body object \a body around a point \a pos,
+ * and stores the result into \a am. Both \a pos and \a am are with respect to the body frame.
  *
- * rkBodyKE() calculates the kinematic energy originating from linear
- * and angular velocity of a body object \a b.
+ * rkBodyKE() calculates the kinetic energy originating from linear and angular velocity
+ * of a body object \a body.
  * \return
  * rkBodyAM() returns a pointer \a am.
  * rkBodyKE() returns the value calculated.
  */
-__ROKI_EXPORT zVec3D *rkBodyAM(rkBody *b, zVec3D *p, zVec3D *am);
-__ROKI_EXPORT double rkBodyKE(rkBody *b);
+__ROKI_EXPORT zVec3D *rkBodyAM(rkBody *body, zVec3D *pos, zVec3D *am);
+__ROKI_EXPORT double rkBodyKE(rkBody *body);
 
 /*! \brief push and pop of shape attached to body.
  *
@@ -358,9 +339,9 @@ __ROKI_EXPORT double rkBodyKE(rkBody *b);
  * rkBodyShapePop() returns a pointer to the shape poped.
  * rkBodyShapeDestroy() returns no value.
  */
-#define rkBodyShapePush(b,s)  zShapeListPush( rkBodyShapeList(b), s )
-#define rkBodyShapePop(b)     zShapeListPop( rkBodyShapeList(b) )
-#define rkBodyShapeDestroy(b) zShapeListDestroy( rkBodyShapeList(b) )
+#define rkBodyShapePush(body,shape) zShapeListPush( rkBodyShapeList(body), shape )
+#define rkBodyShapePop(body)        zShapeListPop( rkBodyShapeList(body) )
+#define rkBodyShapeDestroy(body)    zShapeListDestroy( rkBodyShapeList(body) )
 
 /*! \brief contiguous vertex of a body to a point.
  */
