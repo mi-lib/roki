@@ -1,3 +1,4 @@
+2024.12.16. Fixed memory leak in chain_test (thanks to Daisuke Matsunaga). [test]
 2024.12.14. Modified rkChainUpdateID_G to conform to the renaming of rkChainUpdateJointWrench. [rk_chain]
 2024.12.14. Abolished rkChainNetExtWrench, rkChainExtWrenchDestroy, and rkChainExtWrenchFPrint. [rk_chain]
 2024.12.14. Renamed rkChainLinkWrench, rkChainLinkForce, rkChainLinkTorque, and rkChainUpdateWrench to rkChainLinkJointWrench, rkChainLinkJointForce, rkChainLinkJointTorque, and rkChainUpdateJointWrench, respectively. [rk_chain]

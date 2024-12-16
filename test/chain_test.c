@@ -379,6 +379,7 @@ void assert_fd_id_abi(void)
   eprintf( "Success rate = %d / %d\n", count_success, N );
   rkChainDestroyABI( &chain );
   rkChainDestroy( &chain );
+  zVecFreeAtOnce( 6, dis, vel, acc, expected, actual, err );
   zAssert( rkChainFD_ABI + rkChainID, count_success == N );
 }
 
