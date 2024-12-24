@@ -224,19 +224,21 @@ __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
 
 /*! \brief set and add external wrench or force applied to a link.
  *
- * rkLinkSetExtWrench() sets an external wrench of a link \a link for \a wrench.
- * rkLinkAddExtWrench() adds an external wrench \a wrench to a link \a link.
+ * rkLinkSetExtWrench() sets the external wrench of a link \a link for \a wrench.
+ * rkLinkAddExtWrench() adds the external wrench \a wrench to a link \a link.
+ * rkLinkZeroExtWrench() zeroes the external wrench of a link \a link.
  *
- * rkLinkSetExtForce() sets an external force acting at \a pos of a link \a link for \a force.
- * rkLinkAddExtForce() adds an external force \a force acting at \a pos to a link \a link.
+ * rkLinkSetExtForce() sets the external force acting at \a pos of a link \a link for \a force.
+ * rkLinkAddExtForce() adds the external force \a force acting at \a pos to a link \a link.
  * \return
- * rkLinkSetExtWrench(), rkLinkAddExtWrench(), rkLinkSetExtForce(), and rkLinkAddExtForce() are
- * macros. See rk_link.h.
+ * rkLinkSetExtWrench(), rkLinkAddExtWrench(), rkLinkZeroExtWrench(), rkLinkSetExtForce(), and
+ * rkLinkAddExtForce() are macros. See rk_link.h.
  * \sa
- * rkBodySetExtWrench, rkBodyAddExtWrench, rkBodySetExtForce, rkBodyAddExtForce
+ * rkBodySetExtWrench, rkBodyAddExtWrench, rkBodyZeroExtWrench, rkBodySetExtForce, rkBodyAddExtForce
  */
 #define rkLinkSetExtWrench(link,wrench)   rkBodySetExtWrench( rkLinkBody(link), wrench )
 #define rkLinkAddExtWrench(link,wrench)   rkBodyAddExtWrench( rkLinkBody(link), wrench )
+#define rkLinkZeroExtWrench(link)         rkBodyZeroExtWrench( rkLinkBody(link) )
 #define rkLinkSetExtForce(link,force,pos) rkBodySetExtForce( rkLinkBody(link), force, pos )
 #define rkLinkAddExtForce(link,force,pos) rkBodyAddExtForce( rkLinkBody(link), force, pos )
 

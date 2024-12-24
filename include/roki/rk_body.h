@@ -149,6 +149,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
   zVec6D extwrench;     /*!< \brief external wrench with respect to body frame */
   zShapeList shapelist; /*!< \brief shapes */
   char *stuff;          /*!< \brief stuff identifier */
+#ifdef __cplusplus
+  rkBody();
+  ~rkBody();
+#endif /* __cplusplus */
 };
 
 #define rkBodyMP(body)           ( &(body)->mp )
@@ -281,18 +285,21 @@ __ROKI_EXPORT void rkBodyUpdateCOMRate(rkBody *body);
 
 /*! \brief set and add external wrench or force applied to a body.
  *
- * rkBodySetExtWrench() sets an external wrench of a body \a body for \a wrench.
- * rkBodyAddExtWrench() adds an external wrench \a wrench to a body \a body.
+ * rkBodySetExtWrench() sets the external wrench of a body \a body for \a wrench.
+ * rkBodyAddExtWrench() adds the external wrench \a wrench to a body \a body.
+ * rkBodyZeroExtWrench() zeroes the external wrench of a body \a body.
  *
- * rkBodySetExtForce() sets an external force acting at \a pos of a body \a body for \a force.
- * rkBodyAddExtForce() adds an external force \a force acting at \a pos to a body \a body.
+ * rkBodySetExtForce() sets the external force acting at \a pos of a body \a body for \a force.
+ * rkBodyAddExtForce() adds the external force \a force acting at \a pos to a body \a body.
  * \return
- * rkBodySetExtWrench() and rkBodyAddExtWrench() are macros. See rk_body.h.
+ * rkBodySetExtWrench(), rkBodyAddExtWrench(), and rkBodyZeroExtWrench() are macros.
+ * See rk_body.h.
  * rkBodySetExtForce() and rkBodyAddExtForce() return a pointer to the external wrench, which is
  * a member of \a body,
  */
 #define rkBodySetExtWrench(body,wrench) zVec6DCopy( wrench, rkBodyExtWrench(body) )
 #define rkBodyAddExtWrench(body,wrench) zVec6DAddDRC( rkBodyExtWrench(body), wrench )
+#define rkBodyZeroExtWrench(body)       rkBodySetExtWrench( body, ZVEC6DZERO )
 __ZEO_EXPORT zVec6D *rkBodySetExtForce(rkBody *body, zVec3D *force, zVec3D *pos);
 __ZEO_EXPORT zVec6D *rkBodyAddExtForce(rkBody *body, zVec3D *force, zVec3D *pos);
 
@@ -353,5 +360,10 @@ __ROKI_EXPORT double rkBodyShapeVolume(rkBody *body);
 __ROKI_EXPORT rkMP *rkBodyShapeMP(rkBody *body, double density, rkMP *mp);
 
 __END_DECLS
+
+#ifdef __cplusplus
+inline rkBody::rkBody(){ rkBodyInit( this ); }
+inline rkBody::~rkBody(){ rkBodyDestroy( this ); }
+#endif /* __cplusplus */
 
 #endif /* __RK_BODY_H__ */

@@ -1,3 +1,5 @@
+2024.12.24. Added rkChainLinkSetExtWrench, rkChainLinkAddExtWrench, rkChainLinkZeroExtWrench, rkChainLinkSetExtForce, and rkChainLinkAddExtForce. [rk_chain]
+2024.12.24. Added rkBodyZeroExtWrench and rkLinkZeroExtWrench. [rk_body, rk_link]
 2024.12.16. Fixed memory leak in chain_test (thanks to Daisuke Matsunaga). [test]
 2024.12.14. Modified rkChainUpdateID_G to conform to the renaming of rkChainUpdateJointWrench. [rk_chain]
 2024.12.14. Abolished rkChainNetExtWrench, rkChainExtWrenchDestroy, and rkChainExtWrenchFPrint. [rk_chain]

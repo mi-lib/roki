@@ -304,6 +304,32 @@ __ROKI_EXPORT rkChain *rkChainClone(rkChain *org, rkChain *cln);
  */
 __ROKI_EXPORT rkChain *rkChainCopyState(rkChain *src, rkChain *dst);
 
+/*! \brief set and add external wrench or force applied to a link of a kinematic chain.
+ *
+ * rkChainLinkSetExtWrench() sets the external wrench of the \a i th link of a kinematic chain
+ * \a chain for \a wrench.
+ * rkChainLinkAddExtWrench() adds the external wrench \a wrench to the \a i th link of a kinematic
+ * chain \a chain.
+ * rkChainLinkZeroExtWrench() zeroes the external wrench of the \a i th link of a kinematic chain
+ * \a chain.
+ *
+ * rkChainLinkSetExtForce() sets the external force acting at \a pos of the \a i th link of a
+ * kinematic chain \a chain for \a force.
+ * rkChainLinkAddExtForce() adds the external force \a force acting at \a pos to the \a i th link
+ * of a kinematic chain \a chain.
+ * \return
+ * rkChainLinkSetExtWrench(), rkChainLinkAddExtWrench(), rkChainLinkZeroExtWrench(),
+ * rkChainLinkSetExtForce(), and rkChainLinkAddExtForce() are macros. See rk_chain.h.
+ * \sa
+ * rkBodySetExtWrench, rkBodyAddExtWrench, rkBodyZeroExtWrench, rkBodySetExtForce, rkBodyAddExtForce,
+ * rkLinkSetExtWrench, rkLinkAddExtWrench, rkLinkZeroExtWrench, rkLinkSetExtForce, rkLinkAddExtForce
+ */
+#define rkChainLinkSetExtWrench(chain,i,wrench)   rkLinkSetExtWrench( rkChainLink(chain,i), wrench )
+#define rkChainLinkAddExtWrench(chain,i,wrench)   rkLinkAddExtWrench( rkChainLink(chain,i), wrench )
+#define rkChainLinkZeroExtWrench(chain,i)         rkLinkZeroExtWrench( rkChainLink(chain,i) )
+#define rkChainLinkSetExtForce(chain,i,force,pos) rkLinkSetExtForce( rkChainLink(chain,i), force, pos )
+#define rkChainLinkAddExtForce(chain,i,force,pos) rkLinkAddExtForce( rkChainLink(chain,i), force, pos )
+
 /*! \brief count total number of joints of a kinematic chain.
  *
  * rkChainJointSize() counts the total number of joints of a kinematic
