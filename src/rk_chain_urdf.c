@@ -352,7 +352,7 @@ static rkURDFJoint *_rkURDFLinkAddChild(rkURDFLink *link, rkURDFJoint *child)
 static void _rkURDFBindJointParent(rkURDFRobotInfo *robot_info, char *str, rkURDFJointListCell *jc)
 {
   rkURDFLinkListCell *cp;
-  zListFindName( &robot_info->link_list, str, cp );
+  zListFindName( &robot_info->link_list, str, &cp );
   if( cp && ( jc->data.parent = &cp->data ) )
     _rkURDFLinkAddChild( jc->data.parent, &jc->data );
 }
@@ -360,7 +360,7 @@ static void _rkURDFBindJointParent(rkURDFRobotInfo *robot_info, char *str, rkURD
 static void _rkURDFBindJointChild(rkURDFRobotInfo *robot_info, char *str, rkURDFJointListCell *jc)
 {
   rkURDFLinkListCell *cp;
-  zListFindName( &robot_info->link_list, str, cp );
+  zListFindName( &robot_info->link_list, str, &cp );
   if( cp && ( jc->data.child = &cp->data ) )
     jc->data.child->joint = &jc->data;
 }

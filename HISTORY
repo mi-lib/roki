@@ -1,3 +1,4 @@
+2024.12.27. Modified _rkURDFBindJointParent and _rkURDFBindJointChild to conform to new specification of zListFindName. [rk_chain_urdf]
 2024.12.24. Added rkChainLinkSetExtWrench, rkChainLinkAddExtWrench, rkChainLinkZeroExtWrench, rkChainLinkSetExtForce, and rkChainLinkAddExtForce. [rk_chain]
 2024.12.24. Added rkBodyZeroExtWrench and rkLinkZeroExtWrench. [rk_body, rk_link]
 2024.12.16. Fixed memory leak in chain_test (thanks to Daisuke Matsunaga). [test]
