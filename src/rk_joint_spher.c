@@ -15,14 +15,14 @@ static void _rkJointSpherCopyPrp(rkJoint *src, rkJoint *dst){}
 
 RK_JOINT_COM_DEF_STATE_FUNC( Spher )
 
-/* limit joint displacement */
-static void _rkJointSpherLimDis(rkJoint *joint, double *testval, double *limval){
-  zVec3DCopy( (zVec3D*)testval, (zVec3D*)limval );
+/* test joint displacement */
+static void _rkJointSpherTestDis(rkJoint *joint, double *testval, double *val){
+  zVec3DCopy( (zVec3D*)testval, (zVec3D*)val );
 }
 
 /* set joint displacement */
 static void _rkJointSpherSetDis(rkJoint *joint, double *val){
-  _rkJointSpherLimDis( joint, val, _rks(joint)->aa.e );
+  _rkJointSpherTestDis( joint, val, _rks(joint)->aa.e );
   zMat3DFromAA( &_rks(joint)->_att, &_rks(joint)->aa );
 }
 
@@ -303,7 +303,7 @@ rkJointCom rk_joint_spher = {
   _rkJointSpherAllocState,
   _rkJointSpherCopyPrp,
   _rkJointSpherCopyState,
-  _rkJointSpherLimDis,
+  _rkJointSpherTestDis,
   _rkJointSpherSetDis,
   _rkJointSpherSetMinMax,
   _rkJointSpherSetMinMax,

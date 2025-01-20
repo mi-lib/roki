@@ -17,14 +17,14 @@ static void _rkJointPrismInit(rkJoint *joint){
 RK_JOINT_COM_DEF_PRP_FUNC( Prism )
 RK_JOINT_COM_DEF_STATE_FUNC( Prism )
 
-/* limit joint displacement */
-static void _rkJointPrismLimDis(rkJoint *joint, double *testval, double *limval){
-  *limval = zLimit( *testval, _rkp(joint)->min, _rkp(joint)->max );
+/* test joint displacement */
+static void _rkJointPrismTestDis(rkJoint *joint, double *testval, double *val){
+  *val = zLimit( *testval, _rkp(joint)->min, _rkp(joint)->max );
 }
 
 /* set joint displacement */
 static void _rkJointPrismSetDis(rkJoint *joint, double *val){
-  _rkJointPrismLimDis( joint, val, &_rks(joint)->dis );
+  _rkJointPrismTestDis( joint, val, &_rks(joint)->dis );
 }
 
 static void _rkJointPrismSetMin(rkJoint *joint, double *val){
@@ -363,7 +363,7 @@ rkJointCom rk_joint_prism = {
   _rkJointPrismAllocState,
   _rkJointPrismCopyPrp,
   _rkJointPrismCopyState,
-  _rkJointPrismLimDis,
+  _rkJointPrismTestDis,
   _rkJointPrismSetDis,
   _rkJointPrismSetMin,
   _rkJointPrismSetMax,

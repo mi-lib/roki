@@ -19,19 +19,19 @@ static void _rkJointCylinInit(rkJoint *joint){
 RK_JOINT_COM_DEF_PRP_FUNC( Cylin )
 RK_JOINT_COM_DEF_STATE_FUNC( Cylin )
 
-/* limit joint displacement */
-static void _rkJointCylinLimDis(rkJoint *joint, double *testval, double *limval){
+/* test joint displacement */
+static void _rkJointCylinTestDis(rkJoint *joint, double *testval, double *val){
   double angle;
   /* 0: prismatic */
-  limval[0] = zLimit( testval[0], _rkp(joint)->min[0], _rkp(joint)->max[0] );
+  val[0] = zLimit( testval[0], _rkp(joint)->min[0], _rkp(joint)->max[0] );
   /* 1: revolutional */
   angle = zPhaseNormalize( testval[1] );
-  limval[1] = zLimit( angle, _rkp(joint)->min[1], _rkp(joint)->max[1] );
+  val[1] = zLimit( angle, _rkp(joint)->min[1], _rkp(joint)->max[1] );
 }
 
 /* set joint displacement */
 static void _rkJointCylinSetDis(rkJoint *joint, double *val){
-  _rkJointCylinLimDis( joint, val, _rks(joint)->dis );
+  _rkJointCylinTestDis( joint, val, _rks(joint)->dis );
   zSinCos( _rks(joint)->dis[1], &_rks(joint)->_s, &_rks(joint)->_c );
 }
 
@@ -394,7 +394,7 @@ rkJointCom rk_joint_cylin = {
   _rkJointCylinAllocState,
   _rkJointCylinCopyPrp,
   _rkJointCylinCopyState,
-  _rkJointCylinLimDis,
+  _rkJointCylinTestDis,
   _rkJointCylinSetDis,
   _rkJointCylinSetMin,
   _rkJointCylinSetMax,

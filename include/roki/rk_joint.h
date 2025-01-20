@@ -15,8 +15,8 @@
 __BEGIN_DECLS
 
 /* ********************************************************** */
-/* CLASS: rkJoint
- * joint class
+/*! \struct rkJoint
+ * \brief joint class
  * ********************************************************** */
 ZDECL_STRUCT( rkJointCom );
 
@@ -46,7 +46,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   void (*_copy_state)(rkJoint*,rkJoint*);
 
   /* joint value manipulation function */
-  void (*_lim_dis)(rkJoint*,double*,double*); /* limit displacements */
+  void (*_test_dis)(rkJoint*,double*,double*); /* test displacements */
   void (*_set_dis)(rkJoint*,double*);     /* set displacements */
   void (*_set_min)(rkJoint*,double*);     /* set minimum displacements */
   void (*_set_max)(rkJoint*,double*);     /* set maximum displacements */
@@ -125,12 +125,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
 
 /*! \brief initialize a joint object.
  *
- * rkJointInit() initializes a joint object \a joint, cleaning
- * up all properties.
+ * rkJointInit() initializes a joint object \a joint, cleaning up all properties.
  * \return
- * rkJointInit() returns a pointer \a joint if it succeeds.
- * If \a type is invalid, or it fails to allocate the internal
- * working memory, the null pointer is returned.
+ * rkJointInit() returns a pointer \a joint if it succeeds. If \a type is invalid, or it fails to
+ * allocate the internal working memory, the null pointer is returned.
  */
 #define rkJointInit(joint) do{\
   (joint)->prp   = NULL;\
@@ -149,108 +147,97 @@ __ROKI_EXPORT rkJoint *rkJointCopyState(rkJoint *src, rkJoint *dst);
 
 /*! \brief set and get joint status.
  *
- * rkJointSetDis(), rkJointSetMin(), rJointSetMax(), rkJointSetVel(),
- * rkJointSetAcc() and rkJointSetTrq() set joint displacements, minimum
- * joint displacements, maximum joint displacements, velocities,
+ * rkJointTestDis() tests if the given displacement \a testval is in the movable range of a joint
+ * \a joint, and correct it to \a val, if necessary.
+ *
+ * rkJointSetDis(), rkJointSetMin(), rJointSetMax(), rkJointSetVel(), rkJointSetAcc() and rkJointSetTrq()
+ * set joint displacements, minimum joint displacements, maximum joint displacements, velocities,
  * accelerations and torques \a val to a joint \a joint.
  *
- * rkJointGetDis(), rkJointGetMin(), rkJointGetMax(), rkJointGetVel(),
- * rkJointGetAcc() and rkJointGetTrq() get joint displacements, minimum
- * joint displacements, maximum joint displacements, velocities,
+ * rkJointGetDis(), rkJointGetMin(), rkJointGetMax(), rkJointGetVel(), rkJointGetAcc() and rkJointGetTrq()
+ * get joint displacements, minimum joint displacements, maximum joint displacements, velocities,
  * accelerations and torques of \a joint to \a val.
  *
- * rkJointSetDisCNT() continuously updates the joint
- * displacement of a joint \a joint to \a val over a time step
- * \a dt, calculating joint velocity and acceleration in
- * accordance with a simple differentiation.
+ * rkJointSetDisCNT() continuously updates the joint displacement of a joint \a joint to \a val over a time
+ * step \a dt, calculating joint velocity and acceleration in accordance with a simple differentiation.
  *
- * The size of the array \a val depends on the type of \a joint, basically
- * coinciding with its degree of freedom.
+ * The size of the array \a val depends on the type of \a joint. Basically, it coincides with its degree
+ * of freedom.
  * \notes
- * They do not check the size consistency. Mismatched array size might
- * cause anything.
+ * They do not check the size consistency. Mismatched array size might cause anything.
  * \return
  * None of those functions return any value.
  */
-#define rkJointLimDis(joint,t,v)        (joint)->com->_lim_dis( (joint), t, v )
-#define rkJointSetDis(joint,v)          (joint)->com->_set_dis( (joint), v )
-#define rkJointSetMin(joint,v)          (joint)->com->_set_min( (joint), v )
-#define rkJointSetMax(joint,v)          (joint)->com->_set_max( (joint), v )
-#define rkJointSetVel(joint,v)          (joint)->com->_set_vel( (joint), v )
-#define rkJointSetAcc(joint,v)          (joint)->com->_set_acc( (joint), v )
-#define rkJointSetTrq(joint,v)          (joint)->com->_set_trq( (joint), v )
-#define rkJointGetDis(joint,v)          (joint)->com->_get_dis( (joint), v )
-#define rkJointGetMin(joint,v)          (joint)->com->_get_min( (joint), v )
-#define rkJointGetMax(joint,v)          (joint)->com->_get_max( (joint), v )
-#define rkJointGetVel(joint,v)          (joint)->com->_get_vel( (joint), v )
-#define rkJointGetAcc(joint,v)          (joint)->com->_get_acc( (joint), v )
-#define rkJointGetTrq(joint,v)          (joint)->com->_get_trq( (joint), v )
+#define rkJointTestDis(joint,testval,val)    (joint)->com->_test_dis( (joint), testval, val )
+#define rkJointSetDis(joint,val)             (joint)->com->_set_dis( (joint), val )
+#define rkJointSetMin(joint,val)             (joint)->com->_set_min( (joint), val )
+#define rkJointSetMax(joint,val)             (joint)->com->_set_max( (joint), val )
+#define rkJointSetVel(joint,val)             (joint)->com->_set_vel( (joint), val )
+#define rkJointSetAcc(joint,val)             (joint)->com->_set_acc( (joint), val )
+#define rkJointSetTrq(joint,val)             (joint)->com->_set_trq( (joint), val )
+#define rkJointGetDis(joint,val)             (joint)->com->_get_dis( (joint), val )
+#define rkJointGetMin(joint,val)             (joint)->com->_get_min( (joint), val )
+#define rkJointGetMax(joint,val)             (joint)->com->_get_max( (joint), val )
+#define rkJointGetVel(joint,val)             (joint)->com->_get_vel( (joint), val )
+#define rkJointGetAcc(joint,val)             (joint)->com->_get_acc( (joint), val )
+#define rkJointGetTrq(joint,val)             (joint)->com->_get_trq( (joint), val )
 
-#define rkJointCatDis(joint,d,k,v)      (joint)->com->_cat_dis( (joint), d, k, v )
-#define rkJointSubDis(joint,d,sd)       (joint)->com->_sub_dis( (joint), d, sd )
-#define rkJointSetDisCNT(joint,v,t)     (joint)->com->_cnt_dis( (joint), v, t )
+#define rkJointCatDis(joint,dis,k,val)       (joint)->com->_cat_dis( (joint), dis, k, val )
+#define rkJointSubDis(joint,dis,subdis)      (joint)->com->_sub_dis( (joint), dis, subdis )
+#define rkJointSetDisCNT(joint,val,dt)       (joint)->com->_cnt_dis( (joint), (val), (dt) )
 
-#define rkJointSetFrictionPivot(joint,r) (joint)->com->_set_frictionpivot( (joint), r )
-#define rkJointGetFrictionPivot(joint,r) (joint)->com->_get_frictionpivot( (joint), r )
-#define rkJointSetFriction(joint,f)      (joint)->com->_set_friction( (joint), f )
-#define rkJointGetFriction(joint,f)      (joint)->com->_get_friction( (joint), f )
-#define rkJointGetSFriction(joint,f)     (joint)->com->_get_sfriction( (joint), f )
-#define rkJointGetKFriction(joint,f)     (joint)->com->_get_kfriction( (joint), f )
+#define rkJointSetFrictionPivot(joint,pivot) (joint)->com->_set_frictionpivot( (joint), (pivot) )
+#define rkJointGetFrictionPivot(joint,pivot) (joint)->com->_get_frictionpivot( (joint), (pivot) )
+#define rkJointSetFriction(joint,f)          (joint)->com->_set_friction( (joint), f )
+#define rkJointGetFriction(joint,f)          (joint)->com->_get_friction( (joint), f )
+#define rkJointGetSFriction(joint,f)         (joint)->com->_get_sfriction( (joint), f )
+#define rkJointGetKFriction(joint,f)         (joint)->com->_get_kfriction( (joint), f )
 
 /* motor */
-#define rkJointMotorSetInput(joint,i)   (joint)->com->_set_motor_input( (joint), i )
-#define rkJointMotorInertia(joint,i)    (joint)->com->_motor_inertia( (joint), i )
-#define rkJointMotorInputTrq(joint,t)   (joint)->com->_motor_inputtrq( (joint), t )
-#define rkJointMotorRegistance(joint,r) (joint)->com->_motor_regist( (joint), r )
-#define rkJointMotorDrivingTrq(joint,t) (joint)->com->_motor_destrq( (joint), t )
+#define rkJointMotorSetInput(joint,input)    (joint)->com->_set_motor_input( (joint), input )
+#define rkJointMotorInertia(joint,inertia)   (joint)->com->_motor_inertia( (joint), inertia )
+#define rkJointMotorInputTrq(joint,trq)      (joint)->com->_motor_inputtrq( (joint), trq )
+#define rkJointMotorRegistance(joint,r)      (joint)->com->_motor_regist( (joint), r )
+#define rkJointMotorDrivingTrq(joint,trq)    (joint)->com->_motor_destrq( (joint), trq )
 
 /*! \brief neutral configuration of joint.
  *
- * rkJointNeutralize() sets displacement, velocity and acceleration of a joint
- * \a joint for zero.
+ * rkJointNeutralize() sets displacement, velocity and acceleration of a joint \a joint for zero.
  *
- * rkJointIsNeutral() checks if the joint \a joint is in neutral configuration
- * where all the components are zero.
+ * rkJointIsNeutral() checks if the joint \a joint is in neutral configuration where all the components
+ * are zero.
  * \return
  * rkJointNeutralize() returns no value.
  *
- * rkJointIsNeutral() returns the true value if all (i.e. the number of
- * degrees-of-freedom) the components of joint displacement of \a joint are zero.
- * Otherwise, the false value is returned.
+ * rkJointIsNeutral() returns the true value if all (i.e. the number of degrees-of-freedom) the
+ * components of joint displacement of \a joint are zero. Otherwise, the false value is returned.
  */
 void rkJointNeutralize(rkJoint *joint);
 bool rkJointIsNeutral(rkJoint *joint);
 
 /*! \brief transform a joint frame, velocity, acceleration and torque.
  *
- * rkJointXform() transforms a 3D frame \a fo in accordance with
- * the displacement of a joint \a joint. The result is put into \a f.
+ * rkJointXform() transforms a 3D frame \a fo in accordance with the displacement of a joint \a joint.
+ * The result is put into \a f.
  *
  * Transformation rule depends on the joint type.
  * Fixed joint just copies \a fo to \a f.
  * Revolutional joint revolves \a fo about the z-axis in radian.
  * Prismatic joint translates \a fo along the z-axis.
- * Cylindric joint revolves \a fo about the z-axis with the first
- * displacement in radian, and then translates it along the z-axis
- * with the second displacement.
- * Universal (hooke) joint revolves \a fo with the displacements
- * about z-axis and y-axis in radian.
- * Spherical joint revolves \a fo with the displacements as z-y-x
- * Eulerian angles.
- * Free-floating joint translates \a fo three-dimensionaly with
- * the first three displacements, and revolves it with the rest
- * three as z-y-x Eulerian angles.
+ * Cylindric joint revolves \a fo about the z-axis with the first displacement in radian, and then
+ * translates it along the z-axis with the second displacement.
+ * Universal (hooke) joint revolves \a fo with the displacements about z-axis and y-axis in radian.
+ * Spherical joint revolves \a fo with the displacements as z-y-x Eulerian angles.
+ * Free-floating joint translates \a fo three-dimensionaly with the first three displacements, and
+ * revolves it with the rest three as z-y-x Eulerian angles.
  *
- * rkJointIncRate() increments the given spatial velocity \a vel
- * and acceleration vector \a acc according to the local joint
- * movement. It is a particular function called in
- * rkLinkUpdateTtlRate() and rkLinkUpdateWldRate() internally.
- * Although it is exported, it is not a good idea to call this
- * function in user programs.
+ * rkJointIncRate() increments the given spatial velocity \a vel and acceleration vector \a acc
+ * according to the local joint movement. It is a particular function called in rkLinkUpdateTtlRate()
+ * and rkLinkUpdateWldRate() internally.
+ * Although it is exported, it is not a good idea to call this function in user programs.
  *
- * rkJointCalcTrq() calculates joint torque from the six-axis force
- * \a f exerted at joint and the restitution force originating from
- * joint impedance.
+ * rkJointCalcTrq() calculates joint torque from the six-axis force \a f exerted at joint and the
+ * restitution force originating from joint impedance.
  * \return
  * rkJointXform() returns a pointer \a f.
  * \sa
@@ -270,19 +257,16 @@ __ROKI_EXPORT double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t);
 
 /*! \brief joint axis vector.
  *
- * rkJointAngAxis() and rkJointLinAxis() calculates axis vector of
- * the \a i'th component of a joint \a joint about angular and linear
- * motion, respectively.
+ * rkJointAngAxis() and rkJointLinAxis() calculates axis vector of the \a i th component of a joint
+ * \a joint about angular and linear motion, respectively.
  * \a f is a frame attached to the link with \a joint.
  * The result is put into \a a.
  * \return
- * rkJointAngJacobiCol() and rkJointLinJacobiCol() return a pointer
- * \a a if the axis vector is non-zero. Otherwise, they return the
- * null pointer.
+ * rkJointAngJacobiCol() and rkJointLinJacobiCol() return a pointer \a a if the axis vector is non-zero.
+ * Otherwise, they return the null pointer.
  * \notes
- * Neither rkJointAngJacobiCol() nor rkJointLinJacobiCol() check if
- * \a i is valid. \a i which is larger than the the degree of
- * freedom of \a joint might cause anything.
+ * Neither rkJointAngJacobiCol() nor rkJointLinJacobiCol() check if \a i is valid. \a i which is larger
+ * than the the degree of freedom of \a joint might cause anything.
  */
 #define rkJointAngAxis(joint,i,f,a) (joint)->com->_angaxis[i]( (joint), f, a )
 #define rkJointLinAxis(joint,i,f,a) (joint)->com->_linaxis[i]( (joint), f, a )
@@ -380,16 +364,12 @@ __ROKI_EXPORT rkJoint *rkJointAssignMotorByStr(rkJoint *joint, rkMotorSpecArray 
  *  "viscosity" for the joint viscosity.
  *  "coulomb" for Coulomb's joint friction.
  *  "staticfriction" for static joint friction.
- * The number of components of each property is according to the
- * joint type, and hence, the joint type has to be identified
- * first of all.
+ * The number of components of each property is according to the joint type, and hence, the joint type
+ * has to be identified first of all.
  *
- * rkJointFPrintZTK() prints the joint properties out to a file
- * \a fp in accordance with the above rule. The field "dis" is
- * output only when any components of the joint displacement
- * are non-zero values.
- * \a name is used instead of the key "dis", unless it is the
- * null pointer.
+ * rkJointFPrintZTK() prints the joint properties out to a file \a fp in accordance with the above rule.
+ * The field "dis" is output only when any components of the joint displacement are non-zero values.
+ * \a name is used instead of the key "dis", unless it is the null pointer.
  * \return
  * rkJointFPrintZTK() returns no value.
  */

@@ -148,102 +148,102 @@ int rkChainFindLinkJointIDOffset(rkChain *chain, const char *name)
 }
 
 /* set joint displacements of a kinematic chain. */
-void rkChainSetJointDis(rkChain *chain, const zIndex idx, const zVec dis)
+void rkChainSetJointDis(rkChain *chain, const zIndex index, const zVec dis)
 {
   int i;
   double *dp;
 
-  for( dp=zVecBuf(dis), i=0; i<zArraySize(idx); i++ ){
-    rkChainLinkJointSetDis( chain, zIndexElemNC(idx,i), dp );
-    dp += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
+  for( dp=zVecBuf(dis), i=0; i<zArraySize(index); i++ ){
+    rkChainLinkJointSetDis( chain, zIndexElemNC(index,i), dp );
+    dp += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
   }
 }
 
 /* continuously update joint displacements of a kinematic chain. */
-void rkChainSetJointDisCNT(rkChain *chain, const zIndex idx, const zVec dis, double dt)
+void rkChainSetJointDisCNT(rkChain *chain, const zIndex index, const zVec dis, double dt)
 {
   int i;
   double *dp;
 
-  for( dp=zVecBuf(dis), i=0; i<zArraySize(idx); i++ ){
-    rkChainLinkJointSetDisCNT( chain, zIndexElemNC(idx,i), dp, dt );
-    dp += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
+  for( dp=zVecBuf(dis), i=0; i<zArraySize(index); i++ ){
+    rkChainLinkJointSetDisCNT( chain, zIndexElemNC(index,i), dp, dt );
+    dp += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
   }
 }
 
 /* set joint velocities of a kinematic chain. */
-void rkChainSetJointVel(rkChain *chain, const zIndex idx, const zVec vel)
+void rkChainSetJointVel(rkChain *chain, const zIndex index, const zVec vel)
 {
   int i;
   double *vp;
 
-  for( vp=zVecBuf(vel), i=0; i<zArraySize(idx); i++ ){
-    rkJointSetVel( rkChainLinkJoint(chain,zIndexElemNC(idx,i)), vp );
-    vp += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
+  for( vp=zVecBuf(vel), i=0; i<zArraySize(index); i++ ){
+    rkJointSetVel( rkChainLinkJoint(chain,zIndexElemNC(index,i)), vp );
+    vp += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
   }
 }
 
 /* set joint accelerations of a kinematic chain. */
-void rkChainSetJointAcc(rkChain *chain, const zIndex idx, const zVec acc)
+void rkChainSetJointAcc(rkChain *chain, const zIndex index, const zVec acc)
 {
   int i;
   double *vp;
 
-  for( vp=zVecBuf(acc), i=0; i<zArraySize(idx); i++ ){
-    rkJointSetAcc( rkChainLinkJoint(chain,zIndexElemNC(idx,i)), vp );
-    vp += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
+  for( vp=zVecBuf(acc), i=0; i<zArraySize(index); i++ ){
+    rkJointSetAcc( rkChainLinkJoint(chain,zIndexElemNC(index,i)), vp );
+    vp += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
   }
 }
 
 /* set joint velocities and accelerations of a kinematic chain. */
-void rkChainSetJointRate(rkChain *chain, const zIndex idx, const zVec vel, const zVec acc)
+void rkChainSetJointRate(rkChain *chain, const zIndex index, const zVec vel, const zVec acc)
 {
   int i;
   double *vp, *ap;
 
-  for( vp=zVecBuf(vel), ap=zVecBuf(acc), i=0; i<zArraySize(idx); i++ ){
-    rkJointSetVel( rkChainLinkJoint(chain,zIndexElemNC(idx,i)), vp );
-    rkJointSetAcc( rkChainLinkJoint(chain,zIndexElemNC(idx,i)), ap );
-    vp += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
-    ap += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
+  for( vp=zVecBuf(vel), ap=zVecBuf(acc), i=0; i<zArraySize(index); i++ ){
+    rkJointSetVel( rkChainLinkJoint(chain,zIndexElemNC(index,i)), vp );
+    rkJointSetAcc( rkChainLinkJoint(chain,zIndexElemNC(index,i)), ap );
+    vp += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
+    ap += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
   }
 }
 
 /* get joint displacements of a kinematic chain. */
-zVec rkChainGetJointDis(rkChain *chain, const zIndex idx, const zVec dis)
+zVec rkChainGetJointDis(rkChain *chain, const zIndex index, const zVec dis)
 {
   int i;
   double *dp;
 
-  for( dp=zVecBuf(dis), i=0; i<zArraySize(idx); i++ ){
-    rkChainLinkJointGetDis( chain, zIndexElemNC(idx,i), dp );
-    dp += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
+  for( dp=zVecBuf(dis), i=0; i<zArraySize(index); i++ ){
+    rkChainLinkJointGetDis( chain, zIndexElemNC(index,i), dp );
+    dp += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
   }
   return dis;
 }
 
 /* get joint velocities of a kinematic chain. */
-zVec rkChainGetJointVel(rkChain *chain, const zIndex idx, const zVec vel)
+zVec rkChainGetJointVel(rkChain *chain, const zIndex index, const zVec vel)
 {
   int i;
   double *dp;
 
-  for( dp=zVecBuf(vel), i=0; i<zArraySize(idx); i++ ){
-    rkChainLinkJointGetVel( chain, zIndexElemNC(idx,i), dp );
-    dp += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
+  for( dp=zVecBuf(vel), i=0; i<zArraySize(index); i++ ){
+    rkChainLinkJointGetVel( chain, zIndexElemNC(index,i), dp );
+    dp += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
   }
   return vel;
 }
 
 /* get joint accelerations of a kinematic chain. */
-zVec rkChainGetJointAcc(rkChain *chain, const zIndex idx, zVec acc)
+zVec rkChainGetJointAcc(rkChain *chain, const zIndex index, zVec acc)
 {
   int i;
   double *dp;
 
-  for( dp=zVecBuf(acc), i=0; i<zArraySize(idx); i++ ){
-    rkChainLinkJointGetAcc( chain, zIndexElemNC(idx,i), dp );
-    dp += rkChainLinkJointDOF(chain,zIndexElemNC(idx,i));
+  for( dp=zVecBuf(acc), i=0; i<zArraySize(index); i++ ){
+    rkChainLinkJointGetAcc( chain, zIndexElemNC(index,i), dp );
+    dp += rkChainLinkJointDOF(chain,zIndexElemNC(index,i));
   }
   return acc;
 }
@@ -265,23 +265,23 @@ void rkChainSetJointDisAll(rkChain *chain, const zVec dis)
 }
 
 /* concatenate all joint displacements of a kinematic chain. */
-void rkChainCatJointDisAll(rkChain *chain, zVec dis, double k, const zVec v)
+void rkChainCatJointDisAll(rkChain *chain, zVec dis, double k, const zVec catdis)
 {
   int i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     if( rkChainLinkJointIDOffset(chain,i) >= 0 )
-      rkJointCatDis( rkChainLinkJoint(chain,i), &zVecElemNC(dis,rkChainLinkJointIDOffset(chain,i)), k, &zVecElemNC(v,rkChainLinkJointIDOffset(chain,i)) );
+      rkJointCatDis( rkChainLinkJoint(chain,i), &zVecElemNC(dis,rkChainLinkJointIDOffset(chain,i)), k, &zVecElemNC(catdis,rkChainLinkJointIDOffset(chain,i)) );
 }
 
 /* subtract all joint displacements of a kinematic chain. */
-void rkChainSubJointDisAll(rkChain *chain, zVec dis, const zVec sdis)
+void rkChainSubJointDisAll(rkChain *chain, zVec dis, const zVec subdis)
 {
   int i;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
     if( rkChainLinkJointIDOffset(chain,i) >= 0 )
-      rkJointSubDis( rkChainLinkJoint(chain,i), &zVecElemNC(dis,rkChainLinkJointIDOffset(chain,i)), &zVecElemNC(sdis,rkChainLinkJointIDOffset(chain,i)) );
+      rkJointSubDis( rkChainLinkJoint(chain,i), &zVecElemNC(dis,rkChainLinkJointIDOffset(chain,i)), &zVecElemNC(subdis,rkChainLinkJointIDOffset(chain,i)) );
 }
 
 /* continuously update all joint displacements of a kinematic chain. */
@@ -346,6 +346,18 @@ void rkChainSetJointTrqAll(rkChain *chain, const zVec trq)
   for( i=0; i<rkChainLinkNum(chain); i++ )
     if( rkChainLinkJointIDOffset(chain,i) >= 0 )
       rkChainLinkJointSetTrq( chain, i, &zVecElemNC(trq,rkChainLinkJointIDOffset(chain,i)) );
+}
+
+/* get minimum and maximum displacements of all joints of a kinematic chain. */
+void rkChainGetJointLimitAll(rkChain *chain, zVec min, zVec max)
+{
+  int i;
+
+  for( i=0; i<rkChainLinkNum(chain); i++ )
+    if( rkChainLinkJointIDOffset(chain,i) >= 0 ){
+      rkChainLinkJointGetMin( chain, i, &zVecElemNC(min,rkChainLinkJointIDOffset(chain,i)) );
+      rkChainLinkJointGetMax( chain, i, &zVecElemNC(max,rkChainLinkJointIDOffset(chain,i)) );
+    }
 }
 
 /* get all joint displacements of a kinematic chain. */

@@ -15,25 +15,24 @@
 __BEGIN_DECLS
 
 /* ********************************************************** */
-/* CLASS: rkLink
- * link class
+/*! \struct rkLink
+ * \brief link class
  * ********************************************************** */
 /* for ABI method */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkABIPrp ){
-  zMat6D m; /* mass matrix */
-  zMat6D i; /* ABI matrix */
-  zVec6D f; /* bias force */
-  zVec6D b; /* ABbias force */
+  zMat6D m; /*!< \brief mass matrix */
+  zMat6D i; /*!< \brief ABI matrix */
+  zVec6D f; /*!< \brief bias force */
+  zVec6D b; /*!< \brief ABbias force */
   zVec6D c;
-  rkWrenchList wlist; /* contact force list */
+  rkWrenchList wlist; /*!< \brief contact force list */
   /* workspace */
-  zVec6D w;  /* net wrench except rigid contact forces */
-  zVec6D w0; /* net wrench except contact forces */
-  zVec6D b0; /* ABbios at no rigid contact forces */
-  zVec6D a0; /* link acc at no rigid contact forces */
+  zVec6D w;  /*!< \brief net wrench except rigid contact forces */
+  zVec6D w0; /*!< \brief net wrench except contact forces */
+  zVec6D b0; /*!< \brief ABbios at no rigid contact forces */
+  zVec6D a0; /*!< \brief link acc at no rigid contact forces */
   bool abi_backward_path;
-  /* joint inertial tensor */
-  zMat axi, iaxi;
+  zMat axi, iaxi; /*!< \brief joint inertial tensor */
 };
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
@@ -158,8 +157,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
  *
  * rkLinkInit() initializes a link object \a link, cleaning up all inner properties.
  *
- * rkLinkDestroy() destroys \a link, freeing the memory space allocated for its name
- * and external force, and cleaning it up.
+ * rkLinkDestroy() destroys \a link, freeing the memory space allocated for its name and external force,
+ * and cleaning it up.
  * \return
  * Neither rkLinkInit() nor rkLinkDestroy() returns any values.
  */
@@ -168,21 +167,18 @@ __ROKI_EXPORT void rkLinkDestroy(rkLink *link);
 
 /*! \brief clone a link.
  *
- * rkLinkClone() clones a link \a org, namely, copies its body and connectivities
- * with other links, to another \a cln.
+ * rkLinkClone() clones a link \a org, namely, copies its body and connectivities with other links, to
+ * another \a cln.
  *
- * The multishapes associated with \a org and \a cln are pointed by \a shape_org
- * and \a shape_cln, respectively. It is supposed that the orders of the shapes
- * of \a org and \a cln are the same in \a shape_org and \a shape_cln. Namely,
- * if the k-th shape of \a shape_org is referred from \a org, the k-th shape
- * of \a shape_cln is referred from \a cln.
+ * The multishapes associated with \a org and \a cln are pointed by \a shape_org and \a shape_cln,
+ * respectively. It is supposed that the orders of the shapes of \a org and \a cln are the same in
+ * \a shape_org and \a shape_cln. Namely, if the k-th shape of \a shape_org is referred from \a org,
+ * the k-th shape of \a shape_cln is referred from \a cln.
  *
- * \a msarray_org and \a msarray_cln are arrays of motor specifications associated
- * with \a org and \a cln, respectively. The same condition about the order with
- * the multishapes is assumed.
+ * \a msarray_org and \a msarray_cln are arrays of motor specifications associated with \a org and \a cln,
+ * respectively. The same condition about the order with the multishapes is assumed.
  * \return
- * rkLinkClone() returns \a cln if it succeeds. Otherwise, the null pointer is
- * returned.
+ * rkLinkClone() returns \a cln if it succeeds. Otherwise, the null pointer is returned.
  */
 __ROKI_EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
 
@@ -194,26 +190,24 @@ __ROKI_EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *shape_org
 
 /*! \brief copy state of a link.
  *
- * rkLinkCopyState() copies state of a link \a src to that of another \a dest. The state
- * includes frame, velocity, acceleration, the position, velocity and acceleration of the
- * center of mass, and the external wrench.
+ * rkLinkCopyState() copies state of a link \a src to that of another \a dest. The state includes frame,
+ * velocity, acceleration, the position, velocity and acceleration of the center of mass, and the external
+ * wrench.
  * \retval dest
  */
 __ROKI_EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dest);
 
 /*! \brief add link branch.
  *
- * rkLinkAddSibl() connects a link \a bl to the other \a link
- * as a sibling link, namely, a link which have the same
- * parent link with \a link.
+ * rkLinkAddSibl() connects a link \a bl to the other \a link as a sibling link, namely, a link which have
+ * the same parent link with \a link.
  *
- * rkLinkAddChild() connects a link \a cl to the other \a link
- * as a child link. One link can have plural children.
- * When \a link already has more than one child, \a cl is
- * connected to the youngest link of them as its sibling link.
+ * rkLinkAddChild() connects a link \a cl to the other \a link as a child link. One link can have plural
+ * children.
+ * When \a link already has more than one child, \a cl is connected to the youngest link of them as its
+ * sibling link.
  * \return
- * Each of rkLinkAddSibl() and rkLinkAddChild() returns a
- * pointer to the added link.
+ * Each of rkLinkAddSibl() and rkLinkAddChild() returns a pointer to the added link.
  */
 __ROKI_EXPORT rkLink *rkLinkAddSibl(rkLink *link, rkLink *sibl);
 __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
@@ -244,17 +238,11 @@ __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
 
 /*! \brief push and pop of shape attached to link.
  *
- * rkLinkShapePush() pushes a new shape \a shape to the
- * shape list of a link \a link.
+ * rkLinkShapePush() pushes a new shape \a shape to the shape list of a link \a link.
  *
- * rkLinkShapePop() pops the last shape attached to \a link
- * from the list.
+ * rkLinkShapePop() pops the last shape attached to \a link from the list.
  *
- * rkLinkShapeDelete() destroys the shape list of \a link,
- * freeing all cells.
- * \notes
- * When the shape list of \a link includes statically-allocated
- * cells, rkLinkShapeDelete() causes segmentation fault.
+ * rkLinkShapeDelete() destroys the shape list of \a link, freeing all cells.
  * \return
  * rkLinkShapePush() returns a pointer to the cell pushed.
  * rkLinkShapePop() returns a pointer to the shape poped.
@@ -273,9 +261,8 @@ __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
 
 /*! \brief velocity of a point on link.
  *
- * rkLinkPointVel() calculates the velocity of a point \a p
- * attached to the local frame of a link \a link with respect
- * to the inertia frame. The result is put into \a v.
+ * rkLinkPointVel() calculates the velocity of a point \a p attached to the local frame of a link
+ * \a link with respect to the inertia frame. The result is put into \a v.
  * \return
  * rkLinkPointVel() returns a pointer \a v.
  * \notes
@@ -286,50 +273,49 @@ __ROKI_EXPORT zVec3D *rkLinkPointAcc(rkLink *link, const zVec3D *p, zVec3D *a);
 
 /*! \brief compute inertia tensor of a link with respect to the inertial frame.
  *
- * rkLinkWldInertia() computes the inertia tensor of a link \a link
- * with respect to the inertial frame.
+ * rkLinkWldInertia() computes the inertia tensor of a link \a link with respect to the inertial frame.
  * The result is put where \a i points.
- * \return \a i
+ * \retval \a i
  */
 __ROKI_EXPORT zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i);
 
-/*! \brief set and get joint displacement.
+/*! \brief set and get joint state of a link.
  *
- * rkLinkSetJointDis() sets the joint displacement of \a link
- * for \a dis. It automatically limits components of \a dis
- * which is out of motion range.
+ * rkLinkJointTestDis() tests if the given displacement \a testval is in the movable range of a joint
+ * \a joint, and correct it to \a val, if necessary.
  *
- * rkLinkSetJointDisCNT() continuously updates the joint
- * displacement of \a link to \a dis over the time step \a dt.
- * Then, the velocity and acceleration is calculated in
- * accordance with a simple differentiation.
+ * rkLinkSetJointDis() sets the joint displacement of \a link for \a val. It automatically adjusts
+ * components of \a val to be in the movable range.
  *
- * rkLinkGetJointDis() gets the joint displacement of \a link
- * and puts it into \a dis.
+ * rkLinkSetJointDisCNT() continuously updates the joint displacement of \a link to \a val over the
+ * time step \a dt, and then, calculates the velocity and acceleration approximately in accordance
+ * with a simple differentiation.
+ *
+ * rkLinkGetJointDis() gets the joint displacement of \a link and puts it into \a val.
  * \return
  * These functions return no value.
  */
-#define rkLinkJointLimDis(link,td,ld)    rkJointLimDis( rkLinkJoint(link), td, ld )
-#define rkLinkJointSetDis(link,d)        rkJointSetDis( rkLinkJoint(link), d )
-#define rkLinkJointSetVel(link,v)        rkJointSetVel( rkLinkJoint(link), v )
-#define rkLinkJointSetAcc(link,a)        rkJointSetAcc( rkLinkJoint(link), a )
-#define rkLinkJointSetMin(link,m)        rkJointSetMin( rkLinkJoint(link), m )
-#define rkLinkJointSetMax(link,m)        rkJointSetMax( rkLinkJoint(link), m )
-#define rkLinkJointSetDisCNT(link,d,t)   rkJointSetDisCNT( rkLinkJoint(link), d, t )
-#define rkLinkJointSetTrq(link,t)        rkJointSetTrq( rkLinkJoint(link), t )
+#define rkLinkJointTestDis(link,testval,val) rkJointTestDis( rkLinkJoint(link), testval, val )
+#define rkLinkJointSetDis(link,val)          rkJointSetDis( rkLinkJoint(link), val )
+#define rkLinkJointSetVel(link,val)          rkJointSetVel( rkLinkJoint(link), val )
+#define rkLinkJointSetAcc(link,val)          rkJointSetAcc( rkLinkJoint(link), val )
+#define rkLinkJointSetMin(link,val)          rkJointSetMin( rkLinkJoint(link), val )
+#define rkLinkJointSetMax(link,val)          rkJointSetMax( rkLinkJoint(link), val )
+#define rkLinkJointSetDisCNT(link,val,dt)    rkJointSetDisCNT( rkLinkJoint(link), val, dt )
+#define rkLinkJointSetTrq(link,val)          rkJointSetTrq( rkLinkJoint(link), val )
 
-#define rkLinkJointGetDis(link,d)        rkJointGetDis( rkLinkJoint(link), d )
-#define rkLinkJointGetVel(link,v)        rkJointGetVel( rkLinkJoint(link), v )
-#define rkLinkJointGetAcc(link,a)        rkJointGetAcc( rkLinkJoint(link), a )
-#define rkLinkJointGetMin(link,m)        rkJointGetMin( rkLinkJoint(link), m )
-#define rkLinkJointGetMax(link,m)        rkJointGetMax( rkLinkJoint(link), m )
-#define rkLinkJointGetTrq1(link,i)       rkJointGetTrq1( rkLinkJoint(link), i )
-#define rkLinkJointGetTrq(link,t)        rkJointGetTrq( rkLinkJoint(link), t )
+#define rkLinkJointGetDis(link,val)          rkJointGetDis( rkLinkJoint(link), val )
+#define rkLinkJointGetVel(link,val)          rkJointGetVel( rkLinkJoint(link), val )
+#define rkLinkJointGetAcc(link,val)          rkJointGetAcc( rkLinkJoint(link), val )
+#define rkLinkJointGetMin(link,val)          rkJointGetMin( rkLinkJoint(link), val )
+#define rkLinkJointGetMax(link,val)          rkJointGetMax( rkLinkJoint(link), val )
+#define rkLinkJointGetTrq1(link,i)           rkJointGetTrq1( rkLinkJoint(link), i )
+#define rkLinkJointGetTrq(link,val)          rkJointGetTrq( rkLinkJoint(link), val )
 
-#define rkLinkJointMotor(link)           rkJointMotor( rkLinkJoint(link) )
-#define rkLinkJointMotorSetInput(link,t) rkJointMotorSetInput( rkLinkJoint(link), t )
+#define rkLinkJointMotor(link)               rkJointMotor( rkLinkJoint(link) )
+#define rkLinkJointMotorSetInput(link,input) rkJointMotorSetInput( rkLinkJoint(link), input )
 
-#define rkLinkJointNeutralize(link)      rkJointNeutralize( rkLinkJoint(link) )
+#define rkLinkJointNeutralize(link)          rkJointNeutralize( rkLinkJoint(link) )
 
 /*! \brief update link motion state.
  *

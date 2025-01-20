@@ -10,9 +10,9 @@ static void _rkJointFixedInit(rkJoint *joint){}
 static void *_rkJointFixedAllocDummy(void){ return NULL; }
 static void _rkJoinFixedCopyDummy(rkJoint *src, rkJoint *dst){}
 
-/* limit joint displacement (dummy) */
+/* test joint displacement (dummy) */
 
-static void _rkJointFixedLimVal(rkJoint *joint, double *testval, double *limval){}
+static void _rkJointFixedTestVal(rkJoint *joint, double *testval, double *val){}
 
 /* set/get joint displacement, velocity, acceleration and torque (dummy) */
 
@@ -106,7 +106,7 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedAllocDummy,
   _rkJoinFixedCopyDummy,
   _rkJoinFixedCopyDummy,
-  _rkJointFixedLimVal,
+  _rkJointFixedTestVal,
   _rkJointFixedVal,
   _rkJointFixedVal,
   _rkJointFixedVal,

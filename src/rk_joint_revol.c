@@ -19,14 +19,14 @@ RK_JOINT_COM_DEF_STATE_FUNC( Revol )
 
 /* set joint displacement, velocity, acceleration and torque */
 
-static void _rkJointRevolLimDis(rkJoint *joint, double *testval, double *limval){
+static void _rkJointRevolTestDis(rkJoint *joint, double *testval, double *val){
   double angle;
   angle = zPhaseNormalize( *testval );
-  *limval = zLimit( angle, _rkp(joint)->min, _rkp(joint)->max );
+  *val = zLimit( angle, _rkp(joint)->min, _rkp(joint)->max );
 }
 
 static void _rkJointRevolSetDis(rkJoint *joint, double *val){
-  _rkJointRevolLimDis( joint, val, &_rks(joint)->dis );
+  _rkJointRevolTestDis( joint, val, &_rks(joint)->dis );
   zSinCos( _rks(joint)->dis, &_rks(joint)->_s, &_rks(joint)->_c );
 }
 
@@ -371,7 +371,7 @@ rkJointCom rk_joint_revol = {
   _rkJointRevolAllocState,
   _rkJointRevolCopyPrp,
   _rkJointRevolCopyState,
-  _rkJointRevolLimDis,
+  _rkJointRevolTestDis,
   _rkJointRevolSetDis,
   _rkJointRevolSetMin,
   _rkJointRevolSetMax,

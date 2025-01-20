@@ -371,80 +371,113 @@ __ROKI_EXPORT rkLink *rkChainFindLink(rkChain *chain, const char *name);
 __ROKI_EXPORT int rkChainFindLinkID(rkChain *chain, const char *name);
 __ROKI_EXPORT int rkChainFindLinkJointIDOffset(rkChain *chain, const char *name);
 
-/*! \brief update joint state.
+/*! \brief update and acquire state of a joint of a kinematic chain.
  *
- * rkChainLinkJointSetDis() sets the joint displacement of the
- * \a i'th link of a kinematic chain \a chain for \a dis.
- * Components of \a dis for a revolutional joint are in radian.
- * It automatically limits components of \a dis which is out of
- * motion range.
+ * rkChainLinkJointTestDis() tests if the given displacement \a testval is in the movable range of
+ * joint of the \a i th link of a kinematic chain \a chain, and correct it to \a val, if necessary.
  *
- * rkChainLinkJointSetDisCNT() continuously updates the joint
- * displacement of the \a i'th link of \a chain to \a dis over a
- * time step \a dt. Then, the joint velocity and acceleration
- * is calculated in accordance with a simple differentiation.
+ * rkChainLinkJointSetDis() sets the joint displacement of the \a i th link of a kinematic chain
+ * \a chain for \a val.
+ * Components of \a val for revolutional joints have to be in radian.
+ * It automatically adjusts components of \a val to be in the movable range.
  *
- * rkChainLinkJointGetDis() gets the joint displacement of the
- * \a i'th link of \a chain and puts it into \a dis.
+ * rkChainLinkJointSetDisCNT() continuously updates the joint displacement of the \a i th link of
+ * \a chain to \a val over the time step \a dt, and then, calculates the joint velocity and acceleration
+ * approximately in accordance with a simple differentiation.
  *
- * rkChainSetJointDis() sets all the joint displacements of
- * \a chain specified by a joint index \a index for \a dis.
- * Components corresponding to revolutional joints have to be
- * in radian. Values which are out of the motion range range of
- * the corresponding joints will be automatically limited.
+ * rkChainLinkJointGetDis() gets the joint displacement of the \a i th link of \a chain, and puts it
+ * into \a val.
+ */
+#define rkChainLinkJointTestDis(chain,i,testval,val) rkLinkJointTestDis( rkChainLink(chain,i), testval, val )
+#define rkChainLinkJointSetDis(chain,i,val)          rkLinkJointSetDis( rkChainLink(chain,i), val )
+#define rkChainLinkJointSetDisCNT(chain,i,val,dt)    rkLinkJointSetDisCNT( rkChainLink(chain,i), val, dt )
+#define rkChainLinkJointSetVel(chain,i,val)          rkLinkJointSetVel( rkChainLink(chain,i), val )
+#define rkChainLinkJointSetAcc(chain,i,val)          rkLinkJointSetAcc( rkChainLink(chain,i), val )
+#define rkChainLinkJointSetTrq(chain,i,val)          rkLinkJointSetTrq( rkChainLink(chain,i), val )
+
+#define rkChainLinkJointGetDis(chain,i,val)          rkLinkJointGetDis( rkChainLink(chain,i), val )
+#define rkChainLinkJointGetMin(chain,i,val)          rkLinkJointGetMin( rkChainLink(chain,i), val )
+#define rkChainLinkJointGetMax(chain,i,val)          rkLinkJointGetMax( rkChainLink(chain,i), val )
+#define rkChainLinkJointGetVel(chain,i,val)          rkLinkJointGetVel( rkChainLink(chain,i), val )
+#define rkChainLinkJointGetAcc(chain,i,val)          rkLinkJointGetAcc( rkChainLink(chain,i), val )
+#define rkChainLinkJointGetTrq(chain,i,val)          rkLinkJointGetTrq( rkChainLink(chain,i), val )
+
+#define rkChainLinkJointGetMotor(chain,i,m)          rkLinkJointGetMotor( rkChainLink(chain,i), m )
+
+#define rkChainLinkJointMotorSetInput(chain,i,input) rkLinkJointMotorSetInput( rkChainLink(chain,i), input )
+
+/*! \brief update and acquire joint states of a kinematic chain.
  *
- * rkChainSetJointDisCNT() continuously updates the joint
- * displacements of \a chain specified by \a index to \a dis over
- * a time step \a dt. The joint velocity and acceleration is
- * calculated in accordance with a simple differentiation.
+ * rkChainSetJointDis() sets joint displacements of a kinematic chain \a chain specified by an index
+ * \a index for \a dis. Components corresponding to revolutional joints have to be in radian.
+ * It adjusts the values to be in the movable range of the corresponding joints.
  *
- * rkChainSetJointRate() sets joint velocities and accelerations
- * specified by \a index of \a chain for \a vel and \a acc,
- * respectively.
+ * rkChainSetJointDisCNT() continuously updates joint displacements of \a chain specified by \a index
+ * to \a val over the time step \a dt, and calculates the joint velocity and acceleration approximately
+ * in accordance with a simple differentiation.
  *
- * rkChainGetJointDis() gets joint displacements of \a chain and
- * stores them into \a dis. Only the joints specified by \a index
- * are dealt with.
+ * rkChainSetJointVel() and rkChainSetJointAcc() set joint velocities and accelerations of a kinematic
+ * chain \a chain specified by an index \a index for \a vel and \a acc, respectively. Components
+ * corresponding to revolutional joints have to be in radian per second (per second).
+ * rkChainSetJointRate() sets joint velocities and accelerations of \a chain specified by \a index
+ * for \a vel and \a acc, respectively, at once.
  *
- * rkChainSetJointDisAll(), rkChainSetJointDisCNTAll(),
- * rkChainSetJointRateAll() and rkChainGetJointDisAll() set or
- * get all the joint status to or from \a dis, \a vel and \a acc.
- * The correspondence between kinematic chain links and vector
- * components follows the index to be created by
- * rkChainCreateDefaultJointIndex().
+ * rkChainGetJointDis() gets joint displacements of \a chain specified by \a index, and stores them
+ * into \a dis.
  * \return
- * rkChainSetJoint family does not return any values.
+ * rkChainSetJointDis(), rkChainSetJointDisCNT(), rkChainSetJointVel(), rkChainSetJointAcc(), and
+ * rkChainSetJointRate() do not return any values.
  *
  * rkChainGetJointDis() returns a pointer \a dis.
  * \sa
  * rkLinkJointSetDisCNT, rkChainCreateDefaultJointIndex
  */
-#define rkChainLinkJointLimDis(chain,i,td,ld)  rkLinkJointLimDis( rkChainLink(chain,i), td, ld )
-#define rkChainLinkJointSetDis(chain,i,d)      rkLinkJointSetDis( rkChainLink(chain,i), d )
-#define rkChainLinkJointSetDisCNT(chain,i,d,t) rkLinkJointSetDisCNT( rkChainLink(chain,i), d, t )
-#define rkChainLinkJointSetVel(chain,i,v)      rkLinkJointSetVel( rkChainLink(chain,i), v )
-#define rkChainLinkJointSetAcc(chain,i,a)      rkLinkJointSetAcc( rkChainLink(chain,i), a )
-#define rkChainLinkJointSetTrq(chain,i,t)      rkLinkJointSetTrq( rkChainLink(chain,i), t )
+__ROKI_EXPORT void rkChainSetJointDis(rkChain *chain, const zIndex index, const zVec dis);
+__ROKI_EXPORT void rkChainSetJointDisCNT(rkChain *chain, const zIndex index, const zVec dis, double dt);
+__ROKI_EXPORT void rkChainSetJointVel(rkChain *chain, const zIndex index, const zVec vel);
+__ROKI_EXPORT void rkChainSetJointAcc(rkChain *chain, const zIndex index, const zVec acc);
+__ROKI_EXPORT void rkChainSetJointRate(rkChain *chain, const zIndex index, const zVec vel, const zVec acc);
+__ROKI_EXPORT zVec rkChainGetJointDis(rkChain *chain, const zIndex index, zVec dis);
+__ROKI_EXPORT zVec rkChainGetJointVel(rkChain *chain, const zIndex index, const zVec vel);
+__ROKI_EXPORT zVec rkChainGetJointAcc(rkChain *chain, const zIndex index, zVec acc);
 
-#define rkChainLinkJointGetDis(chain,i,d)      rkLinkJointGetDis( rkChainLink(chain,i), d )
-#define rkChainLinkJointGetVel(chain,i,v)      rkLinkJointGetVel( rkChainLink(chain,i), v )
-#define rkChainLinkJointGetAcc(chain,i,a)      rkLinkJointGetAcc( rkChainLink(chain,i), a )
-#define rkChainLinkJointGetTrq(chain,i,t)      rkLinkJointGetTrq( rkChainLink(chain,i), t )
-
-#define rkChainLinkJointGetMotor(chain,i,m)    rkLinkJointGetMotor( rkChainLink(chain,i), m )
-
-#define rkChainLinkJointMotorSetInput(chain,i,t)  rkLinkJointMotorSetInput( rkChainLink(chain,i), t )
-
-__ROKI_EXPORT void rkChainSetJointDis(rkChain *chain, const zIndex idx, const zVec dis);
-__ROKI_EXPORT void rkChainSetJointDisCNT(rkChain *chain, const zIndex idx, const zVec dis, double dt);
-__ROKI_EXPORT void rkChainSetJointVel(rkChain *chain, const zIndex idx, const zVec vel);
-__ROKI_EXPORT void rkChainSetJointAcc(rkChain *chain, const zIndex idx, const zVec acc);
-__ROKI_EXPORT void rkChainSetJointRate(rkChain *chain, const zIndex idx, const zVec vel, const zVec acc);
-__ROKI_EXPORT zVec rkChainGetJointDis(rkChain *chain, const zIndex idx, zVec dis);
-
+/*! \brief update and acquire all joint states.
+ *
+ * rkChainSetJointDisAll() sets all joint displacements of a kinematic chain \a chain for \a dis.
+ * rkChainCatJointDisAll() concatenates \a catdis multiplied by \a k with all joint displacements
+ * of \a chain.
+ * rkChainSubJointDisAll() subtracts \a subdis from all joint displacements of \a chain.
+ *
+ * rkChainSetJointDisCNTAll() updates all joint displacements of \a chain over the time step \a dt
+ * by \a dis. The joint velocities and accelerations are calculated approximately.
+ *
+ * rkChainSetJointVelAll() and rkChainSetJointAccAll() set all joint velocities and accelerations
+ * of \a chain for \a vel and \a acc, respectively, while rkChainSetJointRateAll() sets them at
+ * once.
+ * rkChainSetJointTrqAll()  sets all joint torques of \a chain for \a trq.
+ *
+ * rkChainGetJointDisAll() gets all joint displacements of \a chain, and put them into \a dis.
+ * rkChainGetJointLimitAll() gets all the minimum and maximum joint displacements of \a chain, and
+ * put them into \a min and \a max, respectively.
+ * rkChainGetJointVelAll() gets all joint velocities of \a chain, and put them into \a vel.
+ * rkChainGetJointAccAll() gets all joint accelerations of \a chain, and put them into \a acc.
+ * rkChainGetJointTrqAll() gets all joint torques of \a chain, and put them into \a trq.
+ *
+ * The correspondence between kinematic chain links and the vector components follows the index
+ * to be created by rkChainCreateDefaultJointIndex().
+ * \return
+ * rkChainSetJointDisAll(), rkChainCatJointDisAll(), rkChainSubJointDisAll(), rkChainSetJointDisCNTAll(),
+ * rkChainSetJointVelAll(), rkChainSetJointAccAll(), rkChainSetJointRateAll(), rkChainSetJointTrqAll(),
+ * and rkChainGetJointLimitAll() do not return any values.
+ *
+ * rkChainGetJointDisAll() returns the pointer \a vel.
+ * rkChainGetJointVelAll() returns the pointer \a vel.
+ * rkChainGetJointAccAll() returns the pointer \a acc.
+ * rkChainGetJointTrqAll() returns the pointer \a trq.
+ */
 __ROKI_EXPORT void rkChainSetJointDisAll(rkChain *chain, const zVec dis);
-__ROKI_EXPORT void rkChainCatJointDisAll(rkChain *chain, zVec dis, double k, const zVec v);
-__ROKI_EXPORT void rkChainSubJointDisAll(rkChain *chain, zVec dis, const zVec sdis);
+__ROKI_EXPORT void rkChainCatJointDisAll(rkChain *chain, zVec dis, double k, const zVec catdis);
+__ROKI_EXPORT void rkChainSubJointDisAll(rkChain *chain, zVec dis, const zVec subdis);
 __ROKI_EXPORT void rkChainSetJointDisCNTAll(rkChain *chain, const zVec dis, double dt);
 __ROKI_EXPORT void rkChainSetJointVelAll(rkChain *chain, const zVec vel);
 __ROKI_EXPORT void rkChainSetJointAccAll(rkChain *chain, const zVec acc);
@@ -452,13 +485,33 @@ __ROKI_EXPORT void rkChainSetJointRateAll(rkChain *chain, const zVec vel, const 
 __ROKI_EXPORT void rkChainSetJointTrqAll(rkChain *chain, const zVec trq);
 
 __ROKI_EXPORT zVec rkChainGetJointDisAll(rkChain *chain, zVec dis);
+__ROKI_EXPORT void rkChainGetJointLimitAll(rkChain *chain, zVec min, zVec max);
 __ROKI_EXPORT zVec rkChainGetJointVelAll(rkChain *chain, zVec vel);
 __ROKI_EXPORT zVec rkChainGetJointAccAll(rkChain *chain, zVec acc);
 __ROKI_EXPORT zVec rkChainGetJointTrqAll(rkChain *chain, zVec trq);
 
+/*! \brief set and get all link configurations of a kinematic chain directly.
+ *
+ * rkChainSetConf() sets the configuration (position and attitude) of the all links of a kinematic chain
+ * \a chain with respect to the world coordinate frame for \a conf.
+ * rkChainGetConf() gets the configuration (position and attitude) of the all links of \a chain
+ * with respect to the world coordinate frame, and puts them into \a conf.
+ *
+ * The configuration is defined as a combination of a position vector and an angle-axis vector.
+ * \return
+ * rkChainSetConf() does not return any value.
+ * rkChainGetConf() returns the pointer \a conf.
+ */
 __ROKI_EXPORT void rkChainSetConf(rkChain *chain, const zVec conf);
 __ROKI_EXPORT zVec rkChainGetConf(rkChain *chain, zVec conf);
 
+/*! \brief set all motor inputs of a kinematic chain.
+ *
+ * rkChainSetMotorInputAll() sets all motor inputs of a kinematic chain \a chain for \a input.
+ * The physical metric of \a input depends on the types of actuators associated with joints.
+ * \return
+ * rkChainSetMotorInputAll() does not return any value.
+ */
 __ROKI_EXPORT void rkChainSetMotorInputAll(rkChain *chain, const zVec input);
 
 /*! \brief update kinematic chain motion state.

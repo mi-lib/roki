@@ -19,20 +19,20 @@ static void _rkJointHookeInit(rkJoint *joint){
 RK_JOINT_COM_DEF_PRP_FUNC( Hooke )
 RK_JOINT_COM_DEF_STATE_FUNC( Hooke )
 
-/* limit joint displacement */
-static double _rkJointHookeLimDis1(rkJoint *joint, int i, double testval){
+/* test joint displacement */
+static double _rkJointHookeTestDis1(rkJoint *joint, int i, double testval){
   testval = zPhaseNormalize( testval );
   return zLimit( testval, _rkp(joint)->min[i], _rkp(joint)->max[i] );
 }
 
-static void _rkJointHookeLimDis(rkJoint *joint, double *testval, double *limval){
-  limval[0] = _rkJointHookeLimDis1( joint, 0, testval[0] );
-  limval[1] = _rkJointHookeLimDis1( joint, 1, testval[1] );
+static void _rkJointHookeTestDis(rkJoint *joint, double *testval, double *val){
+  val[0] = _rkJointHookeTestDis1( joint, 0, testval[0] );
+  val[1] = _rkJointHookeTestDis1( joint, 1, testval[1] );
 }
 
 /* set joint displacement */
 static void _rkJointHookeSetDis1(rkJoint *joint, int i, double val){
-  _rks(joint)->dis[i] = _rkJointHookeLimDis1( joint, i, val );
+  _rks(joint)->dis[i] = _rkJointHookeTestDis1( joint, i, val );
   zSinCos( _rks(joint)->dis[i], &_rks(joint)->_s[i], &_rks(joint)->_c[i] );
 }
 
@@ -376,7 +376,7 @@ rkJointCom rk_joint_hooke = {
   _rkJointHookeAllocState,
   _rkJointHookeCopyPrp,
   _rkJointHookeCopyState,
-  _rkJointHookeLimDis,
+  _rkJointHookeTestDis,
   _rkJointHookeSetDis,
   _rkJointHookeSetMin,
   _rkJointHookeSetMax,

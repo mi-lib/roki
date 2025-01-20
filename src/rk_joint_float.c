@@ -15,14 +15,14 @@ static void _rkJointFloatCopyPrp(rkJoint *src, rkJoint *dst){}
 
 RK_JOINT_COM_DEF_STATE_FUNC( Float )
 
-/* limit joint displacement */
-static void _rkJointFloatLimDis(rkJoint *joint, double *testval, double *limval){
-  zVec6DCopy( (zVec6D*)testval, (zVec6D*)limval );
+/* test joint displacement */
+static void _rkJointFloatTestDis(rkJoint *joint, double *testval, double *val){
+  zVec6DCopy( (zVec6D*)testval, (zVec6D*)val );
 }
 
 /* joint displacement set function */
 static void _rkJointFloatSetDis(rkJoint *joint, double *val){
-  _rkJointFloatLimDis( joint, val, _rks(joint)->dis.e );
+  _rkJointFloatTestDis( joint, val, _rks(joint)->dis.e );
   zMat3DFromAA( &_rks(joint)->_att, zVec6DAng(&_rks(joint)->dis) );
 }
 
@@ -298,7 +298,7 @@ rkJointCom rk_joint_float = {
   _rkJointFloatAllocState,
   _rkJointFloatCopyPrp,
   _rkJointFloatCopyState,
-  _rkJointFloatLimDis,
+  _rkJointFloatTestDis,
   _rkJointFloatSetDis,
   _rkJointFloatSetMinMax,
   _rkJointFloatSetMinMax,

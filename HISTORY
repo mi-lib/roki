@@ -1,3 +1,7 @@
+2025. 1.20. Added prototypes of rkChainGetJointVel and rkChainGetJointAcc. [rk_chain]
+2025. 1.20. Renamed _rkJoint*LimDis to _rkJoint*TestDis. [rk_joint*]
+2025. 1.20. Renamed member _lim_dis of rkJointCom to _test_dis. [rk_joint*]
+2025. 1.20. Added rkChainGetJointLimitAll. [rk_chain]
 2024.12.27. Modified _rkURDFBindJointParent and _rkURDFBindJointChild to conform to new specification of zListFindName. [rk_chain_urdf]
 2024.12.24. Added rkChainLinkSetExtWrench, rkChainLinkAddExtWrench, rkChainLinkZeroExtWrench, rkChainLinkSetExtForce, and rkChainLinkAddExtForce. [rk_chain]
 2024.12.24. Added rkBodyZeroExtWrench and rkLinkZeroExtWrench. [rk_body, rk_link]
