@@ -93,21 +93,21 @@ bool assert_joint_reg_one(void)
       zIndexSetElem( ofs, i, -1 );
   }
 
-  if( !zIndexIsEqual( idx, chain._ik->_j_idx ) ){
+  if( !zIndexEqual( idx, chain._ik->_j_idx ) ){
     eprintf( "counted index:    " );
     zIndexFPrint( stderr, idx );
     eprintf( "registered index: " );
     zIndexFPrint( stderr, chain._ik->_j_idx );
     result = false;
   }
-  if( !zIndexIsEqual( ofs, chain._ik->_j_ofs ) ){
+  if( !zIndexEqual( ofs, chain._ik->_j_ofs ) ){
     eprintf( "counted offset:    " );
     zIndexFPrint( stderr, ofs );
     eprintf( "registered offset: " );
     zIndexFPrint( stderr, chain._ik->_j_ofs );
     result = false;
   }
-  if( !zVecIsEqual( wn, chain._ik->_j_wn, zTOL ) ){
+  if( !zVecEqual( wn, chain._ik->_j_wn, zTOL ) ){
     eprintf( "counted weighting vector:    " );
     zVecFPrint( stderr, wn );
     eprintf( "registered weighting vector: " );

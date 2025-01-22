@@ -742,7 +742,7 @@ zMat (* rkChainInertiaMat)(rkChain*,zMat) = rkChainInertiaMatCRB;
 /* inertia matrix and bias force vector of a kinematic chain by the unit vector method. */
 bool rkChainInertiaMatBiasVecUV_G(rkChain *chain, zMat inertia, zVec bias, const zVec6D *g)
 {
-  if( !zMatIsSqr( inertia ) || !zMatColVecSizeIsEqual( inertia, bias ) ||
+  if( !zMatIsSqr( inertia ) || !zMatColVecSizeEqual( inertia, bias ) ||
       zVecSizeNC(bias) != rkChainJointSize(chain) ){
     ZRUNERROR( RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES );
     return false;
@@ -755,7 +755,7 @@ bool rkChainInertiaMatBiasVecUV_G(rkChain *chain, zMat inertia, zVec bias, const
 /* inertia matrix and bias force vector of a kinematic chain by the composite rigid body method. */
 bool rkChainInertiaMatBiasVecCRB_G(rkChain *chain, zMat inertia, zVec bias, const zVec6D *g)
 {
-  if( !zMatIsSqr( inertia ) || !zMatColVecSizeIsEqual( inertia, bias ) ||
+  if( !zMatIsSqr( inertia ) || !zMatColVecSizeEqual( inertia, bias ) ||
       zVecSizeNC(bias) != rkChainJointSize(chain) ){
     ZRUNERROR( RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES );
     return false;

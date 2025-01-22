@@ -25,6 +25,22 @@ void assert_chain_clone(void)
 }
 #endif
 
+void assert_chain_clone_irregular(void)
+{
+  rkChain org, cln;
+  rkIKAttr attr;
+  rkIKCell *result;
+
+  rkChainReadZTK( &org, "../example/model/puma.ztk" );
+  rkChainRegisterIKJointAll( &org, 0.001 );
+  rkChainClone( &org, &cln );
+  attr.id = 6;
+  result = rkChainRegisterIKCellWldAtt( &cln, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
+  rkChainDestroy( &cln );
+  rkChainDestroy( &org );
+  zAssert( rkChainClone (null IK constraints), result );
+}
+
 bool check_inertia_matrix(rkChain *chain, zMat inertia, double tol)
 {
   zMat h;
@@ -32,7 +48,7 @@ bool check_inertia_matrix(rkChain *chain, zMat inertia, double tol)
 
   h = zMatAllocSqr( rkChainJointSize(chain) );
   rkChainInertiaMatMJ( chain, h );
-  ret = zMatIsEqual( h, inertia, tol );
+  ret = zMatEqual( h, inertia, tol );
   zMatFree( h );
   return ret;
 }
@@ -46,7 +62,7 @@ bool check_kinetic_energy(rkChain *chain, zMat inertia, zVec vel, double tol)
   zMulMatVec( inertia, vel, tmp );
   ke = 0.5 * zVecInnerProd( vel, tmp );
   zVecFree( tmp );
-  return zIsEqual( rkChainKE( chain ), ke, tol );
+  return zEqual( rkChainKE( chain ), ke, tol );
 }
 
 bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec dis, zVec vel, double tol)
@@ -67,7 +83,7 @@ bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec dis, zVec vel, doubl
   zMulMatVec( inertia, acc, trq_fd );
   zVecAddDRC( trq_fd, bias );
   /* check */
-  ret = zVecIsEqual( trq_fd, trq_id, tol );
+  ret = zVecEqual( trq_fd, trq_id, tol );
   zVecFreeAtOnce( 3, acc, trq_fd, trq_id );
   return ret;
 }
@@ -333,7 +349,7 @@ void assert_fd_id(rkChain *chain)
     zVecRandUniform( trq, -1.0, 1.0 );
     rkChainFD( chain, dis, vel, trq, acc );
     rkChainID( chain, dis, vel, acc, trq_id );
-    if( zVecIsEqual( trq, trq_id, zTOL ) ){
+    if( zVecEqual( trq, trq_id, zTOL ) ){
       count_success++;
     } else{
       eprintf( "Failure case : RMSE = %.10g\n", zVecDist( trq, trq_id ) );
@@ -369,7 +385,7 @@ void assert_fd_id_abi(void)
     rkChainSetMotorInputAll( &chain, expected );
     rkChainFD_ABI( &chain, dis, vel, acc ); /* forward dynamics (ABI method) */
     rkChainID( &chain, dis, vel, acc, actual ); /* inverse dynamics (Newton-Euler method) */
-    if( zVecIsEqual( actual, expected, zTOL ) ){
+    if( zVecEqual( actual, expected, zTOL ) ){
       count_success++;
     } else{
       eprintf( "Failure case : RMSE = %.10g\n", zVecDist( expected, actual ) );
@@ -390,6 +406,7 @@ int main(int argc, char *argv[])
 
   zRandInit();
   assert_chain_clone();
+  assert_chain_clone_irregular();
   assert_chain_copy_state();
   /* initialization */
   n = chain_init( &chain );

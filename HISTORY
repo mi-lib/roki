@@ -1,3 +1,5 @@
+2025. 1.22. Reflected renaming of zEqual, zVecEqual, and zMatEqual. [test]
+2025. 1.22. Reflected renaming of zMatColVecSizeEqual. [rk_chain]
 2025. 1.20. Added prototypes of rkChainGetJointVel and rkChainGetJointAcc. [rk_chain]
 2025. 1.20. Renamed _rkJoint*LimDis to _rkJoint*TestDis. [rk_joint*]
 2025. 1.20. Renamed member _lim_dis of rkJointCom to _test_dis. [rk_joint*]
