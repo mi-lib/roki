@@ -1,3 +1,7 @@
+2025. 1.29. Modifid config.lib to add zeo-config -D to CFLAGS. [src]
+2025. 1.29. Added rkChainReadFile to automatically identify ZTK / URDF. [rk_errmsg, rk_chain]
+2025. 1.29. Defined RK_URDF_SUFFIX. [rk_chain_urdf]
+2025. 1.29. Included rk_chain_urdf from rk_chain. [roki, rk_chain]
 2025. 1.22. Reflected renaming of zEqual, zVecEqual, and zMatEqual. [test]
 2025. 1.22. Reflected renaming of zMatColVecSizeEqual. [rk_chain]
 2025. 1.20. Added prototypes of rkChainGetJointVel and rkChainGetJointAcc. [rk_chain]

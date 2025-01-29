@@ -9,6 +9,8 @@ OBJ=rk_g3d.o rk_contact.o\
 	rk_cd.o\
 	rk_abi.o
 
+CFLAGS += `zeo-config -D`
+
 ifeq ($(CONFIG_USE_URDF),y)
 	OBJ += rk_chain_urdf.o
 	CFLAGS += -D__ROKI_USE_URDF

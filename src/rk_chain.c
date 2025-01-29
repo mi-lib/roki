@@ -1114,6 +1114,28 @@ bool rkChainWriteZTK(rkChain *c, const char *filename)
   return true;
 }
 
+/* read a ZTK or URDF file and create a new kinematic chain. */
+rkChain *rkChainReadFile(rkChain *chain, const char *filename)
+{
+  char *suffix, suffix_lower[BUFSIZ];
+
+  if( !( suffix = zGetSuffix( filename ) ) ){
+    ZRUNERROR( RK_ERR_CHAIN_UNKNOWN_FILETYPE, filename );
+    return NULL;
+  }
+  zStrToLower( suffix, BUFSIZ, suffix_lower );
+  if( strcmp( suffix_lower, ZEDA_ZTK_SUFFIX ) == 0 ){
+    chain = rkChainReadZTK( chain, filename );
+  } else
+#if defined( __ZEDA_USE_LIBXML ) && defined( __ROKI_USE_URDF )
+  if( strcmp( suffix_lower, RK_URDF_SUFFIX ) == 0 ){
+    chain = rkChainReadURDF( chain, filename );
+  } else
+#endif
+    chain = NULL;
+  return chain;
+}
+
 static const ZTKPrp __ztk_prp_tag_roki_chain_init[] = {
   { ZTK_TAG_ROKI_CHAIN_INIT, 1, _rkChainInitFromZTK, _rkChainInitFPrintZTK },
 };

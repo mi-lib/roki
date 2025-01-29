@@ -48,6 +48,7 @@
 #define RK_ERR_JOINT_MISMATCH_DOF       "unmatched joint/motor DOFs %d/%d"
 
 #define RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES "unmatched matrix/vector size with joint size"
+#define RK_ERR_CHAIN_UNKNOWN_FILETYPE   "cannot identify the file type of %s"
 
 #define RK_ERR_LINK_INVALID_ID          "invalid link #%d specified"
 #define RK_ERR_LINK_UNKNOWN             "%s: unknown link"

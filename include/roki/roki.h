@@ -20,8 +20,4 @@
 #include <roki/rk_abi.h>
 #include <roki/rk_cd.h>
 
-#if defined( __ZEDA_USE_LIBXML ) && defined( __ROKI_USE_URDF )
-#include <roki/rk_chain_urdf.h>
-#endif
-
 #endif /* __ROKI_H__ */

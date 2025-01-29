@@ -7,9 +7,11 @@
 #ifndef __RK_CHAIN_URDF_H__
 #define __RK_CHAIN_URDF_H__
 
-#include <roki/rk_chain.h>
+/* NOTE: never include this header file in user programs. */
 
 __BEGIN_DECLS
+
+#define RK_URDF_SUFFIX "urdf"
 
 /*! \brief read a URDF file and create an instance of rkChain. */
 __ROKI_EXPORT rkChain *rkChainReadURDF(rkChain *chain, const char *filename);

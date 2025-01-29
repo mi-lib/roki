@@ -5,7 +5,7 @@
  */
 
 #include <zeda/zeda_xml.h>
-#include <roki/rk_chain_urdf.h>
+#include <roki/rk_chain.h>
 
 /* optical info list */
 zListClass( zOpticalInfoList, zOpticalInfoListCell, zOpticalInfo );

@@ -829,6 +829,9 @@ __ROKI_EXPORT void rkChainFPrintZTK(FILE *fp, rkChain *chain);
 __ROKI_EXPORT rkChain *rkChainReadZTK(rkChain *chain, const char *filename);
 __ROKI_EXPORT bool rkChainWriteZTK(rkChain *chain, const char *filename);
 
+/*! \brief read a ZTK or URDF file and create a new kinematic chain. */
+__ROKI_EXPORT rkChain *rkChainReadFile(rkChain *chain, const char *filename);
+
 __ROKI_EXPORT rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk);
 __ROKI_EXPORT void rkChainInitFPrintZTK(FILE *fp, rkChain *chain);
 
@@ -846,6 +849,10 @@ __ROKI_EXPORT void rkChainConnectivityFPrint(FILE *fp, rkChain *chain);
 __END_DECLS
 
 #include <roki/rk_ik.h>
+
+#if defined( __ZEDA_USE_LIBXML ) && defined( __ROKI_USE_URDF )
+#include <roki/rk_chain_urdf.h>
+#endif
 
 #ifdef __cplusplus
 inline int rkChain::getLinkNum() const { return rkChainLinkNum( this ); }
