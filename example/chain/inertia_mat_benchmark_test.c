@@ -89,12 +89,12 @@ void test_inertia_mat(rkChain *chain, int n)
     rkChainInertiaMatUV( chain, hc );
     c2 = clock();
     l2 += c2 - c1;
-    if( zMatIsEqual( h, hc, TOL ) ) count_im++;
+    if( zMatEqual( h, hc, TOL ) ) count_im++;
     c1 = clock();
     rkChainInertiaMatMJ( chain, hc );
     c2 = clock();
     l3 += c2 - c1;
-    if( zMatIsEqual( h, hc, TOL ) ) count_ij++;
+    if( zMatEqual( h, hc, TOL ) ) count_ij++;
   }
   eprintf( "clock (CRB/UV/MJ): %ld %ld %ld\n", l1, l2, l3 );
   eprintf( "success (CRB/UV/MJ) %d/%d/%d\n", count_im, count_ij, N );
