@@ -268,13 +268,13 @@ zVec3D *rkIKCOMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVe
 
 zVec3D *rkIKAMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err)
 { /* angular momentum cancelleration */
-  rkChainAM( chain, &attr->attention_point, err );
+  rkChainAngularMomentum( chain, &attr->attention_point, err );
   return zVec3DRevDRC( err );
 }
 
 zVec3D *rkIKAMCOMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err)
 { /* angular momentum cancelleration */
-  rkChainAM( chain, rkChainWldCOM(chain), err );
+  rkChainAngularMomentum( chain, rkChainWldCOM(chain), err );
   return zVec3DRevDRC( err );
 }
 
@@ -311,12 +311,12 @@ void rkIKBindCOM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
 
 void rkIKBindAM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
 { /* current angular momentum about a point of a kinematic chain in the world frame */
-  rkChainAM( chain, &attr->attention_point, &ref->pos );
+  rkChainAngularMomentum( chain, &attr->attention_point, &ref->pos );
 }
 
 void rkIKBindAMCOM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
 { /* current angular momentum about COM of a kinematic chain in the world frame */
-  rkChainAM( chain, rkChainWldCOM(chain), &ref->pos );
+  rkChainAngularMomentum( chain, rkChainWldCOM(chain), &ref->pos );
 }
 
 /* error accumulation correction */

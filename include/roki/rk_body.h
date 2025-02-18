@@ -314,19 +314,24 @@ __ZEO_EXPORT zVec6D *rkBodyAddExtForce(rkBody *body, zVec3D *force, zVec3D *pos)
  */
 __ROKI_EXPORT zVec6D *rkBodyInertialWrench(rkBody *body, zVec6D *wrench);
 
-/*! \brief angular momentum and kinematic energy of body.
+/*! \brief linear and angular momentum and kinematic energy of body.
  *
- * rkBodyAM() calculates the angular momentum of a body object \a body around a point \a pos,
+ * rkBodyLinearMomentum() calculates the linear momentum of a body object \a body, and stores the result
+ * into \a momentum. \a momentum is with respect to the body frame.
+ *
+ * rkBodyAngularMomentum() calculates the angular momentum of a body object \a body around a point \a pos,
  * and stores the result into \a am. Both \a pos and \a am are with respect to the body frame.
  *
- * rkBodyKE() calculates the kinetic energy originating from linear and angular velocity
+ * rkBodyKineticEnergy() calculates the kinetic energy originating from linear and angular velocities
  * of a body object \a body.
  * \return
- * rkBodyAM() returns a pointer \a am.
- * rkBodyKE() returns the value calculated.
+ * rkBodyLinearMomentum() returns a pointer \a momenum.
+ * rkBodyAngularMomentum() returns a pointer \a am.
+ * rkBodyKineticEnergy() returns the value calculated.
  */
-__ROKI_EXPORT zVec3D *rkBodyAM(rkBody *body, zVec3D *pos, zVec3D *am);
-__ROKI_EXPORT double rkBodyKE(rkBody *body);
+__ROKI_EXPORT zVec3D *rkBodyLinearMomentum(const rkBody *body, zVec3D *momentum);
+__ROKI_EXPORT zVec3D *rkBodyAngularMomentum(const rkBody *body, const zVec3D *pos, zVec3D *am);
+__ROKI_EXPORT double rkBodyKineticEnergy(const rkBody *body);
 
 /*! \brief push and pop of shape attached to body.
  *

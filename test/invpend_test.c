@@ -42,7 +42,7 @@ zVec6D *invpend_acc(rkChain *ip, double q1, double q2, double dq1, double dq2, d
     c1*ddq2-s1*dq1*dq2, s1*ddq2+c1*dq1*dq2, ddq1 );
 }
 
-zVec3D *invpend_am(rkChain *ip, double q1, double q2, double dq1, double dq2, zVec3D *am)
+zVec3D *invpend_angularmomentum(rkChain *ip, double q1, double q2, double dq1, double dq2, zVec3D *am)
 {
   double s1, c1, s2, c2;
 
@@ -54,7 +54,7 @@ zVec3D *invpend_am(rkChain *ip, double q1, double q2, double dq1, double dq2, zV
     (I1+M2*(L1*L1+L2*L2*s2*s2)+I2*s2*s2)*dq1 - M2*L1*L2*c2*dq2 );
 }
 
-double invpend_ke(rkChain *ip, double q1, double q2, double dq1, double dq2)
+double invpend_kineticenergy(rkChain *ip, double q1, double q2, double dq1, double dq2)
 {
   double s1, c1, s2, c2;
 
@@ -112,16 +112,16 @@ void assert_invpend(rkChain *invpend, zVec q, zVec dq, zVec ddq, zVec trq)
 
   /* *** angular momentum test *** */
   /* analytical computation */
-  invpend_am( invpend, zVecElem(q,0), zVecElem(q,1), zVecElem(dq,0), zVecElem(dq,1), &am1 );
+  invpend_angularmomentum( invpend, zVecElem(q,0), zVecElem(q,1), zVecElem(dq,0), zVecElem(dq,1), &am1 );
   /* recursive computation */
-  rkChainAM( invpend, ZVEC3DZERO, &am2 );
+  rkChainAngularMomentum( invpend, ZVEC3DZERO, &am2 );
   zAssert( angular momentum (inverted pendulum), zVec3DIsTiny( zVec3DSub( &am1, &am2, &e3 ) ) );
 
   /* *** kinematic energy test *** */
   /* analytical computation */
-  k1 = invpend_ke( invpend, zVecElem(q,0), zVecElem(q,1), zVecElem(dq,0), zVecElem(dq,1) );
+  k1 = invpend_kineticenergy( invpend, zVecElem(q,0), zVecElem(q,1), zVecElem(dq,0), zVecElem(dq,1) );
   /* recursive computation */
-  k2 = rkChainKE( invpend );
+  k2 = rkChainKineticEnergy( invpend );
   zAssert( kinematic energy (inverted pendulum), zIsTiny( k1 - k2 ) );
 
   /* *** torque test *** */

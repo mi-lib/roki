@@ -113,14 +113,14 @@ void link_am_test(rkChain *chain, zMat jacobi, zVec3D *v)
 
   rkChainLinkAMMat( chain, TIP, ZVEC3DZERO, jacobi );
   zXform3DInv( rkChainLinkWldFrame(chain,TIP), ZVEC3DZERO, &tp );
-  rkLinkAM( rkChainLink(chain,TIP), &tp, v );
+  rkLinkAngularMomentum( rkChainLink(chain,TIP), &tp, v );
   zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,TIP), v );
 }
 
 void am_test(rkChain *chain, zMat jacobi, zVec3D *v)
 {
   rkChainAMMat( chain, ZVEC3DZERO, jacobi );
-  rkChainAM( chain, ZVEC3DZERO, v );
+  rkChainAngularMomentum( chain, ZVEC3DZERO, v );
 }
 
 bool assert_jacobi(rkChain *chain, zMat jacobi, zVec dis, zVec vel, zVec acc, zVec ev, void (*test_f)(rkChain*,zMat,zVec3D*))

@@ -268,16 +268,16 @@ __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
  * \notes
  * \a p is with respect to the local frame of \a link.
  */
-__ROKI_EXPORT zVec3D *rkLinkPointVel(rkLink *link, const zVec3D *p, zVec3D *v);
-__ROKI_EXPORT zVec3D *rkLinkPointAcc(rkLink *link, const zVec3D *p, zVec3D *a);
+__ROKI_EXPORT zVec3D *rkLinkPointVel(const rkLink *link, const zVec3D *p, zVec3D *v);
+__ROKI_EXPORT zVec3D *rkLinkPointAcc(const rkLink *link, const zVec3D *p, zVec3D *a);
 
 /*! \brief compute inertia tensor of a link with respect to the inertial frame.
  *
  * rkLinkWldInertia() computes the inertia tensor of a link \a link with respect to the inertial frame.
  * The result is put where \a i points.
- * \retval \a i
+ * \retval \a inertia
  */
-__ROKI_EXPORT zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i);
+__ROKI_EXPORT zMat3D *rkLinkWldInertia(const rkLink *link, zMat3D *inertia);
 
 /*! \brief set and get joint state of a link.
  *
@@ -348,23 +348,39 @@ __ROKI_EXPORT rkMP *rkLinkUpdateCRB(rkLink *link);
 /*! \brief convert 6D configuration of a link to joint displacement. */
 __ROKI_EXPORT void rkLinkConfToJointDis(rkLink *link);
 
-/*! \brief angular momentum and kinematic energy of link.
+/*! \brief linear / angular momentum and kinematic energy of a link.
  *
- * rkLinkAM() calculates angular momentum of a link \a link
- * around the point \a p. The result will be stored into \a am.
- * Both \a p and \a am are with respect to the local frame of
- * \a link itself.
+ * rkLinkLinearMomentum() calculates the linear momentum of a link \a link. The result is stored into
+ * \a momentum. \a momentum is with respect to the local frame of \a link itself.
  *
- * rkLinkKE Energy() calculates kinematic energy originating
- * from linear and angular velocity of \a link.
+ * rkLinkAngularMomentum() calculates the angular momentum of a link \a link about the point \a pos.
+ * The result is stored into \a am.
+ * Both \a pos and \a am are with respect to the local frame of \a link itself.
+ *
+ * rkLinkKineticEnergy Energy() calculates the kinetic energy originating from linear and angular
+ * velocities of \a link.
  * \return
- * rkLinkAM() returns a pointer \a am.
- * rkLinkKE() returns a value calculated.
+ * rkLinkLinearMomentum() returns a pointer \a momentum.
+ * rkLinkAngularMomentum() returns a pointer \a am.
+ * rkLinkKineticEnergy() returns a value calculated.
  * \sa
- * rkBodyAM, rkBodyKE
+ * rkBodyAngularMomentum, rkBodyKineticEnergy
  */
-#define rkLinkAM(link,p,m) rkBodyAM( rkLinkBody(link), (p), (m) )
-#define rkLinkKE(link)     rkBodyKE( rkLinkBody(link) )
+#define rkLinkLinearMomentum(link,momentum) rkBodyLinearMomentum( rkLinkBody(link), momentum )
+#define rkLinkAngularMomentum(link,pos,am)  rkBodyAngularMomentum( rkLinkBody(link), (pos), (am) )
+#define rkLinkKineticEnergy(link)           rkBodyKineticEnergy( rkLinkBody(link) )
+
+/*! \brief recursively computes linear / angular momentum of a link.
+ *
+ * rkLinkLinearMomentumRecursive() calculates the linear momentum of a link \a link in a recursive way.
+ * The result, which is the same with rkLinkLinearMomentum(), is stored into \a momentum.
+ *
+ * rkLinkAngularMomentumRecursive() calculates the angular momentum about a point \a pos of a link
+ * \a link in a recursive way. \a pos and \a am are with respect to the link frame. The result, which
+ * is the same with rkLinkAngularMomentum(), is stored into \a am.
+ */
+__ROKI_EXPORT zVec3D *rkLinkLinearMomentumRecursive(const rkLink *link, zVec3D *momentum);
+__ROKI_EXPORT zVec3D *rkLinkAngularMomentumRecursive(const rkLink *link, const zVec3D *pos, zVec3D *am);
 
 /*! \brief compute volume of a link. */
 #define rkLinkShapeVolume(link) rkBodyShapeVolume( rkLinkBody(link) )

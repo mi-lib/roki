@@ -90,27 +90,29 @@ rkLink *rkLinkAddChild(rkLink *link, rkLink *child)
 }
 
 /* calculate velocity of a point with respect to the inertial frame. */
-zVec3D *rkLinkPointVel(rkLink *link, const zVec3D *p, zVec3D *v)
+zVec3D *rkLinkPointVel(const rkLink *link, const zVec3D *p, zVec3D *v)
 {
-  zVec3DOuterProd( rkLinkAngVel(link), p, v );
-  return zVec3DAddDRC( v, rkLinkLinVel(link) );
+  _zVec3DOuterProd( rkLinkAngVel(link), p, v );
+  _zVec3DAddDRC( v, rkLinkLinVel(link) );
+  return v;
 }
 
 /* calculate accerelation of a point with respect to the inertial frame. */
-zVec3D *rkLinkPointAcc(rkLink *link, const zVec3D *p, zVec3D *a)
+zVec3D *rkLinkPointAcc(const rkLink *link, const zVec3D *p, zVec3D *a)
 {
   zVec3D tmp;
 
-  zVec3DTripleProd( rkLinkAngVel(link), rkLinkAngVel(link), p, a );
-  zVec3DOuterProd( rkLinkAngAcc(link), p, &tmp );
-  zVec3DAddDRC( a, &tmp );
-  return zVec3DAddDRC( a, rkLinkLinAcc(link) );
+  _zVec3DTripleProd( rkLinkAngVel(link), rkLinkAngVel(link), p, a );
+  _zVec3DOuterProd( rkLinkAngAcc(link), p, &tmp );
+  _zVec3DAddDRC( a, &tmp );
+  _zVec3DAddDRC( a, rkLinkLinAcc(link) );
+  return a;
 }
 
 /* compute inertia tensor of a link with respect to the inertial frame. */
-zMat3D *rkLinkWldInertia(rkLink *link, zMat3D *i)
+zMat3D *rkLinkWldInertia(const rkLink *link, zMat3D *inertia)
 {
-  return zRotMat3D( rkLinkWldAtt(link), rkLinkInertia(link), i );
+  return zRotMat3D( rkLinkWldAtt(link), rkLinkInertia(link), inertia );
 }
 
 /* update link frame with respect to the world frame. */
@@ -151,9 +153,9 @@ static void _rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pac
 
   /* acceleration */
   zVec6DLinShift( pacc, rkLinkAdjPos(link), rkLinkAcc(link) );
-  zVec3DOuterProd( zVec6DAng(pvel), rkLinkAdjPos(link), &wp );
-  zVec3DOuterProd( zVec6DAng(pvel), &wp, &tmp );
-  zVec3DAddDRC( rkLinkLinAcc(link), &tmp );
+  _zVec3DOuterProd( zVec6DAng(pvel), rkLinkAdjPos(link), &wp );
+  _zVec3DOuterProd( zVec6DAng(pvel), &wp, &tmp );
+  _zVec3DAddDRC( rkLinkLinAcc(link), &tmp );
   zMulMat3DTVec6DDRC( rkLinkAdjAtt(link), rkLinkAcc(link) );
   /* joint motion rate */
   zVec3DCopy( rkLinkAngVel(link), &tmp );
@@ -197,10 +199,10 @@ void rkLinkUpdateJointWrench(rkLink *link)
     rkLinkUpdateJointWrench( child );
     for( ; child; child=rkLinkSibl(child) ){
       zXform6DAng( rkLinkAdjFrame(child), rkLinkJointWrench(child), &w );
-      zVec6DAddDRC( rkLinkJointWrench(link), &w );
+      _zVec6DAddDRC( rkLinkJointWrench(link), &w );
     }
   }
-  zVec6DSubDRC( rkLinkJointWrench(link), rkLinkExtWrench(link) );
+  _zVec6DSubDRC( rkLinkJointWrench(link), rkLinkExtWrench(link) );
   /* joint torque resolution */
   rkJointCalcTrq( rkLinkJoint(link), rkLinkJointWrench(link) );
   /* branch */
@@ -242,12 +244,13 @@ rkMP *rkLinkUpdateCRB(rkLink *link)
     zRotMat3D( rkLinkAdjAtt(lp), rkLinkCRBInertia(lp), &tmpi );
     _zXform3D( rkLinkAdjFrame(lp), rkLinkCRBCOM(lp), &tmpr );
     _zVec3DSubDRC( &tmpr, rkLinkCRBCOM(link) );
-    zMat3DCatVec3DDoubleOuterProdDRC( &tmpi, -rkLinkCRBMass(lp), &tmpr );
-    zMat3DAddDRC( rkLinkCRBInertia(link), &tmpi );
+    _zMat3DCatVec3DDoubleOuterProdDRC( &tmpi, -rkLinkCRBMass(lp), &tmpr );
+    _zMat3DAddDRC( rkLinkCRBInertia(link), &tmpi );
   }
   return rkLinkCRB(link);
 }
 
+/* convert 6D configuration of a link to joint displacement. */
 void rkLinkConfToJointDis(rkLink *link)
 {
   zFrame3D org;
@@ -268,6 +271,37 @@ void rkLinkConfToJointDis(rkLink *link)
     rkLinkConfToJointDis( rkLinkChild(link) );
   if( rkLinkSibl(link) )
     rkLinkConfToJointDis( rkLinkSibl(link) );
+}
+
+/* recursively computes linear momentum of a link. */
+zVec3D *rkLinkLinearMomentumRecursive(const rkLink *link, zVec3D *momentum)
+{
+  rkLink *lp;
+  zVec3D m, tmp;
+
+  rkLinkLinearMomentum( link, momentum );
+  for( lp=rkLinkChild(link); lp; lp=rkLinkSibl(lp) ){
+    rkLinkLinearMomentumRecursive( lp, &m );
+    _zMulMat3DVec3D( rkLinkAdjAtt(lp), &m, &tmp );
+    _zVec3DAddDRC( momentum, &tmp );
+  }
+  return momentum;
+}
+
+/* recursively computes angular momentum of a link. */
+zVec3D *rkLinkAngularMomentumRecursive(const rkLink *link, const zVec3D *pos, zVec3D *am)
+{
+  rkLink *lp;
+  zVec3D tp, m, tmp;
+
+  _zXform3DInv( rkLinkWldFrame(link), pos, &tp );
+  rkLinkAngularMomentum( link, &tp, am );
+  for( lp=rkLinkChild(link); lp; lp=rkLinkSibl(lp) ){
+    rkLinkAngularMomentumRecursive( lp, pos, &m );
+    _zMulMat3DVec3D( rkLinkAdjAtt(lp), &m, &tmp );
+    _zVec3DAddDRC( am, &tmp );
+  }
+  return am;
 }
 
 /* ********************************************************** */

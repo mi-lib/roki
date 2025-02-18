@@ -678,19 +678,31 @@ __ROKI_EXPORT zVec3D *rkChainUpdateCOMAcc(rkChain *chain);
 __ROKI_EXPORT zVec3D *rkChainZMP(rkChain *chain, double z, zVec3D *zmp);
 __ROKI_EXPORT double rkChainYawTorque(rkChain *chain);
 
-/*! \brief angular momentum and kinematic energy of kinematic chain.
+/*! \brief linear / angular momentum and kinematic energy of a kinematic chain.
  *
- * rkChainAM() calculates angular momentum of a kinematic chain \a chain around the point \a p
- * with respect to the world frame. The result is put into \a am.
+ * rkChainLinearMomentum() calculates the lienar momentum of a kinematic chain \a chain. The result
+ * is put into \a momentum.
  *
- * rkChainKE() calculates kinematic energy of \a chain, originating from linear and angular
+ * rkChainAngularMomentum() calculates angular momentum about the point \a pos with respect to the
+ * world frame of a kinematic chain \a chain. The result is put into \a am.
+ *
+ * rkChainLinearMomentumRecursive() calculates the lienar momentum of a kinematic chain \a chain in
+ * a recursive manner. The result is put into \a momentum.
+ *
+ * rkChainAngularMomentumRecursive() calculates angular momentum about the point \a pos with respect
+ * to the world frame of a kinematic chain \a chain in a recursive manner. The result is put into \a am.
+ *
+ * rkChainKineticEnergy() calculates kinematic energy of \a chain, originating from linear and angular
  * velocity of each link.
  * \return
- * rkChainAM() returns a pointer \a am.
- * rkChainKE() returns a value calculated.
+ * rkChainAngularMomentum() returns a pointer \a am.
+ * rkChainKineticEnergy() returns a value calculated.
  */
-__ROKI_EXPORT zVec3D *rkChainAM(rkChain *chain, const zVec3D *p, zVec3D *am);
-__ROKI_EXPORT double rkChainKE(rkChain *chain);
+__ROKI_EXPORT zVec3D *rkChainLinearMomentum(const rkChain *chain, zVec3D *momentum);
+__ROKI_EXPORT zVec3D *rkChainAngularMomentum(const rkChain *chain, const zVec3D *p, zVec3D *am);
+__ROKI_EXPORT zVec3D *rkChainLinearMomentumRecursive(const rkChain *chain, zVec3D *momentum);
+__ROKI_EXPORT zVec3D *rkChainAngularMomentumRecursive(const rkChain *chain, const zVec3D *pos, zVec3D *am);
+__ROKI_EXPORT double rkChainKineticEnergy(const rkChain *chain);
 
 /*! \brief inertia matrix and bias force vector of a kinematic chain.
  *
@@ -946,8 +958,8 @@ inline void rkChain::updateCRBMass(){ rkChainUpdateCRBMass( this ); }
 inline void rkChain::updateCRB(){ rkChainUpdateCRB( this ); }
 inline zVec3D *rkChain::ZMP(double z, zVec3D *zmp){ return rkChainZMP( this, z, zmp ); }
 inline double rkChain::yawTorque(){ return rkChainYawTorque( this ); }
-inline zVec3D *rkChain::angularMomentum(const zVec3D *p, zVec3D *am){ return rkChainAM( this, p, am ); }
-inline double rkChain::kineticEnergy(){ return rkChainKE( this ); }
+inline zVec3D *rkChain::angularMomentum(const zVec3D *p, zVec3D *am){ return rkChainAngularMomentum( this, p, am ); }
+inline double rkChain::kineticEnergy(){ return rkChainKineticEnergy( this ); }
 
 inline zMat rkChain::getInertiaMat(zMat inertia){ return rkChainInertiaMat( this, inertia ); }
 inline zVec rkChain::getBiasVec(zVec bias, const zVec6D *g){ return rkChainBiasVecG( this, bias, g ); }

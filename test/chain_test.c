@@ -62,7 +62,7 @@ bool check_kinetic_energy(rkChain *chain, zMat inertia, zVec vel, double tol)
   zMulMatVec( inertia, vel, tmp );
   ke = 0.5 * zVecInnerProd( vel, tmp );
   zVecFree( tmp );
-  return zEqual( rkChainKE( chain ), ke, tol );
+  return zEqual( rkChainKineticEnergy( chain ), ke, tol );
 }
 
 bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec dis, zVec vel, double tol)
@@ -207,23 +207,25 @@ void assert_chain_copy_state(void)
   zAssert( rkChainCopyState, result );
 }
 
-void assert_getsetconf(rkChain *chain)
+void assert_chain_getsetconf(void)
 {
+  rkChain chain;
   zVec orgdis, orgconf, dis, conf;
   int i;
   bool result1 = true, result2 = true;
 
-  orgdis = zVecAlloc( rkChainJointSize( chain ) );
-  dis = zVecAlloc( rkChainJointSize( chain ) );
-  orgconf = zVecAlloc( rkChainLinkNum( chain ) * 6 );
-  conf = zVecAlloc( rkChainLinkNum( chain ) * 6 );
+  chain_init( &chain );
+  orgdis = zVecAlloc( rkChainJointSize( &chain ) );
+  dis = zVecAlloc( rkChainJointSize( &chain ) );
+  orgconf = zVecAlloc( rkChainLinkNum( &chain ) * 6 );
+  conf = zVecAlloc( rkChainLinkNum( &chain ) * 6 );
   for( i=0; i<N; i++ ){
     /* displacement -> configuration -> displacement */
     zVecRandUniform( orgdis, -1.0, 1.0 );
-    rkChainFK( chain, orgdis );
-    rkChainGetConf( chain, conf );
-    rkChainSetConf( chain, conf );
-    rkChainGetJointDisAll( chain, dis );
+    rkChainFK( &chain, orgdis );
+    rkChainGetConf( &chain, conf );
+    rkChainSetConf( &chain, conf );
+    rkChainGetJointDisAll( &chain, dis );
     zVecSubDRC( dis, orgdis );
     if( !zVecIsTol( dis, TOL ) ){
       eprintf( "(rkChainFK + rkChainGetConf + rkChainSetConf + rkChainGetJointDisAll) error abs max = %.10g\n", zVecAbsMax( dis, NULL ) );
@@ -231,13 +233,13 @@ void assert_getsetconf(rkChain *chain)
     }
     /* configuration -> displacement -> configuration */
     zVecRandUniform( orgconf, -1.0, 1.0 );
-    rkChainSetConf( chain, orgconf );
-    rkChainGetJointDisAll( chain, orgdis );
-    rkChainFK( chain, orgdis );
-    rkChainGetConf( chain, orgconf );
-    rkChainSetConf( chain, orgconf );
-    rkChainGetJointDisAll( chain, dis );
-    rkChainGetConf( chain, conf );
+    rkChainSetConf( &chain, orgconf );
+    rkChainGetJointDisAll( &chain, orgdis );
+    rkChainFK( &chain, orgdis );
+    rkChainGetConf( &chain, orgconf );
+    rkChainSetConf( &chain, orgconf );
+    rkChainGetJointDisAll( &chain, dis );
+    rkChainGetConf( &chain, conf );
     zVecSubDRC( conf, orgconf );
     if( !zVecIsTol( conf, TOL ) ){
       eprintf( "(rkChainSetConf + rkChainGetJointDisAll + rkChainFK + rkChainGetConf) error abs max = %.10g\n", zVecAbsMax( conf, NULL ) );
@@ -251,6 +253,7 @@ void assert_getsetconf(rkChain *chain)
   zVecFree( conf );
   zVecFree( orgdis );
   zVecFree( dis );
+  rkChainDestroy( &chain );
 }
 
 bool check_chain_net_inertia(rkChain *chain, zMat3D *inertia_net)
@@ -268,31 +271,68 @@ bool check_chain_net_inertia(rkChain *chain, zMat3D *inertia_net)
   return zMat3DIsTiny( inertia_net );
 }
 
-void assert_crb(rkChain *chain, int n)
+void assert_crb(void)
 {
+  rkChain chain;
   zVec dis;
   zVec3D com;
   zMat3D inertia;
 
-  dis = zVecAlloc( n );
+  chain_init( &chain );
+  dis = zVecAlloc( rkChainJointSize(&chain) );
   zVecRandUniform( dis, -10, 10 );
-  rkChainFK( chain, dis );
-  rkChainUpdateCRB( chain );
-  zXform3D( rkLinkAdjFrame(rkChainRoot(chain)), rkMPCOM(rkLinkCRB(rkChainRoot(chain))), &com );
-  zRotMat3D( rkLinkAdjAtt(rkChainRoot(chain)), rkMPInertia(rkLinkCRB(rkChainRoot(chain))), &inertia );
+  rkChainFK( &chain, dis );
+  rkChainUpdateCRB( &chain );
+  zXform3D( rkLinkAdjFrame(rkChainRoot(&chain)), rkMPCOM(rkLinkCRB(rkChainRoot(&chain))), &com );
+  zRotMat3D( rkLinkAdjAtt(rkChainRoot(&chain)), rkMPInertia(rkLinkCRB(rkChainRoot(&chain))), &inertia );
   zAssert( rkChainUpdateCRB,
-    zIsTiny( rkChainMass(chain) - rkMPMass(rkLinkCRB(rkChainRoot(chain))) ) &&
-    zVec3DEqual( rkChainWldCOM(chain), &com ) &&
-    check_chain_net_inertia( chain, &inertia ) );
+    zIsTiny( rkChainMass(&chain) - rkMPMass(rkLinkCRB(rkChainRoot(&chain))) ) &&
+    zVec3DEqual( rkChainWldCOM(&chain), &com ) &&
+    check_chain_net_inertia( &chain, &inertia ) );
   zVecFree( dis );
+  rkChainDestroy( &chain );
 }
 
-void assert_inertia_mat(rkChain *chain, int n)
+void assert_chain_momentum(void)
 {
+  rkChain chain;
+  zVec dis, vel;
+  zVec3D momentum, momentum_recursive, momentum_gt;
+  zVec3D angularmomentum, angularmomentum_recursive;
+
+  chain_init( &chain );
+  dis = zVecAlloc( rkChainJointSize(&chain) );
+  vel = zVecAlloc( rkChainJointSize(&chain) );
+  zVecRandUniform( dis, -1.0, 1.0 );
+  zVecRandUniform( vel, -0.1, 0.1 );
+  rkChainFK( &chain, dis );
+  rkChainSetJointVelAll( &chain, vel );
+  rkChainUpdateVel( &chain );
+
+  rkChainLinearMomentum( &chain, &momentum );
+  rkChainLinearMomentumRecursive( &chain, &momentum_recursive );
+  rkChainUpdateCOMVel( &chain );
+  zVec3DMul( rkChainCOMVel(&chain), rkChainMass(&chain), &momentum_gt );
+  rkChainAngularMomentum( &chain, ZVEC3DZERO, &angularmomentum );
+  rkChainAngularMomentumRecursive( &chain, ZVEC3DZERO, &angularmomentum_recursive );
+
+  zVecFree( dis );
+  zVecFree( vel );
+  rkChainDestroy( &chain );
+
+  zAssert( rkChainLinearMomentum & rkChainLinearMomentumRecursive, zVec3DEqual( &momentum, &momentum_recursive ) );
+  zAssert( rkChainLinearMomentum & rkChainUpdateCOMVel, zVec3DEqual( &momentum, &momentum_gt ) );
+  zAssert( rkChainAngularMomentum & rkChainAngularMomentumRecursive, zVec3DEqual( &angularmomentum, &angularmomentum_recursive ) );
+}
+
+void assert_inertia_mat(void)
+{
+  rkChain chain;
   zMat h;
   zVec b, dis, vel;
-  int i, count_iuv, count_icrb, count_ke, count_fd;
+  int i, n, count_iuv, count_icrb, count_ke, count_fd;
 
+  n = chain_init( &chain );
   h = zMatAllocSqr( n );
   dis = zVecAlloc( n );
   vel = zVecAlloc( n );
@@ -302,14 +342,14 @@ void assert_inertia_mat(rkChain *chain, int n)
     /* generate posture and velocity randomly */
     zVecRandUniform( dis, -10, 10 );
     zVecRandUniform( vel, -10, 10 );
-    rkChainFK( chain, dis );
-    rkChainSetJointVelAll( chain, vel );
+    rkChainFK( &chain, dis );
+    rkChainSetJointVelAll( &chain, vel );
     /* verifications */
-    rkChainInertiaMatBiasVec( chain, h, b );
+    rkChainInertiaMatBiasVec( &chain, h, b );
     /* count success */
-    if( check_inertia_matrix( chain, h, TOL ) ) count_icrb++;
-    if( check_kinetic_energy( chain, h, vel, TOL ) ) count_ke++;
-    if( check_fd( chain, h, b, dis, vel, TOL ) ) count_fd++;
+    if( check_inertia_matrix( &chain, h, TOL ) ) count_icrb++;
+    if( check_kinetic_energy( &chain, h, vel, TOL ) ) count_ke++;
+    if( check_fd( &chain, h, b, dis, vel, TOL ) ) count_fd++;
   }
   zAssert( rkChainInertiaMatBiasVec, count_icrb == N );
   zAssert( rkChainInertiaMatBiasVec + rkChainKE, count_ke == N );
@@ -318,25 +358,28 @@ void assert_inertia_mat(rkChain *chain, int n)
   for( i=0; i<N; i++ ){
     /* generate posture and velocity randomly */
     zVecRandUniform( dis, -10, 10 );
-    rkChainFK( chain, dis );
-    rkChainInertiaMatUV( chain, h );
-    if( check_inertia_matrix( chain, h, TOL ) ) count_iuv++;
-    rkChainInertiaMatCRB( chain, h );
-    if( check_inertia_matrix( chain, h, TOL ) ) count_icrb++;
+    rkChainFK( &chain, dis );
+    rkChainInertiaMatUV( &chain, h );
+    if( check_inertia_matrix( &chain, h, TOL ) ) count_iuv++;
+    rkChainInertiaMatCRB( &chain, h );
+    if( check_inertia_matrix( &chain, h, TOL ) ) count_icrb++;
   }
   zAssert( rkChainInertiaMatUV, count_iuv == N );
   zAssert( rkChainInertiaMatCRB, count_icrb == N );
 
   zMatFree( h );
   zVecFreeAtOnce( 3, b, dis, vel );
+  rkChainDestroy( &chain );
 }
 
-void assert_fd_id(rkChain *chain)
+void assert_fd_id(void)
 {
+  rkChain chain;
   zVec dis, vel, acc, trq, trq_id;
-  int i, size, count_success = 0;
+  int i, size, fd_id_count_success = 0, com_acc_count_success = 0;
+  zVec3D f1, f2;
 
-  size = rkChainJointSize( chain );
+  size = chain_init( &chain );
   dis = zVecAlloc( size );
   vel = zVecAlloc( size );
   acc = zVecAlloc( size );
@@ -347,18 +390,28 @@ void assert_fd_id(rkChain *chain)
     zVecRandUniform( dis, -1.0, 1.0 );
     zVecRandUniform( vel, -1.0, 1.0 );
     zVecRandUniform( trq, -1.0, 1.0 );
-    rkChainFD( chain, dis, vel, trq, acc );
-    rkChainID( chain, dis, vel, acc, trq_id );
+    rkChainFD( &chain, dis, vel, trq, acc );
+    rkChainID( &chain, dis, vel, acc, trq_id );
     if( zVecEqual( trq, trq_id, zTOL ) ){
-      count_success++;
+      fd_id_count_success++;
     } else{
       eprintf( "Failure case : RMSE = %.10g\n", zVecDist( trq, trq_id ) );
       eprintf( " (error) = " ); zVecPrint( zVecSubDRC( trq_id, trq ) );
     }
+    zVec3DMul( rkChainCOMAcc(&chain), rkChainMass(&chain), &f1 );
+    zMulMat3DVec3D( rkChainRootAtt(&chain), rkChainRootForce(&chain), &f2 );
+    if( zVec3DEqual( &f1, &f2 ) ){
+      com_acc_count_success++;
+    } else{
+      eprintf( " (error) = " ); zVec3DPrint( zVec3DSubDRC( &f1, &f2 ) );
+    }
   }
-  eprintf( "Success rate = %d / %d\n", count_success, N );
   zVecFreeAtOnce( 5, dis, vel, acc, trq, trq_id );
-  zAssert( rkChainFD + rkChainID, count_success == N );
+  rkChainDestroy( &chain );
+  eprintf( "Success rate = %d / %d\n", fd_id_count_success, N );
+  zAssert( rkChainFD + rkChainID, fd_id_count_success == N );
+  eprintf( "Success rate = %d / %d\n", com_acc_count_success, N );
+  zAssert( rkChainUpdateCOMAcc + rkChainID, com_acc_count_success == N );
 }
 
 /* only works with torque-controlled robot models. */
@@ -401,21 +454,15 @@ void assert_fd_id_abi(void)
 
 int main(int argc, char *argv[])
 {
-  rkChain chain;
-  int n;
-
   zRandInit();
   assert_chain_clone();
   assert_chain_clone_irregular();
   assert_chain_copy_state();
-  /* initialization */
-  n = chain_init( &chain );
-  assert_getsetconf( &chain );
-  assert_crb( &chain, n );
-  assert_inertia_mat( &chain, n );
-  assert_fd_id( &chain );
-  /* termination */
-  rkChainDestroy( &chain );
+  assert_chain_getsetconf();
+  assert_chain_momentum();
+  assert_inertia_mat();
+  assert_crb();
+  assert_fd_id();
   assert_fd_id_abi();
   return EXIT_SUCCESS;
 }

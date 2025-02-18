@@ -567,8 +567,23 @@ double rkChainYawTorque(rkChain *chain)
   return zVec3DInnerProd(rkChainRootTorque(chain),rkChainRootForce(chain)) / zVec3DInnerProd(rkChainRootTorque(chain),&dz);
 }
 
+/* linear momentum of a kinematic chain. */
+zVec3D *rkChainLinearMomentum(const rkChain *chain, zVec3D *momentum)
+{
+  int i;
+  zVec3D tmp;
+
+  zVec3DZero( momentum );
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
+    rkLinkLinearMomentum( rkChainLink(chain,i), &tmp );
+    _zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,i), &tmp );
+    _zVec3DAddDRC( momentum, &tmp );
+  }
+  return momentum;
+}
+
 /* angular momentum of a kinematic chain. */
-zVec3D *rkChainAM(rkChain *chain, const zVec3D *p, zVec3D *am)
+zVec3D *rkChainAngularMomentum(const rkChain *chain, const zVec3D *p, zVec3D *am)
 {
   int i;
   zVec3D tp, tmp;
@@ -576,21 +591,41 @@ zVec3D *rkChainAM(rkChain *chain, const zVec3D *p, zVec3D *am)
   zVec3DZero( am );
   for( i=0; i<rkChainLinkNum(chain); i++ ){
     zXform3DInv( rkChainLinkWldFrame(chain,i), p, &tp );
-    rkLinkAM( rkChainLink(chain,i), &tp, &tmp );
+    rkLinkAngularMomentum( rkChainLink(chain,i), &tp, &tmp );
     zMulMat3DVec3DDRC( rkChainLinkWldAtt(chain,i), &tmp );
     zVec3DAddDRC( am, &tmp );
   }
   return am;
 }
 
+/* recursively computes linear momentum of a kinematic chain. */
+zVec3D *rkChainLinearMomentumRecursive(const rkChain *chain, zVec3D *momentum)
+{
+  zVec3D tmp;
+
+  rkLinkLinearMomentumRecursive( rkChainRoot(chain), &tmp );
+  _zMulMat3DVec3D( rkChainRootAtt(chain), &tmp, momentum );
+  return momentum;
+}
+
+/* recursively computes angular momentum of a kinematic chain. */
+zVec3D *rkChainAngularMomentumRecursive(const rkChain *chain, const zVec3D *pos, zVec3D *am)
+{
+  zVec3D tmp;
+
+  rkLinkAngularMomentumRecursive( rkChainRoot(chain), pos, &tmp );
+  _zMulMat3DVec3D( rkChainRootAtt(chain), &tmp, am );
+  return am;
+}
+
 /* kinetic energy of a kinematic chain. */
-double rkChainKE(rkChain *chain)
+double rkChainKineticEnergy(const rkChain *chain)
 {
   int i;
   double energy = 0;
 
   for( i=0; i<rkChainLinkNum(chain); i++ )
-    energy += rkLinkKE( rkChainLink(chain,i) );
+    energy += rkLinkKineticEnergy( rkChainLink(chain,i) );
   return energy;
 }
 

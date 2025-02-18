@@ -120,7 +120,7 @@ void rk_idOutput(double t, zVec trq)
   zVec3DSub( rkChainCOMAcc(&chain), RK_GRAVITY3D, &a );
   rkChainZMP( &chain, zfloor, &zmp );
   zMat3DToZYX( rkChainRootAtt(&chain), &rpy );
-  rkChainAM( &chain, rkChainWldCOM(&chain), &am );
+  rkChainAngularMomentum( &chain, rkChainWldCOM(&chain), &am );
   rkChainGetJointTrqAll( &chain, trq );
 
   fprintf( fp[0], "%f ", t ); zVec3DValueFPrint( fp[0], rkChainWldCOM(&chain) );

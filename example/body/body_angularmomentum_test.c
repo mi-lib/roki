@@ -31,8 +31,8 @@ int main(void)
   for( i=0; i<DIV; i++ ){
     theta = 2 * zPI * i / DIV;
     zMat3DRotYaw( &ident, theta, rkBodyAtt(&body) );
-    rkBodyAM( &body, rkBodyCOM(&body), &am_com );
-    rkBodyAM( &body, ZVEC3DZERO, &am );
+    rkBodyAngularMomentum( &body, rkBodyCOM(&body), &am_com );
+    rkBodyAngularMomentum( &body, ZVEC3DZERO, &am );
     zVec3DValuePrint( &am );
     zVec3DValueNLPrint( &am_com );
   }
