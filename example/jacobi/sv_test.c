@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     rkChainLinkWldLinJacobi( &chain, rkChainLinkNum(&chain)-1, ZVEC3DZERO, jl );
     zMatPut( jacobi, 0, 0, ja );
     zMatPut( jacobi, 3, 0, jl );
-    printf( "%.10f %.10f %.10f\n", rkJacobiManip(jacobi), zSVMax(jacobi), zSVMin(jacobi) );
+    printf( "%.10f %.10f %.10f\n", rkJacobiManip(jacobi), zMatSingularValueMax(jacobi), zMatSingularValueMin(jacobi) );
   }
 
   /* termination */
