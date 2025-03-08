@@ -1,3 +1,4 @@
+2025.03.09. Modified rkMPInertiaEllips to reflect new specifcation of zMat3DSymEig. [rk_body]
 2025.02.18. Added test for rkChainUpdateCOMVel and rkChainUpdateCOMAcc. [test]
 2025.02.18. Added rkChainLinearMomentum, rkChainLinearMomentumRecursive, and rkChainAngularMomentumRecursive. [rk_chain]
 2025.02.18. Added const qualifiers to the first arguments of rkLinkPointVel, rkLinkPointAcc, and rkLinkWldInertia. [rk_link]

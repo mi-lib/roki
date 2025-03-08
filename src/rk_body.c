@@ -68,11 +68,11 @@ zMat3D *rkMPOrgInertia(rkMP *mp, zMat3D *i)
 /* compute the inertial ellipsoid from a mass property set. */
 zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie)
 {
-  zVec3D evec[3];
-  double eval[3];
+  zVec3D eigval;
+  zMat3D eigbase;
 
-  zMat3DSymEig( rkMPInertia(mp), eval, evec );
-  return zEllips3DCreate( ie, rkMPCOM(mp), &evec[0], &evec[1], &evec[2], eval[0], eval[1], eval[2], 0 );
+  zMat3DSymEig( rkMPInertia(mp), &eigval, &eigbase );
+  return zEllips3DCreate( ie, rkMPCOM(mp), &eigbase.v[0], &eigbase.v[1], &eigbase.v[2], eigval.e[0], eigval.e[1], eigval.e[2], 0 );
 }
 
 /* print mass property out to a file. */
