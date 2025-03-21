@@ -490,7 +490,7 @@ zVec rkIKSolveEquationSRED(rkIK *ik)
 {
   zVecCopy( ik->_c_vec, ik->__c );
   zLESolveSRBiasDST( ik->_c_mat, ik->__c, ik->_j_wn, ik->_c_we,
-    zVecInnerProd( ik->_c_vec, ik->__c ) + 1.0e1 * _zVecMean(ik->_j_wn) * zMax( 1 - rkJacobiManip( ik->_c_mat ), 0 ),
+    zVecInnerProd( ik->_c_vec, ik->__c ) + 1.0e1 * _zVecElemMean(ik->_j_wn) * zMax( 1 - rkJacobiManip( ik->_c_mat ), 0 ),
     ik->_j_vec, &ik->__le );
   return ik->_j_vec;
 }

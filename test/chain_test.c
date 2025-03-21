@@ -228,7 +228,7 @@ void assert_chain_getsetconf(void)
     rkChainGetJointDisAll( &chain, dis );
     zVecSubDRC( dis, orgdis );
     if( !zVecIsTol( dis, TOL ) ){
-      eprintf( "(rkChainFK + rkChainGetConf + rkChainSetConf + rkChainGetJointDisAll) error abs max = %.10g\n", zVecAbsMax( dis, NULL ) );
+      eprintf( "(rkChainFK + rkChainGetConf + rkChainSetConf + rkChainGetJointDisAll) error abs max = %.10g\n", zVecElemAbsMax( dis, NULL ) );
       result1 = false;
     }
     /* configuration -> displacement -> configuration */
@@ -242,7 +242,7 @@ void assert_chain_getsetconf(void)
     rkChainGetConf( &chain, conf );
     zVecSubDRC( conf, orgconf );
     if( !zVecIsTol( conf, TOL ) ){
-      eprintf( "(rkChainSetConf + rkChainGetJointDisAll + rkChainFK + rkChainGetConf) error abs max = %.10g\n", zVecAbsMax( conf, NULL ) );
+      eprintf( "(rkChainSetConf + rkChainGetJointDisAll + rkChainFK + rkChainGetConf) error abs max = %.10g\n", zVecElemAbsMax( conf, NULL ) );
       result2 = false;
     }
   }
