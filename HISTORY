@@ -1,3 +1,6 @@
+2025.04.29. Modified _rkContactInfoFromZTK, rkContactInfoArrayFromZTK, rkMotorSpecFromZTK, rkMotorSpecFPrintZTK, _rkMotorSpecTrqFromZTK, _rkMotorSpecTrqFPrintZTK, _rkMotorSpecDCFromZTK, _rkMotorSpecDCFPrintZTK, rkJointPrpFromZTK, _rkJointRevolFPrintZTK, _rkJointPrismFPrintZTK, _rkJointCylinFPrintZTK, _rkJointHookeFPrintZTK, _rkJointSpherFPrintZTK, _rkJointFloatFPrintZTK, _rkJointBrFloatFPrintZTK, rkLinkFromZTK, rkLinkConnectFromZTK, rkLinkFPrintZTK, _rkChainChainFromZTK, _rkChainChainFPrintZTK, _rkChainInitFromZTK, _rkChainInitFPrintZTK, rkChainFromZTK, rkChainFPrintZTK, rkChainInitFromZTK, rkChainInitFPrintZTK, _rkIKFromZTK, and rkChainIKConfFromZTK to apply new specifications of the ZTK processor. [rk_contact, rk_motor, rk_motor_trq, rk_motor_dc, rk_joint, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher, rk_joint_float, rk_joint_brfloat, rk_link, rk_chain, rk_ik]
+2025.04.29. Modified makefile to conform to new specification of zeda-makefile-gen. [all]
+2025.04.29. Modified makefile in example. [example]
 2025.03.21. Modified rkIKSolveEquationSRED and chain_test to reflect renaming of _zVecElemMean. [rk_ik, test]
 2025.03.09. Modified rkMPInertiaEllips to reflect new specifcation of zMat3DSymEig. [rk_body]
 2025.02.18. Added test for rkChainUpdateCOMVel and rkChainUpdateCOMAcc. [test]

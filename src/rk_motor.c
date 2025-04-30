@@ -76,7 +76,7 @@ static ZTKPrp __ztk_prp_rkmotorspec[] = {
 rkMotorSpec *rkMotorSpecFromZTK(rkMotorSpec *ms, ZTK *ztk)
 {
   rkMotorSpecInit( ms );
-  if( !ZTKEvalKey( ms, NULL, ztk, __ztk_prp_rkmotorspec ) ) return NULL;
+  if( !_ZTKEvalKey( ms, NULL, ztk, __ztk_prp_rkmotorspec ) ) return NULL;
   ms->com->_fromZTK( ms, ztk );
   return ms;
 }
@@ -84,7 +84,7 @@ rkMotorSpec *rkMotorSpecFromZTK(rkMotorSpec *ms, ZTK *ztk)
 void rkMotorSpecFPrintZTK(FILE *fp, rkMotorSpec *ms)
 {
   if( !ms ) return;
-  ZTKPrpKeyFPrint( fp, ms, __ztk_prp_rkmotorspec );
+  _ZTKPrpKeyFPrint( fp, ms, __ztk_prp_rkmotorspec );
   ms->com->_fprintZTK( fp, ms );
   fprintf( fp, "\n" );
 }

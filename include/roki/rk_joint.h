@@ -375,7 +375,7 @@ __ROKI_EXPORT rkJoint *rkJointAssignMotorByStr(rkJoint *joint, rkMotorSpecArray 
  */
 
 #define rkJointPrpFromZTK(joint,motorspecarray,ztk,ztkprp) \
-  ( ZTKEvalKey( joint, motorspecarray, ztk, ztkprp ) ? joint : NULL )
+  ( _ZTKEvalKey( joint, motorspecarray, ztk, ztkprp ) ? joint : NULL )
 
 __ROKI_EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorSpecArray *motorspecarray, ZTK *ztk);
 

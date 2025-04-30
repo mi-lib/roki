@@ -360,7 +360,7 @@ static rkJoint *_rkJointRevolFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
 
 static void _rkJointRevolFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
-  ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_revol );
+  _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_revol );
 }
 
 rkJointCom rk_joint_revol = {

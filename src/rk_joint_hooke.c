@@ -365,7 +365,7 @@ static rkJoint *_rkJointHookeFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
 
 static void _rkJointHookeFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
-  ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_hooke );
+  _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_hooke );
 }
 
 rkJointCom rk_joint_hooke = {

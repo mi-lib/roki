@@ -287,7 +287,7 @@ static rkJoint *_rkJointFloatFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
 
 static void _rkJointFloatFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
-  ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_float );
+  _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_float );
 }
 
 rkJointCom rk_joint_float = {

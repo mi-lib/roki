@@ -292,7 +292,7 @@ static rkJoint *_rkJointSpherFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
 
 static void _rkJointSpherFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
-  ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_spher );
+  _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_spher );
 }
 
 rkJointCom rk_joint_spher = {

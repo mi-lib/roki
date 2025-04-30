@@ -383,7 +383,7 @@ static rkJoint *_rkJointCylinFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
 
 static void _rkJointCylinFPrintZTK(FILE *fp, rkJoint *joint, char *name)
 {
-  ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_cylin );
+  _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_cylin );
 }
 
 rkJointCom rk_joint_cylin = {

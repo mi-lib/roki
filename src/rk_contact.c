@@ -100,7 +100,7 @@ static const ZTKPrp __ztk_prp_rkcontactinfo[] = {
 
 static void *_rkContactInfoFromZTK(void *obj, int i, void *arg, ZTK *ztk)
 {
-  if( !ZTKEvalKey( zArrayElem((rkContactInfoArray*)obj,i), arg, ztk, __ztk_prp_rkcontactinfo ) ) return NULL;
+  if( !_ZTKEvalKey( zArrayElem((rkContactInfoArray*)obj,i), arg, ztk, __ztk_prp_rkcontactinfo ) ) return NULL;
   return obj;
 }
 
@@ -181,7 +181,7 @@ rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *z
     return NULL;
   }
   zArrayAlloc( carray, rkContactInfo, n );
-  ZTKEvalTag( carray, carray, ztk, __ztk_prp_tag_roki_contactinfo );
+  _ZTKEvalTag( carray, carray, ztk, __ztk_prp_tag_roki_contactinfo );
   return carray;
 }
 

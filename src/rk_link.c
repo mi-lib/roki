@@ -532,7 +532,7 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
   prp.auto_inertia = false;
   prp.density = 1.0; /* dummy */
 
-  if( !ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink ) ) return NULL;
+  if( !_ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink ) ) return NULL;
   /* automatic mass property computation */
   if( prp.given_density ){ /* from density */
     if( prp.given_mass )
@@ -572,7 +572,7 @@ rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk)
   _rkLinkRefPrp prp;
 
   prp.larray = larray;
-  if( !ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink_parent ) ) return NULL;
+  if( !_ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink_parent ) ) return NULL;
   return link;
 }
 
@@ -580,14 +580,14 @@ void rkLinkFPrintZTK(FILE *fp, rkLink *link)
 {
   zShapeListCell *cp;
 
-  ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink );
+  _ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink );
   if( !rkLinkShapeIsEmpty(link) ){
     fprintf( fp, "%s:", ZTK_KEY_ROKI_LINK_SHAPE );
     zListForEach( rkLinkShapeList(link), cp )
       fprintf( fp, " %s", zName( zShapeListCellShape(cp) ) );
     fprintf( fp, "\n" );
   }
-  ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink_parent );
+  _ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink_parent );
   fprintf( fp, "\n" );
 }
 

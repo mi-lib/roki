@@ -680,7 +680,7 @@ static void _rkIKConstraintFPrintZTK(FILE *fp, rkChain *chain)
 
 static void *_rkIKFromZTK(void *obj, int i, void *arg, ZTK *ztk)
 {
-  if( !ZTKEvalKey( obj, NULL, ztk, __ztk_prp_rkik ) ) return NULL;
+  if( !_ZTKEvalKey( obj, NULL, ztk, __ztk_prp_rkik ) ) return NULL;
   return obj;
 }
 
@@ -691,7 +691,7 @@ static const ZTKPrp __ztk_prp_tag_roki_chain_ik[] = {
 /* read the inverse kinematics configuration of a kinematic chain from ZTK. */
 rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk)
 {
-  ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_ik );
+  _ZTKEvalTag( chain, NULL, ztk, __ztk_prp_tag_roki_chain_ik );
   return chain;
 }
 

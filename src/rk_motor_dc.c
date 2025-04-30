@@ -69,12 +69,12 @@ static ZTKPrp __ztk_prp_rkmotor_dc[] = {
 
 static rkMotorSpec *_rkMotorSpecDCFromZTK(rkMotorSpec *ms, ZTK *ztk)
 {
-  return (rkMotorSpec *)ZTKEvalKey( ms, NULL, ztk, __ztk_prp_rkmotor_dc );
+  return (rkMotorSpec *)_ZTKEvalKey( ms, NULL, ztk, __ztk_prp_rkmotor_dc );
 }
 
 static void _rkMotorSpecDCFPrintZTK(FILE *fp, rkMotorSpec *ms)
 {
-  ZTKPrpKeyFPrint( fp, ms, __ztk_prp_rkmotor_dc );
+  _ZTKPrpKeyFPrint( fp, ms, __ztk_prp_rkmotor_dc );
 }
 
 #undef _rkp
