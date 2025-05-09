@@ -154,7 +154,7 @@ static bool _rkURDFEvalMaterial(xmlNode *node, rkURDFRobotInfo *robot_info)
   zNameSetPtr( &mc->data, zXMLFindNodeAttr( node, "name" ) );
   zXMLForEachNode( node->children, np ){
     zXMLCheckElementAndExec( np, "color", _rkURDFEvalColor( np, mc ) );
-    /* NOTE: texture unsupported. */
+    /* NOTE: texture unsupported yet. */
   }
   return true;
 }
@@ -217,7 +217,7 @@ static bool _rkURDFEvalShapeSphere(xmlNode *node, rkURDFShapeListCell *sc)
   return true;
 }
 
-static bool _rkURDFEvalShapeCylinder(xmlNode *node, rkURDFShapeListCell *sc)
+static bool _rkURDFEvalShapeCylinderCapsule(xmlNode *node, rkURDFShapeListCell *sc)
 {
   xmlAttr *attr;
 
@@ -248,7 +248,8 @@ static bool _rkURDFEvalShapeGeometry(xmlNode *node, rkURDFShapeListCell *sc)
   zXMLForEachNode( node, np ){
     zXMLCheckElementAndExec( np, "box",      _rkURDFEvalShapeBox( np, sc ) )      else
     zXMLCheckElementAndExec( np, "sphere",   _rkURDFEvalShapeSphere( np, sc ) )   else
-    zXMLCheckElementAndExec( np, "cylinder", _rkURDFEvalShapeCylinder( np, sc ) ) else
+    zXMLCheckElementAndExec( np, "cylinder", _rkURDFEvalShapeCylinderCapsule( np, sc ) ) else
+    zXMLCheckElementAndExec( np, "capsule",  _rkURDFEvalShapeCylinderCapsule( np, sc ) ) else
     zXMLCheckElementAndExec( np, "mesh",     _rkURDFEvalShapeMesh( np, sc ) );
   }
   return true;
@@ -328,9 +329,9 @@ static bool _rkURDFEvalLink(xmlNode *node, rkURDFRobotInfo *robot_info)
   zListInsertHead( &robot_info->link_list, lc );
   lc->data.name = zXMLFindNodeAttr( node, "name" );
   zXMLForEachNode( node->children, np ){
-    zXMLCheckElementAndExec( np, "inertial", _rkURDFEvalLinkMP( np, lc ) ) else
-    zXMLCheckElementAndExec( np, "visual",   _rkURDFEvalLinkVisual( np, robot_info, lc ) );
-    /* collision and contact are ignored. */
+    zXMLCheckElementAndExec( np, "inertial",  _rkURDFEvalLinkMP( np, lc ) ) else
+    zXMLCheckElementAndExec( np, "visual",    _rkURDFEvalLinkVisual( np, robot_info, lc ) );
+    /* collision nodes are ignored. */
   }
   return true;
 }
@@ -584,14 +585,14 @@ static bool _rkURDF2ZTKShapeBox(ZTK *ztk, rkURDFShapeListCell *sc)
 {
   double width, height, depth;
 
-  if( !ZTKAddKey( ztk, "type" ) ) return false;
-  if( !ZTKAddVal( ztk, "box" ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_TYPE ) ) return false;
+  if( !ZTKAddVal( ztk, zeo_shape3d_box_com.typestr ) ) return false;
   sscanf( sc->data.property1, "%lf %lf %lf", &depth, &width, &height );
-  if( !ZTKAddKey( ztk, "depth" ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_DEPTH ) ) return false;
   if( !ZTKAddDouble( ztk, depth ) ) return false;
-  if( !ZTKAddKey( ztk, "width" ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_WIDTH ) ) return false;
   if( !ZTKAddDouble( ztk, width ) ) return false;
-  if( !ZTKAddKey( ztk, "height" ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_HEIGHT ) ) return false;
   if( !ZTKAddDouble( ztk, height ) ) return false;
   return true;
 }
@@ -600,37 +601,49 @@ static bool _rkURDF2ZTKShapeSphere(ZTK *ztk, rkURDFShapeListCell *sc)
 {
   double radius;
 
-  if( !ZTKAddKey( ztk, "type" ) ) return false;
-  if( !ZTKAddVal( ztk, "sphere" ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_TYPE ) ) return false;
+  if( !ZTKAddVal( ztk, zeo_shape3d_sphere_com.typestr ) ) return false;
   sscanf( sc->data.property1, "%lf", &radius );
-  if( !ZTKAddKey( ztk, "radius" ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_RADIUS ) ) return false;
+  if( !ZTKAddDouble( ztk, radius ) ) return false;
+  return true;
+}
+
+static bool _rkURDF2ZTKShapeCylinderCapsuleBody(ZTK *ztk, rkURDFShapeListCell *sc)
+{
+  double radius, length;
+  zVec3D center;
+
+  sscanf( sc->data.property1, "%lf", &radius );
+  sscanf( sc->data.property2, "%lf", &length );
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_CENTER ) ) return false;
+  zVec3DCreate( &center, 0, 0, length/2 );
+  if( !zVec3DToZTK( &center, ztk ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_CENTER ) ) return false;
+  zVec3DCreate( &center, 0, 0,-length/2 );
+  if( !zVec3DToZTK( &center, ztk ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_RADIUS ) ) return false;
   if( !ZTKAddDouble( ztk, radius ) ) return false;
   return true;
 }
 
 static bool _rkURDF2ZTKShapeCylinder(ZTK *ztk, rkURDFShapeListCell *sc)
 {
-  double radius, length;
-  zVec3D center;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_TYPE ) ) return false;
+  if( !ZTKAddVal( ztk, zeo_shape3d_cyl_com.typestr ) ) return false;
+  return _rkURDF2ZTKShapeCylinderCapsuleBody( ztk, sc );
+}
 
-  if( !ZTKAddKey( ztk, "type" ) ) return false;
-  if( !ZTKAddVal( ztk, "cylinder" ) ) return false;
-  sscanf( sc->data.property1, "%lf", &radius );
-  sscanf( sc->data.property2, "%lf", &length );
-  if( !ZTKAddKey( ztk, "center" ) ) return false;
-  zVec3DCreate( &center, 0, 0, length/2 );
-  if( !zVec3DToZTK( &center, ztk ) ) return false;
-  if( !ZTKAddKey( ztk, "center" ) ) return false;
-  zVec3DCreate( &center, 0, 0,-length/2 );
-  if( !zVec3DToZTK( &center, ztk ) ) return false;
-  if( !ZTKAddKey( ztk, "radius" ) ) return false;
-  if( !ZTKAddDouble( ztk, radius ) ) return false;
-  return true;
+static bool _rkURDF2ZTKShapeCapsule(ZTK *ztk, rkURDFShapeListCell *sc)
+{
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_TYPE ) ) return false;
+  if( !ZTKAddVal( ztk, zeo_shape3d_capsule_com.typestr ) ) return false;
+  return _rkURDF2ZTKShapeCylinderCapsuleBody( ztk, sc );
 }
 
 static bool _rkURDF2ZTKShapeMesh(ZTK *ztk, rkURDFShapeListCell *sc)
 {
-  if( !ZTKAddKey( ztk, "import" ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_IMPORT ) ) return false;
   if( !ZTKAddVal( ztk, sc->data.property1 ) ) return false;
   if( sc->data.property2 ) /* scale */
     if( !ZTKAddVal( ztk, sc->data.property2 ) ) return false;
@@ -647,23 +660,24 @@ static bool _rkURDF2ZTKShape(ZTK *ztk, rkURDFShapeList *shape_list)
       continue;
     }
     if( !ZTKAddTag( ztk, ZTK_TAG_ZEO_SHAPE ) ) return false;
-    if( !ZTKAddKey( ztk, "name" ) ) return false;
+    if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_NAME ) ) return false;
     if( !ZTKAddVal( ztk, zName(&sc->data) ) ) return false;
     if( !zVec3DIsTiny( zFrame3DPos(&sc->data.fl) ) ){
-      if( !ZTKAddKey( ztk, "pos" ) ) return false;
+      if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_POS ) ) return false;
       if( !zVec3DToZTK( zFrame3DPos(&sc->data.fl), ztk ) ) return false;
     }
     if( !zMat3DIsIdent( zFrame3DAtt(&sc->data.fl) ) ){
-      if( !ZTKAddKey( ztk, "att" ) ) return false;
+      if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_ATT ) ) return false;
       if( !zMat3DToZTK( zFrame3DAtt(&sc->data.fl), ztk ) ) return false;
     }
     if( sc->data.material ){
-      if( !ZTKAddKey( ztk, "optic" ) ) return false;
+      if( !ZTKAddKey( ztk, ZTK_KEY_ZEO_SHAPE3D_OPTIC ) ) return false;
       if( !ZTKAddVal( ztk, sc->data.material ) ) return false;
     }
     if( strcmp( sc->data.type, "box" ) == 0 )      _rkURDF2ZTKShapeBox( ztk, sc );      else
     if( strcmp( sc->data.type, "sphere" ) == 0 )   _rkURDF2ZTKShapeSphere( ztk, sc );   else
     if( strcmp( sc->data.type, "cylinder" ) == 0 ) _rkURDF2ZTKShapeCylinder( ztk, sc ); else
+    if( strcmp( sc->data.type, "capsule" ) == 0 )  _rkURDF2ZTKShapeCapsule( ztk, sc );  else
     if( strcmp( sc->data.type, "mesh" ) == 0 )     _rkURDF2ZTKShapeMesh( ztk, sc );     else{
       ZRUNWARN( RK_WARN_URDF_UNKNOWN_SHAPETYPE, sc->data.type );
     }
@@ -677,49 +691,49 @@ static bool _rkURDF2ZTKJoint(ZTK *ztk, rkURDFJoint *joint)
 
   lower = upper = 0;
   if( joint->type ){
-    if( !ZTKAddKey( ztk, "jointtype" ) ) return false;
+    if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_JOINTTYPE ) ) return false;
     if( _rkURDFJointIsRevol( joint ) ){
-      if( !ZTKAddVal( ztk, "revolute" ) ) return false;
+      if( !ZTKAddVal( ztk, rk_joint_revol.typestr ) ) return false;
       if( joint->lower ) lower = zRad2Deg( atof( joint->lower ) );
       if( joint->upper ) upper = zRad2Deg( atof( joint->upper ) );
     } else
     if( _rkURDFJointIsPrism( joint ) ){
-      if( !ZTKAddVal( ztk, "prismatic" ) ) return false;
+      if( !ZTKAddVal( ztk, rk_joint_prism.typestr ) ) return false;
       if( joint->lower ) lower = atof( joint->lower );
       if( joint->upper ) upper = atof( joint->upper );
     } else
     if( _rkURDFJointIsFloat( joint ) ){
-      if( !ZTKAddVal( ztk, "float" ) ) return false;
+      if( !ZTKAddVal( ztk, rk_joint_float.typestr ) ) return false;
     } else
     if( _rkURDFJointIsFixed( joint ) ){
-      if( !ZTKAddVal( ztk, "fixed" ) ) return false;
+      if( !ZTKAddVal( ztk, rk_joint_fixed.typestr ) ) return false;
     } else{
       ZRUNERROR( RK_ERR_URDF_UNKNOWN_JOINTTYPE, joint->type );
       return false;
     }
   }
   if( joint->lower ){
-    if( !ZTKAddKey( ztk, "min" ) ) return false;
+    if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_JOINT_MIN ) ) return false;
     if( !ZTKAddDouble( ztk, lower ) ) return false;
   }
   if( joint->upper ){
-    if( !ZTKAddKey( ztk, "max" ) ) return false;
+    if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_JOINT_MAX ) ) return false;
     if( !ZTKAddDouble( ztk, upper ) ) return false;
   }
   if( joint->damping ){
-    if( !ZTKAddKey( ztk, "viscosity" ) ) return false;
+    if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_JOINT_VISCOSITY ) ) return false;
     if( !ZTKAddVal( ztk, joint->damping ) ) return false;
   }
   if( joint->friction ){
-    if( !ZTKAddKey( ztk, "coulomb" ) ) return false;
+    if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_JOINT_COULOMB ) ) return false;
     if( !ZTKAddVal( ztk, joint->friction ) ) return false;
   }
   if( !zVec3DIsTiny( zFrame3DPos(&joint->fl) ) ){
-    if( !ZTKAddKey( ztk, "pos" ) ) return false;
+    if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_POS ) ) return false;
     if( !zVec3DToZTK( zFrame3DPos(&joint->fl), ztk ) ) return false;
   }
   if( !zMat3DIsIdent( zFrame3DAtt(&joint->fl) ) ){
-    if( !ZTKAddKey( ztk, "att" ) ) return false;
+    if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_ATT ) ) return false;
     if( !zMat3DToZTK( zFrame3DAtt(&joint->fl), ztk ) ) return false;
   }
   return true;
@@ -733,29 +747,29 @@ static bool _rkURDF2ZTKLink(ZTK *ztk, rkURDFLinkList *link_list)
   zListForEach( link_list, lc ){
     if( !ZTKAddTag( ztk, ZTK_TAG_ROKI_LINK ) ) return false;
     if( lc->data.name ){
-      if( !ZTKAddKey( ztk, "name" ) ) return false;
+      if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_NAME ) ) return false;
       if( !ZTKAddVal( ztk, zName(&lc->data) ) ) return false;
     }
     if( lc->data.joint )
       _rkURDF2ZTKJoint( ztk, lc->data.joint );
     if( lc->data.mp.mass != 0 ){
-      if( !ZTKAddKey( ztk, "mass" ) ) return false;
+      if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_MASS ) ) return false;
       if( !ZTKAddDouble( ztk, lc->data.mp.mass ) ) return false;
       if( !zVec3DIsTiny( &lc->data.mp.com ) ){
-        if( !ZTKAddKey( ztk, "COM" ) ) return false;
+        if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_COM ) ) return false;
         if( !zVec3DToZTK( &lc->data.mp.com, ztk ) ) return false;
       }
       if( !zMat3DIsTiny( &lc->data.mp.inertia ) ){
-        if( !ZTKAddKey( ztk, "inertia" ) ) return false;
+        if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_INERTIA ) ) return false;
         if( !zMat3DToZTK( &lc->data.mp.inertia, ztk ) ) return false;
       }
     }
     zListForEach( &lc->data.shape_p_list, spc ){
-      if( !ZTKAddKey( ztk, "shape" ) ) return false;
+      if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_SHAPE ) ) return false;
       if( !ZTKAddVal( ztk, spc->data->name ) ) return false;
     }
     if( lc->data.joint && lc->data.joint->parent ){
-      if( !ZTKAddKey( ztk, "parent" ) ) return false;
+      if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_LINK_PARENT ) ) return false;
       if( !ZTKAddVal( ztk, lc->data.joint->parent->name ) ) return false;
     }
   }
@@ -765,7 +779,7 @@ static bool _rkURDF2ZTKLink(ZTK *ztk, rkURDFLinkList *link_list)
 static bool _rkURDF2ZTK(ZTK *ztk, rkURDFRobotInfo *robot_info)
 {
   if( !ZTKAddTag( ztk, ZTK_TAG_ROKI_CHAIN ) ) return false;
-  if( !ZTKAddKey( ztk, "name" ) ) return false;
+  if( !ZTKAddKey( ztk, ZTK_KEY_ROKI_CHAIN_NAME ) ) return false;
   if( !ZTKAddVal( ztk, robot_info->name ) ) return false;
 
   if( !zListIsEmpty( &robot_info->material_list ) )
@@ -778,225 +792,56 @@ static bool _rkURDF2ZTK(ZTK *ztk, rkURDFRobotInfo *robot_info)
 }
 
 /* read a URDF file and create an instance of rkChain. */
-rkChain *rkChainReadURDF(rkChain *chain, const char *filename)
+static bool _rkURDFReadZTK(ZTK *ztk, const char *filename)
 {
   xmlDoc *doc;
   rkURDFRobotInfo robot_info;
-  ZTK ztk;
+  bool retval = false;
 
+  ZTKInit( ztk );
   zXMLInit();
   if( !( doc = xmlReadFile( filename, NULL, XML_PARSE_RECOVER | XML_PARSE_COMPACT ) ) ){
     ZOPENERROR( filename );
-    return NULL;
-  }
-  _rkURDFRobotInfoInit( &robot_info );
-  if( !_rkURDFEval( xmlDocGetRootElement( doc ), &robot_info ) ){
-    ZRUNERROR( RK_ERR_URDF_INVALID );
-    chain = NULL;
-  } else{
-    _rkURDFCorrectFrame( &robot_info );
-    ZTKInit( &ztk );
-    if( _rkURDF2ZTK( &ztk, &robot_info ) )
-      chain = rkChainFromZTK( chain, &ztk );
-    ZTKDestroy( &ztk );
-  }
-  _rkURDFRobotInfoDestroy( &robot_info );
-  xmlFreeDoc( doc );
-  xmlCleanupParser();
-  return chain;
-}
-
-/* direct output to a ZTK file */
-
-static void _rkURDFOutputMaterialZTK(FILE *fp, zOpticalInfoList *material_list)
-{
-  zOpticalInfoListCell *mc;
-
-  zListForEach( material_list, mc ){
-    fprintf( fp, "[%s]\n", ZTK_TAG_ZEO_OPTIC );
-    zOpticalInfoFPrintZTK( fp, &mc->data );
-  }
-}
-
-static void _rkURDFOutputShapeBoxZTK(FILE *fp, rkURDFShapeListCell *sc)
-{
-  double width, height, depth;
-
-  fprintf( fp, "type: box\n" );
-  sscanf( sc->data.property1, "%lf %lf %lf", &depth, &width, &height );
-  fprintf( fp, "depth: %.10g\n", depth );
-  fprintf( fp, "width: %.10g\n", width );
-  fprintf( fp, "height: %.10g\n", height );
-}
-
-static void _rkURDFOutputShapeSphereZTK(FILE *fp, rkURDFShapeListCell *sc)
-{
-  double radius;
-
-  fprintf( fp, "type: sphere\n" );
-  sscanf( sc->data.property1, "%lf", &radius );
-  fprintf( fp, "radius: %.10g\n", radius );
-}
-
-static void _rkURDFOutputShapeCylinderZTK(FILE *fp, rkURDFShapeListCell *sc)
-{
-  double radius, length;
-
-  fprintf( fp, "type: cylinder\n" );
-  sscanf( sc->data.property1, "%lf", &radius );
-  sscanf( sc->data.property2, "%lf", &length );
-  fprintf( fp, "center: ( 0, 0, %.10g )\n", length/2 );
-  fprintf( fp, "center: ( 0, 0,-%.10g )\n", length/2 );
-  fprintf( fp, "radius: %.10g\n", radius );
-}
-
-static void _rkURDFOutputShapeMeshZTK(FILE *fp, rkURDFShapeListCell *sc)
-{
-  fprintf( fp, "import: %s", sc->data.property1 );
-  if( sc->data.property2 ) /* scale */
-    fprintf( fp, " %s", sc->data.property2 );
-  fprintf( fp, "\n" );
-}
-
-static void _rkURDFOutputShapeZTK(FILE *fp, rkURDFShapeList *shape_list)
-{
-  rkURDFShapeListCell *sc;
-
-  zListForEach( shape_list, sc ){
-    if( !sc->data.type ){
-      ZRUNWARN( RK_WARN_URDF_UNNAMED_SHAPE );
-      continue;
-    }
-    fprintf( fp, "[%s]\n", ZTK_TAG_ZEO_SHAPE );
-    fprintf( fp, "name: %s\n", sc->data.name );
-    if( !zVec3DIsTiny( zFrame3DPos(&sc->data.fl) ) ){
-      fprintf( fp, "pos: " );
-      zVec3DFPrint( fp, zFrame3DPos(&sc->data.fl) );
-    }
-    if( !zMat3DIsIdent( zFrame3DAtt(&sc->data.fl) ) ){
-      fprintf( fp, "att: " );
-      zMat3DFPrint( fp, zFrame3DAtt(&sc->data.fl) );
-    }
-    if( sc->data.material ) fprintf( fp, "optic: %s\n", sc->data.material );
-    if( strcmp( sc->data.type, "box" ) == 0 )      _rkURDFOutputShapeBoxZTK( fp, sc );      else
-    if( strcmp( sc->data.type, "sphere" ) == 0 )   _rkURDFOutputShapeSphereZTK( fp, sc );   else
-    if( strcmp( sc->data.type, "cylinder" ) == 0 ) _rkURDFOutputShapeCylinderZTK( fp, sc ); else
-    if( strcmp( sc->data.type, "mesh" ) == 0 )     _rkURDFOutputShapeMeshZTK( fp, sc );     else{
-      ZRUNWARN( RK_WARN_URDF_UNKNOWN_SHAPETYPE, sc->data.type );
-    }
-    fprintf( fp, "\n" );
-  }
-}
-
-static void _rkURDFOutputJointZTK(FILE *fp, rkURDFJoint *joint)
-{
-  double lower, upper;
-
-  lower = upper = 0;
-  if( joint->type ){
-    if( _rkURDFJointIsRevol( joint ) ){
-      fprintf( fp, "jointtype: revolute\n" );
-      if( joint->lower ) lower = zRad2Deg( atof( joint->lower ) );
-      if( joint->upper ) upper = zRad2Deg( atof( joint->upper ) );
-    } else
-    if( _rkURDFJointIsPrism( joint ) ){
-      fprintf( fp, "jointtype: prismatic\n" );
-      if( joint->lower ) lower = atof( joint->lower );
-      if( joint->upper ) upper = atof( joint->upper );
-    } else
-    if( _rkURDFJointIsFloat( joint ) ){
-      fprintf( fp, "jointtype: float\n" );
-    } else
-    if( _rkURDFJointIsFixed( joint ) ){
-      fprintf( fp, "jointtype: fixed\n" );
-    } else{
-      ZRUNERROR( RK_ERR_URDF_UNKNOWN_JOINTTYPE, joint->type );
-      return;
-    }
-  }
-  if( joint->lower )    fprintf( fp, "min: %.10g\n",    lower );
-  if( joint->upper )    fprintf( fp, "max: %.10g\n",    upper );
-  if( joint->damping )  fprintf( fp, "viscosity: %s\n", joint->damping );
-  if( joint->friction ) fprintf( fp, "coulomb: %s\n",   joint->friction );
-  if( !zVec3DIsTiny( zFrame3DPos(&joint->fl) ) ){
-    fprintf( fp, "pos: " );
-    zVec3DFPrint( fp, zFrame3DPos(&joint->fl) );
-  }
-  if( !zMat3DIsIdent( zFrame3DAtt(&joint->fl) ) ){
-    fprintf( fp, "att: " );
-    zMat3DFPrint( fp, zFrame3DAtt(&joint->fl) );
-  }
-}
-
-static void _rkURDFOutputLinkZTK(FILE *fp, rkURDFLinkList *link_list)
-{
-  rkURDFLinkListCell *lc;
-  rkURDFShapePListCell *spc;
-
-  zListForEach( link_list, lc ){
-    fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_LINK );
-    if( lc->data.name ) fprintf( fp, "name: %s\n", lc->data.name );
-    if( lc->data.joint )
-      _rkURDFOutputJointZTK( fp, lc->data.joint );
-    if( lc->data.mp.mass != 0 ){
-      fprintf( fp, "mass: %.10g\n", lc->data.mp.mass );
-      if( !zVec3DIsTiny( &lc->data.mp.com ) ){
-        fprintf( fp, "COM: " );
-        zVec3DFPrint( fp, &lc->data.mp.com );
-      }
-      fprintf( fp, "inertia: " );
-      zMat3DFPrint( fp, &lc->data.mp.inertia );
-    }
-    zListForEach( &lc->data.shape_p_list, spc ){
-      fprintf( fp, "shape: %s\n", spc->data->name );
-    }
-    if( lc->data.joint && lc->data.joint->parent )
-      fprintf( fp, "parent: %s\n", lc->data.joint->parent->name );
-    fprintf( fp, "\n" );
-  }
-}
-
-static void _rkURDFOutputZTK(FILE *fp, rkURDFRobotInfo *robot_info)
-{
-  fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_CHAIN );
-  fprintf( fp, "name: %s\n\n", robot_info->name );
-  if( !zListIsEmpty( &robot_info->material_list ) )
-    _rkURDFOutputMaterialZTK( fp, &robot_info->material_list );
-  if( !zListIsEmpty( &robot_info->shape_list ) )
-    _rkURDFOutputShapeZTK( fp, &robot_info->shape_list );
-  if( !zListIsEmpty( &robot_info->link_list ) )
-    _rkURDFOutputLinkZTK( fp, &robot_info->link_list );
-}
-
-/* directly convert a URDF file to a ZTK file. */
-bool rkURDF2ZTK(const char *inputfilename, const char *outputfilename)
-{
-  xmlDoc *doc;
-  rkURDFRobotInfo robot_info;
-  FILE *fp;
-  bool ret = true;
-
-  zXMLInit();
-  if( !( doc = xmlReadFile( inputfilename, NULL, XML_PARSE_RECOVER | XML_PARSE_COMPACT ) ) ){
-    ZOPENERROR( inputfilename );
     return false;
   }
   _rkURDFRobotInfoInit( &robot_info );
   if( !_rkURDFEval( xmlDocGetRootElement( doc ), &robot_info ) ){
     ZRUNERROR( RK_ERR_URDF_INVALID );
-    ret = false;
   } else{
     _rkURDFCorrectFrame( &robot_info );
-    if( !( fp = fopen( outputfilename, "w" ) ) ){
-      ZOPENERROR( outputfilename );
-      ret = false;
-    } else{
-      _rkURDFOutputZTK( fp, &robot_info );
-      fclose( fp );
-    }
+    if( _rkURDF2ZTK( ztk, &robot_info ) ) retval = true;
   }
   _rkURDFRobotInfoDestroy( &robot_info );
   xmlFreeDoc( doc );
   xmlCleanupParser();
-  return ret;
+  return retval;
+}
+
+/* read a URDF file and create an instance of rkChain. */
+rkChain *rkChainReadURDF(rkChain *chain, const char *filename)
+{
+  ZTK ztk;
+
+  if( _rkURDFReadZTK( &ztk, filename ) )
+    chain = rkChainFromZTK( chain, &ztk );
+  ZTKDestroy( &ztk );
+  return chain;
+}
+
+/* directly convert a URDF file to a ZTK file. */
+bool rkURDFWriteZTK(const char *inputfilename, const char *outputfilename)
+{
+  FILE *fp;
+  ZTK ztk;
+
+  if( !( fp = fopen( outputfilename, "w" ) ) ){
+    ZOPENERROR( outputfilename );
+    return false;
+  }
+  ZTKInit( &ztk );
+  if( _rkURDFReadZTK( &ztk, inputfilename ) )
+    ZTKFPrint( fp, &ztk );
+  ZTKDestroy( &ztk );
+  fclose( fp );
+  return true;
 }

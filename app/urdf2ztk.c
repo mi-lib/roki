@@ -8,10 +8,10 @@ void urdf2ztk_usage(char *argv)
 
 int main(int argc, char *argv[])
 {
-  char filename[BUFSIZ];
+  char outputfilename[BUFSIZ];
 
   if( argc < 2 ) urdf2ztk_usage( argv[0] );
-  zReplaceSuffix( argv[1], "ztk", filename, BUFSIZ );
-  rkURDF2ZTK( argv[1], filename );
+  zReplaceSuffix( argv[1], ZEDA_ZTK_SUFFIX, outputfilename, BUFSIZ );
+  rkURDFWriteZTK( argv[1], outputfilename );
   return EXIT_SUCCESS;
 }

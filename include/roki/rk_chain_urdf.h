@@ -17,7 +17,7 @@ __BEGIN_DECLS
 __ROKI_EXPORT rkChain *rkChainReadURDF(rkChain *chain, const char *filename);
 
 /*! \brief directly convert a URDF file to a ZTK file. */
-__ROKI_EXPORT bool rkURDF2ZTK(const char *inputfilename, const char *outputfilename);
+__ROKI_EXPORT bool rkURDFWriteZTK(const char *inputfilename, const char *outputfilename);
 
 __END_DECLS
 
