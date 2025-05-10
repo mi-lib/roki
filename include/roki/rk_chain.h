@@ -64,7 +64,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   void init();
   void destroy();
   rkChain *clone(rkChain *dest);
+  rkChain *clone(rkChain &dest){ return this->clone( &dest ); }
   rkChain *copyState(rkChain *dest);
+  rkChain *copyState(rkChain &dest){ return this->copyState( &dest ); }
   int jointSize();
   zIndex createDefaultJointIndex();
   int jointIndexSize(zIndex idx);
@@ -986,6 +988,7 @@ inline bool rkChain::unregisterInverseKinematicsJointID(int id){ return rkChainU
 inline bool rkChain::registerInverseKinematicsJoint(const char *name, double weight){ return rkChainRegisterIKJoint( this, name, weight ); }
 inline bool rkChain::unregisterInverseKinematicsJoint(const char *name){ return rkChainUnregisterIKJoint( this, name ); }
 inline bool rkChain::registerInverseKinematicsJointAll(double weight){ return rkChainRegisterIKJointAll( this, weight ); }
+
 inline rkIKCell *rkChain::registerInverseKinematicsCell(const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegisterIKCell( this, name, priority, attr, mask, constraint, util ); }
 inline rkIKCell *rkChain::registerInverseKinematicsCell(int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegisterIKCell( this, NULL, priority, attr, mask, constraint, util ); }
 inline rkIKCell *rkChain::registerInverseKinematicsCell(rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util){ return rkChainRegisterIKCell( this, NULL, 0, attr, mask, constraint, util ); }

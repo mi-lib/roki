@@ -1,3 +1,4 @@
+2025.05.09. Added overloads of methods clone and copyState of rkChain that accept the original instance of rkChain as references. [rk_chain]
 2025.05.09. Added _rkURDFReadZTK, and reimplemented rkChainReadURDF and rkURDFWriteZTK. [rk_chain_urdf, app]
 2025.05.09. Renamed rkURDF2ZTK to rkURDFWriteZTK. [rk_chain_urdf]
 2025.05.09. Abolished _rkURDFOutputMaterialZTK, _rkURDFOutputShapeBoxZTK, _rkURDFOutputShapeSphereZTK, _rkURDFOutputShapeCylinderZTK, _rkURDFOutputShapeCapsuleZTK, _rkURDFOutputShapeMeshZTK, _rkURDFOutputShapeZTK, _rkURDFOutputJointZTK, _rkURDFOutputLinkZTK, and _rkURDFOutputZTK. [rk_chain_urdf]
