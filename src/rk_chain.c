@@ -907,7 +907,7 @@ zVec3DData *rkChainVertData(rkChain *chain, zVec3DData *data)
       if( sc->data->com == &zeo_shape3d_ph_com ){
         for( j=0; j<zShape3DVertNum(sc->data); j++ ){
           zXform3D( rkLinkWldFrame(l), zShape3DVert(sc->data,j), &v );
-          if( !zVec3DDataAdd( data, &v ) ) goto ERROR;
+          if( !zVec3DDataAdd( data, &v ) ) goto RKCHAIN_VERT_DATA_ERROR;
         }
       } else{
         zShape3DClone( sc->data, &s, NULL );
@@ -918,13 +918,13 @@ zVec3DData *rkChainVertData(rkChain *chain, zVec3DData *data)
           if( !zVec3DDataAdd( data, zShape3DVert(&s,j) ) ) result = false;
         }
         zShape3DDestroy( &s );
-        if( !result ) goto ERROR;
+        if( !result ) goto RKCHAIN_VERT_DATA_ERROR;
       }
     }
   }
   return data;
 
- ERROR:
+ RKCHAIN_VERT_DATA_ERROR:
   zVec3DDataDestroy( data );
   return NULL;
 }
