@@ -20,7 +20,7 @@ void check_test(rkChain *pend, zVec dis, zVec vel, zVec acc)
 {
   rkLink *link;
   rkJoint *joint;
-  register int i;
+  int i;
   int num;
   Test *test;
   zVec3D grav, tmp;

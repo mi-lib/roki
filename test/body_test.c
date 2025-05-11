@@ -11,7 +11,7 @@ zArrayClass( point_array_t, point_t );
 
 void create_point_rand(point_array_t *pa, int n)
 {
-  register int i;
+  int i;
 
   zArrayAlloc( pa, point_t, n );
   for( i=0; i<n; i++ ){
@@ -22,7 +22,7 @@ void create_point_rand(point_array_t *pa, int n)
 
 void create_mp(point_array_t *pa, rkMP mp[])
 {
-  register int i;
+  int i;
   rkMP *mpp;
   zVec3D r;
 

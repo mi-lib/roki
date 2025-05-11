@@ -39,7 +39,7 @@ void assert_limit_dis(void)
   rkJoint joint;
   double dmin, dmax;
   double din, dout;
-  register int i;
+  int i;
   bool result = true;
 
   rkJointAssign( &joint, &rk_joint_revol );
@@ -59,7 +59,7 @@ void assert_joint_neutral(void)
 {
   rkJoint joint;
   double dis[6];
-  register int i, j;
+  int i, j;
   bool result = true;
 
   for( i=0; rk_joint_com[i]; i++ ){
@@ -87,7 +87,7 @@ void assert_spher_cat(void)
 {
   rkJoint j;
   zVec3D aa, v, a, aao, vo, ao, err;
-  register int i;
+  int i;
   bool result = true;
 
   rkJointAssign( &j, &rk_joint_spher );
@@ -131,7 +131,7 @@ void assert_float_cat(void)
 {
   rkJoint j;
   zVec6D d, v, a, dn, vn, an, err;
-  register int i;
+  int i;
   bool result = true;
 
   rkJointAssign( &j, &rk_joint_float );
@@ -225,7 +225,7 @@ void assert_joint_torsion(void)
   zFrame3D f;
   double dis[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   int type;
-  register int i;
+  int i;
   bool result = true;
 
   for( type=0; rk_joint_com[type]; type++ ){

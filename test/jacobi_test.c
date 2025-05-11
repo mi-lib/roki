@@ -21,7 +21,7 @@ void link_mp_rand(rkLink *l)
 
 void chain_init(rkChain *chain)
 {
-  register int i;
+  int i;
   char name[BUFSIZ];
   zVec3D aa;
 

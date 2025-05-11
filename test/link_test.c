@@ -23,7 +23,7 @@ void assert_link_shape(void)
 {
   rkLink l;
   zShape3D *s;
-  register int i;
+  int i;
   rkMP mp1, mp2;
   double v;
   zMat3D inertia;

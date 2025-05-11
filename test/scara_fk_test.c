@@ -43,7 +43,7 @@ bool check_one(rkLink l[])
 
 bool check(rkLink l[], int n)
 {
-  register int i;
+  int i;
 
   for( i=0; i<n; i++ ){
     if( !check_one( l ) ) return false;
