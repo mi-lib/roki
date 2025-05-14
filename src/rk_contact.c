@@ -213,7 +213,7 @@ bool rkContactInfoArrayWriteZTK(rkContactInfoArray *carray, const char filename[
 {
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( filename, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( filename, "wb" ) ) ) return false;
   rkContactInfoArrayFPrintZTK( fp, carray );
   return true;
 }

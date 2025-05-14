@@ -1143,7 +1143,7 @@ bool rkChainWriteZTK(rkChain *c, const char *filename)
 {
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( filename, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( filename, "wb" ) ) ) return false;
   rkChainFPrintZTK( fp, c );
   fclose(fp);
   return true;
@@ -1204,7 +1204,7 @@ bool rkChainInitWriteZTK(rkChain *chain, const char *filename)
 {
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( (char *)filename, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( (char *)filename, "wb" ) ) ) return false;
   rkChainInitFPrintZTK( fp, chain );
   fclose( fp );
   return true;

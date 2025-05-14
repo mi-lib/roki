@@ -3,10 +3,11 @@
 
 #ifndef __WINDOWS__
 #include <unistd.h>
+#endif
 void assert_chain_clone(void)
 {
-#define FILE_ORG "org.ztk"
-#define FILE_CLN "cln.ztk"
+  const char *file_org = "org.ztk";
+  const char *file_cln = "cln.ztk";
   rkChain chain_org, chain_cln;
   long ret;
 
@@ -14,16 +15,20 @@ void assert_chain_clone(void)
   rkChainClone( &chain_org, &chain_cln );
   zNameFree( &chain_cln );
   zNameSet( &chain_cln, zNamePtr(&chain_org) );
-  rkChainWriteZTK( &chain_org, FILE_ORG );
-  rkChainWriteZTK( &chain_cln, FILE_CLN );
-  ret = zFileCompare( FILE_ORG, FILE_CLN );
+  rkChainWriteZTK( &chain_org, file_org );
+  rkChainWriteZTK( &chain_cln, file_cln );
+  ret = zFileCompare( file_org, file_cln );
   rkChainDestroy( &chain_org );
   rkChainDestroy( &chain_cln );
   zAssert( rkChainClone, ret == 0 );
-  unlink( FILE_ORG );
-  unlink( FILE_CLN );
-}
+#ifndef __WINDOWS__
+  unlink( file_org );
+  unlink( file_cln );
+#else
+  _unlink( file_org );
+  _unlink( file_cln );
 #endif
+}
 
 void assert_chain_clone_irregular(void)
 {

@@ -259,6 +259,7 @@ static rkIKCell *_rkIKRegisterCell(rkIK *ik, const char *name, int priority, rkI
 
 static bool _rkIKUnregisterCell(rkIK *ik, rkIKCell *cell)
 {
+  if( !cell ) return false;
   zListPurge( &ik->cell_list, cell );
   return _rkIKAllocCVec( ik );
 }
@@ -268,8 +269,10 @@ static bool _rkIKUnregisterAndDestroyCell(rkIK *ik, rkIKCell *cell)
   bool result;
 
   result = _rkIKUnregisterCell( ik, cell );
-  rkIKCellDestroy( cell );
-  zFree( cell );
+  if( cell ){
+    rkIKCellDestroy( cell );
+    zFree( cell );
+  }
   return result;
 }
 
@@ -722,7 +725,7 @@ bool rkChainIKConfWriteZTK(rkChain *chain, const char *filename)
 {
   FILE *fp;
 
-  if( !( fp = zOpenZTKFile( filename, "w" ) ) ) return false;
+  if( !( fp = zOpenZTKFile( filename, "wb" ) ) ) return false;
   rkChainIKConfFPrintZTK( fp, chain );
   fclose( fp );
   return true;
