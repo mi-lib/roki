@@ -460,9 +460,7 @@ void assert_fd_id_abi(void)
 int main(int argc, char *argv[])
 {
   zRandInit();
-#ifndef __WINDOWS__
   assert_chain_clone();
-#endif
   assert_chain_clone_irregular();
   assert_chain_copy_state();
   assert_chain_getsetconf();
