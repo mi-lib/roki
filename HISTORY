@@ -1,3 +1,5 @@
+2025.05.15. Modified rkContactInfoArrayWriteZTK, rkChainWriteZTK, and rkChainIKConfWriteZTK to open files in binary modes. [rk_contact, rk_chain, rk_ik]
+2025.05.15. Modified _rkIKUnregisterCell and _rkIKUnregisterAndDestroyCell to return the false value if the null pointer is assigned for cell. [rk_ik]
 2025.05.11. Removed register qualifiers from test codes. [test]
 2025.05.11. Modified rkChainVertData to rename an ERROR label. [rk_chain]
 2025.05.09. Added overloads of methods clone and copyState of rkChain that accept the original instance of rkChain as references. [rk_chain]
