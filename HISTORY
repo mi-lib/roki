@@ -1,3 +1,6 @@
+2025.05.20. Added rkLinkMPMerge and rkChainMPCombine. [rk_link, rk_chain]
+2025.05.20. Added const qualifiers to arguments of functions in rk_body. [rk_body]
+2025.05.20. Modified rkMPCombine to enable to overwrite given mass properties, and added rkMPMerge. [rk_body]
 2025.05.15. Modified rkContactInfoArrayWriteZTK, rkChainWriteZTK, and rkChainIKConfWriteZTK to open files in binary modes. [rk_contact, rk_chain, rk_ik]
 2025.05.15. Modified _rkIKUnregisterCell and _rkIKUnregisterAndDestroyCell to return the false value if the null pointer is assigned for cell. [rk_ik]
 2025.05.11. Removed register qualifiers from test codes. [test]

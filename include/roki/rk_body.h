@@ -76,20 +76,36 @@ __ROKI_EXPORT rkMP *rkMPgmm2kgm(rkMP *mp);
  *
  * \return \a dest
  */
-__ROKI_EXPORT rkMP *rkMPXform(rkMP *src, zFrame3D *f, rkMP *dest);
-__ROKI_EXPORT rkMP *rkMPXformInv(rkMP *src, zFrame3D *f, rkMP *dest);
+__ROKI_EXPORT rkMP *rkMPXform(const rkMP *src, const zFrame3D *f, rkMP *dest);
+__ROKI_EXPORT rkMP *rkMPXformInv(const rkMP *src, const zFrame3D *f, rkMP *dest);
 
 /*! \brief combine two mass property sets in the same frame.
+ *
+ * rkMPCombine() combines two sets of mass properties \a mp1 and \a mp2 into \a mp.
+ * \return
+ * rkMPCombine() returns the pointer \a mp.
+ * \sa
+ * rkMPMerge
  */
-__ROKI_EXPORT rkMP *rkMPCombine(rkMP *mp1, rkMP *mp2, rkMP *mp);
+__ROKI_EXPORT rkMP *rkMPCombine(const rkMP *mp1, const rkMP *mp2, rkMP *mp);
+
+/*! \brief merge mass property sets to another.
+ *
+ * rkMPMerge() merges a set of mass properties \a mp_sub into \a mp.
+ * \return
+ * rkMPMerge() returns the pointer \a mp.
+ * \sa
+ * rkMPCombine
+ */
+__ROKI_EXPORT rkMP *rkMPMerge(rkMP *mp, const rkMP *mp_sub);
 
 /* \brief convert inertia tensor to that about the origin.
  */
-__ROKI_EXPORT zMat3D *rkMPOrgInertia(rkMP *mp, zMat3D *i);
+__ROKI_EXPORT zMat3D *rkMPOrgInertia(const rkMP *mp, zMat3D *i);
 
 /* \brief compute the inertial ellipsoid from a mass property set.
  */
-__ROKI_EXPORT zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie);
+__ROKI_EXPORT zEllips3D *rkMPInertiaEllips(const rkMP *mp, zEllips3D *ie);
 
 /*! \brief print mass property.
  *
@@ -109,7 +125,7 @@ __ROKI_EXPORT zEllips3D *rkMPInertiaEllips(rkMP *mp, zEllips3D *ie);
  * \return
  * rkMPFPrint() and rkMPPrint() return no value.
  */
-__ROKI_EXPORT void rkMPFPrint(FILE *fp, rkMP *mp);
+__ROKI_EXPORT void rkMPFPrint(FILE *fp, const rkMP *mp);
 #define rkMPPrint(mp) rkMPFPrint( stdout, mp )
 
 __END_DECLS
@@ -221,7 +237,7 @@ __ROKI_EXPORT void rkBodyDestroy(rkBody *body);
  * of \a sc is supposed to be attached with \a cln.
  * \return cln
  */
-__ROKI_EXPORT rkBody *rkBodyClone(rkBody *org, rkBody *cln, zMShape3D *so, zMShape3D *sc);
+__ROKI_EXPORT rkBody *rkBodyClone(const rkBody *org, rkBody *cln, const zMShape3D *so, const zMShape3D *sc);
 
 /*! \brief zero velocity and acceleration of a body.
  *
@@ -237,7 +253,7 @@ __ROKI_EXPORT void rkBodyZeroRate(rkBody *body);
  * frame, velocity, acceleration, and the position, velocity and acceleration of the center of mass.
  * \retval dest
  */
-__ROKI_EXPORT rkBody *rkBodyCopyState(rkBody *src, rkBody *dest);
+__ROKI_EXPORT rkBody *rkBodyCopyState(const rkBody *src, rkBody *dest);
 
 /*! \brief combine two bodies.
  *
@@ -245,7 +261,7 @@ __ROKI_EXPORT rkBody *rkBodyCopyState(rkBody *src, rkBody *dest);
  * which is denoted in a frame \a frame.
  * \retval body
  */
-__ROKI_EXPORT rkBody *rkBodyCombine(rkBody *body1, rkBody *body2, zFrame3D *frame, rkBody *body);
+__ROKI_EXPORT rkBody *rkBodyCombine(const rkBody *body1, const rkBody *body2, const zFrame3D *frame, rkBody *body);
 
 /*! \brief combine a body directly to another.
  *
@@ -253,7 +269,7 @@ __ROKI_EXPORT rkBody *rkBodyCombine(rkBody *body1, rkBody *body2, zFrame3D *fram
  * directly to another \a b.
  * \retval body
  */
-__ROKI_EXPORT rkBody *rkBodyCombineDRC(rkBody *body, rkBody *subbody);
+__ROKI_EXPORT rkBody *rkBodyCombineDRC(rkBody *body, const rkBody *subbody);
 
 /* \brief compute the inertial ellipsoid from a rigid body.
  */
@@ -300,8 +316,8 @@ __ROKI_EXPORT void rkBodyUpdateCOMRate(rkBody *body);
 #define rkBodySetExtWrench(body,wrench) zVec6DCopy( wrench, rkBodyExtWrench(body) )
 #define rkBodyAddExtWrench(body,wrench) zVec6DAddDRC( rkBodyExtWrench(body), wrench )
 #define rkBodyZeroExtWrench(body)       rkBodySetExtWrench( body, ZVEC6DZERO )
-__ZEO_EXPORT zVec6D *rkBodySetExtForce(rkBody *body, zVec3D *force, zVec3D *pos);
-__ZEO_EXPORT zVec6D *rkBodyAddExtForce(rkBody *body, zVec3D *force, zVec3D *pos);
+__ZEO_EXPORT zVec6D *rkBodySetExtForce(rkBody *body, const zVec3D *force, const zVec3D *pos);
+__ZEO_EXPORT zVec6D *rkBodyAddExtForce(rkBody *body, const zVec3D *force, const zVec3D *pos);
 
 /*! \brief inertial wrench of a body.
  *
@@ -312,7 +328,7 @@ __ZEO_EXPORT zVec6D *rkBodyAddExtForce(rkBody *body, zVec3D *force, zVec3D *pos)
  * \return
  * rkBodyInertialWrench() returns a pointer \a wrench.
  */
-__ROKI_EXPORT zVec6D *rkBodyInertialWrench(rkBody *body, zVec6D *wrench);
+__ROKI_EXPORT zVec6D *rkBodyInertialWrench(const rkBody *body, zVec6D *wrench);
 
 /*! \brief linear and angular momentum and kinematic energy of body.
  *
@@ -355,14 +371,13 @@ __ROKI_EXPORT double rkBodyKineticEnergy(const rkBody *body);
 #define rkBodyShapePop(body)        zShapeListPop( rkBodyShapeList(body) )
 #define rkBodyShapeDestroy(body)    zShapeListDestroy( rkBodyShapeList(body) )
 
-/*! \brief contiguous vertex of a body to a point.
- */
-__ROKI_EXPORT zVec3D *rkBodyContigVert(rkBody *body, zVec3D *p, double *d);
+/*! \brief contiguous vertex of a body to a point. */
+__ROKI_EXPORT zVec3D *rkBodyContigVert(const rkBody *body, const zVec3D *p, double *d);
 
 /*! \brief compute volume of a body. */
-__ROKI_EXPORT double rkBodyShapeVolume(rkBody *body);
+__ROKI_EXPORT double rkBodyShapeVolume(const rkBody *body);
 /*! \brief compute mass property of a body. */
-__ROKI_EXPORT rkMP *rkBodyShapeMP(rkBody *body, double density, rkMP *mp);
+__ROKI_EXPORT rkMP *rkBodyShapeMP(const rkBody *body, double density, rkMP *mp);
 
 __END_DECLS
 

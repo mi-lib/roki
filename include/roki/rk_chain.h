@@ -706,6 +706,16 @@ __ROKI_EXPORT zVec3D *rkChainLinearMomentumRecursive(const rkChain *chain, zVec3
 __ROKI_EXPORT zVec3D *rkChainAngularMomentumRecursive(const rkChain *chain, const zVec3D *pos, zVec3D *am);
 __ROKI_EXPORT double rkChainKineticEnergy(const rkChain *chain);
 
+/*! \brief combine mass properties of a kinematic chain.
+ *
+ * rkChainCombineMP() combines mass properties of all links of a kinemtic chain \a chain into \a mp.
+ * \return
+ * rkChainCombineMP() returns the pointer \a mp.
+ * \sa
+ * rkLinkMergeMP
+ */
+__ROKI_EXPORT rkMP *rkChainCombineMP(const rkChain *chain, rkMP *mp);
+
 /*! \brief inertia matrix and bias force vector of a kinematic chain.
  *
  * rkChainInertiaMat() computes the inertia matrix of a kinematic chain

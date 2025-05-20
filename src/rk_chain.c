@@ -629,6 +629,17 @@ double rkChainKineticEnergy(const rkChain *chain)
   return energy;
 }
 
+/* combine mass properties of a kinematic chain. */
+rkMP *rkChainCombineMP(const rkChain *chain, rkMP *mp)
+{
+  int i;
+
+  rkMPZero( mp );
+  for( i=0; i<rkChainLinkNum(chain); i++ )
+    rkLinkMergeMP( rkChainLink(chain,i), mp );
+  return mp;
+}
+
 /* bias force vector of a kinematic chain. */
 static void _rkChainBiasVec(rkChain *chain, zVec bias, const zVec6D *g)
 {

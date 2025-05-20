@@ -276,6 +276,27 @@ bool check_chain_net_inertia(rkChain *chain, zMat3D *inertia_net)
   return zMat3DIsTiny( inertia_net );
 }
 
+void assert_chain_com_inertia(void)
+{
+  rkChain chain;
+  zVec dis;
+  rkMP mp1, mp2;
+
+  chain_init( &chain );
+  dis = zVecAlloc( rkChainJointSize( &chain ) );
+  zVecRandUniform( dis, -zPI, zPI );
+  rkChainFK( &chain, dis );
+  rkChainUpdateCRB( &chain );
+  rkMPXform( rkLinkCRB(rkChainRoot(&chain)), rkChainRootFrame(&chain), &mp1 );
+  rkChainCombineMP( &chain, &mp2 );
+  zVecFree( dis );
+  rkChainDestroy( &chain );
+  zAssert( rkChainCombineMP,
+    zEqual( rkMPMass(&mp1), rkMPMass(&mp2), zTOL ) &&
+    zVec3DEqual( rkMPCOM(&mp1), rkMPCOM(&mp2) ) &&
+    zMat3DEqual( rkMPInertia(&mp1), rkMPInertia(&mp2) ) );
+}
+
 void assert_crb(void)
 {
   rkChain chain;
@@ -466,6 +487,7 @@ int main(int argc, char *argv[])
   assert_chain_getsetconf();
   assert_chain_momentum();
   assert_inertia_mat();
+  assert_chain_com_inertia();
   assert_crb();
   assert_fd_id();
   assert_fd_id_abi();

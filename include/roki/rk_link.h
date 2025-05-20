@@ -340,6 +340,14 @@ __ROKI_EXPORT void rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6
 __ROKI_EXPORT void rkLinkUpdateRate(rkLink *link, const zVec6D *pvel, const zVec6D *pacc);
 __ROKI_EXPORT void rkLinkUpdateJointWrench(rkLink *link);
 
+/*! \brief merge mass properties of a link.
+ *
+ * rkLinkMergeMP() merges mass properties of a link \a link into \a mp.
+ * \return
+ * rkLinkMergeMP() returns the pointer \a mp.
+ */
+__ROKI_EXPORT rkMP *rkLinkMergeMP(const rkLink *link, rkMP *mp);
+
 /*! \brief update mass of the composite rigit body of a link. */
 __ROKI_EXPORT double rkLinkUpdateCRBMass(rkLink *link);
 /*! \brief update the composite rigit body of a link. */

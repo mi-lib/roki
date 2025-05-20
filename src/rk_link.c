@@ -128,6 +128,7 @@ void rkLinkUpdateFrame(rkLink *link, const zFrame3D *pwf)
     rkLinkUpdateFrame( rkLinkSibl(link), rkLinkWldFrame(rkLinkParent(link)) );
 }
 
+/* update velocity of a link in the inertial frame, where the orientation is with respect to the link frame. */
 static void _rkLinkUpdateVel(rkLink *link, const zVec6D *pvel)
 {
   /* velocity */
@@ -137,7 +138,6 @@ static void _rkLinkUpdateVel(rkLink *link, const zVec6D *pvel)
   /* COM velocity and acceleration */
   rkBodyUpdateCOMVel( rkLinkBody(link) );
 }
-
 void rkLinkUpdateVel(rkLink *link, const zVec6D *pvel)
 {
   _rkLinkUpdateVel( link, pvel );
@@ -147,6 +147,7 @@ void rkLinkUpdateVel(rkLink *link, const zVec6D *pvel)
     rkLinkUpdateVel( rkLinkSibl(link), rkLinkVel(rkLinkParent(link)) );
 }
 
+/* update acceleration of a link in the inertial frame, where the orientation is with respect to the link frame. */
 static void _rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pacc)
 {
   zVec3D wp, tmp;
@@ -164,7 +165,6 @@ static void _rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pac
   /* COM velocity and acceleration */
   rkBodyUpdateCOMAcc( rkLinkBody(link) );
 }
-
 void rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pacc)
 {
   _rkLinkUpdateAcc( link, pvel, pacc );
@@ -174,7 +174,7 @@ void rkLinkUpdateAcc(rkLink *link, const zVec6D *pvel, const zVec6D *pacc)
     rkLinkUpdateAcc( rkLinkSibl(link), rkLinkVel(rkLinkParent(link)), rkLinkAcc(rkLinkParent(link)) );
 }
 
-/* update link motion rate with respect to the inertial frame. */
+/* update link motion rate in the inertial frame, where the orientation is with respect to the link frame. */
 void rkLinkUpdateRate(rkLink *link, const zVec6D *pvel, const zVec6D *pacc)
 {
   _rkLinkUpdateVel( link, pvel );
@@ -208,6 +208,15 @@ void rkLinkUpdateJointWrench(rkLink *link)
   /* branch */
   if( rkLinkSibl(link) )
     rkLinkUpdateJointWrench( rkLinkSibl(link) );
+}
+
+/* merge mass properties of a link. */
+rkMP *rkLinkMergeMP(const rkLink *link, rkMP *mp)
+{
+  rkMP link_mp;
+
+  rkMPXform( rkLinkMP(link), rkLinkWldFrame(link), &link_mp );
+  return rkMPMerge( mp, &link_mp );
 }
 
 /* update mass of the composite rigit body of a link. */
