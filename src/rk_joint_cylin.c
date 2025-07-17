@@ -106,14 +106,9 @@ static void _rkJointCylinSetDisCNT(rkJoint *joint, double *val, double dt){
 /* joint frame transformation */
 static zFrame3D *_rkJointCylinXform(rkJoint *joint, zFrame3D *fo, zFrame3D *f){
   /* rotation */
-  zVec3DMul( &zFrame3DAtt(fo)->v[0], _rks(joint)->_c, &zFrame3DAtt(f)->v[0] );
-  zVec3DCatDRC( &zFrame3DAtt(f)->v[0], _rks(joint)->_s, &zFrame3DAtt(fo)->v[1] );
-  zVec3DMul( &zFrame3DAtt(fo)->v[0],-_rks(joint)->_s, &zFrame3DAtt(f)->v[1] );
-  zVec3DCatDRC( &zFrame3DAtt(f)->v[1], _rks(joint)->_c, &zFrame3DAtt(fo)->v[1] );
-  zVec3DCopy( &zFrame3DAtt(fo)->v[2], &zFrame3DAtt(f)->v[2] );
+  _rkJointRotateZ( joint, fo, f );
   /* slide */
-  zVec3DCat( zFrame3DPos(fo),
-    _rks(joint)->dis[0], &zFrame3DAtt(fo)->v[2], zFrame3DPos(f) );
+  zVec3DCat( zFrame3DPos(fo), _rks(joint)->dis[0], &zFrame3DAtt(fo)->v[2], zFrame3DPos(f) );
   return f;
 }
 

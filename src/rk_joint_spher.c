@@ -26,8 +26,6 @@ static void _rkJointSpherSetDis(rkJoint *joint, double *val){
   zMat3DFromAA( &_rks(joint)->_att, &_rks(joint)->aa );
 }
 
-static void _rkJointSpherSetMinMax(rkJoint *joint, double *val){}
-
 static void _rkJointSpherSetVel(rkJoint *joint, double *val){
   zVec3DCopy( (zVec3D*)val, &_rks(joint)->vel );
 }
@@ -197,12 +195,6 @@ static void _rkJointSpherCRBXform(rkJoint *joint, zFrame3D *f, zVec6D si[]){
   }
 }
 
-/* friction computation (to be implemented) */
-
-static void _rkJointSpherFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp){}
-
-static void _rkJointSpherVal(rkJoint *joint, double *val){}
-
 /* motor */
 
 static void _rkJointSpherMotorSetInput(rkJoint *joint, double *val){
@@ -236,22 +228,22 @@ static void _rkJointSpherABIAxisInertia(rkJoint *joint, zMat6D *m, zMat h, zMat 
   /* The inertia matrix is multiplied by R from the left side and
      by R transpose from the right side in the mathematically strict
      way. A nice property is that they are cancelled in the following
-     computation and thus are omitted from the beginning. */
+     computation and thus are able to be skipped from the beginning. */
   _rkJointSpherMotorInertia( joint, zMatBufNC(h) );
   zMat3DT( &m->e[1][1], (zMat3D *)&zMatElemNC(h,0,0) );
   zMatInv( h, ih );
 }
 
 static void _rkJointSpherABIAddABI(rkJoint *joint, zMat6D *m, zFrame3D *f, zMat h, zMat6D *pm){
-  eprintf("under construction error: abi update for spherical joint\n");
+  eprintf( "ABI method for spherical joint not implemented yet.\n" );
 }
 
 static void _rkJointSpherABIAddBias(rkJoint *joint, zMat6D *m, zVec6D *b, zFrame3D *f, zMat h, zVec6D *pb){
-  eprintf("under construction error: abi update for spherical joint\n");
+  eprintf( "ABI method for spherical joint not implemented yet.\n" );
 }
 
 static void _rkJointSpherABIDrivingTorque(rkJoint *joint){
-  eprintf("under construction error: abi update for spherical joint\n");
+  eprintf( "ABI method for spherical joint not implemented yet.\n" );
 }
 
 static void _rkJointSpherABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *jac, zMat h, zVec6D *acc){}
@@ -305,8 +297,8 @@ rkJointCom rk_joint_spher = {
   _rkJointSpherCopyState,
   _rkJointSpherTestDis,
   _rkJointSpherSetDis,
-  _rkJointSpherSetMinMax,
-  _rkJointSpherSetMinMax,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
   _rkJointSpherSetVel,
   _rkJointSpherSetAcc,
   _rkJointSpherSetTrq,
@@ -331,12 +323,12 @@ rkJointCom rk_joint_spher = {
   _rkJointSpherCRBWrench,
   _rkJointSpherCRBXform,
 
-  _rkJointSpherFrictionPivot,
-  _rkJointSpherFrictionPivot,
-  _rkJointSpherVal,
-  _rkJointSpherVal,
-  _rkJointSpherVal,
-  _rkJointSpherVal,
+  _rkJointDummyFrictionPivot,
+  _rkJointDummyFrictionPivot,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
 
   _rkJointSpherMotorSetInput,
   _rkJointSpherMotorInertia,

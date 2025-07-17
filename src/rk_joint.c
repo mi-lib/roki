@@ -111,14 +111,26 @@ bool rkJointIsNeutral(rkJoint *joint)
   return true;
 }
 
-/* NOTE: The following macros and functions are for sharing
- * some operation codes. Do not use them in users programs. */
+/* NOTE: The following functions are methods for joints. Do not use them in users programs. */
+void _rkJointDummyVal(rkJoint *joint, double *val){}
+void _rkJointDummyFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp){}
+
 zVec3D *_rkJointAxisNull(rkJoint *joint, zFrame3D *f, zVec3D *a){
   return NULL;
 }
 
+zVec3D *_rkJointAxisX(rkJoint *joint, zFrame3D *f, zVec3D *a){
+  zVec3DCopy( zFrame3DVec(f,zX), a );
+  return a;
+}
+
+zVec3D *_rkJointAxisY(rkJoint *joint, zFrame3D *f, zVec3D *a){
+  zVec3DCopy( zFrame3DVec(f,zY), a );
+  return a;
+}
+
 zVec3D *_rkJointAxisZ(rkJoint *joint, zFrame3D *f, zVec3D *a){
-  zVec3DCopy( &zFrame3DAtt(f)->e[zZ], a );
+  zVec3DCopy( zFrame3DVec(f,zZ), a );
   return a;
 }
 
@@ -133,15 +145,14 @@ double rkJointRevolTorsionDis(zFrame3D *dev, zVec6D *t)
   zVec3DCreate( &aa, -zFrame3DAtt(dev)->e[2][1], zFrame3DAtt(dev)->e[2][0], 0 );
   l = sqrt( zSqr(aa.e[zX]) + zSqr(aa.e[zY]) );
   angle = atan2( l, zFrame3DAtt(dev)->e[2][2] );
-  zIsTiny( angle ) ?
-    zVec3DZero( &aa ) : zVec3DMulDRC( &aa, angle/l );
+  zIsTiny( angle ) ? zVec3DZero( &aa ) : zVec3DMulDRC( &aa, angle/l );
   zMulMat3DTVec3D( zFrame3DAtt(dev), &aa, zVec6DAng(t) );
   /* intermediate attitude */
   zMat3DFromAA( &rm, &aa );
   /* joint displacement */
   return 0.5 *
-    ( zVec3DAngle( &rm.v[zX], &zFrame3DAtt(dev)->v[zX], &rm.v[zZ] )
-    + zVec3DAngle( &rm.v[zY], &zFrame3DAtt(dev)->v[zY], &rm.v[zZ] ) );
+    ( zVec3DAngle( &rm.v[zX], zFrame3DVec(dev,zX), &rm.v[zZ] )
+    + zVec3DAngle( &rm.v[zY], zFrame3DVec(dev,zY), &rm.v[zZ] ) );
 }
 
 double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t)

@@ -16,8 +16,6 @@ static void _rkJointFixedTestVal(rkJoint *joint, double *testval, double *val){}
 
 /* set/get joint displacement, velocity, acceleration and torque (dummy) */
 
-static void _rkJointFixedVal(rkJoint *joint, double *val){}
-
 /* continuously update joint displacement */
 
 static void _rkJointFixedCatDis(rkJoint *joint, double *dis, double k, double *val){}
@@ -64,10 +62,6 @@ static zVec3D* (*_rk_joint_fixed_axis_lin[])(rkJoint*,zFrame3D*,zVec3D*) = {
 static void _rkJointFixedCRBWrench(rkJoint *joint, rkMP *crb, zVec6D wi[]){}
 static void _rkJointFixedCRBXform(rkJoint *joint, zFrame3D *f, zVec6D si[]){}
 
-/* pivot for static friction computation */
-
-static void _rkJointFixedFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp){}
-
 /* ABI */
 
 static void _rkJointFixedABIAxisInertia(rkJoint *joint, zMat6D *m, zMat h, zMat ih){}
@@ -92,10 +86,9 @@ static void _rkJointFixedABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 
 /* ZTK */
 
-static rkJoint *_rkJointFixedFromZTK(rkJoint *joint, rkMotorSpecArray *motorarray, ZTK *ztk){
-  return joint;
-}
-
+static void *_rkJointFixedDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){ return NULL; }
+static rkJoint *_rkJointFixedFromZTK(rkJoint *joint, rkMotorSpecArray *motorarray, ZTK *ztk){ return joint; }
+static bool _rkJointFixedDisFPrintZTK(FILE *fp, int i, void *joint){ return true; }
 static void _rkJointFixedFPrintZTK(FILE *fp, rkJoint *joint, char *name){}
 
 rkJointCom rk_joint_fixed = {
@@ -107,18 +100,18 @@ rkJointCom rk_joint_fixed = {
   _rkJoinFixedCopyDummy,
   _rkJoinFixedCopyDummy,
   _rkJointFixedTestVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
   _rkJointFixedCatDis,
   _rkJointFixedSubDis,
   _rkJointFixedSetDisCNT,
@@ -134,12 +127,12 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedCRBWrench,
   _rkJointFixedCRBXform,
 
-  _rkJointFixedFrictionPivot,
-  _rkJointFixedFrictionPivot,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
-  _rkJointFixedVal,
+  _rkJointDummyFrictionPivot,
+  _rkJointDummyFrictionPivot,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
 
   rkJointMotorSetValDummy,
   rkJointMotorGetValDummy,
@@ -154,8 +147,8 @@ rkJointCom rk_joint_fixed = {
   _rkJointFixedABIQAcc,
   _rkJointUpdateWrench,
 
-  NULL,
+  _rkJointFixedDisFromZTK,
   _rkJointFixedFromZTK,
-  NULL,
+  _rkJointFixedDisFPrintZTK,
   _rkJointFixedFPrintZTK,
 };

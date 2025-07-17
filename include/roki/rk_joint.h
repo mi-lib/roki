@@ -228,13 +228,15 @@ bool rkJointIsNeutral(rkJoint *joint);
  * translates it along the z-axis with the second displacement.
  * Universal (hooke) joint revolves \a fo with the displacements about z-axis and y-axis in radian.
  * Spherical joint revolves \a fo with the displacements as z-y-x Eulerian angles.
+ * Planar joint translates \a fo along the x- and y-axes with the first and second displacements,
+ * and then revolves it about the z-axis with the third displacement in radian.
  * Free-floating joint translates \a fo three-dimensionaly with the first three displacements, and
  * revolves it with the rest three as z-y-x Eulerian angles.
  *
  * rkJointIncRate() increments the given spatial velocity \a vel and acceleration vector \a acc
  * according to the local joint movement. It is a particular function called in rkLinkUpdateTtlRate()
  * and rkLinkUpdateWldRate() internally.
- * Although it is exported, it is not a good idea to call this function in user programs.
+ * Although it is a public function, it is not a good idea to call this function in user programs.
  *
  * rkJointCalcTrq() calculates joint torque from the six-axis force \a f exerted at joint and the
  * restitution force originating from joint impedance.
@@ -252,8 +254,15 @@ __ROKI_EXPORT void rkJointIncRate(rkJoint *joint, zVec3D *w, zVec6D *vel, zVec6D
 
 #define rkJointTorsion(joint,dev,t,d) (joint)->com->_torsion( dev, t, d )
 
+/* NOTE: The following functions are for commonizing some methods for joints.
+ * Do not use them in users programs. */
 __ROKI_EXPORT double rkJointRevolTorsionDis(zFrame3D *dev, zVec6D *t);
 __ROKI_EXPORT double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t);
+
+/* NOTE: The following functions are for commonizing some methods for joints.
+ * Do not use them in users programs. */
+__ROKI_EXPORT void _rkJointDummyVal(rkJoint *joint, double *val);
+__ROKI_EXPORT void _rkJointDummyFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp);
 
 /*! \brief joint axis vector.
  *
@@ -271,21 +280,50 @@ __ROKI_EXPORT double rkJointPrismTorsionDis(zFrame3D *dev, zVec6D *t);
 #define rkJointAngAxis(joint,i,f,a) (joint)->com->_angaxis[i]( (joint), f, a )
 #define rkJointLinAxis(joint,i,f,a) (joint)->com->_linaxis[i]( (joint), f, a )
 
+/* NOTE: The following functions are for commonizing some methods for joints.
+ * Do not use them in users programs. */
 __ROKI_EXPORT zVec3D *_rkJointAxisNull(rkJoint *joint, zFrame3D *f, zVec3D *a);
+__ROKI_EXPORT zVec3D *_rkJointAxisX(rkJoint *joint, zFrame3D *f, zVec3D *a);
+__ROKI_EXPORT zVec3D *_rkJointAxisY(rkJoint *joint, zFrame3D *f, zVec3D *a);
 __ROKI_EXPORT zVec3D *_rkJointAxisZ(rkJoint *joint, zFrame3D *f, zVec3D *a);
+
+/* NOTE: The following macro is for sharing some operation codes.
+ * Do not use them in users' programs. */
+#define _rkJointRotateZ(joint,fo,f) do{ \
+  zVec3DMul( zFrame3DVec(fo,0), _rks(joint)->_c, zFrame3DVec(f,0) ); \
+  zVec3DCatDRC( zFrame3DVec(f,0), _rks(joint)->_s, zFrame3DVec(fo,1) ); \
+  zVec3DMul( zFrame3DVec(fo,0),-_rks(joint)->_s, zFrame3DVec(f,1) ); \
+  zVec3DCatDRC( zFrame3DVec(f,1), _rks(joint)->_c, zFrame3DVec(fo,1) ); \
+  zVec3DCopy( zFrame3DVec(fo,2), zFrame3DVec(f,2) ); \
+} while(0)
+
+/* NOTE: The following macro is for sharing some operation codes.
+ * Do not use them in users programs. */
+#define _rkJointRestTrq(stiffness,viscosity,coulomb,dis,vel) ( -(stiffness)*(dis) -(viscosity)*(vel) -(coulomb)*zSgn(vel) )
 
 /* composite rigid body method */
 #define rkJointCRBWrench(joint,m,w) (joint)->com->_crb_wrench( (joint), m, w )
 #define rkJointCRBXform(joint,f,s)  (joint)->com->_crb_xform( (joint), f, s )
 
-/* NOTE: The following macros and functions are for sharing some operation codes.
- * Do not use them in users programs. */
-#define _rkJointRestTrq(stiffness,viscosity,coulomb,dis,vel) ( -(stiffness)*(dis) -(viscosity)*(vel) -(coulomb)*zSgn(vel) )
-
 /* Composite Rigid Body */
 /* The following macros are supposed to be used only in internal methods for
    the composite rigid body method computations. Never use them in user programs.
  */
+#define _rkJointCRBWrenchLinX(crb,w) _zVec6DCreate( w, \
+  rkMPMass(crb), 0, 0, \
+  0, \
+  rkMPMass(crb)*rkMPCOM(crb)->c.z, \
+ -rkMPMass(crb)*rkMPCOM(crb)->c.y )
+#define _rkJointCRBWrenchLinY(crb,w) _zVec6DCreate( w, \
+  0, rkMPMass(crb), 0, \
+ -rkMPMass(crb)*rkMPCOM(crb)->c.z, \
+  0, \
+  rkMPMass(crb)*rkMPCOM(crb)->c.x )
+#define _rkJointCRBWrenchLinZ(crb,w) _zVec6DCreate( w, \
+  0, 0, rkMPMass(crb), \
+  rkMPMass(crb)*rkMPCOM(crb)->c.y, \
+ -rkMPMass(crb)*rkMPCOM(crb)->c.x, \
+  0 )
 #define _rkJointCRBWrenchLinZ(crb,w) _zVec6DCreate( w, \
   0, 0, rkMPMass(crb), \
   rkMPMass(crb)*rkMPCOM(crb)->c.y, \
@@ -314,12 +352,12 @@ __ROKI_EXPORT zVec3D *_rkJointAxisZ(rkJoint *joint, zFrame3D *f, zVec3D *a);
   rkMPInertia(crb)->c.zz+rkMPMass(crb)*(zSqr(rkMPCOM(crb)->c.x)+zSqr(rkMPCOM(crb)->c.y)) )
 
 #define _rkJointCRBXformLin(f,a,s) do{ \
-  zVec3DCopy( &zFrame3DAtt(f)->v[a], zVec6DLin(s) ); \
+  zVec3DCopy( zFrame3DVec(f,a), zVec6DLin(s) ); \
   _zVec3DZero( zVec6DAng(s) ); \
 } while(0)
 #define _rkJointCRBXformAng(f,a,s) do{ \
-  _zVec3DOuterProd( zFrame3DPos(f), &zFrame3DAtt(f)->v[a], zVec6DLin(s) ); \
-  zVec3DCopy( &zFrame3DAtt(f)->v[a], zVec6DAng(s) ); \
+  _zVec3DOuterProd( zFrame3DPos(f), zFrame3DVec(f,a), zVec6DLin(s) ); \
+  zVec3DCopy( zFrame3DVec(f,a), zVec6DAng(s) ); \
 } while(0)
 
 /* Articulated Body Inertia */
@@ -390,6 +428,7 @@ __END_DECLS
 #include <roki/rk_joint_cylin.h>   /* cylindrical joint */
 #include <roki/rk_joint_hooke.h>   /* universal joint */
 #include <roki/rk_joint_spher.h>   /* spherical joint */
+#include <roki/rk_joint_plana.h>   /* planar joint */
 #include <roki/rk_joint_float.h>   /* free-floating joint */
 #include <roki/rk_joint_brfloat.h> /* breakable free-floating joint */
 
@@ -399,16 +438,17 @@ __ROKI_EXPORT rkJointCom *rk_joint_com[];
 
 /* add the handle to the following list when you create a new joint class. */
 #define RK_JOINT_COM_ARRAY \
-rkJointCom *rk_joint_com[] = {\
-  &rk_joint_fixed,\
-  &rk_joint_revol,\
-  &rk_joint_prism,\
-  &rk_joint_cylin,\
-  &rk_joint_hooke,\
-  &rk_joint_spher,\
-  &rk_joint_float,\
-  &rk_joint_brfloat,\
-  NULL,\
+rkJointCom *rk_joint_com[] = { \
+  &rk_joint_fixed, \
+  &rk_joint_revol, \
+  &rk_joint_prism, \
+  &rk_joint_cylin, \
+  &rk_joint_hooke, \
+  &rk_joint_spher, \
+  &rk_joint_plana, \
+  &rk_joint_float, \
+  &rk_joint_brfloat, \
+  NULL, \
 }
 
 __END_DECLS

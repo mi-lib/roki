@@ -102,11 +102,7 @@ static zFrame3D *_rkJointRevolXform(rkJoint *joint, zFrame3D *fo, zFrame3D *f)
   /* position */
   zVec3DCopy( zFrame3DPos(fo), zFrame3DPos(f) );
   /* attitude */
-  zVec3DMul( &zFrame3DAtt(fo)->v[0], _rks(joint)->_c, &zFrame3DAtt(f)->v[0] );
-  zVec3DCatDRC( &zFrame3DAtt(f)->v[0], _rks(joint)->_s, &zFrame3DAtt(fo)->v[1] );
-  zVec3DMul( &zFrame3DAtt(fo)->v[0],-_rks(joint)->_s, &zFrame3DAtt(f)->v[1] );
-  zVec3DCatDRC( &zFrame3DAtt(f)->v[1], _rks(joint)->_c, &zFrame3DAtt(fo)->v[1] );
-  zVec3DCopy( &zFrame3DAtt(fo)->v[2], &zFrame3DAtt(f)->v[2] );
+  _rkJointRotateZ( joint, fo, f );
   return f;
 }
 

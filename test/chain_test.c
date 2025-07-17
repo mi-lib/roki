@@ -93,8 +93,6 @@ bool check_fd(rkChain *chain, zMat inertia, zVec bias, zVec dis, zVec vel, doubl
   return ret;
 }
 
-#define LINK_NUM 8
-
 void link_mp_rand(rkLink *l)
 {
   double i11, i12, i13, i22, i23, i33;
@@ -114,6 +112,7 @@ void link_mp_rand(rkLink *l)
   rkLinkSetInertia( l, &inertia );
 }
 
+#define LINK_NUM 9
 int chain_init(rkChain *chain)
 {
   int i;
@@ -138,14 +137,16 @@ int chain_init(rkChain *chain)
   rkLinkAddChild( rkChainLink(chain,0), rkChainLink(chain,5) );
   rkLinkAddChild( rkChainLink(chain,5), rkChainLink(chain,6) );
   rkLinkAddChild( rkChainLink(chain,6), rkChainLink(chain,7) );
+  rkLinkAddChild( rkChainLink(chain,7), rkChainLink(chain,8) );
   rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
   rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_spher );
   rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol );
   rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_cylin );
-  rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_revol );
-  rkJointAssign( rkChainLinkJoint(chain,5), &rk_joint_prism );
-  rkJointAssign( rkChainLinkJoint(chain,6), &rk_joint_hooke );
-  rkJointAssign( rkChainLinkJoint(chain,7), &rk_joint_fixed );
+  rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_plana );
+  rkJointAssign( rkChainLinkJoint(chain,5), &rk_joint_revol );
+  rkJointAssign( rkChainLinkJoint(chain,6), &rk_joint_prism );
+  rkJointAssign( rkChainLinkJoint(chain,7), &rk_joint_hooke );
+  rkJointAssign( rkChainLinkJoint(chain,8), &rk_joint_fixed );
 
   rkChainSetJointIDOffset( chain );
   rkChainUpdateCRBMass( chain );

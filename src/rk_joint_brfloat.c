@@ -32,8 +32,6 @@ static void _rkJointBrFloatSetDis(rkJoint *joint, double *val){
   zMat3DFromAA( &_rks(joint)->_att, zVec6DAng(&_rks(joint)->dis) );
 }
 
-static void _rkJointBrFloatSetMinMax(rkJoint *joint, double *val){}
-
 static void _rkJointBrFloatSetVel(rkJoint *joint, double *val){
   zVec6DCopy( (zVec6D*)val, &_rks(joint)->vel );
 }
@@ -220,9 +218,6 @@ static void _rkJointBrFloatCRBXform(rkJoint *joint, zFrame3D *f, zVec6D si[]){
   }
 }
 
-static void _rkJointBrFloatFrictionPivot(rkJoint *joint, rkJointFrictionPivot *fp){}
-static void _rkJointBrFloatVal(rkJoint *joint, double *val){}
-
 /* motor */
 
 static void _rkJointBrFloatMotorInertia(rkJoint *joint, double *val){ zMat6DZero( (zMat6D *)val ); }
@@ -348,8 +343,8 @@ rkJointCom rk_joint_brfloat = {
   _rkJointBrFloatCopyState,
   _rkJointBrFloatTestDis,
   _rkJointBrFloatSetDis,
-  _rkJointBrFloatSetMinMax,
-  _rkJointBrFloatSetMinMax,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
   _rkJointBrFloatSetVel,
   _rkJointBrFloatSetAcc,
   _rkJointBrFloatSetTrq,
@@ -374,12 +369,12 @@ rkJointCom rk_joint_brfloat = {
   _rkJointBrFloatCRBWrench,
   _rkJointBrFloatCRBXform,
 
-  _rkJointBrFloatFrictionPivot,
-  _rkJointBrFloatFrictionPivot,
-  _rkJointBrFloatVal,
-  _rkJointBrFloatVal,
-  _rkJointBrFloatVal,
-  _rkJointBrFloatVal,
+  _rkJointDummyFrictionPivot,
+  _rkJointDummyFrictionPivot,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
+  _rkJointDummyVal,
 
   rkJointMotorSetValDummy,
   _rkJointBrFloatMotorInertia,

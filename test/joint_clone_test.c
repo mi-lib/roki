@@ -133,6 +133,19 @@ bool assert_spher_comp(rkJoint *joint1, rkJoint *joint2)
   return memcmp( joint1->state, joint2->state, sizeof(rkJointSpherState) ) == 0;
 }
 
+void assert_plana_set(rkJoint *joint)
+{
+  zCoord2D coord;
+
+  zCoord2DCreate( &coord, 1, -2, zDeg2Rad(30) );
+  rkJointSetDis( joint, (double *)&coord );
+}
+
+bool assert_plana_comp(rkJoint *joint1, rkJoint *joint2)
+{
+  return memcmp( joint1->state, joint2->state, sizeof(rkJointPlanaState) ) == 0;
+}
+
 void assert_float_set(rkJoint *joint)
 {
   zVec6D dis;
@@ -193,6 +206,8 @@ void assert_clone(void)
     assert_clone_one( "hooke", assert_hooke_set, assert_hooke_comp ) );
   zAssert( rkJointClone (spherical joint),
     assert_clone_one( "spherical", assert_spher_set, assert_spher_comp ) );
+  zAssert( rkJointClone (planar joint),
+    assert_clone_one( "planar", assert_plana_set, assert_plana_comp ) );
   zAssert( rkJointClone (floating joint),
     assert_clone_one( "float", assert_float_set, assert_float_comp ) );
   zAssert( rkJointClone (breakable floating joint),

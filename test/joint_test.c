@@ -30,6 +30,7 @@ void assert_joint_assign(void)
     assert_joint_assign_one( "cylindrical", 2 ) &&
     assert_joint_assign_one( "hooke", 2 ) &&
     assert_joint_assign_one( "spherical", 3 ) &&
+    assert_joint_assign_one( "planar", 3 ) &&
     assert_joint_assign_one( "float", 6 ) &&
     assert_joint_assign_one( "invalid", -1 ) );
 }
