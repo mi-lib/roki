@@ -526,6 +526,7 @@ static const ZTKPrp __ztk_prp_rklink_parent[] = {
   { ZTK_KEY_ROKI_LINK_PARENT,    1, _rkLinkParentFromZTK, _rkLinkParentFPrintZTK },
 };
 
+/* build a link from ZTK. */
 rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorSpecArray *msarray, ZTK *ztk)
 {
   _rkLinkRefPrp prp;
@@ -570,12 +571,20 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
   }
   if( prp.auto_com ) rkLinkSetCOM( link, rkMPCOM(&mp) );
   if( prp.auto_inertia ) rkLinkSetInertia( link, rkMPInertia(&mp) );
-
+  if( !zMat3DIsSymmetric( rkLinkInertia(link) ) ){ /* check if inertia tensor is symmetric */
+    ZRUNWARN( RK_WARN_BODY_NON_SYMMETRIC_INERTIA );
+    zMat3DSymmetrizeDRC( rkLinkInertia(link) );
+  }
   if( !rkLinkJoint(link)->com ) rkJointAssign( rkLinkJoint(link), &rk_joint_fixed );
   rkJointFromZTK( rkLinkJoint(link), msarray, ztk );
+  if( !zMat3DIsOrthonormal( rkLinkOrgAtt(link) ) ){ /* check if attitude matrix is orthonormal */
+    ZRUNWARN( RK_WARN_LINK_NON_ORTHONORMAL_ATT );
+    zMat3DOrthonormalizeDRC( rkLinkOrgAtt(link), zZ, zX );
+  }
   return link;
 }
 
+/* connect links based on ZTK. */
 rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk)
 {
   _rkLinkRefPrp prp;
@@ -585,6 +594,7 @@ rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk)
   return link;
 }
 
+/* print out link properties to a file in ZTK format. */
 void rkLinkFPrintZTK(FILE *fp, rkLink *link)
 {
   zShapeListCell *cp;

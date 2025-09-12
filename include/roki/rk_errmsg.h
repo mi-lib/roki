@@ -14,8 +14,12 @@
 #define RK_WARN_CONTACT_DUPLICATE_KEY   "duplicate contact information with keys %s and %s"
 #define RK_WARN_CONTACT_EMPTY           "empty set of contact information specified."
 
+#define RK_WARN_BODY_NON_SYMMETRIC_INERTIA "body inertia is not symmetric, corrected"
+
 #define RK_WARN_LINK_NULL               "null link specified."
 #define RK_WARN_LINK_DUPLICATE_NAME     "%s: name of a link duplicated."
+
+#define RK_WARN_LINK_NON_ORTHONORMAL_ATT "link attitude is not orthonormal, corrected"
 
 #define RK_WARN_LINK_DUALLYDEFINED_MASS "dual definition of mass and density. mass specification ignored"
 #define RK_WARN_LINK_UNSPECIFIED_MASS   "neither mass nor density are specified"
