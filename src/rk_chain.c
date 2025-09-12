@@ -945,11 +945,11 @@ zSphere3D *rkChainBoundingBall(rkChain *chain, zSphere3D *bb)
 {
   zVec3DData data;
 
-  if( rkChainVertData( chain, &data ) )
+  if( rkChainVertData( chain, &data ) ){
     zVec3DDataBoundingBall( &data, bb, NULL );
-  else
+    zVec3DDataDestroy( &data );
+  } else
     bb = NULL;
-  zVec3DDataDestroy( &data );
   return bb;
 }
 

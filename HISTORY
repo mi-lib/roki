@@ -1,3 +1,4 @@
+2025.09.13. Modified rkChainBoundingBall. [rk_chain]
 2025.09.13. Modified rkLinkFromZTK to automatically correct non-symmetric inertia tensor and non-orthonormal attitude matrix. [rk_errmsg, rk_link]
 2025.07.17. Modified _rkJointRotateZ, _rkJointCRBXformLin, _rkJointCRBXformAng, and rkJointRevolTorsionDis to use zFrame3DVec. [rk_joint]
 2025.07.17. Added _rkJointFixedDisFromZTK and _rkJointFixedDisFPrintZTK. [rk_joint_fixed]
