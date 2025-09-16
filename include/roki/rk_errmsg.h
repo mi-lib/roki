@@ -20,6 +20,7 @@
 #define RK_WARN_LINK_DUPLICATE_NAME     "%s: name of a link duplicated."
 
 #define RK_WARN_LINK_NON_ORTHONORMAL_ATT "link attitude is not orthonormal, corrected"
+#define RK_WARN_LINK_NON_RIGHTHAND_ATT  "link attitude is not right-handed"
 
 #define RK_WARN_LINK_DUALLYDEFINED_MASS "dual definition of mass and density. mass specification ignored"
 #define RK_WARN_LINK_UNSPECIFIED_MASS   "neither mass nor density are specified"

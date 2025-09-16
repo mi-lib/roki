@@ -577,6 +577,9 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
   }
   if( !rkLinkJoint(link)->com ) rkJointAssign( rkLinkJoint(link), &rk_joint_fixed );
   rkJointFromZTK( rkLinkJoint(link), msarray, ztk );
+  if( !zMat3DIsRightHand( rkLinkOrgAtt(link) ) ){ /* check if attitude matrix is right-handed */
+    ZRUNWARN( RK_WARN_LINK_NON_RIGHTHAND_ATT );
+  }
   if( !zMat3DIsOrthonormal( rkLinkOrgAtt(link) ) ){ /* check if attitude matrix is orthonormal */
     ZRUNWARN( RK_WARN_LINK_NON_ORTHONORMAL_ATT );
     zMat3DOrthonormalizeDRC( rkLinkOrgAtt(link), zZ, zX );
