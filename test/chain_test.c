@@ -298,28 +298,6 @@ void assert_chain_com_inertia(void)
     zMat3DEqual( rkMPInertia(&mp1), rkMPInertia(&mp2) ) );
 }
 
-void assert_crb(void)
-{
-  rkChain chain;
-  zVec dis;
-  zVec3D com;
-  zMat3D inertia;
-
-  chain_init( &chain );
-  dis = zVecAlloc( rkChainJointSize(&chain) );
-  zVecRandUniform( dis, -10, 10 );
-  rkChainFK( &chain, dis );
-  rkChainUpdateCRB( &chain );
-  zXform3D( rkLinkAdjFrame(rkChainRoot(&chain)), rkMPCOM(rkLinkCRB(rkChainRoot(&chain))), &com );
-  zRotMat3D( rkLinkAdjAtt(rkChainRoot(&chain)), rkMPInertia(rkLinkCRB(rkChainRoot(&chain))), &inertia );
-  zAssert( rkChainUpdateCRB,
-    zIsTiny( rkChainMass(&chain) - rkMPMass(rkLinkCRB(rkChainRoot(&chain))) ) &&
-    zVec3DEqual( rkChainWldCOM(&chain), &com ) &&
-    check_chain_net_inertia( &chain, &inertia ) );
-  zVecFree( dis );
-  rkChainDestroy( &chain );
-}
-
 void assert_chain_momentum(void)
 {
   rkChain chain;
@@ -350,6 +328,89 @@ void assert_chain_momentum(void)
   zAssert( rkChainLinearMomentum & rkChainLinearMomentumRecursive, zVec3DEqual( &momentum, &momentum_recursive ) );
   zAssert( rkChainLinearMomentum & rkChainUpdateCOMVel, zVec3DEqual( &momentum, &momentum_gt ) );
   zAssert( rkChainAngularMomentum & rkChainAngularMomentumRecursive, zVec3DEqual( &angularmomentum, &angularmomentum_recursive ) );
+}
+
+int simple_chain_create(rkChain *chain)
+{
+  char name[BUFSIZ];
+  double mass;
+  zVec3D com;
+  zMat3D inertia;
+  zBox3D box;
+
+  rkChainInit( chain );
+  rkLinkArrayAlloc( rkChainLinkArray(chain), 1 );
+  sprintf( name, "link" );
+  rkLinkInit( rkChainRoot(chain) );
+  mass = 2.0;
+  zVec3DCreate( &com, 1.0, 2.0, 1.0 );
+  zBox3DCreateAlign( &box, &com, fabs(com.c.x), fabs(com.c.y), fabs(com.c.z) );
+  zBox3DBaryInertiaMass( &box, mass, &inertia );
+  rkLinkSetMass( rkChainRoot(chain), mass );
+  rkLinkSetCOM( rkChainRoot(chain), &com );
+  rkLinkSetInertia( rkChainRoot(chain), &inertia );
+  zVec3DCreate( rkChainLinkOrgPos(chain,0), 0.0, 0.0, 0.0 );
+  zNameSet( rkChainRoot(chain), name );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
+
+  rkChainSetJointIDOffset( chain );
+  rkChainUpdateCRBMass( chain );
+  rkChainUpdateFK( chain );
+  rkChainUpdateID( chain );
+  return rkChainJointSize( chain );
+}
+
+void assert_zmp_simple(void)
+{
+  rkChain box;
+  zVec3D zmp;
+  zVec jointdis, jointtrq;
+  bool result = true;
+  int i;
+  const int n = 100;
+
+  simple_chain_create( &box );
+  jointdis = zVecAlloc( rkChainJointSize( &box ) );
+  jointtrq = zVecAlloc( rkChainJointSize( &box ) );
+  for( i=0; i<n; i++ ){
+    zVecSetElemList( jointdis, zRandF(-5,5), zRandF(-5,5), zRandF(-5,5), zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
+    rkChainFK( &box, jointdis );
+    rkChainUpdateID( &box );
+    rkChainGetJointTrqAll( &box, jointtrq );
+    rkChainZMP( &box, 0, &zmp );
+    zVec3DSubDRC( &zmp, rkChainLinkWldCOM(&box,0) );
+    if( !zIsTiny( zmp.c.x ) || !zIsTiny( zmp.c.y ) ||
+        !zIsTiny( zVecElemNC(jointtrq,0) ) ||
+        !zIsTiny( zVecElemNC(jointtrq,1) ) ||
+        !zIsTiny( zVecElemNC(jointtrq,2) - rkChainMass(&box)*RK_G ) ||
+        !zIsTiny( zVecElemNC(jointtrq,5) ) ) result = false;
+  }
+  zVecFree( jointdis );
+  zVecFree( jointtrq );
+  rkChainDestroy( &box );
+  zAssert( rkChainZMP (a simple body), result );
+}
+
+void assert_crb(void)
+{
+  rkChain chain;
+  zVec dis;
+  zVec3D com;
+  zMat3D inertia;
+
+  chain_init( &chain );
+  dis = zVecAlloc( rkChainJointSize(&chain) );
+  zVecRandUniform( dis, -10, 10 );
+  rkChainFK( &chain, dis );
+  rkChainUpdateCRB( &chain );
+  zXform3D( rkLinkAdjFrame(rkChainRoot(&chain)), rkMPCOM(rkLinkCRB(rkChainRoot(&chain))), &com );
+  zRotMat3D( rkLinkAdjAtt(rkChainRoot(&chain)), rkMPInertia(rkLinkCRB(rkChainRoot(&chain))), &inertia );
+  zAssert( rkChainUpdateCRB,
+    zIsTiny( rkChainMass(&chain) - rkMPMass(rkLinkCRB(rkChainRoot(&chain))) ) &&
+    zVec3DEqual( rkChainWldCOM(&chain), &com ) &&
+    check_chain_net_inertia( &chain, &inertia ) );
+  zVecFree( dis );
+  rkChainDestroy( &chain );
 }
 
 void assert_inertia_mat(void)
@@ -489,9 +550,10 @@ int main(int argc, char *argv[])
   assert_chain_copy_state();
   assert_chain_getsetconf();
   assert_chain_momentum();
-  assert_inertia_mat();
   assert_chain_com_inertia();
+  assert_zmp_simple();
   assert_crb();
+  assert_inertia_mat();
   assert_fd_id();
   assert_fd_id_abi();
   return EXIT_SUCCESS;
