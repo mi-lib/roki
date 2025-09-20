@@ -38,7 +38,7 @@ static rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, z
   /* convert the original shape to a polyhedron */
   if( !zShape3DToPH( cell->data.shape ) ) return NULL;
   /* create the bounding box of the shape */
-  zVec3DDataAssignArray( &data, &zShape3DPH(cell->data.shape)->vert );
+  zVec3DDataAssignArray( &data, zPH3DVertArray(zShape3DPH(cell->data.shape)) );
   zVec3DDataOBB( &data, &cell->data.bb );
   zVec3DDataDestroy( &data );
 
@@ -682,7 +682,7 @@ static int _rkCDPairColVolBREP(rkCDPair *cp)
   /* merge */
   _rkCDBREPMergeCH( &brep[0], &brep[1], &cp->data.colvol );
   /* safety */
-  if( zArraySize(&cp->data.colvol.vert) < 4 || zArraySize(&cp->data.colvol.face) < 4 ||
+  if( zPH3DVertNum(&cp->data.colvol) < 4 || zPH3DFaceNum(&cp->data.colvol) < 4 ||
       _rkCDColVolError( &cp->data.colvol ) ){
     cp->data.is_col = false;
     ret--;
