@@ -54,8 +54,8 @@ bool rcc_read_command_arg(rkChain *chain, int argc, char *argv[])
     return false;
   }
   zMShape3DToPH( rkChainShape(chain) );
-  zArrayFree( &rkChainShape(chain)->optic );
-  zArrayFree( &rkChainShape(chain)->texture );
+  zArrayFree( zMShape3DOpticArray( rkChainShape(chain) ) );
+  zArrayFree( zMShape3DTextureArray( rkChainShape(chain) ) );
   zStrAddrListDestroy( &arglist );
   return true;
 }
@@ -118,7 +118,7 @@ bool rcc_replace_link_shape(rkChain *chain)
     if( option[RCC_VERBOSE].flag ) eprintf( "associate link shape to %s.\n", rkChainLinkName(chain,i) );
     rkLinkShapePush( rkChainLink(chain,i), sp );
   }
-  zArrayMove( &shape_array, &rkChainShape(chain)->shape );
+  zArrayMove( &shape_array, zMShape3DShapeArray( rkChainShape(chain) ) );
   return true;
 }
 

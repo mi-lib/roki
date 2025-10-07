@@ -372,7 +372,7 @@ __ROKI_EXPORT double rkBodyKineticEnergy(const rkBody *body);
 #define rkBodyShapeDestroy(body)    zShapeListDestroy( rkBodyShapeList(body) )
 
 /*! \brief contiguous vertex of a body to a point. */
-__ROKI_EXPORT zVec3D *rkBodyContigVert(const rkBody *body, const zVec3D *p, double *d);
+__ROKI_EXPORT const zVec3D *rkBodyContigVert(const rkBody *body, const zVec3D *point, double *distance);
 
 /*! \brief compute volume of a body. */
 __ROKI_EXPORT double rkBodyShapeVolume(const rkBody *body);

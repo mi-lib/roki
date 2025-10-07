@@ -977,7 +977,7 @@ static void *_rkChainMotorSpecFromZTK(void *obj, int i, void *arg, ZTK *ztk){
 static void *_rkChainLinkFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return rkLinkFromZTK( rkChainLink((rkChain*)obj,i),
     rkChainLinkArray((rkChain*)obj),
-    rkChainShape((rkChain*)obj) ? &rkChainShape((rkChain*)obj)->shape : NULL,
+    rkChainShape((rkChain*)obj) ? zMShape3DShapeArray( rkChainShape((rkChain*)obj) ) : NULL,
     rkChainMotorSpecArray((rkChain*)obj), ztk ) ? obj : NULL;
 }
 static void *_rkChainLinkConnectFromZTK(void *obj, int i, void *arg, ZTK *ztk){

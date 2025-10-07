@@ -289,12 +289,12 @@ double rkBodyKineticEnergy(const rkBody *body)
 }
 
 /* contiguous vertex of a body to a point. */
-zVec3D *rkBodyContigVert(const rkBody *body, const zVec3D *p, double *d)
+const zVec3D *rkBodyContigVert(const rkBody *body, const zVec3D *point, double *distance)
 {
   zVec3D pc;
 
-  _zXform3DInv( rkBodyFrame(body), p, &pc );
-  return zShapeListContigVert( rkBodyShapeList(body), &pc, d );
+  _zXform3DInv( rkBodyFrame(body), point, &pc );
+  return zShapeListContigVert( rkBodyShapeList(body), &pc, distance );
 }
 
 /* compute volume of a body. */
