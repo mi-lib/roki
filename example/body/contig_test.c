@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 {
   rkBody body;
   zMShape3D ms;
-  zVec3D p, *cv1, *cv2, *dp;
+  zVec3D p, *dp;
   zShape3D sc;
   double d1, d2;
   int i;
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   zRandInit();
   init_shape( &ms );
   init_mp( &body, &ms );
-  zFrame3DFromZYX( rkBodyFrame(&body),
+  zFrame3DFromPosZYX( rkBodyFrame(&body),
     zRandF(-1,1), zRandF(-1,1), zRandF(-1,1),
     zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
   /* for assertion */
@@ -39,8 +39,8 @@ int main(int argc, char *argv[])
   fp2 = fopen( "cp", "w" );
   for( i=0; i<N; i++ ){
     zVec3DCreate( &p, zRandF(-2,2), zRandF(-2,2), zRandF(-2,2) );
-    cv1 = rkBodyContigVert( &body, &p, &d1 );
-    cv2 = zShape3DContigVert( &sc, &p, &d2 );
+    const zVec3D *cv1 = rkBodyContigVert( &body, &p, &d1 );
+    const zVec3D *cv2 = zShape3DContigVert( &sc, &p, &d2 );
     dp = (zVec3D*)( (long)zShape3DVertBuf(zMShape3DShape(&ms,0)) + (long)cv2 - (long)zShape3DVertBuf(&sc) );
     if( cv1 != dp ) ZRUNERROR( "might be false" );
     zVec3DValueNLFPrint( fp1, &p );
