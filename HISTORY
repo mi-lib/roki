@@ -1,3 +1,7 @@
+2025.10.11. Abolished mp_xform_test. [example]
+2025.10.11. Moved contig_test, org_inertia_test, and combine_test from example to test. [example, test]
+2025.10.11. Added rkMPEqual and corresponding operator == for C++. [rk_body]
+2025.10.11. Reflected new specification of zShape3DContigVert and rkBodyContigVert in example/contig_test. [example]
 2025.10.08. Modified _rkChainLinkFromZTK to use zMShape3DShapeArray. [rk_chain]
 2025.10.08. Added const qualifier to the return value of rkBodyContigVert. [rk_body]
 2025.09.20. Reflected renaming of zPH3DVertArray and zPH3DFaceArray. [rk_cd]

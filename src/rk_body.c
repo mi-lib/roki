@@ -20,6 +20,14 @@ rkMP *rkMPgmm2kgm(rkMP *mp)
   return mp;
 }
 
+/* check if two sets of mass properties are equal. */
+bool rkMPEqual(rkMP *mp1, rkMP *mp2)
+{
+  return zEqual( rkMPMass(mp1), rkMPMass(mp2), zTOL ) &&
+         zVec3DEqual( rkMPCOM(mp1), rkMPCOM(mp2) ) &&
+         zMat3DEqual( rkMPInertia(mp1), rkMPInertia(mp2) );
+}
+
 /* transform mass properties to that with respect to a frame. */
 rkMP *rkMPXform(const rkMP *src, const zFrame3D *f, rkMP *dest)
 {

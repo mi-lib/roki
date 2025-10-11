@@ -13,10 +13,8 @@
 __BEGIN_DECLS
 
 /* ********************************************************** */
-/* CLASS: rkMP
- * mass property class
- * ********************************************************** */
-
+/* mass property class.
+ *//* ******************************************************* */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   /* mass property */
   double mass;
@@ -32,6 +30,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   zMat3D &setInertia(zMat3D &);
   rkMP *copy(rkMP &);
   void zero();
+  friend bool operator==(rkMP &mp1, rkMP &mp2);
   friend rkMP operator*(zFrame3D &f, rkMP &src);
 #endif /* __cplusplus */
 };
@@ -61,6 +60,14 @@ __ROKI_EXPORT rkMP *rkMPgmm2kgm(rkMP *mp);
 
 /*! \brief shift inertia tensor by an offset 3D vector. */
 #define rkMPShiftInertia(mp,r,i) zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp), -rkMPMass(mp), (r), (i) )
+
+/*! \brief check if two sets of mass properties are equal.
+ *
+ * rkMPEqual() checks if two sets of mass properties \a mp1 and \a mp2 are equal.
+ * \return
+ * rkMPEqual() returns a boolean value based on the result.
+ */
+__ROKI_EXPORT bool rkMPEqual(rkMP *mp1, rkMP *mp2);
 
 /*! \brief transform mass properties to that with respect to a frame.
  *
@@ -140,6 +147,7 @@ inline zVec3D &rkMP::setCOM(zVec3D &p){ rkMPSetCOM( this, &p ); return COM(); }
 inline zMat3D &rkMP::setInertia(zMat3D &i){ rkMPSetInertia( this, &i ); return Inertia(); }
 inline rkMP *rkMP::copy(rkMP &src){ rkMPCopy( &src, this ); return this; }
 inline void rkMP::zero(){ rkMPZero( this ); }
+inline bool operator==(rkMP &mp1, rkMP &mp2){ return rkMPEqual( &mp1, &mp2 ); }
 inline rkMP operator*(zFrame3D &f, rkMP &src){
   rkMP dest;
   rkMPXform( &src, &f, &dest );
@@ -147,13 +155,11 @@ inline rkMP operator*(zFrame3D &f, rkMP &src){
 }
 #endif /* __cplusplus */
 
-/* ********************************************************** */
-/* CLASS: rkBody
- * rigid body class
- * ********************************************************** */
-
 __BEGIN_DECLS
 
+/* ********************************************************** */
+/* rigid body class.
+ *//* ******************************************************* */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
   rkMP mp;              /*!< \brief mass property */
   zFrame3D frame;       /*!< \brief absolute transformation frame */
