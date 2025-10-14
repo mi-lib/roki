@@ -192,9 +192,8 @@ void rkCDReset(rkCD *cd)
   zListForEach( &cd->plist, pair ){
     pair->data.is_col = false;
     zListDestroy( rkCDPlane, &pair->data.cplane );
-    zPH3DDestroy( &pair->data.colvol );
   }
-   zListForEach(&cd->clist, cell){
+  zListForEach(&cd->clist, cell){
     cell->data._ph_update_flag = false;
     cell->data._bb_update_flag = false;
   }
@@ -350,34 +349,50 @@ void rkCDChainUnreg(rkCD *cd, rkChain *chain)
   }
 }
 
-static void _rkCDColChkAABB(rkCD *cd)
+static bool _rkCDColChkAABB(rkCD *cd)
 {
+  bool is_col;
   rkCDPair *cp;
 
+  is_col = false;
   zListForEach( &cd->plist, cp ){
     /* TO BE MODIFIED */
     rkCDCellUpdateBB( cp->data.cell[0] );
     rkCDCellUpdateBB( cp->data.cell[1] );
-    if( zColChkAABox3D( &cp->data.cell[0]->data.aabb, &cp->data.cell[1]->data.aabb ) )
+    if( zColChkAABox3D( &cp->data.cell[0]->data.aabb, &cp->data.cell[1]->data.aabb ) ){
       cp->data.is_col = true;
+      is_col = true;
+    }
   }
+
+  return is_col;
 }
 
-static void _rkCDColChkOBB(rkCD *cd)
+static bool _rkCDColChkOBB(rkCD *cd)
 {
+  bool is_col;
   rkCDPair *cp;
 
-  zListForEach( &cd->plist, cp )
-    if( cp->data.is_col == true &&
-        !zColChkBox3D( &cp->data.cell[0]->data.obb, &cp->data.cell[1]->data.obb ) )
-      cp->data.is_col = false;
+  is_col = false;
+  zListForEach( &cd->plist, cp ){
+    if( cp->data.is_col == true ){
+      if( !zColChkBox3D( &cp->data.cell[0]->data.obb, &cp->data.cell[1]->data.obb ) )
+        cp->data.is_col = false;
+      else
+        is_col = true;
+    }
+  }
+
+  return is_col;
 }
 
-static void _rkCDColChkGJK(rkCD *cd)
+static bool _rkCDColChkGJK(rkCD *cd)
 {
+  bool is_col;
   rkCDPair *cp;
   zVec3D v1, v2;
 
+  is_col = false;
   zListForEach( &cd->plist, cp ){
     if( cp->data.is_col == true ){
       /* TO BE MODIFIED */
@@ -386,27 +401,32 @@ static void _rkCDColChkGJK(rkCD *cd)
       if( !zColChkPH3D( &cp->data.cell[0]->data.ph, &cp->data.cell[1]->data.ph,
           &v1, &v2 ) )
         cp->data.is_col = false;
+      else{
+        is_col = true;
+      }
     }
   }
+
+  return is_col;
 }
 
-void rkCDColChkAABB(rkCD *cd)
+bool rkCDColChkAABB(rkCD *cd)
 {
-  if( zListIsEmpty( &cd->plist ) ) return;
+  if( zListIsEmpty( &cd->plist ) ) return false;
   rkCDReset( cd );
-  _rkCDColChkAABB( cd );
+  return _rkCDColChkAABB( cd );
 }
 
-void rkCDColChkOBB(rkCD *cd)
+bool rkCDColChkOBB(rkCD *cd)
 {
-  rkCDColChkAABB( cd );
-  _rkCDColChkOBB( cd );
+  if( !rkCDColChkAABB( cd ) ) return false;
+  return _rkCDColChkOBB( cd );
 }
 
-void rkCDColChkGJK(rkCD *cd)
+bool rkCDColChkGJK(rkCD *cd)
 {
-  rkCDColChkOBB( cd );
-  _rkCDColChkGJK( cd );
+  if( !rkCDColChkOBB( cd ) ) return false;
+  return _rkCDColChkGJK( cd );
 }
 
 void rkCDColChkGJKOnly(rkCD *cd)
@@ -605,6 +625,14 @@ void rkCDColVol(rkCD *cd)
 {
   rkCDColChkOBB( cd );
   _rkCDColVol( cd );
+}
+
+void rkCDColVolDestroy(rkCD *cd)
+{
+  rkCDPair *cp;
+
+  zListForEach( &cd->plist, cp )
+    zPH3DDestroy( &cp->data.colvol );
 }
 
 static void _rkCDIntegrationNormBREP(zBREP *b1, zBREP *b2, zVec3D *norm)

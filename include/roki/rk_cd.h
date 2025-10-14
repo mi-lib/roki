@@ -130,15 +130,16 @@ __ROKI_EXPORT void rkCDPairChainUnreg(rkCD *cd, rkChain *chain);
 __ROKI_EXPORT void rkCDPairPrint(rkCD *cd);
 __ROKI_EXPORT void rkCDPairVertPrint(rkCD *cd);
 
-__ROKI_EXPORT void rkCDColChkAABB(rkCD *cd);    /* AABB */
-__ROKI_EXPORT void rkCDColChkOBB(rkCD *cd);     /* AABB->OBB */
-__ROKI_EXPORT void rkCDColChkGJK(rkCD *cd);     /* AABB->OBB->GJK */
+__ROKI_EXPORT bool rkCDColChkAABB(rkCD *cd);    /* AABB */
+__ROKI_EXPORT bool rkCDColChkOBB(rkCD *cd);     /* AABB->OBB */
+__ROKI_EXPORT bool rkCDColChkGJK(rkCD *cd);     /* AABB->OBB->GJK */
 __ROKI_EXPORT void rkCDColChkVert(rkCD *cd);    /* AABB->OBB->Vert(PH) */
 __ROKI_EXPORT void rkCDColChkOBBVert(rkCD *cd); /* AABB->OBB->Vert(OBB) */
 
 __ROKI_EXPORT void rkCDColChkGJKOnly(rkCD *cd); /* GJK */
 
 __ROKI_EXPORT void rkCDColVol(rkCD *cd);        /* AABB->OBB->GJK->MP */
+__ROKI_EXPORT void rkCDColVolDestroy(rkCD *cd);
 __ROKI_EXPORT void rkCDColVolBREP(rkCD *cd);    /* AABB->OBB->BREP->CH */
 __ROKI_EXPORT void rkCDColVolBREPFast(rkCD *cd);/* AABB->OBB->BREP->CH(Fast) */
 
