@@ -1,3 +1,8 @@
+2025.10.17. Renamed member f of rkCDPairDat to wrench. [rk_cd]
+2025.10.17. Renamed members _bb_update_flag and _ph_update_flag of rkCDCellDat to _bb_is_uptodate and _ph_is_uptodate, respectively. [rk_cd]
+2025.10.17. Applied ZDEF_STRUCT to rk_cd. [rk_cd]
+2025.10.17. Added rkCDColVolDestroy, and modified rkCDReset not to destroy the collision volume. (thanks to Daishi Kaneta) [rk_cd]
+2025.10.17. Modified rkCDColChkAABB, rkCDColChkOBB, and rkCDColChkGJK to return a boolean value based on whether the collision is detected. (thanks to Daishi Kaneta) [rk_cd]
 2025.10.11. Abolished mp_xform_test. [example]
 2025.10.11. Moved contig_test, org_inertia_test, and combine_test from example to test. [example, test]
 2025.10.11. Added rkMPEqual and corresponding operator == for C++. [rk_body]

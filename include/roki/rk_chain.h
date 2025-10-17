@@ -13,10 +13,8 @@
 __BEGIN_DECLS
 
 /* ********************************************************** */
-/* CLASS: rkChain
- * kinematic chain class
- * ********************************************************** */
-
+/*! \brief kinematic chain class.
+ *//* ******************************************************* */
 ZDECL_STRUCT( rkIK );
 ZDECL_STRUCT( rkFDEquation );
 

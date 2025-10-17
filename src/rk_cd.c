@@ -30,8 +30,8 @@ static rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, z
   cell->data.link = link;
   cell->data.chain = chain;
   cell->data.type = type;
-  cell->data._ph_update_flag = false;
-  cell->data._bb_update_flag = false;
+  cell->data._ph_is_uptodate = false;
+  cell->data._bb_is_uptodate = false;
   /* for a fake-crawler */
   cell->data.slide_mode = false;
   cell->data.slide_vel = 0.0;
@@ -76,33 +76,33 @@ rkCDCell *rkCDCellReg(rkCDCellList *clist, rkChain *chain, rkLink *link, zShape3
 void rkCDCellUpdateBB(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ||
-      cell->data._bb_update_flag == true ) return;
+      cell->data._bb_is_uptodate == true ) return;
   zBox3DXform( &cell->data.bb, rkLinkWldFrame(cell->data.link), &cell->data.obb );
   zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
-  cell->data._bb_update_flag = true;
+  cell->data._bb_is_uptodate = true;
 }
 
 /* update the polyhedron of a collision detection cell. */
 void rkCDCellUpdatePH(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ||
-      cell->data._ph_update_flag == true ) return;
+      cell->data._ph_is_uptodate == true ) return;
   zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
-  cell->data._ph_update_flag = true;
+  cell->data._ph_is_uptodate = true;
 }
 
 /* update a collision detection cell. */
 void rkCDCellUpdate(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ) return;
-  if( cell->data._bb_update_flag == false ){
+  if( cell->data._bb_is_uptodate == false ){
     zBox3DXform( &cell->data.bb, rkLinkWldFrame(cell->data.link), &cell->data.obb );
     zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
-    cell->data._bb_update_flag = true;
+    cell->data._bb_is_uptodate = true;
   }
-  if( cell->data._ph_update_flag == false ){
+  if( cell->data._ph_is_uptodate == false ){
     zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
-    cell->data._ph_update_flag = true;
+    cell->data._ph_is_uptodate = true;
   }
 }
 
@@ -193,9 +193,9 @@ void rkCDReset(rkCD *cd)
     pair->data.is_col = false;
     zListDestroy( rkCDPlane, &pair->data.cplane );
   }
-  zListForEach(&cd->clist, cell){
-    cell->data._ph_update_flag = false;
-    cell->data._bb_update_flag = false;
+  zListForEach( &cd->clist, cell ){
+    cell->data._ph_is_uptodate = false;
+    cell->data._bb_is_uptodate = false;
   }
 }
 
@@ -718,7 +718,7 @@ static int _rkCDPairColVolBREP(rkCDPair *cp)
     goto CONTINUE;
   }
   /* axis */
-  zVec3DCopy( &cp->data.norm ,&cp->data.axis[0] );
+  zVec3DCopy( &cp->data.norm, &cp->data.axis[0] );
   zVec3DOrthoSpace( &cp->data.axis[0], &cp->data.axis[1], &cp->data.axis[2] );
   /* center */
   zPH3DBarycenter( &cp->data.colvol, &cp->data.center );
@@ -769,7 +769,7 @@ static void _rkCDColVolBREPFast(rkCD *cd)
       /* merge */
       _rkCDBREPMergeCH( &brep[0], &brep[1], &cp->data.colvol );
       /* axis */
-      zVec3DCopy( &cp->data.norm ,&cp->data.axis[0] );
+      zVec3DCopy( &cp->data.norm, &cp->data.axis[0] );
       zVec3DOrthoSpace( &cp->data.axis[0], &cp->data.axis[1], &cp->data.axis[2] );
       /* center */
       zPH3DBarycenter( &cp->data.colvol, &cp->data.center );
