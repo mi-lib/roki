@@ -212,6 +212,35 @@ __ROKI_EXPORT rkLink *rkLinkCopyState(rkLink *src, rkLink *dest);
 __ROKI_EXPORT rkLink *rkLinkAddSibl(rkLink *link, rkLink *sibl);
 __ROKI_EXPORT rkLink *rkLinkAddChild(rkLink *link, rkLink *child);
 
+/*! \brief attach a link to another link as a child.
+ *
+ * rkLinkAttach() tentatively attaches a link \a link to another link \a parent as a child.
+ * \note
+ * rkLinkAttach( link, parent ) is equivalent with rkLinkAddChild( parent, link ), but \a link should be
+ * a part of another kinematic chain than which \a parent belongs to.
+ * The attached link \a link has to be detached by rkLinkDetach() before destroying a kinematic chain
+ * which \a parent belongs to. \a link is not counted as one that constitutes the kinematic chain.
+ *
+ * \a link has to be detached from its parent and siblings before attached to another. If not,
+ * anything may happen.
+ * \return
+ * rkLinkAttach() returns a pointer \a parent.
+ * \sa
+ * rkLinkDetach
+ */
+#define rkLinkAttach(link,parent) rkLinkAddChild( parent, link )
+
+/*! \brief detach a link from its parent and siblings.
+ *
+ * rkLinkDetach() detaches a link \a link from its parent and siblings. Note that the child(ren) of
+ * \a link remains.
+ * \return
+ * rkLinkDetach() returns a pointer \a link.
+ * \sa
+ * rkLinkAttach
+ */
+__ROKI_EXPORT rkLink *rkLinkDetach(rkLink *link);
+
 /* \brief compute the inertial ellipsoid of a link.
  */
 #define rkLinkInertiaEllips(link,e) rkBodyInertiaEllips( rkLinkBody(link), e )

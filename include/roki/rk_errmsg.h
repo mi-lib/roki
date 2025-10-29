@@ -29,6 +29,8 @@
 #define RK_WARN_LINK_TOO_SMALL_MASS     "too small mass of a link specified"
 #define RK_WARN_LINK_EMPTY_SHAPE        "cannot compute mass properties of an empty shape"
 
+#define RK_WARN_LINK_NOT_CONNECTED      "link %s not connected with %s"
+
 #define RK_WARN_CHAIN_NULL              "null chain specified."
 #define RK_WARN_CHAIN_EMPTY             "empty chain specified."
 #define RK_WARN_CHAIN_SHAPE_ONLY        "create a floating link to assign shape(s)"

@@ -89,6 +89,32 @@ rkLink *rkLinkAddChild(rkLink *link, rkLink *child)
   return rkLinkAddSibl( rkLinkChild(link), child );
 }
 
+/* detach a link from its parent and siblings. */
+rkLink *rkLinkDetach(rkLink *link)
+{
+  rkLink *parent, *sibl;
+
+  if( !( parent = rkLinkParent(link) ) ) return link; /* no need to detach link. */
+  if( !( sibl = rkLinkChild( parent ) ) ){
+    ZRUNERROR( RK_WARN_LINK_NOT_CONNECTED, zName(link), zName(parent) );
+    return NULL;
+  }
+  if( sibl == link ){
+    rkLinkSetChild( parent, rkLinkSibl(link) );
+  } else{
+    while( rkLinkSibl(sibl) != link ){
+      if( !( sibl = rkLinkSibl(sibl) ) ){
+        ZRUNERROR( RK_WARN_LINK_NOT_CONNECTED, zName(link), zName(parent) );
+        return NULL;
+      }
+    }
+    rkLinkSetSibl( sibl, rkLinkSibl(link) ); /* skip link. */
+  }
+  rkLinkSetParent( link, NULL );
+  rkLinkSetSibl( link, NULL );
+  return link;
+}
+
 /* calculate velocity of a point with respect to the inertial frame. */
 zVec3D *rkLinkPointVel(const rkLink *link, const zVec3D *p, zVec3D *v)
 {

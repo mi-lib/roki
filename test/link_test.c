@@ -1,4 +1,4 @@
-#include <roki/rk_link.h>
+#include <roki/rk_chain.h>
 
 zShape3D *generate_box_rand(void)
 {
@@ -17,12 +17,11 @@ zShape3D *generate_box_rand(void)
   return zShape3DBoxCreate( box, &center, &ax, &ay, &az, zRandF(0.1,5), zRandF(0.1,5), zRandF(0.1,5) );
 }
 
-#define N 10
-
 void assert_link_shape(void)
 {
   rkLink l;
   zShape3D *s;
+  const int n = 10;
   int i;
   rkMP mp1, mp2;
   double v;
@@ -30,7 +29,7 @@ void assert_link_shape(void)
 
   rkLinkInit( &l );
   rkMPZero( &mp1 );
-  for( i=0; i<N;i ++ ){
+  for( i=0; i<n;i ++ ){
     if( !( s = generate_box_rand() ) ) return;
     rkLinkShapePush( &l, s );
     rkMPMass(&mp1) += ( v = zBox3DVolume( zShape3DBox(s) ) );
@@ -52,8 +51,47 @@ void assert_link_shape(void)
   }
 }
 
+void assert_link_detach(void)
+{
+  rkChain puma, box;
+  rkLink *link6;
+  zVec joint_dis;
+  zVec6D hand_pose, box_pose;
+  const int n = 100;
+  int i;
+  bool result1 = true, result2 = true;
+
+  rkChainReadZTK( &puma, "../example/model/puma.ztk" );
+  rkChainReadZTK( &box, "../example/model/box.ztk" );
+  joint_dis = zVecAlloc( rkChainJointSize( &puma ) );
+
+  link6 = rkChainFindLink( &puma, "link6" );
+  rkLinkAttach( rkChainRoot(&box), link6 );
+  for( i=0; i<n; i++ ){
+    zVecRandUniform( joint_dis, -zPI, zPI );
+    rkChainFK( &puma, joint_dis );
+    zFrame3DToVec6DAA( rkLinkWldFrame(link6), &hand_pose );
+    zFrame3DToVec6DAA( rkChainRootFrame(&box), &box_pose );
+    if( !zVec6DEqual( &hand_pose, &box_pose ) ) result1 = false;
+  }
+  rkLinkDetach( rkChainRoot(&box) );
+  for( i=0; i<n; i++ ){
+    zVecRandUniform( joint_dis, -zPI, zPI );
+    rkChainFK( &puma, joint_dis );
+    zFrame3DToVec6DAA( rkLinkWldFrame(link6), &hand_pose );
+    zFrame3DToVec6DAA( rkChainRootFrame(&box), &box_pose );
+    if( zVec6DEqual( &hand_pose, &box_pose ) ) result1 = false;
+  }
+  zVecFree( joint_dis );
+  rkChainDestroy( &puma );
+  rkChainDestroy( &box );
+  zAssert( rkLinkAttach & rkLinkDetach, result1 && result2 );
+}
+
 int main(int argc, char *argv[])
 {
+  zRandInit();
   assert_link_shape();
+  assert_link_detach();
   return 0;
 }
