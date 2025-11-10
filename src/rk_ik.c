@@ -620,7 +620,7 @@ static void *_rkIKJointFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   if( ZTKValPtr(ztk) )
     rkLinkJoint(link)->com->_dis_fromZTK( rkLinkJoint(link), 0, NULL, ztk );
   if( w == 0 ) return obj;
-  return rkChainRegisterIKJointID( (rkChain*)obj, link - rkChainRoot((rkChain*)obj), w ) ? obj : NULL;
+  return rkChainRegisterIKJointID( (rkChain*)obj, rkChainLinkIDOffset((rkChain*)obj,link), w ) ? obj : NULL;
 }
 
 static void *_rkIKConstraintFromZTK(void *obj, int i, void *arg, ZTK *ztk)

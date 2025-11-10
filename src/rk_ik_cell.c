@@ -406,10 +406,10 @@ static bool _rkIKConstraintLinkFromZTK(rkChain *chain, int num, rkIKAttr *attr, 
     return false;
   } else
   if( num == 0 ){
-    attr->id = link - rkChainRoot(chain);
+    attr->id = rkChainLinkIDOffset(chain,link);
     *mask |= RK_IK_ATTR_MASK_ID;
   } else{
-    attr->id_sub = link - rkChainRoot(chain);
+    attr->id_sub = rkChainLinkIDOffset(chain,link);
     *mask |= RK_IK_ATTR_MASK_ID_SUB;
   }
   ZTKValNext( ztk );

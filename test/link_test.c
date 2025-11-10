@@ -51,6 +51,32 @@ void assert_link_shape(void)
   }
 }
 
+void assert_link_is_included(void)
+{
+  rkChain puma1, puma2;
+  int i;
+  bool result1, result2;
+
+  rkChainReadZTK( &puma1, "../example/model/puma.ztk" );
+  rkChainClone( &puma1, &puma2 );
+  /* positive case */
+  result1 = true;
+  for( i=0; i<rkChainLinkNum(&puma1); i++ ){
+    if( !rkChainLinkIsIncluded( &puma1, rkChainLink(&puma1,i) ) ) result1 = false;
+    if( !rkChainLinkIsIncluded( &puma2, rkChainLink(&puma2,i) ) ) result1 = false;
+  }
+  /* negative case */
+  result2 = true;
+  for( i=0; i<rkChainLinkNum(&puma1); i++ ){
+    if( rkChainLinkIsIncluded( &puma1, rkChainLink(&puma2,i) ) ) result2 = false;
+    if( rkChainLinkIsIncluded( &puma2, rkChainLink(&puma1,i) ) ) result2 = false;
+  }
+  rkChainDestroy( &puma1 );
+  rkChainDestroy( &puma2 );
+  zAssert( rkChainLinkIsIncluded (positive case), result1 );
+  zAssert( rkChainLinkIsIncluded (negative case), result2 );
+}
+
 void assert_link_detach(void)
 {
   rkChain puma, box;
@@ -92,6 +118,7 @@ int main(int argc, char *argv[])
 {
   zRandInit();
   assert_link_shape();
+  assert_link_is_included();
   assert_link_detach();
   return 0;
 }

@@ -137,7 +137,7 @@ rkLink *rkChainFindLink(rkChain *chain, const char *name)
 int rkChainFindLinkID(rkChain *chain, const char *name)
 {
   rkLink *l;
-  return ( l = rkChainFindLink( chain, name ) ) ? (int)( l - rkChainRoot(chain) ) : -1;
+  return ( l = rkChainFindLink( chain, name ) ) ? rkChainLinkIDOffset(chain,l) : -1;
 }
 
 /* find a joint identifier offset of a link of a kinematic chain from name. */
@@ -145,6 +145,15 @@ int rkChainFindLinkJointIDOffset(rkChain *chain, const char *name)
 {
   rkLink *l;
   return ( l = rkChainFindLink( chain, name ) ) ? rkLinkJointIDOffset(l) : -1;
+}
+
+/* check if a link is included in a kinematic chain. */
+bool rkChainLinkIsIncluded(rkChain *chain, rkLink *link)
+{
+  int dp;
+
+  dp = rkChainLinkIDOffset( chain, link );
+  return dp >= 0 && dp < rkChainLinkNum(chain);
 }
 
 /* set joint displacements of a kinematic chain. */
@@ -553,7 +562,7 @@ zVec3D *rkChainZMP(rkChain *chain, double z, zVec3D *zmp)
   if( zIsTiny( ( f = zVec3DInnerProd( &dz, rkChainRootForce(chain) ) ) ) )
     return NULL; /* ZMP does not exist (floating). */
   zVec3DOuterProd( &dz, rkChainRootTorque(chain), zmp );
-  zVec3DCatDRC( zmp, z-rkChainRootPos(chain)->e[zZ], rkChainRootForce(chain) );
+  zVec3DCatDRC( zmp, z - rkChainRootPos(chain)->c.z, rkChainRootForce(chain) );
   zVec3DDivDRC( zmp, f );
   return zXform3DDRC( rkChainRootFrame(chain), zmp );
 }

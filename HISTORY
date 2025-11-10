@@ -1,3 +1,6 @@
+2025.11.11. Added rkChainLinkIsIncluded. [rk_chain]
+2025.11.11. Modified rkChainFindLinkID, _rkIKJointFromZTK, and _rkIKConstraintLinkFromZTK to use rkChainLinkIDOffset. [rk_chain]
+2025.11.11. Defined rkChainLinkIDOffset. [rk_chain]
 2025.10.29. Added rkLinkAttach and rkLinkDetach. [rk_errmsg, rk_link]
 2025.10.17. Renamed member f of rkCDPairDat to wrench. [rk_cd]
 2025.10.17. Renamed members _bb_update_flag and _ph_update_flag of rkCDCellDat to _bb_is_uptodate and _ph_is_uptodate, respectively. [rk_cd]

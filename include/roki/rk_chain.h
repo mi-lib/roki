@@ -371,6 +371,18 @@ __ROKI_EXPORT rkLink *rkChainFindLink(rkChain *chain, const char *name);
 __ROKI_EXPORT int rkChainFindLinkID(rkChain *chain, const char *name);
 __ROKI_EXPORT int rkChainFindLinkJointIDOffset(rkChain *chain, const char *name);
 
+/*! \brief link offset from the root of a chain. */
+#define rkChainLinkIDOffset(chain,link) ( (int)( link - rkChainRoot(chain) ) )
+
+/*! \brief check if a link is included in a kinematic chain.
+ *
+ * rkChainLinkIsIncluded() checks if a link \a link is included in a kinematic chain \a chain.
+ * \return
+ * rkChainLinkIsIncluded() returns the true value if \a link is included in \a chain. Otherwise,
+ * it returns the false value.
+ */
+__ROKI_EXPORT bool rkChainLinkIsIncluded(rkChain *chain, rkLink *link);
+
 /*! \brief update and acquire state of a joint of a kinematic chain.
  *
  * rkChainLinkJointTestDis() tests if the given displacement \a testval is in the movable range of
