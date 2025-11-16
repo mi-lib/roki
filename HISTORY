@@ -1,3 +1,4 @@
+2025.11.16. Modified _rkLinkInitABIInertia to apply renaming of zVec3DOuterProdToMat3D and zVec3DTripleProdToMat3D. [rk_abi]
 2025.11.16. Added rkBodyMPRegressor. [rk_errmsg, rk_body]
 2025.11.16. Added rkBodyMPFromRawVec, rkBodyMPFromVec, rkBodyMPToRawVec, and rkBodyMPToVec. [rk_body]
 2025.11.16. Added rkMPFromRawVec, rkMPFromVec, rkMPToRawVec, and rkMPToVec. [rk_errmsg, rk_body]

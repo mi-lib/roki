@@ -17,9 +17,9 @@ static void _rkLinkInitABIInertia(rkLink *link)
   ap = rkLinkABIPrp(link);
   zMat3DCreate( &ap->m.e[0][0], rkLinkMass(link), 0, 0, 0, rkLinkMass(link), 0, 0, 0, rkLinkMass(link) );
   zVec3DMul( rkLinkCOM(link), rkLinkMass(link), &pc );
-  zVec3DOuterProd2Mat3D( &pc, &ap->m.e[0][1] );
+  zVec3DOuterProdToMat3D( &pc, &ap->m.e[0][1] );
   zMat3DRev( &ap->m.e[0][1], &ap->m.e[1][0] );
-  zVec3DTripleProd2Mat3D( &pc, rkLinkCOM(link), &mpcross2 );
+  zVec3DTripleProdToMat3D( &pc, rkLinkCOM(link), &mpcross2 );
   zMat3DSub( rkLinkInertia(link), &mpcross2, &ap->m.e[1][1] );
 }
 
