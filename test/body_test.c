@@ -55,7 +55,21 @@ void create_point_rand(point_array_t *pa, int n)
   }
 }
 
-void create_mp(point_array_t *pa, rkMP mp[])
+void create_mp_rand(rkMP *mp)
+{
+  zVec3D distributed_mass;
+  int i, n = 10;
+
+  rkMPSetMass( mp, zRandF( 1.0, 5.0 ) );
+  zVec3DCreate( rkMPCOM(mp), zRandF(-1.0,1.0), zRandF(-1.0,1.0), zRandF(-1.0,1.0) );
+  zMat3DZero( rkMPInertia(mp) );
+  for( i=0; i<n; i++ ){
+    zVec3DCreate( &distributed_mass, zRandF(-1.0,1.0), zRandF(-1.0,1.0), zRandF(-1.0,1.0) );
+    zMat3DAddDyad( rkMPInertia(mp), &distributed_mass, &distributed_mass );
+  }
+}
+
+void create_mp3(point_array_t *pa, rkMP mp[])
 {
   int i;
   rkMP *mpp;
@@ -85,6 +99,26 @@ void create_mp(point_array_t *pa, rkMP mp[])
   }
 }
 
+void assert_mp_shift_inertia(void)
+{
+  rkMP mp, mp_shifted;
+  zVec3D shift_vec;
+  zMat3D inertia;
+  const int n = 100;
+  int i;
+  bool result = true;
+
+  for( i=0; i<n; i++ ){
+    create_mp_rand( &mp );
+    rkMPCopy( &mp, &mp_shifted );
+    zVec3DCreate( &shift_vec, zRandF(-5,5), zRandF(-5,5), zRandF(-5,5) );
+    rkMPShiftInertia( &mp, &shift_vec, rkMPInertia(&mp_shifted) );
+    rkMPInvShiftInertia( &mp_shifted, &shift_vec, &inertia );
+    if( !zMat3DEqual( rkMPInertia(&mp), &inertia ) ) result = false;
+  }
+  zAssert( rkMPShiftInertia + rkMPInvShiftInertia, result );
+}
+
 void assert_mp_combine_pointmass(void)
 {
   point_array_t pa;
@@ -94,7 +128,7 @@ void assert_mp_combine_pointmass(void)
   const int n = 1000;
 
   create_point_rand( &pa, n );
-  create_mp( &pa, mp );
+  create_mp3( &pa, mp );
   zArrayFree( &pa );
   rkMPCombine( &mp[0], &mp[1], &mpc );
   zVec3DSub( rkMPCOM(&mp[2]), rkMPCOM(&mpc), &ec );
@@ -138,11 +172,25 @@ void assert_mp_inertialellipsoid(void)
   zAssert( rkMPInertiaEllips, result );
 }
 
+void assert_mp_to_vec(void)
+{
+  rkMP mp_src, mp_dest;
+  double mpvec_array[10];
+  zVecStruct mpvec;
+
+  zVecAssignArray( &mpvec, 10, mpvec_array );
+  create_mp_rand( &mp_src );
+  rkMPToVec( &mp_src, &mpvec );
+  rkMPFromVec( &mp_dest, &mpvec );
+  zAssert( rkMPToVec + rkMPFromVec, rkMPEqual( &mp_src, &mp_dest ) );
+}
+
 void create_body_rand(rkBody *body)
 {
+  rkBodyInit( body );
+#if 0
   zVec3D iv[3];
 
-  rkBodyInit( body );
   rkBodySetMass( body, zRandF(0.1,5.0) );
   zVec3DCreate( &iv[0], zRandF(0.1,1.0), zRandF(0.1,1.0), zRandF(0.1,1.0) );
   zVec3DCreate( &iv[1], zRandF(0.1,1.0), zRandF(0.1,1.0), zRandF(0.1,1.0) );
@@ -152,6 +200,9 @@ void create_body_rand(rkBody *body)
   zMat3DAddDyad( rkBodyInertia(body), &iv[1], &iv[1] );
   zMat3DAddDyad( rkBodyInertia(body), &iv[2], &iv[2] );
   zVec3DCreate( rkBodyPos(body), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
+#else
+  create_mp_rand( rkBodyMP(body) );
+#endif
 }
 
 void assert_body_combine(void)
@@ -214,13 +265,59 @@ void assert_body_contig_vert(void)
   zAssert( rkBodyContigVert, result );
 }
 
+void create_body_state_rand(rkBody *body)
+{
+  zVec3D aa;
+
+  create_body_rand( body );
+  zVec3DCreate( rkBodyPos(body), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
+  zVec3DCreate( &aa, zRandF(-zPI,zPI), zRandF(-zPI,zPI), zRandF(-zPI,zPI) );
+  zMat3DFromAA( rkBodyAtt(body), &aa );
+  zVec6DCreate( rkBodyVel(body), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
+  zVec6DCreate( rkBodyAcc(body), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
+  rkBodyUpdateCOM( body );
+  rkBodyUpdateCOMVel( body );
+  rkBodyUpdateCOMAcc( body );
+}
+
+void assert_body_eqm_regressor(void)
+{
+  zVecStruct mpvec, wrenchvec;
+  zMatStruct regressor;
+  double mpvec_array[10];
+  double regressor_array[60];
+  rkBody body;
+  zVec6D wrench_com, wrench_org1, wrench_org2;
+  const int n = 10;
+  int i;
+  bool result = true;
+
+  zVecAssignArray( &mpvec, 10, mpvec_array );
+  zMatAssignArray( &regressor, 6, 10, regressor_array );
+  zVecAssignArray( &wrenchvec, 6, wrench_org2.e );
+  for( i=0; i<n; i++ ){
+    create_body_state_rand( &body );
+    rkBodyInertialWrench( &body, &wrench_com );
+    zVec6DAngShift( &wrench_com, rkBodyCOM(&body), &wrench_org1 );
+    rkBodyMPToVec( &body, &mpvec );
+    rkBodyMPRegressor( &body, &regressor );
+    zMulMatVec( &regressor, &mpvec, &wrenchvec );
+    if( !zVec6DEqual( &wrench_org1, &wrench_org2 ) ) result = false;
+    rkBodyDestroy( &body );
+  }
+  zAssert( rkBodyMPRegressor, result );
+}
+
 int main(int argc, char *argv[])
 {
   zRandInit();
   assert_mp_org_inertia();
+  assert_mp_shift_inertia();
   assert_mp_combine_pointmass();
   assert_mp_inertialellipsoid();
+  assert_mp_to_vec();
   assert_body_combine();
   assert_body_contig_vert();
+  assert_body_eqm_regressor();
   return 0;
 }

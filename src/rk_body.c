@@ -7,9 +7,8 @@
 #include <roki/rk_body.h>
 
 /* ********************************************************** */
-/* CLASS: rkMP
- * mass property class
- * ********************************************************** */
+/* mass property class
+ * *//******************************************************* */
 
 /* convert mass properties in [g,mm] to that in [kg,m]. */
 rkMP *rkMPgmm2kgm(rkMP *mp)
@@ -92,6 +91,59 @@ zEllips3D *rkMPInertiaEllips(const rkMP *mp, zEllips3D *ie)
   return zEllips3DCreate( ie, rkMPCOM(mp), &eigbase.v[0], &eigbase.v[1], &eigbase.v[2], eigval.e[0], eigval.e[1], eigval.e[2], 0 );
 }
 
+/* convert a raw vector to a mass property set. */
+rkMP *rkMPFromRawVec(rkMP *mp, const double *mpvec)
+{
+  zMat3D org_inertia;
+
+  rkMPSetMass( mp, mpvec[0] );
+  zVec3DDiv( (zVec3D*)&mpvec[1], rkMPMass(mp), rkMPCOM(mp) );
+  zMat3DCreate( &org_inertia,
+    mpvec[4], mpvec[7], mpvec[8],
+    mpvec[7], mpvec[5], mpvec[9],
+    mpvec[8], mpvec[9], mpvec[6] );
+  zMat3DCatVec3DDoubleOuterProd( &org_inertia, rkMPMass(mp), rkMPCOM(mp), rkMPInertia(mp) );
+  return mp;
+}
+
+/* convert a 10-dim vector to a mass property set. */
+rkMP *rkMPFromVec(rkMP *mp, const zVec mpvec)
+{
+  if( zVecSize(mpvec) < 10 ){
+    ZRUNERROR( RK_ERR_MP_INVSIZEVEC, zVecSize(mpvec) );
+    return NULL;
+  }
+  return rkMPFromRawVec( mp, zVecBufNC(mpvec) );
+}
+
+/* convert a mass property set to a raw vector. */
+double *rkMPToRawVec(const rkMP *mp, double *mpvec)
+{
+  zMat3D org_inertia;
+
+  mpvec[0] = rkMPMass(mp);
+  zVec3DMul( rkMPCOM(mp), rkMPMass(mp), (zVec3D*)&mpvec[1] );
+  rkMPOrgInertia( mp, &org_inertia );
+  mpvec[4] = org_inertia.c.xx;
+  mpvec[5] = org_inertia.c.yy;
+  mpvec[6] = org_inertia.c.zz;
+  mpvec[7] = org_inertia.c.xy;
+  mpvec[8] = org_inertia.c.xz;
+  mpvec[9] = org_inertia.c.yz;
+  return mpvec;
+}
+
+/* convert a mass property set to a 10-dim vector. */
+zVec rkMPToVec(const rkMP *mp, zVec mpvec)
+{
+  if( zVecSize(mpvec) < 10 ){
+    ZRUNERROR( RK_ERR_MP_INVSIZEVEC, zVecSize(mpvec) );
+    return NULL;
+  }
+  rkMPToRawVec( mp, zVecBufNC(mpvec) );
+  return mpvec;
+}
+
 /* print mass property out to a file. */
 void rkMPFPrint(FILE *fp, const rkMP *mp)
 {
@@ -103,9 +155,8 @@ void rkMPFPrint(FILE *fp, const rkMP *mp)
 }
 
 /* ********************************************************** */
-/* CLASS: rkBody
- * rigid body class
- * ********************************************************** */
+/* rigid body class
+ * *//******************************************************* */
 
 /* initialize a body. */
 void rkBodyInit(rkBody *body)
@@ -334,4 +385,93 @@ rkMP *rkBodyShapeMP(const rkBody *body, double density, rkMP *mp)
   zVec3DDivDRC( rkMPCOM(mp), rkMPMass(mp) );
   _zMat3DCatVec3DDoubleOuterProdDRC( rkMPInertia(mp), rkMPMass(mp), rkMPCOM(mp) );
   return mp;
+}
+
+/* compute a regressor matrix for mass property identification. */
+zMat rkBodyMPRegressor(const rkBody *body, zMat regressor)
+{
+  double ox2, oy2, oz2, oxy, oyz, ozx;
+
+  if( zMatRowSize(regressor) != 6 || zMatColSize(regressor) != 10 ){
+    ZRUNERROR( RK_ERR_BODY_INVSIZE_REGRESSOR, zMatRowSize(regressor), zMatColSize(regressor) );
+    return NULL;
+  }
+  ox2 = zSqr( rkBodyAngVel(body)->c.x );
+  oy2 = zSqr( rkBodyAngVel(body)->c.y );
+  oz2 = zSqr( rkBodyAngVel(body)->c.z );
+  oxy = rkBodyAngVel(body)->c.x * rkBodyAngVel(body)->c.y;
+  oyz = rkBodyAngVel(body)->c.y * rkBodyAngVel(body)->c.z;
+  ozx = rkBodyAngVel(body)->c.z * rkBodyAngVel(body)->c.x;
+
+  zMatSetElemNC( regressor, 0, 0, rkBodyLinAcc(body)->c.x );
+  zMatSetElemNC( regressor, 1, 0, rkBodyLinAcc(body)->c.y );
+  zMatSetElemNC( regressor, 2, 0, rkBodyLinAcc(body)->c.z );
+  zMatSetElemNC( regressor, 3, 0, 0 );
+  zMatSetElemNC( regressor, 4, 0, 0 );
+  zMatSetElemNC( regressor, 5, 0, 0 );
+
+  zMatSetElemNC( regressor, 0, 1, -oy2-oz2 );
+  zMatSetElemNC( regressor, 1, 1, oxy+rkBodyAngAcc(body)->c.z );
+  zMatSetElemNC( regressor, 2, 1, ozx-rkBodyAngAcc(body)->c.y );
+  zMatSetElemNC( regressor, 3, 1, 0 );
+  zMatSetElemNC( regressor, 4, 1,-rkBodyLinAcc(body)->c.z );
+  zMatSetElemNC( regressor, 5, 1, rkBodyLinAcc(body)->c.y );
+
+  zMatSetElemNC( regressor, 0, 2, oxy-rkBodyAngAcc(body)->c.z );
+  zMatSetElemNC( regressor, 1, 2, -oz2-ox2 );
+  zMatSetElemNC( regressor, 2, 2, oyz+rkBodyAngAcc(body)->c.x );
+  zMatSetElemNC( regressor, 3, 2, rkBodyLinAcc(body)->c.z );
+  zMatSetElemNC( regressor, 4, 2, 0 );
+  zMatSetElemNC( regressor, 5, 2,-rkBodyLinAcc(body)->c.x );
+
+  zMatSetElemNC( regressor, 0, 3, ozx+rkBodyAngAcc(body)->c.y );
+  zMatSetElemNC( regressor, 1, 3, oyz-rkBodyAngAcc(body)->c.x );
+  zMatSetElemNC( regressor, 2, 3, -ox2-oy2 );
+  zMatSetElemNC( regressor, 3, 3,-rkBodyLinAcc(body)->c.y );
+  zMatSetElemNC( regressor, 4, 3, rkBodyLinAcc(body)->c.x );
+  zMatSetElemNC( regressor, 5, 3, 0 );
+
+  zMatSetElemNC( regressor, 0, 4, 0 );
+  zMatSetElemNC( regressor, 1, 4, 0 );
+  zMatSetElemNC( regressor, 2, 4, 0 );
+  zMatSetElemNC( regressor, 3, 4, rkBodyAngAcc(body)->c.x );
+  zMatSetElemNC( regressor, 4, 4, ozx );
+  zMatSetElemNC( regressor, 5, 4,-oxy );
+
+  zMatSetElemNC( regressor, 0, 5, 0 );
+  zMatSetElemNC( regressor, 1, 5, 0 );
+  zMatSetElemNC( regressor, 2, 5, 0 );
+  zMatSetElemNC( regressor, 3, 5,-oyz );
+  zMatSetElemNC( regressor, 4, 5, rkBodyAngAcc(body)->c.y );
+  zMatSetElemNC( regressor, 5, 5, oxy );
+
+  zMatSetElemNC( regressor, 0, 6, 0 );
+  zMatSetElemNC( regressor, 1, 6, 0 );
+  zMatSetElemNC( regressor, 2, 6, 0 );
+  zMatSetElemNC( regressor, 3, 6, oyz );
+  zMatSetElemNC( regressor, 4, 6,-ozx );
+  zMatSetElemNC( regressor, 5, 6, rkBodyAngAcc(body)->c.z );
+
+  zMatSetElemNC( regressor, 0, 7, 0 );
+  zMatSetElemNC( regressor, 1, 7, 0 );
+  zMatSetElemNC( regressor, 2, 7, 0 );
+  zMatSetElemNC( regressor, 3, 7,-ozx+rkBodyAngAcc(body)->c.y );
+  zMatSetElemNC( regressor, 4, 7, oyz+rkBodyAngAcc(body)->c.x );
+  zMatSetElemNC( regressor, 5, 7, ox2-oy2 );
+
+  zMatSetElemNC( regressor, 0, 8, 0 );
+  zMatSetElemNC( regressor, 1, 8, 0 );
+  zMatSetElemNC( regressor, 2, 8, 0 );
+  zMatSetElemNC( regressor, 3, 8, oxy+rkBodyAngAcc(body)->c.z );
+  zMatSetElemNC( regressor, 4, 8, oz2-ox2 );
+  zMatSetElemNC( regressor, 5, 8,-oyz+rkBodyAngAcc(body)->c.x );
+
+  zMatSetElemNC( regressor, 0, 9, 0 );
+  zMatSetElemNC( regressor, 1, 9, 0 );
+  zMatSetElemNC( regressor, 2, 9, 0 );
+  zMatSetElemNC( regressor, 3, 9, oy2-oz2 );
+  zMatSetElemNC( regressor, 4, 9,-oxy+rkBodyAngAcc(body)->c.z );
+  zMatSetElemNC( regressor, 5, 9, ozx+rkBodyAngAcc(body)->c.y );
+
+  return regressor;
 }

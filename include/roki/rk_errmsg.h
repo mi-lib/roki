@@ -51,16 +51,20 @@
 #define RK_ERR_MOTOR_OUTOFRANGE         "motor identifier out of range %d/%d"
 #define RK_ERR_MOTOR_UNNAMED            "unnamed motor exists"
 
+#define RK_ERR_MP_INVSIZEVEC            "vector size = %d, does not have sufficient number of components for mass property of a rigid body"
+
+#define RK_ERR_BODY_INVSIZE_REGRESSOR   "invalid size of mass property regressor matrix (%dx%d)"
+
 #define RK_ERR_JOINT_FAILED             "cannot create joint instance"
 #define RK_ERR_JOINT_MISMATCH_DOF       "unmatched joint/motor DOFs %d/%d"
-
-#define RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES "unmatched matrix/vector size with joint size"
-#define RK_ERR_CHAIN_UNKNOWN_FILETYPE   "cannot identify the file type of %s"
 
 #define RK_ERR_LINK_INVALID_ID          "invalid link #%d specified"
 #define RK_ERR_LINK_UNKNOWN             "%s: unknown link"
 
 #define RK_ERR_SHAPE_UNKNOWN            "%s: unknown shape"
+
+#define RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES "unmatched matrix/vector size with joint size"
+#define RK_ERR_CHAIN_UNKNOWN_FILETYPE   "cannot identify the file type of %s"
 
 #define RK_ERR_IK_JOINT_UNREGISTERED    "joint not registered"
 #define RK_ERR_IK_CONSTRAINT_NOTFOUND   "constraint %s of the inverse kinematics not found"

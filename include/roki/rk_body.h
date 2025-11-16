@@ -22,12 +22,6 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   zMat3D inertia;
 #ifdef __cplusplus
   rkMP();
-  double Mass() const;
-  zVec3D &COM();
-  zMat3D &Inertia();
-  double setMass(double);
-  zVec3D &setCOM(zVec3D &);
-  zMat3D &setInertia(zMat3D &);
   rkMP *copy(rkMP &);
   void zero();
   friend bool operator==(rkMP &mp1, rkMP &mp2);
@@ -60,6 +54,8 @@ __ROKI_EXPORT rkMP *rkMPgmm2kgm(rkMP *mp);
 
 /*! \brief shift inertia tensor by an offset 3D vector. */
 #define rkMPShiftInertia(mp,r,i) zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp), -rkMPMass(mp), (r), (i) )
+/*! \brief shift inertia tensor inversely by an offset 3D vector. */
+#define rkMPInvShiftInertia(mp,r,i) zMat3DCatVec3DDoubleOuterProd( rkMPInertia(mp), rkMPMass(mp), (r), (i) )
 
 /*! \brief check if two sets of mass properties are equal.
  *
@@ -106,13 +102,22 @@ __ROKI_EXPORT rkMP *rkMPCombine(const rkMP *mp1, const rkMP *mp2, rkMP *mp);
  */
 __ROKI_EXPORT rkMP *rkMPMerge(rkMP *mp, const rkMP *mp_sub);
 
-/* \brief convert inertia tensor to that about the origin.
+/*! \brief convert inertia tensor to that about the origin.
  */
 __ROKI_EXPORT zMat3D *rkMPOrgInertia(const rkMP *mp, zMat3D *i);
 
-/* \brief compute the inertial ellipsoid from a mass property set.
+/*! \brief compute the inertial ellipsoid from a mass property set.
  */
 __ROKI_EXPORT zEllips3D *rkMPInertiaEllips(const rkMP *mp, zEllips3D *ie);
+
+/*! \brief convert a raw vector to a mass property set. */
+__ROKI_EXPORT rkMP *rkMPFromRawVec(rkMP *mp, const double *mpvec);
+/*! \brief convert a 10-dim vector to a mass property set. */
+__ROKI_EXPORT rkMP *rkMPFromVec(rkMP *mp, const zVec mpvec);
+/*! \brief convert a mass property set to a raw vector. */
+__ROKI_EXPORT double *rkMPToRawVec(const rkMP *mp, double *mpvec);
+/*! \brief convert a mass property set to a 10-dim vector. */
+__ROKI_EXPORT zVec rkMPToVec(const rkMP *mp, zVec mpvec);
 
 /*! \brief print mass property.
  *
@@ -139,12 +144,6 @@ __END_DECLS
 
 #ifdef __cplusplus
 inline rkMP::rkMP(){ rkMPZero( this ); }
-inline double rkMP::Mass() const { return rkMPMass( this ); }
-inline zVec3D &rkMP::COM(){ return *rkMPCOM( this ); }
-inline zMat3D &rkMP::Inertia(){ return *rkMPInertia( this ); }
-inline double rkMP::setMass(double m){ return rkMPSetMass( this, m ); }
-inline zVec3D &rkMP::setCOM(zVec3D &p){ rkMPSetCOM( this, &p ); return COM(); }
-inline zMat3D &rkMP::setInertia(zMat3D &i){ rkMPSetInertia( this, &i ); return Inertia(); }
 inline rkMP *rkMP::copy(rkMP &src){ rkMPCopy( &src, this ); return this; }
 inline void rkMP::zero(){ rkMPZero( this ); }
 inline bool operator==(rkMP &mp1, rkMP &mp2){ return rkMPEqual( &mp1, &mp2 ); }
@@ -384,6 +383,18 @@ __ROKI_EXPORT const zVec3D *rkBodyContigVert(const rkBody *body, const zVec3D *p
 __ROKI_EXPORT double rkBodyShapeVolume(const rkBody *body);
 /*! \brief compute mass property of a body. */
 __ROKI_EXPORT rkMP *rkBodyShapeMP(const rkBody *body, double density, rkMP *mp);
+
+/*! \brief convert a raw vector to a mass property set of a body. */
+#define rkBodyMPFromRawVec(body,mpvec) rkMPFromRawVec( rkBodyMP(body), mpvec )
+/*! \brief convert a 10-dim vector to a mass property set of a body. */
+#define rkBodyMPFromVec(body,mpvec)    rkMPFromVec( rkBodyMP(body), mpvec )
+/*! \brief convert a mass property set of a body to a raw vector. */
+#define rkBodyMPToRawVec(body,mpvec)   rkMPToRawVec( rkBodyMP(body), mpvec )
+/*! \brief convert a mass property set of a body to a 10-dim vector. */
+#define rkBodyMPToVec(body,mpvec)      rkMPToVec( rkBodyMP(body), mpvec )
+
+/*! \brief compute a regressor matrix for mass property identification. */
+__ROKI_EXPORT zMat rkBodyMPRegressor(const rkBody *body, zMat regressor);
 
 __END_DECLS
 
