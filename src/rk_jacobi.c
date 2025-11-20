@@ -8,57 +8,55 @@
 
 /* Manipulator Jacobian matrix */
 
-#define __rk_jacobi_set_vector(j,c,k,v) do{\
-  zMatSetElemNC( j, zX, c, (v)->e[zX] );\
-  zMatSetElemNC( j, zY, c, (v)->e[zY] );\
-  zMatSetElemNC( j, zZ, c, (v)->e[zZ] );\
+#define __rk_jacobi_set_vector(jacobi,col,k,vec) do{ \
+  zMatSetElemNC( jacobi, zX, col, (vec)->c.x ); \
+  zMatSetElemNC( jacobi, zY, col, (vec)->c.y ); \
+  zMatSetElemNC( jacobi, zZ, col, (vec)->c.z ); \
 } while(0)
 
-#define __rk_jacobi_add_vector(j,c,k,v) do{\
-  zMatElemNC(j,zX,c) += (v)->e[zX];\
-  zMatElemNC(j,zY,c) += (v)->e[zY];\
-  zMatElemNC(j,zZ,c) += (v)->e[zZ];\
+#define __rk_jacobi_add_vector(jacobi,col,k,vec) do{ \
+  zMatElemNC(jacobi,zX,col) += (vec)->c.x; \
+  zMatElemNC(jacobi,zY,col) += (vec)->c.y; \
+  zMatElemNC(jacobi,zZ,col) += (vec)->c.z; \
 } while(0)
 
-#define __rk_jacobi_sub_vector(j,c,k,v) do{\
-  zMatElemNC(j,zX,c) -= (v)->e[zX];\
-  zMatElemNC(j,zY,c) -= (v)->e[zY];\
-  zMatElemNC(j,zZ,c) -= (v)->e[zZ];\
+#define __rk_jacobi_sub_vector(jacobi,col,k,vec) do{ \
+  zMatElemNC(jacobi,zX,col) -= (vec)->c.x; \
+  zMatElemNC(jacobi,zY,col) -= (vec)->c.y; \
+  zMatElemNC(jacobi,zZ,col) -= (vec)->c.z; \
 } while(0)
 
-#define __rk_jacobi_cat_vector(j,c,k,v) do{\
-  zMatElemNC(j,zX,c) += (k)*(v)->e[zX];\
-  zMatElemNC(j,zY,c) += (k)*(v)->e[zY];\
-  zMatElemNC(j,zZ,c) += (k)*(v)->e[zZ];\
+#define __rk_jacobi_cat_vector(jacobi,col,k,vec) do{ \
+  zMatElemNC(jacobi,zX,col) += (k)*(vec)->c.x; \
+  zMatElemNC(jacobi,zY,col) += (k)*(vec)->c.y; \
+  zMatElemNC(jacobi,zZ,col) += (k)*(vec)->c.z; \
 } while(0)
 
-#define __rk_jacobi_ang_col(l,f,m,op,s) do{\
-  int __i;\
-\
-  for( __i=0; __i<rkLinkJointDOF(l); __i++ )\
-    if( rkJointAngAxis( rkLinkJoint(l), __i, f, s ) )\
-      op( m, rkLinkJointIDOffset(l)+__i, 0 /* dummy */, s );\
+#define __rk_jacobi_ang_col(link,frame,mat,op,vec) do{ \
+  int __i; \
+  for( __i=0; __i<rkLinkJointDOF(link); __i++ ) \
+    if( rkJointAngAxis( rkLinkJoint(link), __i, frame, vec ) ) \
+      op( mat, rkLinkJointIDOffset(link)+__i, 0 /* dummy */, vec ); \
 } while(0)
 
 /* column vector of linear Jacobian matrix. */
-static zVec3D *_rkJacobiLinCol(rkLink *link, int i, zFrame3D *f, zVec3D *p, zVec3D *s)
+static zVec3D *_rkJacobiLinCol(rkLink *link, int i, zFrame3D *frame, zVec3D *p, zVec3D *vec)
 {
   zVec3D tmp, dp;
 
-  if( rkJointLinAxis( rkLinkJoint(link), i, f, s ) ) return s;
-  if( rkJointAngAxis( rkLinkJoint(link), i, f, &tmp ) ){
-    zVec3DSub( p, zFrame3DPos(f), &dp );
-    return zVec3DOuterProd( &tmp, &dp, s );
+  if( rkJointLinAxis( rkLinkJoint(link), i, frame, vec ) ) return vec;
+  if( rkJointAngAxis( rkLinkJoint(link), i, frame, &tmp ) ){
+    zVec3DSub( p, zFrame3DPos(frame), &dp );
+    return zVec3DOuterProd( &tmp, &dp, vec );
   }
   return NULL;
 }
 
-#define __rk_jacobi_lin_col(link,f,p,k,m,op,s) do{\
-  int __i;\
-\
-  for( __i=0; __i<rkLinkJointDOF(link); __i++ )\
-    if( _rkJacobiLinCol( link, __i, f, p, s ) )\
-      op( m, rkLinkJointIDOffset(link)+__i, k, s );\
+#define __rk_jacobi_lin_col(link,frame,p,k,mat,op,vec) do{ \
+  int __i; \
+  for( __i=0; __i<rkLinkJointDOF(link); __i++ ) \
+    if( _rkJacobiLinCol( link, __i, frame, p, vec ) ) \
+      op( mat, rkLinkJointIDOffset(link)+__i, k, vec ); \
 } while(0)
 
 /* Jacobian matrix about angular movement of a link with respect to the world frame. */
@@ -96,14 +94,20 @@ zMat rkChainLinkToLinkAngJacobi(rkChain *chain, int from, int to, zMat jacobi)
 {
   rkLink *lp;
   zVec3D s;
+  zFrame3D frame_from;
 
   zMatZero( jacobi );
-  for( lp=rkChainLink(chain,to); lp!=rkChainRoot(chain); lp=rkLinkParent(lp) ){
+  for( lp=rkChainLink(chain,to); ; lp=rkLinkParent(lp) ){
     if( lp == rkChainLink(chain,from) ) return jacobi;
-    __rk_jacobi_ang_col( lp, rkLinkWldFrame(lp), jacobi, __rk_jacobi_set_vector, &s );
+    _zFrame3DXform( rkChainLinkWldFrame(chain,from), rkLinkWldFrame(lp), &frame_from );
+    __rk_jacobi_ang_col( lp, &frame_from, jacobi, __rk_jacobi_set_vector, &s );
+    if( lp == rkChainRoot(chain) ) break;
   }
-  for( lp=rkChainLink(chain,from); lp!=rkChainRoot(chain); lp=rkLinkParent(lp) )
-    __rk_jacobi_ang_col( lp, rkLinkWldFrame(lp), jacobi, __rk_jacobi_sub_vector, &s );
+  for( lp=rkChainLink(chain,from); ; lp=rkLinkParent(lp) ){
+    _zFrame3DXform( rkChainLinkWldFrame(chain,from), rkLinkWldFrame(lp), &frame_from );
+    __rk_jacobi_ang_col( lp, &frame_from, jacobi, __rk_jacobi_sub_vector, &s );
+    if( lp == rkChainRoot(chain) ) break;
+  }
   return jacobi;
 }
 
@@ -112,17 +116,21 @@ zMat rkChainLinkToLinkAngJacobi(rkChain *chain, int from, int to, zMat jacobi)
 zMat rkChainLinkToLinkLinJacobi(rkChain *chain, int from, int to, zVec3D *p, zMat jacobi)
 {
   rkLink *lp;
-  zVec3D s, tp;
+  zVec3D s, p_to, p_from_to;
+  zFrame3D frame_from;
 
   zMatZero( jacobi );
-  zXform3D( rkChainLinkWldFrame(chain,to), p, &tp );
+  _zXform3D( rkChainLinkWldFrame(chain,to), p, &p_to );
+  _zXform3DInv( rkChainLinkWldFrame(chain,from), &p_to, &p_from_to );
   for( lp=rkChainLink(chain,to); ; lp=rkLinkParent(lp) ){
     if( lp == rkChainLink(chain,from) ) return jacobi;
-    __rk_jacobi_lin_col( lp, rkLinkWldFrame(lp), &tp, 0, jacobi, __rk_jacobi_set_vector, &s );
+    _zFrame3DXform( rkChainLinkWldFrame(chain,from), rkLinkWldFrame(lp), &frame_from );
+    __rk_jacobi_lin_col( lp, &frame_from, &p_from_to, 0, jacobi, __rk_jacobi_set_vector, &s );
     if( lp == rkChainRoot(chain) ) break;
   }
   for( lp=rkChainLink(chain,from); ; lp=rkLinkParent(lp) ){
-    __rk_jacobi_lin_col( lp, rkLinkWldFrame(lp), &tp, 0, jacobi, __rk_jacobi_sub_vector, &s );
+    _zFrame3DXform( rkChainLinkWldFrame(chain,from), rkLinkWldFrame(lp), &frame_from );
+    __rk_jacobi_lin_col( lp, &frame_from, &p_from_to, 0, jacobi, __rk_jacobi_sub_vector, &s );
     if( lp == rkChainRoot(chain) ) break;
   }
   return jacobi;

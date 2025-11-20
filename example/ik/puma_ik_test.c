@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
   zFrame3DPrint( rkChainLinkWldFrame(&chain,6) );
   rkChainIK( &chain, dis, zTOL, 0 );
   zVecPrint( dis );
-  rkChainFK( &chain, dis );
+
   printf( "++ goal frame\n" );
   zFrame3DCreate( &goal, &cell[1]->data.ref.pos, &cell[0]->data.ref.att );
   zFrame3DPrint( &goal );

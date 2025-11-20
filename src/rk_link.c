@@ -7,8 +7,7 @@
 #include <roki/rk_link.h>
 
 /* ********************************************************** */
-/* CLASS: rkLink
- * link class
+/* link class
  * ********************************************************** */
 
 /* initialize a link. */
@@ -387,8 +386,8 @@ void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray)
 /* ZTK processing */
 
 typedef struct{
-  rkLinkArray *larray;
-  zShape3DArray *sarray;
+  rkLinkArray *link_array;
+  zShape3DArray *shape_array;
   bool given_density;
   bool given_mass;
   bool auto_com;
@@ -398,7 +397,7 @@ typedef struct{
 
 static void *_rkLinkNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   rkLink *link;
-  zArrayFindName( ((_rkLinkRefPrp*)arg)->larray, ZTKVal(ztk), link );
+  zArrayFindName( ((_rkLinkRefPrp*)arg)->link_array, ZTKVal(ztk), link );
   if( link ){
     ZRUNWARN( RK_WARN_LINK_DUPLICATE_NAME, ZTKVal(ztk) );
     return NULL;
@@ -407,7 +406,12 @@ static void *_rkLinkNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return zNamePtr((rkLink*)obj) ? obj : NULL;
 }
 static void *_rkLinkJointTypeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
-  return rkJointAssignByStr( rkLinkJoint((rkLink*)obj), ZTKVal(ztk) );
+  if( !rkJointAssignByStr( rkLinkJoint((rkLink*)obj), ZTKVal(ztk) ) ) return NULL;
+  if( ZTKValNext( ztk ) ){
+    if( strcmp( ZTKVal(ztk), ZTK_VAL_ROKI_JOINT_PASSIVE ) == 0 )
+      rkLinkJoint((rkLink*)obj)->is_active = false;
+  }
+  return obj;
 }
 static void *_rkLinkMassFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   ((_rkLinkRefPrp*)arg)->given_mass = true;
@@ -466,7 +470,7 @@ static void *_rkLinkDHFromZTK(void *obj, int i, void *arg, ZTK *ztk){
 }
 static void *_rkLinkParentFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   rkLink *parent;
-  zArrayFindName( ((_rkLinkRefPrp*)arg)->larray, ZTKVal(ztk), parent );
+  zArrayFindName( ((_rkLinkRefPrp*)arg)->link_array, ZTKVal(ztk), parent );
   if( !parent ){
     ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
     return NULL;
@@ -477,7 +481,7 @@ static void *_rkLinkParentFromZTK(void *obj, int i, void *arg, ZTK *ztk){
 static void *_rkLinkShapeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   zShape3D *sp;
   do{
-    zArrayFindName( ((_rkLinkRefPrp*)arg)->sarray, ZTKVal(ztk), sp );
+    zArrayFindName( ((_rkLinkRefPrp*)arg)->shape_array, ZTKVal(ztk), sp );
     if( !sp ){
       ZRUNERROR( RK_ERR_SHAPE_UNKNOWN, ZTKVal(ztk) );
       return NULL;
@@ -486,13 +490,26 @@ static void *_rkLinkShapeFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   } while( ZTKValNext( ztk ) );
   return obj;
 }
+static void *_rkLinkBindFromZTK(void *obj, int i, void *arg, ZTK *ztk){
+  rkLink *identlink;
+  zArrayFindName( ((_rkLinkRefPrp*)arg)->link_array, ZTKVal(ztk), identlink );
+  if( !identlink ){
+    ZRUNERROR( RK_ERR_LINK_UNKNOWN, ZTKVal(ztk) );
+    return NULL;
+  }
+  rkLinkSetIdent( (rkLink*)obj, identlink );
+  return obj;
+}
 
 static bool _rkLinkNameFPrintZTK(FILE *fp, int i, void *obj){
   fprintf( fp, "%s\n", zName((rkLink*)obj) );
   return true;
 }
 static bool _rkLinkJointTypeFPrintZTK(FILE *fp, int i, void *obj){
-  fprintf( fp, "%s\n", rkLinkJointTypeStr((rkLink*)obj) );
+  fprintf( fp, "%s", rkLinkJointTypeStr((rkLink*)obj) );
+  if( !rkJointIsActive( rkLinkJoint((rkLink*)obj) ) )
+    fprintf( fp, " %s", ZTK_VAL_ROKI_JOINT_PASSIVE );
+  fprintf( fp, "\n" );
   rkJointFPrintZTK( fp, rkLinkJoint((rkLink*)obj), zName((rkLink*)obj) );
   return true;
 }
@@ -531,6 +548,11 @@ static bool _rkLinkParentFPrintZTK(FILE *fp, int i, void *obj){
   fprintf( fp, "%s\n", zName(rkLinkParent((rkLink*)obj)) );
   return true;
 }
+static bool _rkLinkBindFPrintZTK(FILE *fp, int i, void *obj){
+  if( !rkLinkIdent((rkLink*)obj) ) return false;
+  fprintf( fp, "%s\n", zName(rkLinkIdent((rkLink*)obj)) );
+  return true;
+}
 
 static const ZTKPrp __ztk_prp_rklink[] = {
   { ZTK_KEY_ROKI_LINK_NAME,      1, _rkLinkNameFromZTK, _rkLinkNameFPrintZTK },
@@ -548,20 +570,21 @@ static const ZTKPrp __ztk_prp_rklink[] = {
   { ZTK_KEY_ROKI_LINK_SHAPE,    -1, _rkLinkShapeFromZTK, NULL },
 };
 
-static const ZTKPrp __ztk_prp_rklink_parent[] = {
+static const ZTKPrp __ztk_prp_rklink_connect[] = {
   { ZTK_KEY_ROKI_LINK_PARENT,    1, _rkLinkParentFromZTK, _rkLinkParentFPrintZTK },
+  { ZTK_KEY_ROKI_LINK_BIND,      1, _rkLinkBindFromZTK, _rkLinkBindFPrintZTK },
 };
 
 /* build a link from ZTK. */
-rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorSpecArray *msarray, ZTK *ztk)
+rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *link_array, zShape3DArray *shape_array, rkMotorSpecArray *motorspec_array, ZTK *ztk)
 {
   _rkLinkRefPrp prp;
   rkMP mp;
   double v;
 
   rkLinkInit( link );
-  prp.larray = larray;
-  prp.sarray = sarray;
+  prp.link_array = link_array;
+  prp.shape_array = shape_array;
   prp.given_density = false;
   prp.given_mass = false;
   prp.auto_com = false;
@@ -602,7 +625,7 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
     zMat3DSymmetrizeDRC( rkLinkInertia(link) );
   }
   if( !rkLinkJoint(link)->com ) rkJointAssign( rkLinkJoint(link), &rk_joint_fixed );
-  rkJointFromZTK( rkLinkJoint(link), msarray, ztk );
+  rkJointFromZTK( rkLinkJoint(link), motorspec_array, ztk );
   if( !zMat3DIsRightHand( rkLinkOrgAtt(link) ) ){ /* check if attitude matrix is right-handed */
     ZRUNWARN( RK_WARN_LINK_NON_RIGHTHAND_ATT );
   }
@@ -614,12 +637,12 @@ rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, 
 }
 
 /* connect links based on ZTK. */
-rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk)
+rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *link_array, ZTK *ztk)
 {
   _rkLinkRefPrp prp;
 
-  prp.larray = larray;
-  if( !_ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink_parent ) ) return NULL;
+  prp.link_array = link_array;
+  if( !_ZTKEvalKey( link, &prp, ztk, __ztk_prp_rklink_connect ) ) return NULL;
   return link;
 }
 
@@ -635,7 +658,7 @@ void rkLinkFPrintZTK(FILE *fp, rkLink *link)
       fprintf( fp, " %s", zName( zShapeListCellShape(cp) ) );
     fprintf( fp, "\n" );
   }
-  _ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink_parent );
+  _ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink_connect );
   fprintf( fp, "\n" );
 }
 

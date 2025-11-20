@@ -1,0 +1,129 @@
+[roki::chain]
+name: double-four-bar_linkage
+
+[zeo::shape]
+name: base
+type: box
+center: ( 0, 0, -0.1 )
+depth: 1.0
+width: 1.0
+height:0.2
+
+[zeo::shape]
+name: coupler
+type: box
+center: ( 0, -0.1, 0 )
+depth: 0.05
+width: 0.25
+height: 0.01
+
+[zeo::shape]
+name: coupler_dup
+type: box
+center: ( 0, 0.1, 0 )
+depth: 0.05
+width: 0.25
+height: 0.01
+
+# lower layer
+
+[roki::link]
+name: base_link
+jointtype: fixed
+shape: base
+
+[roki::link]
+name: input_link1
+jointtype: revolute
+pos: ( 0, -0.1, 0 )
+att: {
+ 0, 0, 1
+ 0,-1, 0
+ 1, 0, 0
+}
+parent: base_link
+
+[roki::link]
+name: coupler_link1
+jointtype: revolute passive
+pos: ( 0.3, 0, 0 )
+att: {
+ 1, 0, 0
+ 0, 1, 0
+ 0, 0, 1
+}
+parent: input_link1
+shape: coupler
+
+[roki::link]
+name: output_link1
+jointtype: revolute passive
+pos: ( 0, 0.1, 0 )
+att: {
+ 0, 0, 1
+ 0,-1, 0
+ 1, 0, 0
+}
+parent: base_link
+
+[roki::link]
+name: coupler_link_dup1
+jointtype: revolute passive
+pos: ( 0.3, 0, 0 )
+att: {
+ 1, 0, 0
+ 0, 1, 0
+ 0, 0, 1
+}
+parent: output_link1
+shape: coupler_dup
+bind: coupler_link1
+
+# upper layer
+
+[roki::link]
+name: input_link2
+jointtype: revolute
+pos: ( 0, 0, 0 )
+att: {
+ 1, 0, 0
+ 0, 1, 0
+ 0, 0, 1
+}
+parent: coupler_link1
+
+[roki::link]
+name: coupler_link2
+jointtype: revolute passive
+pos: ( 0.3, 0, 0 )
+att: {
+ 1, 0, 0
+ 0, 1, 0
+ 0, 0, 1
+}
+parent: input_link2
+shape: coupler
+
+[roki::link]
+name: output_link2
+jointtype: revolute passive
+pos: ( 0, -0.2, 0 )
+att: {
+ 1, 0, 0
+ 0, 1, 0
+ 0, 0, 1
+}
+parent: coupler_link1
+
+[roki::link]
+name: coupler_link_dup2
+jointtype: revolute passive
+pos: ( 0.3, 0, 0 )
+att: {
+ 1, 0, 0
+ 0, 1, 0
+ 0, 0, 1
+}
+parent: output_link2
+shape: coupler_dup
+bind: coupler_link2

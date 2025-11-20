@@ -19,8 +19,7 @@ rkIKAttr* rkIKAttrInit(rkIKAttr *attr)
 }
 
 /* ********************************************************** */
-/* CLASS: rkIKCell
- * inverse kinematics cell class
+/* inverse kinematics cell class
  * ********************************************************** */
 
 /* initialize an IK cell. */
@@ -204,12 +203,12 @@ zMat rkIKJacobiLinkWldAng(rkChain *chain, rkIKAttr *attr, zMat j)
 
 zMat rkIKJacobiLinkL2LLin(rkChain *chain, rkIKAttr *attr, zMat j)
 { /* relative linear motion of a link with respect to another link */
-  return rkChainLinkToLinkLinJacobi( chain, attr->id, attr->id_sub, &attr->attention_point, j );
+  return rkChainLinkToLinkLinJacobi( chain, attr->id_sub, attr->id, &attr->attention_point, j );
 }
 
 zMat rkIKJacobiLinkL2LAng(rkChain *chain, rkIKAttr *attr, zMat j)
 { /* relative angular motion of a link with respect to another link */
-  return rkChainLinkToLinkAngJacobi( chain, attr->id, attr->id_sub, j );
+  return rkChainLinkToLinkAngJacobi( chain, attr->id_sub, attr->id, j );
 }
 
 zMat rkIKJacobiCOM(rkChain *chain, rkIKAttr *attr, zMat j)
@@ -246,19 +245,17 @@ zVec3D *rkIKLinkL2LPosErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *r
 { /* position error of a link with respect to another link */
   zVec3D p;
 
-  zXform3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->attention_point, &p );
-  zVec3DSubDRC( &p, rkChainLinkWldPos(chain,attr->id) );
+  _zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->attention_point, &p );
+  zXform3DInvDRC( rkChainLinkWldFrame(chain,attr->id_sub), &p );
   return zVec3DSub( &ref->pos, &p, err );
 }
 
 zVec3D *rkIKLinkL2LAttErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err)
 { /* attitude error of a link with respect to another link */
   zMat3D m;
-  zVec3D e;
 
-  zMulMat3DTMat3D( rkChainLinkWldAtt(chain,attr->id), rkChainLinkWldAtt(chain,attr->id_sub), &m );
-  zMat3DError( &ref->att, &m, &e );
-  return zMulMat3DVec3D( rkChainLinkWldAtt(chain,attr->id), &e, err );
+  zMulMat3DTMat3D( rkChainLinkWldAtt(chain,attr->id_sub), rkChainLinkWldAtt(chain,attr->id), &m );
+  return zMat3DError( &ref->att, &m, err );
 }
 
 zVec3D *rkIKCOMErr(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref, zVec3D *err)
@@ -294,13 +291,13 @@ void rkIKBindLinkL2LPos(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref
 { /* current position of a link with respect to another link */
   zVec3D p;
 
-  zXform3D( rkChainLinkWldFrame(chain,attr->id_sub), &attr->attention_point, &p );
-  zVec3DSub( &p, rkChainLinkWldPos(chain,attr->id), &ref->pos );
+  zXform3D( rkChainLinkWldFrame(chain,attr->id), &attr->attention_point, &p );
+  zXform3DInv( rkChainLinkWldFrame(chain,attr->id_sub), &p, &ref->pos );
 }
 
 void rkIKBindLinkL2LAtt(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)
 { /* current attitude of a link with respect to another link */
-  zMulMat3DTMat3D( rkChainLinkWldAtt(chain,attr->id), rkChainLinkWldAtt(chain,attr->id_sub), &ref->att );
+  zMulMat3DTMat3D( rkChainLinkWldAtt(chain,attr->id_sub), rkChainLinkWldAtt(chain,attr->id), &ref->att );
 }
 
 void rkIKBindCOM(rkChain *chain, rkIKAttr *attr, void *util, rkIKRef *ref)

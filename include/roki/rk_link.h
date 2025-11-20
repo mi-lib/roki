@@ -46,6 +46,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
   rkLink *parent;      /*!< \brief a pointer to the parent link */
   rkLink *child;       /*!< \brief a pointer to a child link */
   rkLink *sibl;        /*!< \brief a pointer to a sibling link */
+  rkLink *ident;       /*!< \brief an identical link (for loop closure) */
   /*! \cond */
   rkABIPrp _abiprp;  /* for ABI method */
   /* additional property */
@@ -63,6 +64,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 
 #define rkLinkJointIDOffset(link) (link)->joint_id_offset
 #define rkLinkJoint(link)         ( &(link)->joint )
+#define rkLinkJointIsActive(link) rkJointIsActive( rkLinkJoint(link) )
 #define rkLinkJointDOF(link)      rkJointDOF( rkLinkJoint(link) )
 #define rkLinkJointTypeStr(link)  rkJointTypeStr( rkLinkJoint(link) )
 #define rkLinkBody(link)          ( &(link)->body )
@@ -103,6 +105,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #define rkLinkParent(link)        (link)->parent
 #define rkLinkChild(link)         (link)->child
 #define rkLinkSibl(link)          (link)->sibl
+#define rkLinkIdent(link)         (link)->ident
 #define rkLinkABIPrp(link)        ( &(link)->_abiprp )
 #define rkLinkExtWrenchBuf(link)  ( &(link)->_abiprp.wlist )
 
@@ -149,6 +152,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #define rkLinkSetParent(link,p)   ( rkLinkParent(link) = (p) )
 #define rkLinkSetChild(link,c)    ( rkLinkChild(link) = (c) )
 #define rkLinkSetSibl(link,b)     ( rkLinkSibl(link) = (b) )
+#define rkLinkSetIdent(link,i)    ( rkLinkIdent(link) = (i) )
 
 #define rkLinkJointDestroy(link)  rkJointDestroy( rkLinkJoint(link) )
 #define rkLinkStuffDestroy(link)  rkBodyStuffDestroy( rkLinkBody(link) )
@@ -457,6 +461,7 @@ __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
 #define ZTK_KEY_ROKI_LINK_DH        "DH"
 #define ZTK_KEY_ROKI_LINK_SHAPE     "shape"
 #define ZTK_KEY_ROKI_LINK_PARENT    "parent"
+#define ZTK_KEY_ROKI_LINK_BIND      "bind"
 
 /*! \brief read link properties from a ZTK file and print link properties.
  *
@@ -492,6 +497,8 @@ __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
  *   Denavit=Hertenberg parameters(compatible with frame).
  *  parent: <name>
  *   the name of parent link.
+ *  bind: <name>
+ *   the name of an identical link.
  *  shape: <name>
  *   the name of shape(plural specification permitted).
  *
@@ -529,8 +536,8 @@ __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
  * rkLinkConnectionPrint(), rkLinkExtForceFPrint() and
  * rkLinkExtForcePrint() return no values.
  */
-__ROKI_EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *larray, zShape3DArray *sarray, rkMotorSpecArray *motorspecarray, ZTK *ztk);
-__ROKI_EXPORT rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *larray, ZTK *ztk);
+__ROKI_EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *link_array, zShape3DArray *shape_array, rkMotorSpecArray *motorspec_array, ZTK *ztk);
+__ROKI_EXPORT rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *link_array, ZTK *ztk);
 
 __ROKI_EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *link);
 

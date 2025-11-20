@@ -37,6 +37,7 @@
 
 #define RK_WARN_IK_CONSTRAINT_ALREADY_REGISTERED "constraint %s already registered, replaced"
 #define RK_WARN_IK_CONSTRAINT_DUALLYDEFINED_LINK "duplicate specification of a link %s"
+#define RK_WARN_IK_CELL_DUPLICATE       "found duplicate name of constraint cell %s, replaced"
 
 #define RK_WARN_URDF_UNNAMED_SHAPE      "Unnamed shape. Skipped"
 #define RK_WARN_URDF_UNKNOWN_SHAPETYPE  "Unknown type of a shape: %s"

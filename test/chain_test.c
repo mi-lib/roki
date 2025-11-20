@@ -138,14 +138,14 @@ int chain_init(rkChain *chain)
   rkLinkAddChild( rkChainLink(chain,5), rkChainLink(chain,6) );
   rkLinkAddChild( rkChainLink(chain,6), rkChainLink(chain,7) );
   rkLinkAddChild( rkChainLink(chain,7), rkChainLink(chain,8) );
-  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
-  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_spher );
-  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol );
-  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_cylin );
-  rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_plana );
-  rkJointAssign( rkChainLinkJoint(chain,5), &rk_joint_revol );
-  rkJointAssign( rkChainLinkJoint(chain,6), &rk_joint_prism );
-  rkJointAssign( rkChainLinkJoint(chain,7), &rk_joint_hooke );
+  rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float ); /* 0-5 */
+  rkJointAssign( rkChainLinkJoint(chain,1), &rk_joint_spher ); /* 6-8 */
+  rkJointAssign( rkChainLinkJoint(chain,2), &rk_joint_revol ); /* 9 */
+  rkJointAssign( rkChainLinkJoint(chain,3), &rk_joint_cylin ); /* 10-11 */
+  rkJointAssign( rkChainLinkJoint(chain,4), &rk_joint_plana ); /* 12-14 */
+  rkJointAssign( rkChainLinkJoint(chain,5), &rk_joint_revol ); /* 15 */
+  rkJointAssign( rkChainLinkJoint(chain,6), &rk_joint_prism ); /* 16 */
+  rkJointAssign( rkChainLinkJoint(chain,7), &rk_joint_hooke ); /* 17-18 */
   rkJointAssign( rkChainLinkJoint(chain,8), &rk_joint_fixed );
 
   rkChainSetJointIDOffset( chain );
@@ -153,6 +153,45 @@ int chain_init(rkChain *chain)
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
   return rkChainJointSize( chain );
+}
+
+void assert_chain_joint_index(void)
+{
+  rkChain chain;
+  zVec dis_src, dis_dest, dis_selected;
+  zIndex index, index_selected;
+  int jointsize, i;
+  bool result1, result2, result3;
+
+  jointsize = chain_init( &chain );
+  dis_src  = zVecAlloc( jointsize );
+  dis_dest = zVecAlloc( jointsize );
+  for( i=0; i<zVecSizeNC(dis_src); i++ )
+    zVecSetElemNC( dis_src, i, 0.1 * i );
+
+  index = rkChainCreateDefaultJointIndex( &chain );
+  index_selected = zIndexCreateList( 4, 5, 6, 7, 8 );
+  dis_selected = zVecAlloc( rkChainJointIndexSize(&chain,index_selected) );
+  result1 = zVecSizeNC(dis_selected) == 4;
+  rkChainSetJointDis( &chain, index, dis_src );
+  rkChainUpdateFK( &chain );
+  rkChainGetJointDis( &chain, index, dis_dest );
+  result2 = zVecEqual( dis_src, dis_dest, zTOL );
+  rkChainGetJointDis( &chain, index_selected, dis_selected );
+  result3 = zEqual( zVecElemNC(dis_selected,0), 1.5, zTOL ) &&
+            zEqual( zVecElemNC(dis_selected,1), 1.6, zTOL ) &&
+            zEqual( zVecElemNC(dis_selected,2), 1.7, zTOL ) &&
+            zEqual( zVecElemNC(dis_selected,3), 1.8, zTOL );
+  zIndexFree( index );
+  zIndexFree( index_selected );
+  zVecFree( dis_src );
+  zVecFree( dis_dest );
+  zVecFree( dis_selected );
+  rkChainDestroy( &chain );
+
+  zAssert( rkChainJointIndexSize, result1 );
+  zAssert( rkChainSetJointDis + rkChainGetJointDis (all), result2 );
+  zAssert( rkChainSetJointDis + rkChainGetJointDis (selected), result3 );
 }
 
 #define N 1000
@@ -360,7 +399,58 @@ int simple_chain_create(rkChain *chain)
   return rkChainJointSize( chain );
 }
 
-void assert_zmp_simple(void)
+void assert_chain_gravitydir(void)
+{
+  rkChain chain;
+  double angle;
+  zVec dis;
+  zVec3D a, a_ans;
+  const int step = 100;
+  int i;
+  bool result1 = true, result2 = true, result3 = true;
+
+  rkChainInit( &chain );
+  zNameSet( &chain, "floatbody" );
+  rkLinkArrayAlloc( rkChainLinkArray(&chain), 1 );
+  rkLinkInit( rkChainLink(&chain,0) );
+  zNameSet( rkChainLink(&chain,0), "body" );
+  rkJointAssign( rkChainLinkJoint(&chain,0), &rk_joint_float );
+  rkChainSetMass( &chain, 1.0 );
+  rkChainSetJointIDOffset( &chain );
+  dis = zVecAlloc( rkChainJointSize(&chain) );
+
+  for( i=0; i<=step; i++ ){
+    angle = zPI*2*i/step;
+    zVecSetElem( dis, 3, angle );
+    zVec3DCreate( &a_ans, 0, sin(angle), cos(angle) );
+    rkChainFK( &chain, dis );
+    if( !zVec3DEqual( rkChainGravityDir( &chain, &a ), &a_ans ) ) result1 = false;
+  }
+  zVecZero( dis );
+  for( i=0; i<=step; i++ ){
+    angle = zPI*2*i/step;
+    zVecSetElem( dis, 4, angle );
+    zVec3DCreate( &a_ans, -sin(angle), 0, cos(angle) );
+    rkChainFK( &chain, dis );
+    if( !zVec3DEqual( rkChainGravityDir( &chain, &a ), &a_ans ) ) result2 = false;
+  }
+  zVecZero( dis );
+  for( i=0; i<=step; i++ ){
+    angle = zPI*2*i/step;
+    zVecSetElem( dis, 5, angle );
+    zVec3DCreate( &a_ans, 0, 0, 1 );
+    rkChainFK( &chain, dis );
+    if( !zVec3DEqual( rkChainGravityDir( &chain, &a ), &a_ans ) ) result3 = false;
+  }
+  zVecFree( dis );
+  rkChainDestroy( &chain );
+
+  zAssert( rkChainGravityDir (rolling),  result1 );
+  zAssert( rkChainGravityDir (pitching), result2 );
+  zAssert( rkChainGravityDir (yawing),   result3 );
+}
+
+void assert_chain_zmp_simple(void)
 {
   rkChain box;
   zVec3D zmp;
@@ -391,7 +481,7 @@ void assert_zmp_simple(void)
   zAssert( rkChainZMP (a simple body), result );
 }
 
-void assert_crb(void)
+void assert_chain_crb(void)
 {
   rkChain chain;
   zVec dis;
@@ -413,12 +503,14 @@ void assert_crb(void)
   rkChainDestroy( &chain );
 }
 
-void assert_inertia_mat(void)
+void assert_chain_inertia_mat(void)
 {
   rkChain chain;
   zMat h;
   zVec b, dis, vel;
   int i, n, count_iuv, count_icrb, count_ke, count_fd;
+  clock_t c1, c2;
+  long l_mj, l_uv, l_crb;
 
   n = chain_init( &chain );
   h = zMatAllocSqr( n );
@@ -443,15 +535,27 @@ void assert_inertia_mat(void)
   zAssert( rkChainInertiaMatBiasVec + rkChainKE, count_ke == N );
   zAssert( rkChainInertiaMatBiasVec (FD-ID), count_fd == N );
   count_iuv = count_icrb = 0;
+  l_mj = l_uv = l_crb = 0;
   for( i=0; i<N; i++ ){
     /* generate posture and velocity randomly */
     zVecRandUniform( dis, -10, 10 );
     rkChainFK( &chain, dis );
+    c1 = clock();
+    rkChainInertiaMatMJ( &chain, h );
+    c2 = clock();
+    l_mj += c2 - c1;
+    c1 = clock();
     rkChainInertiaMatUV( &chain, h );
+    c2 = clock();
+    l_uv += c2 - c1;
     if( check_inertia_matrix( &chain, h, TOL ) ) count_iuv++;
+    c1 = clock();
     rkChainInertiaMatCRB( &chain, h );
+    c2 = clock();
+    l_crb += c2 - c1;
     if( check_inertia_matrix( &chain, h, TOL ) ) count_icrb++;
   }
+  eprintf( "clock (MJ/UV/CRB): %ld %ld %ld\n", l_mj, l_uv, l_crb );
   zAssert( rkChainInertiaMatUV, count_iuv == N );
   zAssert( rkChainInertiaMatCRB, count_icrb == N );
 
@@ -460,7 +564,7 @@ void assert_inertia_mat(void)
   rkChainDestroy( &chain );
 }
 
-void assert_fd_id(void)
+void assert_chain_fd_id(void)
 {
   rkChain chain;
   zVec dis, vel, acc, trq, trq_id;
@@ -503,7 +607,7 @@ void assert_fd_id(void)
 }
 
 /* only works with torque-controlled robot models. */
-void assert_fd_id_abi(void)
+void assert_chain_fd_id_abi(void)
 {
   rkChain chain;
   zVec dis, vel, acc, expected, actual, err;
@@ -543,6 +647,7 @@ void assert_fd_id_abi(void)
 int main(int argc, char *argv[])
 {
   zRandInit();
+  assert_chain_joint_index();
 #ifndef __WINDOWS__
   assert_chain_clone();
 #endif /* __WINDOWS__ */
@@ -551,10 +656,11 @@ int main(int argc, char *argv[])
   assert_chain_getsetconf();
   assert_chain_momentum();
   assert_chain_com_inertia();
-  assert_zmp_simple();
-  assert_crb();
-  assert_inertia_mat();
-  assert_fd_id();
-  assert_fd_id_abi();
+  assert_chain_gravitydir();
+  assert_chain_zmp_simple();
+  assert_chain_crb();
+  assert_chain_inertia_mat();
+  assert_chain_fd_id();
+  assert_chain_fd_id_abi();
   return EXIT_SUCCESS;
 }

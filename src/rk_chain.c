@@ -6,11 +6,6 @@
 
 #include <roki/rk_chain.h>
 
-/* ********************************************************** */
-/* CLASS: rkChain
- * kinematic chain class
- * ********************************************************** */
-
 /* initialize a kinematic chain. */
 void rkChainInit(rkChain *chain)
 {
@@ -455,6 +450,9 @@ void rkChainFK(rkChain *chain, const zVec dis)
 {
   rkChainSetJointDisAll( chain, dis );
   rkChainUpdateFK( chain );
+  /* for closed-loop */
+  if( chain->_ik )
+    rkChainIK( chain, dis, zTOL, 0 );
 }
 
 /* neutralize all joints of a kinematic chain. */
@@ -489,6 +487,7 @@ zVec rkChainID_G(rkChain *chain, const zVec dis, const zVec vel, const zVec acc,
 /* continuously update joint displacements of a kinematic chain over a time step. */
 void rkChainFKCNT(rkChain *chain, const zVec dis, double dt)
 {
+  /* TODO: this should be modified for closed-loop kinematic chain. */
   rkChainSetJointDisCNTAll( chain, dis, dt );
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
@@ -1128,6 +1127,7 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     rkChainSetMass( chain, 1.0 ); /* dummy weight */
   rkChainUpdateFK( chain );
   rkChainUpdateID( chain );
+  rkChainCreateClosure( chain );
   return chain;
 }
 

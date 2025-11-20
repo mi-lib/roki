@@ -11,11 +11,9 @@ int main(int argc, char *argv[])
 
   zRandInit();
   rkChainReadZTK( &chain, "../model/arm.ztk" );
-  rkChainRegisterIKJointAll( &chain, 0.001 );
   dis = zVecAlloc( rkChainJointSize( &chain ) );
 
-  rkChainFK( &chain, dis );
-
+  rkChainRegisterIKJointAll( &chain, 0.001 );
   attr.id = 5;
   cell = rkChainRegisterIKCellWldPos( &chain, NULL, 0, &attr, RK_IK_ATTR_MASK_ID );
   r = rkChainLinkWldPos(&chain,attr.id)->c.z - rkChainLinkWldPos(&chain,1)->c.z;

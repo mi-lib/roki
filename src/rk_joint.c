@@ -51,6 +51,7 @@ rkJoint *rkJointClone(rkJoint *org, rkJoint *cln, rkMotorSpecArray *msarray_org,
   rkMotor *motor_cln;
 
   if( !rkJointAssign( cln, org->com ) ) return NULL;
+  cln->is_active = org->is_active;
   rkJointCopyState( org, cln );
   rkJointCopyPrp( org, cln );
   if( rkJointMotor(org) ){

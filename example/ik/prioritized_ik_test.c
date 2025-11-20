@@ -68,9 +68,8 @@ int main(int argc, char *argv[])
 
   chain_init( &chain );
   dis = zVecAlloc( rkChainJointSize(&chain) );
-  rkChainFK( &chain, dis );
-  rkChainRegisterIKJointAll( &chain, 0.01 );
 
+  rkChainRegisterIKJointAll( &chain, 0.01 );
   for( i=0; i<BRANCH_NUM; i++ ){
     attr.id = i*4+5;
     cell[i] = rkChainRegisterIKCellWldPos( &chain, NULL, BRANCH_NUM-i, &attr, RK_IK_ATTR_MASK_ID );
@@ -87,7 +86,6 @@ int main(int argc, char *argv[])
     zVec3DCreate( &ref[1], 0, 0.2,-0.2-0.5*(double)i/DIV );
     rkIKCellSetRefVec( cell[1], &ref[1] );
     rkChainIK( &chain, dis, zTOL, 0 );
-    rkChainFK( &chain, dis );
     for( j=0; j<BRANCH_NUM; j++ ){
       printf( "[#%d] %g %g ", j,
         ref[j].c.y - rkChainLinkWldPos(&chain,rkIKCellLinkID(cell[j]))->c.y,
@@ -101,7 +99,6 @@ int main(int argc, char *argv[])
     zVec3DCreate( &ref[2], 0, 0.2+0.2*(double)i/DIV, 0 );
     rkIKCellSetRefVec( cell[2], &ref[2] );
     rkChainIK( &chain, dis, zTOL, 0 );
-    rkChainFK( &chain, dis );
     for( j=0; j<BRANCH_NUM; j++ ){
       printf( "[#%d] %g %g ", j,
         ref[j].c.y - rkChainLinkWldPos(&chain,rkIKCellLinkID(cell[j]))->c.y,

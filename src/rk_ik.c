@@ -146,7 +146,7 @@ bool rkChainCloneIK(rkChain *src, rkChain *dest)
 static bool _rkIKAllocCMat(rkIK *ik)
 {
   zMatFree( ik->_c_mat );
-  if( zListSize(&ik->cell_list) == 0 || !ik->_j_idx || zArraySize(ik->_j_idx) == 0 ){
+  if( zListSize(&ik->cell_list) == 0 || !ik->_j_idx || zIndexSize(ik->_j_idx) == 0 ){
     ik->_c_mat = NULL;
     return true;
   }
@@ -184,7 +184,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
   if( !( ik->_j_vec = zVecAlloc(count) ) ||
       !( ik->_j_wn = zVecAlloc(count) ) ||
       !zLEWorkspaceAlloc( &ik->__le, NULL, count ) ) return false;
-  for( wp=zVecBuf(ik->_j_wn), i=0; i<zArraySize(ik->_j_idx); i++ )
+  for( wp=zVecBuf(ik->_j_wn), i=0; i<zIndexSizeNC(ik->_j_idx); i++ )
     for( j=0; j<rkChainLinkJointDOF(chain,zIndexElemNC(ik->_j_idx,i)); j++ )
       *wp++ = ik->joint_weight[zIndexElemNC(ik->_j_idx,i)];
   return _rkIKAllocCMat( ik );
@@ -238,25 +238,6 @@ static bool _rkIKAllocCVec(rkIK *ik)
   return ( !ik->_c_vec || !ik->_c_we || !ik->__c ) ? false : _rkIKAllocCMat( ik );
 }
 
-static rkIKCell *_rkIKAddCell(rkIK *ik, rkIKCell *cell){
-  rkIKCell *cp;
-
-  if( !cell ) return NULL;
-  rkIKCellEnable( cell );
-  zListForEach( &ik->cell_list, cp )
-    if( rkIKCellPriority(cp) < rkIKCellPriority(cell) ) break;
-  zListInsertPrev( &ik->cell_list, cp, cell );
-  return _rkIKAllocCVec( ik ) ? cell : NULL;
-}
-
-static rkIKCell *_rkIKRegisterCell(rkIK *ik, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
-{
-  rkIKCell *cell;
-
-  if( !( cell = rkIKCellCreate( name, priority, attr, mask, constraint, util ) ) ) return NULL;
-  return _rkIKAddCell( ik, cell );
-}
-
 static bool _rkIKUnregisterCell(rkIK *ik, rkIKCell *cell)
 {
   if( !cell ) return false;
@@ -274,6 +255,36 @@ static bool _rkIKUnregisterAndDestroyCell(rkIK *ik, rkIKCell *cell)
     zFree( cell );
   }
   return result;
+}
+
+static rkIKCell *_rkIKAddCell(rkIK *ik, rkIKCell *cell){
+  rkIKCell *cp;
+
+  if( !cell ) return NULL;
+  rkIKCellEnable( cell );
+  /* destroy identical cells if they exist in the stack of tasks. */
+  if( zNamePtr(&cell->data) ){
+    zListForEach( &ik->cell_list, cp ){
+      if( zNamePtr(&cp->data) && strcmp( zName(&cp->data), zName(&cell->data) ) == 0 ){
+        ZRUNWARN( RK_WARN_IK_CELL_DUPLICATE, zName(&cell->data) );
+        _rkIKUnregisterAndDestroyCell( ik, cp );
+        break;
+      }
+    }
+  }
+  /* insert the cell based on priority. */
+  zListForEach( &ik->cell_list, cp )
+    if( rkIKCellPriority(cp) < rkIKCellPriority(cell) ) break;
+  zListInsertPrev( &ik->cell_list, cp, cell );
+  return _rkIKAllocCVec( ik ) ? cell : NULL;
+}
+
+static rkIKCell *_rkIKRegisterCell(rkIK *ik, const char *name, int priority, rkIKAttr *attr, ubyte mask, const rkIKConstraint *constraint, void *util)
+{
+  rkIKCell *cell;
+
+  if( !( cell = rkIKCellCreate( name, priority, attr, mask, constraint, util ) ) ) return NULL;
+  return _rkIKAddCell( ik, cell );
 }
 
 rkIKCell *rkChainAddIKCell(rkChain *chain, rkIKCell *cell)
@@ -505,7 +516,7 @@ static zVec _rkChainIKSolveEquation(rkChain *chain)
   double *vp;
 
   chain->_ik->_solve_eq( chain->_ik );
-  for( vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
+  for( vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zIndexSizeNC(chain->_ik->_j_idx); i++ ){
     k = zIndexElemNC( chain->_ik->_j_idx, i );
     for( j=0; j<rkChainLinkJointDOF(chain,k); j++ )
       zVecSetElemNC( chain->_ik->joint_vec, rkChainLinkJointIDOffset(chain,k)+j, *vp++ );
@@ -543,7 +554,7 @@ static zVec _rkChainIKOneRJO(rkChain *chain, zVec dis, double dt)
   double *dp, *vp;
 
   chain->_ik->_solve_eq( chain->_ik );
-  for( dp=zVecBuf(dis), vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zArraySize(chain->_ik->_j_idx); i++ ){
+  for( dp=zVecBuf(dis), vp=zVecBuf(chain->_ik->_j_vec), i=0; i<zIndexSizeNC(chain->_ik->_j_idx); i++ ){
     k = zIndexElemNC(chain->_ik->_j_idx,i);
     rkJointCatDis( rkChainLinkJoint(chain,k), dp, dt, vp );
     rkJointSetDis( rkChainLinkJoint(chain,k), dp );
@@ -594,6 +605,51 @@ int rkChainIK(rkChain *chain, zVec dis, double tol, int iter){
 }
 int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter){
   return _rkChainIK( chain, dis, _rkChainGetJointDisRJO, _rkChainIKOneRJO, tol, iter );
+}
+
+/* for closed kinematic chains */
+
+/* register passive joints to IK solver. */
+static bool _rkChainRegisterIKPassiveJointAll(rkChain *chain)
+{
+  int i;
+
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
+    if( !rkChainLinkJointIsActive( chain,i ) )
+      if( !rkChainRegisterIKJointID( chain, i, RK_IK_JOINT_WEIGHT_DEFAULT ) ) return false;
+  }
+  return true;
+}
+
+/* register IK cells for bound links to IK solver. */
+static bool _rkChainRegisterIKCellBoundLinkAll(rkChain *chain)
+{
+  int i;
+  char cell_name[BUFSIZ];
+  rkIKAttr attr;
+
+  for( i=0; i<rkChainLinkNum(chain); i++ ){
+    if( rkChainLinkIdent(chain,i) ){
+      rkIKAttrInit( &attr );
+      attr.id = rkChainLinkIDOffset( chain, rkChainLinkIdent(chain,i) );
+      attr.id_sub = i;
+      sprintf( cell_name, "_bound_%s_%s_pos", zName( rkChainLinkIdent(chain,i) ), zName( rkChainLink(chain,i) ) );
+      if( !rkChainRegisterIKCellL2LPos( chain, cell_name, RK_IK_PRIORITY_CLOSEDLOOP, &attr, RK_IK_ATTR_MASK_ID | RK_IK_ATTR_MASK_ID_SUB ) )
+        return false;
+      sprintf( cell_name, "_bound_%s_%s_att", zName( rkChainLinkIdent(chain,i) ), zName( rkChainLink(chain,i) ) );
+      if( !rkChainRegisterIKCellL2LAtt( chain, cell_name, RK_IK_PRIORITY_CLOSEDLOOP, &attr, RK_IK_ATTR_MASK_ID | RK_IK_ATTR_MASK_ID_SUB ) )
+        return false;
+    }
+  }
+  if( chain->_ik )
+    rkChainBindIK( chain );
+  return true;
+}
+
+/* create loop-closure of a kinematic chain. */
+bool rkChainCreateClosure(rkChain *chain)
+{
+  return _rkChainRegisterIKPassiveJointAll( chain ) && _rkChainRegisterIKCellBoundLinkAll( chain );
 }
 
 /* ********************************************************** */

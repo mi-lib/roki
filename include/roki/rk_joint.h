@@ -21,6 +21,7 @@ __BEGIN_DECLS
 ZDECL_STRUCT( rkJointCom );
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJoint ){
+  bool is_active;  /*!< flag to tell if joint is active */
   void *prp;       /*!< joint properties */
   void *state;     /*!< joint state */
   rkMotor *motor;  /*!< motor */
@@ -116,6 +117,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   static void _rkJoint##name##CopyState(rkJoint *src, rkJoint *dst){ \
     memcpy( dst->state, src->state, sizeof(rkJoint##name##State) ); }
 
+#define rkJointIsActive(joint) (joint)->is_active
 #define rkJointDOF(joint)      (joint)->com->dof
 #define rkJointTypeStr(joint)  (joint)->com->typestr
 #define rkJointMotor(joint)    (joint)->motor
@@ -130,11 +132,12 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
  * rkJointInit() returns a pointer \a joint if it succeeds. If \a type is invalid, or it fails to
  * allocate the internal working memory, the null pointer is returned.
  */
-#define rkJointInit(joint) do{\
-  (joint)->prp   = NULL;\
-  (joint)->state = NULL;\
-  (joint)->motor = NULL;\
-  (joint)->com   = NULL;\
+#define rkJointInit(joint) do{ \
+  (joint)->is_active = true; \
+  (joint)->prp   = NULL; \
+  (joint)->state = NULL; \
+  (joint)->motor = NULL; \
+  (joint)->com   = NULL; \
 } while(0)
 
 __ROKI_EXPORT rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com);
@@ -390,6 +393,8 @@ __ROKI_EXPORT rkJoint *rkJointAssignMotorByStr(rkJoint *joint, rkMotorSpecArray 
 #define ZTK_KEY_ROKI_JOINT_MOTOR          "motor"
 #define ZTK_KEY_ROKI_JOINT_TH_FORCE       "forcethreshold"
 #define ZTK_KEY_ROKI_JOINT_TH_TORQUE      "torquethreshold"
+
+#define ZTK_VAL_ROKI_JOINT_PASSIVE        "passive"
 
 /*! \brief scan and print out joint displacement and properties.
  *

@@ -13,8 +13,7 @@
 __BEGIN_DECLS
 
 /* ********************************************************** */
-/* CLASS: rkIK
- * inverse kinematics solver class
+/* inverse kinematics solver class
  * **********************************************************
 
  Inverse Kinematics Computation Procedure
@@ -45,6 +44,8 @@ __BEGIN_DECLS
      rkChainRegisterIKCellCOM : position of the center of mass in the world frame
      rkChainRegisterIKCellAM : angular momentum about the origin of the world frame
      rkChainRegisterIKCellAMCOM : angular momentum about the center of mass
+    For relative position and attitude, the target link ID and the reference link ID are set for
+    id and id_sub, respectively, of attr.
 
  3. Initialize the posture of \a chain.
 
@@ -245,6 +246,20 @@ __ROKI_EXPORT zVec rkIKSolveEquationSRED(rkIK *ik);
 __ROKI_EXPORT zVec rkChainIKOne(rkChain *chain, zVec dis, double dt);
 __ROKI_EXPORT int rkChainIK(rkChain *chain, zVec dis, double tol, int iter);
 __ROKI_EXPORT int rkChainIK_RJO(rkChain *chain, zVec dis, double tol, int iter);
+
+/* for closed kinematic chains */
+
+#define RK_IK_PRIORITY_CLOSEDLOOP 100
+
+/*! \brief create loop-closure of a kinematic chain.
+ *
+ * rkChainCreateClosure() makes loop-closure of a kinematic chain \a chain.
+ * It counts all passive joints and all bound links of \a chain, and register them to the internal IK solver.
+ * \return
+ * rkChainCreateClosure() returns the true value if it succeeds to register the passive joints and bound
+ * links. Otherwise, it returns the false value.
+ */
+__ROKI_EXPORT bool rkChainCreateClosure(rkChain *chain);
 
 /* ********************************************************** */
 /* IK configuration file I/O

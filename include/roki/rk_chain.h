@@ -210,6 +210,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainLinkName(chain,i)            zName(rkChainLink(chain,i))
 #define rkChainLinkJointIDOffset(chain,i)   rkLinkJointIDOffset(rkChainLink(chain,i))
 #define rkChainLinkJoint(chain,i)           rkLinkJoint(rkChainLink(chain,i))
+#define rkChainLinkJointIsActive(chain,i)   rkLinkJointIsActive(rkChainLink(chain,i))
 #define rkChainLinkJointDOF(chain,i)        rkLinkJointDOF(rkChainLink(chain,i))
 #define rkChainLinkJointTypeStr(chain,i)    rkLinkJointTypeStr(rkChainLink(chain,i))
 #define rkChainLinkMass(chain,i)            rkLinkMass(rkChainLink(chain,i))
@@ -246,6 +247,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
 #define rkChainLinkParent(chain,i)          rkLinkParent(rkChainLink(chain,i))
 #define rkChainLinkChild(chain,i)           rkLinkChild(rkChainLink(chain,i))
 #define rkChainLinkSibl(chain,i)            rkLinkSibl(rkChainLink(chain,i))
+#define rkChainLinkIdent(chain,i)           rkLinkIdent(rkChainLink(chain,i))
 
 #define rkChainLinkJointNeutralize(chain,i) rkLinkJointNeutralize( rkChainLink(chain,i) )
 
@@ -577,21 +579,34 @@ __ROKI_EXPORT void rkChainSetMotorInputAll(rkChain *chain, const zVec input);
 #define rkChainLinkPointVel(chain,i,p,v) rkLinkPointVel( rkChainLink(chain,i), p, v )
 #define rkChainLinkPointAcc(chain,i,p,a) rkLinkPointAcc( rkChainLink(chain,i), p, a )
 
-/*! \brief kinematic chain forward kinematics.
+/*! \brief update frames of a kinematic chain (forward kinematics).
  *
- * rkChainUpdateFK() updates the frame of each link of the
- * kinematic chain \a chain with resect to both the total body
- * frame and the world frame.
- *
- * rkChainFK() sets the joint displacement \a dis, and then
- * compute the forward kinematics of \a chain with respect to the
- * world frame.
+ * rkChainUpdateFK() updates frames of links of a kinematic chain \a chain with resect to the world frame.
+ * The positions of the center of mass of links are also updated.
+ * Closed-loop contraints are not dealt with.
  * \return
- * All these functions return no velues.
+ * rkChainUpdateFK() does not return any value.
  * \sa
- * rkChainUpdateFrame
+ * rkChainUpdateFrame, rkChainUpdateCOM
  */
 __ROKI_EXPORT void rkChainUpdateFK(rkChain *chain);
+
+/*! \brief forward kinematics of a kinematic chain.
+ *
+ * rkChainFK() solves the forward kinematics of a kinematic chain \a chain.
+ * It sets joint displacements of \a chain for \a dis, updates frames of links with respect to the world
+ * frame, and resolves closed-loop constraints if necessary.
+ * \note
+ * Since rkChainFK() internally solves the inverse kinematics for loop-closure, it might not work correctly
+ * if IK cells other than bound links are enabled.
+ * Use rkChainUpdateFK() instead if only the open-loop forward kinematics is to be solved.
+ *
+ * Components of \a dis for passive joints are ignored.
+ * \return
+ * rkChainFK() does not return any value.
+ * \sa
+ * rkChainUpdateFK
+ */
 __ROKI_EXPORT void rkChainFK(rkChain *chain, const zVec dis);
 
 /*! \brief neutralize all joints of a kinematic chain. */

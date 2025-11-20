@@ -12,8 +12,7 @@
 __BEGIN_DECLS
 
 /* ********************************************************** */
-/* CLASS: rkIKCell
- * inverse kinematics cell class
+/* inverse kinematics cell class
  * ********************************************************** */
 
 ZDECL_STRUCT( rkChain );
@@ -232,8 +231,7 @@ __ROKI_EXPORT void rkIKCellListDestroy(rkIKCellList *list);
 __ROKI_EXPORT rkIKCellList *rkIKCellListClone(rkIKCellList *src, rkIKCellList *dest);
 
 /* ********************************************************** */
-/* CLASS: rkIKConstraint
- * inverse kinematics constraint class
+/* inverse kinematics constraint class
  * ********************************************************** */
 
 __ROKI_EXPORT const rkIKConstraint *rkIKConstraintFind(const char *typestr);
