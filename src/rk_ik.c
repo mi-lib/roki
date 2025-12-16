@@ -183,7 +183,7 @@ static bool _rkIKAllocJointIndex(rkIK *ik, rkChain *chain)
   count = rkChainJointIndexSize( chain, ik->_j_idx );
   if( !( ik->_j_vec = zVecAlloc(count) ) ||
       !( ik->_j_wn = zVecAlloc(count) ) ||
-      !zLEWorkspaceAlloc( &ik->__le, NULL, count ) ) return false;
+      !zLEWorkspaceAlloc( &ik->__le, 0, count ) ) return false;
   for( wp=zVecBuf(ik->_j_wn), i=0; i<zIndexSizeNC(ik->_j_idx); i++ )
     for( j=0; j<rkChainLinkJointDOF(chain,zIndexElemNC(ik->_j_idx,i)); j++ )
       *wp++ = ik->joint_weight[zIndexElemNC(ik->_j_idx,i)];
