@@ -1,3 +1,4 @@
+2025.12.26. Replaced -i option of xargs in example/makefile to -I (thanks to Naoki Wakisaka). [example]
 2025.12.16. Modified _rkIKAllocJointIndex to reflect new specification of zLEWorkspaceAlloc. [rk_ik]
 2025.11.20. Modified rkChainFromZTK to internally call rkChainCreateClosure. [rk_chain]
 2025.11.20. Modified rkJointClone to copy is_active member. [rk_joint]
