@@ -363,7 +363,6 @@ void assert_chain_momentum(void)
   zVecFree( dis );
   zVecFree( vel );
   rkChainDestroy( &chain );
-
   zAssert( rkChainLinearMomentum & rkChainLinearMomentumRecursive, zVec3DEqual( &momentum, &momentum_recursive ) );
   zAssert( rkChainLinearMomentum & rkChainUpdateCOMVel, zVec3DEqual( &momentum, &momentum_gt ) );
   zAssert( rkChainAngularMomentum & rkChainAngularMomentumRecursive, zVec3DEqual( &angularmomentum, &angularmomentum_recursive ) );
@@ -391,7 +390,6 @@ int simple_chain_create(rkChain *chain)
   zVec3DCreate( rkChainLinkOrgPos(chain,0), 0.0, 0.0, 0.0 );
   zNameSet( rkChainRoot(chain), name );
   rkJointAssign( rkChainLinkJoint(chain,0), &rk_joint_float );
-
   rkChainSetJointIDOffset( chain );
   rkChainUpdateCRBMass( chain );
   rkChainUpdateFK( chain );
@@ -418,7 +416,6 @@ void assert_chain_gravitydir(void)
   rkChainSetMass( &chain, 1.0 );
   rkChainSetJointIDOffset( &chain );
   dis = zVecAlloc( rkChainJointSize(&chain) );
-
   for( i=0; i<=step; i++ ){
     angle = zPI*2*i/step;
     zVecSetElem( dis, 3, angle );
@@ -444,7 +441,6 @@ void assert_chain_gravitydir(void)
   }
   zVecFree( dis );
   rkChainDestroy( &chain );
-
   zAssert( rkChainGravityDir (rolling),  result1 );
   zAssert( rkChainGravityDir (pitching), result2 );
   zAssert( rkChainGravityDir (yawing),   result3 );
@@ -558,7 +554,6 @@ void assert_chain_inertia_mat(void)
   eprintf( "clock (MJ/UV/CRB): %ld %ld %ld\n", l_mj, l_uv, l_crb );
   zAssert( rkChainInertiaMatUV, count_iuv == N );
   zAssert( rkChainInertiaMatCRB, count_icrb == N );
-
   zMatFree( h );
   zVecFreeAtOnce( 3, b, dis, vel );
   rkChainDestroy( &chain );
@@ -577,7 +572,6 @@ void assert_chain_fd_id(void)
   acc = zVecAlloc( size );
   trq = zVecAlloc( size );
   trq_id = zVecAlloc( size );
-
   for( i=0; i<N; i++ ){
     zVecRandUniform( dis, -1.0, 1.0 );
     zVecRandUniform( vel, -1.0, 1.0 );
@@ -626,7 +620,6 @@ void assert_chain_fd_id_abi(void)
     zVecRandUniform( dis, 10, -10 );
     zVecRandUniform( vel, 10, -10 );
     zVecRandUniform( expected, 10, -10 );
-
     rkChainSetMotorInputAll( &chain, expected );
     rkChainFD_ABI( &chain, dis, vel, acc ); /* forward dynamics (ABI method) */
     rkChainID( &chain, dis, vel, acc, actual ); /* inverse dynamics (Newton-Euler method) */

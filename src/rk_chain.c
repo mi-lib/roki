@@ -683,8 +683,7 @@ zMat rkChainInertiaMatMJ(rkChain *chain, zMat inertia)
   inertia_tmp = zMatAllocSqr( n );
   jacobi = zMatAlloc( 3, n );
   tmp = zMatAlloc( 3, n );
-  zMatSetSizeNC( &mp, 3, 3 );
-  zMatBufNC(&mp) = (double *)&mpe;
+  zMatAssignArray( &mp, 3, 3, (double *)&mpe );
   zMatZero( inertia );
   for( i=rkChainLinkNum(chain)-1; i>=0; i-- ){
     /* linear component */
@@ -714,15 +713,15 @@ static void _rkChainInertiaMatUV(rkChain *chain, const zVec bias, zMat inertia)
 
   rkChainSetJointAccAll( chain, NULL );
   /* inertia matrix */
-  h.size = zMatRowSizeNC(inertia);
+  zVecAssignArray( &h, zMatRowSizeNC(inertia), NULL );
   for( i=j=0; j<rkChainLinkNum(chain); j++ )
     for( k=0; k<rkChainLinkJointDOF(chain,j); k++, i++ ){
-      h.buf = zMatRowBuf( inertia, i );
+      h.buf = zMatRowBufNC( inertia, i );
       acc[k] = 1;
       rkChainLinkJointSetAcc( chain, j, acc );
       rkChainUpdateID0G( chain );
       rkChainGetJointTrqAll( chain, &h );
-      zVecSubDRC( &h, bias );
+      zVecSubNCDRC( &h, bias );
       acc[k] = 0;
       rkChainLinkJointSetAcc( chain, j, acc );
     }
@@ -785,7 +784,7 @@ zMat rkChainInertiaMatCRB(rkChain *chain, zMat inertia)
   double _e[36];
 
   rkChainUpdateCRB( chain );
-  zMatBufNC(&hij) = _e;
+  zMatAssignArray( &hij, 6, 6, _e );
   zMatZero( inertia );
   _rkChainLinkInertiaMatCRB( rkChainRoot(chain), wi, si, &hij, inertia );
   return inertia;
