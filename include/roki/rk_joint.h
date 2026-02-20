@@ -27,6 +27,24 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJoint ){
   rkMotor *motor;  /*!< motor */
   zVec6D wrench;   /*!< joint wrench */
   rkJointCom *com; /*!< common methods for joint class */
+#ifdef __cplusplus
+  void setDis(double*);
+  void setMinDis(double*);
+  void setMaxDis(double*);
+  void setVel(double*);
+  void setAcc(double*);
+  void setTrq(double*);
+  void getDis(double*);
+  void getMinDis(double*);
+  void getMaxDis(double*);
+  void getVel(double*);
+  void getAcc(double*);
+  void getTrq(double*);
+  void catDis(double*,double,double*);
+  void subDis(double*,double*);
+  void updateDisCNT(double*,double);
+  zFrame3D *xform(zFrame3D*,zFrame3D*);
+#endif /* __cplusplus */
 };
 
 /* for forward dynamics */
@@ -426,6 +444,25 @@ __ROKI_EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorSpecArray *motorspe
 #define rkJointFPrintZTK(fp,joint,name) ( (name) ? (joint)->com->_fprintZTK( fp, joint, name ) : (joint)->com->_fprintZTK( fp, joint, (char *)"dis" ) )
 
 __END_DECLS
+
+#ifdef __cplusplus
+inline void rkJoint::setDis(double *val){ rkJointSetDis( this, val ); }
+inline void rkJoint::setMinDis(double *val){ rkJointSetMin( this, val ); }
+inline void rkJoint::setMaxDis(double *val){ rkJointSetMax( this, val ); }
+inline void rkJoint::setVel(double *val){ rkJointSetVel( this, val ); }
+inline void rkJoint::setAcc(double *val){ rkJointSetAcc( this, val ); }
+inline void rkJoint::setTrq(double *val){ rkJointSetTrq( this, val ); }
+inline void rkJoint::getDis(double *val){ rkJointGetDis( this, val ); }
+inline void rkJoint::getMinDis(double *val){ rkJointGetMin( this, val ); }
+inline void rkJoint::getMaxDis(double *val){ rkJointGetMax( this, val ); }
+inline void rkJoint::getVel(double *val){ rkJointGetVel( this, val ); }
+inline void rkJoint::getAcc(double *val){ rkJointGetAcc( this, val ); }
+inline void rkJoint::getTrq(double *val){ rkJointGetTrq( this, val ); }
+inline void rkJoint::catDis(double *dis, double k, double *val){ rkJointCatDis( this, dis, k, val ); }
+inline void rkJoint::subDis(double *dis, double *subdis){ rkJointSubDis( this, dis, subdis ); }
+inline void rkJoint::updateDisCNT(double *val, double dt){ rkJointSetDisCNT( this, val, dt ); }
+inline zFrame3D *rkJoint::xform(zFrame3D *f0, zFrame3D *f){ return rkJointXform( this, f0, f ); }
+#endif /* __cplusplus */
 
 #include <roki/rk_joint_fixed.h>   /* fixed joint */
 #include <roki/rk_joint_revol.h>   /* revolutional joint */
