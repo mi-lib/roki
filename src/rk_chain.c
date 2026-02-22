@@ -912,7 +912,7 @@ void rkChainSetJointIDOffset(rkChain *chain)
 zVec3DData *rkChainVertData(rkChain *chain, zVec3DData *data)
 {
   rkLink *l;
-  zShapeListCell *sc;
+  zShape3DListCell *sc;
   zShape3D s;
   zVec3D v;
   int i, j;

@@ -12,9 +12,9 @@
 
 __BEGIN_DECLS
 
-/* ********************************************************** */
-/* mass property class.
- *//* ******************************************************* */
+/*! \struct rkMP
+ * \brief mass property class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   /* mass property */
   double mass;
@@ -29,18 +29,18 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
 #endif /* __cplusplus */
 };
 
-#define rkMPMass(mp)           (mp)->mass
-#define rkMPCOM(mp)            ( &(mp)->com )
-#define rkMPInertia(mp)        ( &(mp)->inertia )
+#define rkMPMass(mp)            (mp)->mass
+#define rkMPCOM(mp)             ( &(mp)->com )
+#define rkMPInertia(mp)         ( &(mp)->inertia )
 
 #define rkMPCOMElem(mp,i)       rkMPCOM(mp)->e[i]
 #define rkMPInertiaElem(mp,i,j) rkMPInertia(mp)->e[j][i]
 
-#define rkMPSetMass(mp,m)      ( rkMPMass(mp) = (m) )
-#define rkMPSetCOM(mp,c)       zVec3DCopy( c, rkMPCOM(mp) )
-#define rkMPSetInertia(mp,i)   zMat3DCopy( i, rkMPInertia(mp) )
+#define rkMPSetMass(mp,m)       ( rkMPMass(mp) = (m) )
+#define rkMPSetCOM(mp,c)        zVec3DCopy( c, rkMPCOM(mp) )
+#define rkMPSetInertia(mp,i)    zMat3DCopy( i, rkMPInertia(mp) )
 
-#define rkMPCopy(src,dest)     ( *(dest) = *(src) )
+#define rkMPCopy(src,dest)      ( *(dest) = *(src) )
 
 /*! \brief clear mass property. */
 #define rkMPZero(mp) do{\
@@ -156,20 +156,20 @@ inline rkMP operator*(zFrame3D &f, rkMP &src){
 
 __BEGIN_DECLS
 
-/* ********************************************************** */
-/* rigid body class.
- *//* ******************************************************* */
+/*! \struct rkBody
+ * \brief rigid body class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
-  rkMP mp;              /*!< \brief mass property */
-  zFrame3D frame;       /*!< \brief absolute transformation frame */
-  zVec6D vel;           /*!< \brief velocity */
-  zVec6D acc;           /*!< \brief acceleration */
-  zVec3D com;           /*!< \brief center of mass (COM) */
-  zVec3D comvel;        /*!< \brief COM velocity */
-  zVec3D comacc;        /*!< \brief COM acceleration */
-  zVec6D extwrench;     /*!< \brief external wrench with respect to body frame */
-  zShapeList shapelist; /*!< \brief shapes */
-  char *stuff;          /*!< \brief stuff identifier */
+  rkMP mp;                /*!< \brief mass property */
+  zFrame3D frame;         /*!< \brief absolute transformation frame */
+  zVec6D vel;             /*!< \brief velocity */
+  zVec6D acc;             /*!< \brief acceleration */
+  zVec3D com;             /*!< \brief center of mass (COM) */
+  zVec3D comvel;          /*!< \brief COM velocity */
+  zVec3D comacc;          /*!< \brief COM acceleration */
+  zVec6D extwrench;       /*!< \brief external wrench with respect to body frame */
+  zShape3DList shapelist; /*!< \brief shapes */
+  char *stuff;            /*!< \brief stuff identifier */
 #ifdef __cplusplus
   rkBody();
   ~rkBody();
@@ -372,9 +372,9 @@ __ROKI_EXPORT double rkBodyKineticEnergy(const rkBody *body);
  * rkBodyShapePop() returns a pointer to the shape poped.
  * rkBodyShapeDestroy() returns no value.
  */
-#define rkBodyShapePush(body,shape) zShapeListPush( rkBodyShapeList(body), shape )
-#define rkBodyShapePop(body)        zShapeListPop( rkBodyShapeList(body) )
-#define rkBodyShapeDestroy(body)    zShapeListDestroy( rkBodyShapeList(body) )
+#define rkBodyShapePush(body,shape) zShape3DListPush( rkBodyShapeList(body), shape )
+#define rkBodyShapePop(body)        zShape3DListPop( rkBodyShapeList(body) )
+#define rkBodyShapeDestroy(body)    zShape3DListDestroy( rkBodyShapeList(body) )
 
 /*! \brief contiguous vertex of a body to a point. */
 __ROKI_EXPORT const zVec3D *rkBodyContigVert(const rkBody *body, const zVec3D *point, double *distance);

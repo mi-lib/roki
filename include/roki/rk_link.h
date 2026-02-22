@@ -14,11 +14,9 @@
 
 __BEGIN_DECLS
 
-/* ********************************************************** */
-/*! \struct rkLink
- * \brief link class
- * ********************************************************** */
-/* for ABI method */
+/*! \struct rkABIPrp
+ * \brief properties for ABI method.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkABIPrp ){
   zMat6D m; /*!< \brief mass matrix */
   zMat6D i; /*!< \brief ABI matrix */
@@ -35,6 +33,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkABIPrp ){
   zMat axi, iaxi; /*!< \brief joint inertial tensor */
 };
 
+/*! \struct rkLink
+ * \brief link class
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
   Z_NAMED_CLASS;
   rkJoint joint;       /*!< \brief joint */
@@ -445,7 +446,7 @@ __ROKI_EXPORT rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, 
 /*! \brief output information of an array of links to a file in the ZTK format. */
 __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
 
-/* ***** ZTK ***** */
+/* *** ZTK *** */
 
 #define ZTK_TAG_ROKI_LINK           "roki::link"
 

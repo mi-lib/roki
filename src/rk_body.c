@@ -187,7 +187,7 @@ void rkBodyDestroy(rkBody *body)
 /* clone a body. */
 rkBody *rkBodyClone(const rkBody *org, rkBody *cln, const zMultiShape3D *shape_org, const zMultiShape3D *shape_cln)
 {
-  zShapeListCell *sp;
+  zShape3DListCell *sp;
 
   rkMPCopy( &org->mp, &cln->mp );
   /* shape list */
@@ -353,13 +353,13 @@ const zVec3D *rkBodyContigVert(const rkBody *body, const zVec3D *point, double *
   zVec3D pc;
 
   _zXform3DInv( rkBodyFrame(body), point, &pc );
-  return zShapeListContigVert( rkBodyShapeList(body), &pc, distance );
+  return zShape3DListContigVert( rkBodyShapeList(body), &pc, distance );
 }
 
 /* compute volume of a body. */
 double rkBodyShapeVolume(const rkBody *body)
 {
-  zShapeListCell *cp;
+  zShape3DListCell *cp;
   double v = 0;
 
   zListForEach( rkBodyShapeList(body), cp )
@@ -370,7 +370,7 @@ double rkBodyShapeVolume(const rkBody *body)
 /* compute mass property of a body. */
 rkMP *rkBodyShapeMP(const rkBody *body, double density, rkMP *mp)
 {
-  zShapeListCell *cp;
+  zShape3DListCell *cp;
   double m;
   zVec3D c;
   zMat3D i;

@@ -652,13 +652,13 @@ rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *link_array, ZTK *ztk)
 /* print out link properties to a file in ZTK format. */
 void rkLinkFPrintZTK(FILE *fp, rkLink *link)
 {
-  zShapeListCell *cp;
+  zShape3DListCell *cp;
 
   _ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink );
   if( !rkLinkShapeIsEmpty(link) ){
     fprintf( fp, "%s:", ZTK_KEY_ROKI_LINK_SHAPE );
     zListForEach( rkLinkShapeList(link), cp )
-      fprintf( fp, " %s", zName( zShapeListCellShape(cp) ) );
+      fprintf( fp, " %s", zName( zShape3DListCellShape(cp) ) );
     fprintf( fp, "\n" );
   }
   _ZTKPrpKeyFPrint( fp, link, __ztk_prp_rklink_connect );

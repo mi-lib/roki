@@ -11,7 +11,7 @@ bool chain2mshapeConvert(rkChain *chain, char basename[])
   FILE *fp;
   int i;
   rkLink *l;
-  zShapeListCell *sc;
+  zShape3DListCell *sc;
   zShape3D s;
 
   if( !( fp = zOpenZTKFile( basename, "w" ) ) ){

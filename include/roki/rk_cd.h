@@ -16,9 +16,9 @@ __BEGIN_DECLS
 /*! \brief type to classify stationary or movable shape */
 typedef enum{ RK_CD_CELL_STAT, RK_CD_CELL_MOVE } rkCDCellType;
 
-/* ********************************************************** */
-/*! \brief volume-based collision detection cell class.
- *//* ******************************************************* */
+/*! \struct rkCDCellDat
+ * \brief volume-based collision detection cell class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDCellDat ){
   zShape3D *shape;   /*!< shape to be checked */
   rkLink *link;      /*!< link which the shape belongs to */
@@ -55,9 +55,9 @@ __ROKI_EXPORT void rkCDCellUpdatePH(rkCDCell *cell);
  */
 __ROKI_EXPORT void rkCDCellUpdate(rkCDCell *cell);
 
-/* ********************************************************** */
-/*! \brief vertex-based collision detection cell class.
- *//* ******************************************************* */
+/*! \struct rkCDVertDat
+ * \brief vertex-based collision detection cell class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDVertDat ){
   rkCDCell *cell;  /*!< collision detection cell */
   zVec3D *vert;    /*!< the vertex to be checked */
@@ -78,9 +78,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDVertDat ){
 };
 zListClass( rkCDVertList, rkCDVert, rkCDVertDat );
 
-/* ********************************************************** */
-/*! \brief collision plane class.
- *//* ******************************************************* */
+/*! \struct rkCDPlaneDat
+ * \brief collision plane class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDPlaneDat ){
   zVec3D v;
   zVec3D norm;
@@ -89,9 +89,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDPlaneDat ){
 };
 zListClass( rkCDPlaneList, rkCDPlane, rkCDPlaneDat );
 
-/* ********************************************************** */
-/*! \brief pair of collision class.
- *//* ******************************************************* */
+/*! \struct rkCDPairDat
+ * \brief pair of collision class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDPairDat ){
   rkCDCell *cell[2];    /*!< a pair of collision detection cells */
   bool is_col;          /*!< flag to check collision */
@@ -108,9 +108,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDPairDat ){
 };
 zListClass( rkCDPairList, rkCDPair, rkCDPairDat );
 
-/* ********************************************************** */
-/*! \brief collision detector class.
- *//* ******************************************************* */
+/*! \struct rkCD
+ * \brief collision detector class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCD ){
   rkCDCellList clist; /*!< a list of collision detection cells */
   rkCDPairList plist; /*!< a list of collision detection pairs */

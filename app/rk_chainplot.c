@@ -25,7 +25,7 @@ void conv_chain(char *filename)
   int i;
   rkChain chain;
   rkLink *l;
-  zShapeListCell *sp;
+  zShape3DListCell *sp;
   zShape3D s;
 
   if( !rkChainReadZTK( &chain, filename ) )
@@ -34,8 +34,8 @@ void conv_chain(char *filename)
     l = rkChainLink(&chain,i);
     if( rkLinkShapeIsEmpty( l ) ) continue;
     zListForEach( rkLinkShapeList(l), sp ){
-      zShape3DClone( zShapeListCellShape(sp), &s, NULL );
-      zShape3DXform( zShapeListCellShape(sp), rkLinkWldFrame(l), &s );
+      zShape3DClone( zShape3DListCellShape(sp), &s, NULL );
+      zShape3DXform( zShape3DListCellShape(sp), rkLinkWldFrame(l), &s );
       output_shape( &s );
       zShape3DDestroy( &s );
     }

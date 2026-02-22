@@ -2,7 +2,7 @@
  *
  * 2023. 6. 2. Originally developed by Kenta Imanishi.
  * 2023. 6. 4. Modified by Tom Sugihara.
- * 2026. 2.21. Last updated by Tom Sugihara.
+ * 2026. 2.22. Last updated by Tom Sugihara.
  */
 
 #include <roki/roki.h>
@@ -67,7 +67,7 @@ bool rcc_is_fixed_link(rkLink *link)
 
 int rcc_add_link_vert(rkLink *link, zFrame3D *frame, zVec3DData *data)
 {
-  zShapeListCell *sp;
+  zShape3DListCell *sp;
   rkLink *l;
   zFrame3D f;
   zVec3D v;
@@ -112,7 +112,7 @@ bool rcc_replace_link_shape(rkChain *chain)
   }
   /* replace the original shape of the link. */
   for( i=0; i<rkChainLinkNum(chain); i++ ){
-    zShapeListDestroy( rkChainLinkShapeList(chain,i) );
+    zShape3DListDestroy( rkChainLinkShapeList(chain,i) );
     zArrayFindName( &shape_array, rkChainLinkName(chain,i), sp );
     if( !sp ) continue;
     if( option[RCC_VERBOSE].flag ) eprintf( "associate link shape to %s.\n", rkChainLinkName(chain,i) );
