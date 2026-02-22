@@ -26,7 +26,7 @@ void rkChainDestroy(rkChain *chain)
   if( !chain ) return;
   zNameFree( chain );
   rkLinkArrayDestroy( rkChainLinkArray(chain) );
-  zMShape3DDestroy( rkChainShape(chain) );
+  zMultiShape3DDestroy( rkChainShape(chain) );
   zFree( rkChainShape(chain) );
   rkMotorSpecArrayDestroy( rkChainMotorSpecArray(chain) );
   rkChainDestroyIK( chain );
@@ -53,7 +53,7 @@ rkChain *rkChainClone(rkChain *org, rkChain *cln)
     ZALLOCERROR();
     return NULL;
   }
-  if( rkChainShape(org) && !( rkChainShape(cln) = zMShape3DClone( rkChainShape(org) ) ) )
+  if( rkChainShape(org) && !( rkChainShape(cln) = zMultiShape3DClone( rkChainShape(org) ) ) )
     return NULL;
   if( !rkMotorSpecArrayClone( rkChainMotorSpecArray(org), rkChainMotorSpecArray(cln) ) )
     return NULL;
@@ -984,7 +984,7 @@ static void *_rkChainMotorSpecFromZTK(void *obj, int i, void *arg, ZTK *ztk){
 static void *_rkChainLinkFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return rkLinkFromZTK( rkChainLink((rkChain*)obj,i),
     rkChainLinkArray((rkChain*)obj),
-    rkChainShape((rkChain*)obj) ? zMShape3DShapeArray( rkChainShape((rkChain*)obj) ) : NULL,
+    rkChainShape((rkChain*)obj) ? zMultiShape3DShapeArray( rkChainShape((rkChain*)obj) ) : NULL,
     rkChainMotorSpecArray((rkChain*)obj), ztk ) ? obj : NULL;
 }
 static void *_rkChainLinkConnectFromZTK(void *obj, int i, void *arg, ZTK *ztk){
@@ -1090,11 +1090,11 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
   rkChainInit( chain );
   /* optical infos and shapes */
   if( ZTKCountTag( ztk, ZTK_TAG_ZEO_SHAPE ) > 0 ){
-    if( !( rkChainShape(chain) = zAlloc( zMShape3D, 1 ) ) ){
+    if( !( rkChainShape(chain) = zAlloc( zMultiShape3D, 1 ) ) ){
       ZALLOCERROR();
       return NULL;
     }
-    if( !zMShape3DFromZTK( rkChainShape(chain), ztk ) ) return NULL;
+    if( !zMultiShape3DFromZTK( rkChainShape(chain), ztk ) ) return NULL;
   }
   /* motors */
   if( ( num_motor = ZTKCountTag( ztk, ZTK_TAG_ROKI_MOTOR ) ) > 0 )
@@ -1119,8 +1119,8 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
     if( !rkLinkArrayAlloc( rkChainLinkArray(chain), 1 ) ) return NULL;
     rkLinkInit( rkChainRoot(chain) );
     if( !rkJointAssignByStr(rkLinkJoint(rkChainRoot(chain)), rk_joint_float.typestr ) ) return NULL;
-    for( i=0; i<zMShape3DShapeNum(rkChainShape(chain)); i++ )
-      rkLinkShapePush( rkChainRoot(chain), zMShape3DShape(rkChainShape(chain),i) );
+    for( i=0; i<zMultiShape3DShapeNum(rkChainShape(chain)); i++ )
+      rkLinkShapePush( rkChainRoot(chain), zMultiShape3DShape(rkChainShape(chain),i) );
   }
   if( rkChainMass(chain) == 0 )
     rkChainSetMass( chain, 1.0 ); /* dummy weight */
@@ -1136,7 +1136,7 @@ void rkChainFPrintZTK(FILE *fp, rkChain *chain)
   _ZTKPrpTagFPrint( fp, chain, __ztk_prp_tag_roki_chain );
   fprintf( fp, "\n" );
   if( rkChainShape(chain) )
-    zMShape3DFPrintZTK( fp, rkChainShape(chain) );
+    zMultiShape3DFPrintZTK( fp, rkChainShape(chain) );
   if( zArraySize(rkChainMotorSpecArray(chain)) > 0 )
     rkMotorSpecArrayFPrintZTK( fp, rkChainMotorSpecArray(chain) );
   if( rkChainLinkNum(chain) > 0 ){

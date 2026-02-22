@@ -242,7 +242,7 @@ __ROKI_EXPORT void rkBodyDestroy(rkBody *body);
  * of \a sc is supposed to be attached with \a cln.
  * \return cln
  */
-__ROKI_EXPORT rkBody *rkBodyClone(const rkBody *org, rkBody *cln, const zMShape3D *so, const zMShape3D *sc);
+__ROKI_EXPORT rkBody *rkBodyClone(const rkBody *org, rkBody *cln, const zMultiShape3D *so, const zMultiShape3D *sc);
 
 /*! \brief zero velocity and acceleration of a body.
  *

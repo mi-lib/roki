@@ -18,9 +18,9 @@ bool chain2mshapeConvert(rkChain *chain, char basename[])
     ZOPENERROR( basename );
     return false;
   }
-  for( i=0; i<zMShape3DOpticNum(rkChainShape(chain)); i++ ){
+  for( i=0; i<zMultiShape3DOpticNum(rkChainShape(chain)); i++ ){
     fprintf( fp, "[optic]\n" );
-    zOpticalInfoFPrintZTK( fp, zMShape3DOptic(rkChainShape(chain),i) );
+    zOpticalInfoFPrintZTK( fp, zMultiShape3DOptic(rkChainShape(chain),i) );
   }
   for( i=0; i<rkChainLinkNum(chain); i++ ){
     l = rkChainLink(chain,i);

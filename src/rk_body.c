@@ -8,7 +8,7 @@
 
 /* ********************************************************** */
 /* mass property class
- * *//******************************************************* */
+ *//* ******************************************************* */
 
 /* convert mass properties in [g,mm] to that in [kg,m]. */
 rkMP *rkMPgmm2kgm(rkMP *mp)
@@ -156,7 +156,7 @@ void rkMPFPrint(FILE *fp, const rkMP *mp)
 
 /* ********************************************************** */
 /* rigid body class
- * *//******************************************************* */
+ *//* ******************************************************* */
 
 /* initialize a body. */
 void rkBodyInit(rkBody *body)
@@ -185,7 +185,7 @@ void rkBodyDestroy(rkBody *body)
 }
 
 /* clone a body. */
-rkBody *rkBodyClone(const rkBody *org, rkBody *cln, const zMShape3D *shape_org, const zMShape3D *shape_cln)
+rkBody *rkBodyClone(const rkBody *org, rkBody *cln, const zMultiShape3D *shape_org, const zMultiShape3D *shape_cln)
 {
   zShapeListCell *sp;
 
@@ -193,7 +193,7 @@ rkBody *rkBodyClone(const rkBody *org, rkBody *cln, const zMShape3D *shape_org, 
   /* shape list */
   zListInit( rkBodyShapeList(cln) );
   zListForEachRew( rkBodyShapeList(org), sp )
-    if( !rkBodyShapePush( cln, sp->data - zMShape3DShapeBuf(shape_org) + zMShape3DShapeBuf(shape_cln) ) ) return NULL;
+    if( !rkBodyShapePush( cln, sp->data - zMultiShape3DShapeBuf(shape_org) + zMultiShape3DShapeBuf(shape_cln) ) ) return NULL;
   /* stuff */
   if( rkBodyStuff(org) && !rkBodySetStuff( cln, rkBodyStuff(org) ) ){
     ZALLOCERROR();

@@ -184,7 +184,7 @@ __ROKI_EXPORT void rkLinkDestroy(rkLink *link);
  * \return
  * rkLinkClone() returns \a cln if it succeeds. Otherwise, the null pointer is returned.
  */
-__ROKI_EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
+__ROKI_EXPORT rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMultiShape3D *shape_org, zMultiShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
 
 /*! \brief zero velocity and acceleration of a link.
  *
@@ -428,19 +428,21 @@ __ROKI_EXPORT zVec3D *rkLinkAngularMomentumRecursive(const rkLink *link, const z
 /*! \brief compute mass property of a link. */
 #define rkLinkShapeMP(link,d,mp) rkBodyShapeMP( rkLinkBody(link), (d), (mp) )
 
-/* ********************************************************** */
 /*! \struct rkLinkArray
  * \brief array of links
- * ********************************************************** */
-
+ */
 zArrayClass( rkLinkArray, rkLink );
 
+/*! \brief allocate an array of links. */
 __ROKI_EXPORT rkLinkArray *rkLinkArrayAlloc(rkLinkArray *linkarray, int size);
 
+/*! \brief destroy an array of links. */
 __ROKI_EXPORT void rkLinkArrayDestroy(rkLinkArray *linkarray);
 
-__ROKI_EXPORT rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
+/*! \brief clone an array of links. */
+__ROKI_EXPORT rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, zMultiShape3D *shape_org, zMultiShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
 
+/*! \brief output information of an array of links to a file in the ZTK format. */
 __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
 
 /* ***** ZTK ***** */

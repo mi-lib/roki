@@ -21,7 +21,7 @@ ZDECL_STRUCT( rkFDEquation );
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   Z_NAMED_CLASS;
   rkLinkArray linkarray;           /*!< array of links */
-  zMShape3D *shape;                /*!< multishape */
+  zMultiShape3D *shape;                /*!< multishape */
   rkMotorSpecArray motorspecarray; /*!< array of motor specifications */
 
   zVec3D wldcom;    /*!< position of COM in the world frame */

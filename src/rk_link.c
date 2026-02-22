@@ -8,7 +8,7 @@
 
 /* ********************************************************** */
 /* link class
- * ********************************************************** */
+ *//* ******************************************************* */
 
 /* initialize a link. */
 void rkLinkInit(rkLink *link)
@@ -38,7 +38,7 @@ void rkLinkDestroy(rkLink *link)
 }
 
 /* clone a link. */
-rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln)
+rkLink *rkLinkClone(rkLink *org, rkLink *cln, zMultiShape3D *shape_org, zMultiShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln)
 {
   if( !org || !cln ){
     ZRUNERROR( RK_WARN_LINK_NULL );
@@ -339,16 +339,17 @@ zVec3D *rkLinkAngularMomentumRecursive(const rkLink *link, const zVec3D *pos, zV
 }
 
 /* ********************************************************** */
-/* rkLinkArray
- * array of links
- * ********************************************************** */
+/* array of links
+ *//* ******************************************************* */
 
+/* allocate an array of links. */
 rkLinkArray *rkLinkArrayAlloc(rkLinkArray *linkarray, int size)
 {
   zArrayAlloc( linkarray, rkLink, size );
   return zArraySize(linkarray) == size ? linkarray : NULL;
 }
 
+/* destroy an array of links. */
 void rkLinkArrayDestroy(rkLinkArray *linkarray)
 {
   int i;
@@ -358,7 +359,8 @@ void rkLinkArrayDestroy(rkLinkArray *linkarray)
   zArrayFree( linkarray );
 }
 
-rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, zMShape3D *shape_org, zMShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln)
+/* clone an array of links. */
+rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, zMultiShape3D *shape_org, zMultiShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln)
 {
   int i;
 
@@ -373,6 +375,7 @@ rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, zMShape3D *sha
   return cln;
 }
 
+/* output information of an array of links to a file in the ZTK format. */
 void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray)
 {
   int i;
