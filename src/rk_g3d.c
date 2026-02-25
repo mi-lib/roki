@@ -7,4 +7,8 @@
 #include <roki/rk_g3d.h>
 
 /* acceleration vector due to gravity. */
+#ifdef __cplusplus
+const zVec6D rk_gravity6D{ 0, 0, RK_G, 0, 0, 0 };
+#else
 const zVec6D rk_gravity6D = { { 0, 0, RK_G, 0, 0, 0 } };
+#endif /* __cplusplus */

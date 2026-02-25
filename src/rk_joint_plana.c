@@ -28,20 +28,20 @@ static void _rkJointPlanaSetDis(rkJoint *joint, double *val){
 }
 
 static void _rkJointPlanaSetVel(rkJoint *joint, double *val){
-  zCoord2DCopy( val, &_rks(joint)->vel );
+  zCoord2DCopy( (zCoord2D *)val, &_rks(joint)->vel );
 }
 
 static void _rkJointPlanaSetAcc(rkJoint *joint, double *val){
-  zCoord2DCopy( val, &_rks(joint)->acc );
+  zCoord2DCopy( (zCoord2D *)val, &_rks(joint)->acc );
 }
 
 static void _rkJointPlanaSetTrq(rkJoint *joint, double *val){
-  zCoord2DCopy( val, &_rks(joint)->trq );
+  zCoord2DCopy( (zCoord2D *)val, &_rks(joint)->trq );
 }
 
 /* get joint displacement, velocity, acceleration and torque */
 static void _rkJointPlanaGetDis(rkJoint *joint, double *val){
-  zCoord2DCopy( &_rks(joint)->dis, val );
+  zCoord2DCopy( &_rks(joint)->dis, (zCoord2D *)val );
 }
 
 static void _rkJointPlanaGetMin(rkJoint *joint, double *val){
@@ -53,31 +53,31 @@ static void _rkJointPlanaGetMax(rkJoint *joint, double *val){
 }
 
 static void _rkJointPlanaGetVel(rkJoint *joint, double *val){
-  zCoord2DCopy( &_rks(joint)->vel, val );
+  zCoord2DCopy( &_rks(joint)->vel, (zCoord2D *)val );
 }
 
 static void _rkJointPlanaGetAcc(rkJoint *joint, double *val){
-  zCoord2DCopy( &_rks(joint)->acc, val );
+  zCoord2DCopy( &_rks(joint)->acc, (zCoord2D *)val );
 }
 
 static void _rkJointPlanaGetTrq(rkJoint *joint, double *val){
-  zCoord2DCopy( &_rks(joint)->trq, val );
+  zCoord2DCopy( &_rks(joint)->trq, (zCoord2D *)val );
 }
 
 static void _rkJointPlanaCatDis(rkJoint *joint, double *dis, double k, double *val){
-  zCoord2DCatDRC( (zCoord2D*)dis, k, (zCoord2D*)val );
+  zCoord2DCatDRC( (zCoord2D *)dis, k, (zCoord2D *)val );
 }
 
 static void _rkJointPlanaSubDis(rkJoint *joint, double *dis, double *sdis){
-  zCoord2DSubDRC( (zCoord2D*)dis, (zCoord2D*)sdis );
+  zCoord2DSubDRC( (zCoord2D *)dis, (zCoord2D *)sdis );
 }
 
 /* continuously update joint displacement over delta time */
 static void _rkJointPlanaSetDisCNT(rkJoint *joint, double *val, double dt){
   zCoord2D olddis, oldvel;
 
-  _rkJointPlanaGetDis( joint, (double*)&olddis );
-  _rkJointPlanaGetVel( joint, (double*)&oldvel );
+  _rkJointPlanaGetDis( joint, (double *)&olddis );
+  _rkJointPlanaGetVel( joint, (double *)&oldvel );
   _rkJointPlanaSetDis( joint, val );
   zCoord2DSub( &_rks(joint)->dis, &olddis, &_rks(joint)->vel );
   zCoord2DDivDRC( &_rks(joint)->vel, dt );

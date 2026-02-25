@@ -173,6 +173,12 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
 #ifdef __cplusplus
   rkBody();
   ~rkBody();
+  zVec3D &pos();
+  zMat3D &att();
+  zVec3D &setPos(zVec3D &_pos);
+  zMat3D &setAtt(zMat3D &_att);
+  zMat3D &setAtt(zVec3D &aa);
+  zMat3D &setAtt(zEP &ep);
 #endif /* __cplusplus */
 };
 
@@ -401,6 +407,12 @@ __END_DECLS
 #ifdef __cplusplus
 inline rkBody::rkBody(){ rkBodyInit( this ); }
 inline rkBody::~rkBody(){ rkBodyDestroy( this ); }
+inline zVec3D &rkBody::pos(){ return this->frame.pos; }
+inline zMat3D &rkBody::att(){ return this->frame.att; }
+inline zVec3D &rkBody::setPos(zVec3D &_pos){ return this->frame.setPos( _pos ); }
+inline zMat3D &rkBody::setAtt(zMat3D &_att){ return this->frame.setAtt( _att ); }
+inline zMat3D &rkBody::setAtt(zVec3D &aa){ return this->frame.att.createFromAA( aa ); }
+inline zMat3D &rkBody::setAtt(zEP &ep){ return ep.toMat3D( this->frame.att ); }
 #endif /* __cplusplus */
 
 #endif /* __RK_BODY_H__ */

@@ -31,6 +31,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkABIPrp ){
   zVec6D a0; /*!< \brief link acc at no rigid contact forces */
   bool abi_backward_path;
   zMat axi, iaxi; /*!< \brief joint inertial tensor */
+#ifdef __cplusplus
+  rkABIPrp() : abi_backward_path{false} {};
+#endif /* __cplusplus */
 };
 
 /*! \struct rkLink

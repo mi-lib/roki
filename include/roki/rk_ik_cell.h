@@ -17,30 +17,42 @@ __BEGIN_DECLS
 
 ZDECL_STRUCT( rkChain );
 
-/*! \class reference data class */
+/*! \union rkIKRef
+ * \brief reference data class.
+ */
 ZDEF_UNION( __ROKI_CLASS_EXPORT, rkIKRef ){
   zVec3D pos; /*!< position reference */
   zMat3D att; /*!< attitude reference */
 #ifdef __cplusplus
   rkIKRef() : att{*ZMAT3DZERO} {};
+  ~rkIKRef(){}
 #endif /* __cplusplus */
 };
 
 #define rkIKRefClear(ref) zMat3DZero(&(ref)->att)
 
-/*! \class error accumulator class */
+/*! \struct rkIKAcm
+ * \brief error accumulator class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAcm ){
-  union{
+  union rkIKAcmVal{
     zVec3D p; /*!< accumulated position error */
     zEP e;    /*!< accumulated attitude error by Euler parameter */
+#ifdef __cplusplus
+    rkIKAcmVal(){}
+    ~rkIKAcmVal(){}
+#endif /* __cplusplus */
   } ae, e_old; /*!< accumulated error */
   zVec3D h_old;
 #ifdef __cplusplus
-  rkIKAcm() : ae{*ZVEC3DZERO}, e_old{*ZVEC3DZERO}, h_old{*ZVEC3DZERO} {};
+  rkIKAcm(){}
+  ~rkIKAcm(){}
 #endif /* __cplusplus */
 };
 
-/*! \class IK attribute class */
+/*! \struct rkIKAttr
+ * \brief IK attribute class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
   int user_defined_type;  /*!< user-defined type identifier */
   int id;                 /*!< attention link IDs */
@@ -48,6 +60,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
   zVec3D attention_point; /*!< attention point */
   zVec3D weight;          /*!< weight on constraint */
   ubyte mask;             /*!< mask to specify enabled attributes */
+#ifdef __cplusplus
+  rkIKAttr() : user_defined_type{0}, id{-1}, id_sub{-1}, mask{0} {}
+  ~rkIKAttr(){}
+#endif /* __cplusplus */
 };
 
 /*! \brief masks to specify attributes to be set */
@@ -82,7 +98,9 @@ typedef zVec3D* (* rkIKAcm_fp)(rkChain*,rkIKAcm*,void*,zVec3D*);
 
 ZDECL_STRUCT( rkIKCell );
 
-/*! \class IK constraint class */
+/*! \struct rkIKConstraint
+ * \brief IK constraint class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKConstraint ){
   const char *typestr; /*!< a string to identify constraint type */
   rkIKRef_fp  ref_fp;  /*!< reference function pointer */
@@ -96,7 +114,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKConstraint ){
 };
 zListClass( rkIKConstraintList, rkIKConstraintListCell, const rkIKConstraint* );
 
-/*! \class IK constraint cell class */
+/*! \struct rkIKCellDat
+ * \brief IK constraint cell class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
   Z_NAMED_CLASS; /*!< name of constraint */
   const rkIKConstraint *constraint; /*!< constraint */
