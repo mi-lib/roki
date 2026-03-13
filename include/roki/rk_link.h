@@ -114,23 +114,12 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #define rkLinkExtWrenchBuf(link)  ( &(link)->_abiprp.wlist )
 
 #define rkLinkSetJointIDOffset(link,o) ( rkLinkJointIDOffset(link) = (o) )
-#define rkLinkSetMass(link,m)     do{\
-  rkBodySetMass( rkLinkBody(link), m );\
-  rkMPSetMass( rkLinkCRB(link), rkLinkMass(link) );\
-} while(0)
-#define rkLinkSetCOM(link,c)      do{\
-  rkBodySetCOM( rkLinkBody(link), c );\
-  rkMPSetCOM( rkLinkCRB(link), rkLinkCOM(link) );\
-} while(0)
-#define rkLinkSetInertia(link,i)  do{\
-  rkBodySetInertia( rkLinkBody(link), i );\
-  rkMPSetInertia( rkLinkCRB(link), rkLinkInertia(link) );\
-} while(0)
-#define rkLinkSetMP(link,mp)      do{\
-  rkLinkSetMass( link, rkMPMass(mp) );\
-  rkLinkSetCOM( link, rkMPCOM(mp) );\
-  rkLinkSetInertia( link, rkMPInertia(mp) );\
-} while(0)
+
+#define rkLinkSetMass(link,m)     rkBodySetMass( rkLinkBody(link), m )
+#define rkLinkSetCOM(link,c)      rkBodySetCOM( rkLinkBody(link), c )
+#define rkLinkSetInertia(link,i)  rkBodySetInertia( rkLinkBody(link), i )
+#define rkLinkSetMP(link,mp)      rkMPCopy( mp, rkLinkMP(link) )
+
 #define rkLinkSetVel(link,v)      rkBodySetVel( rkLinkBody(link), v )
 #define rkLinkSetAcc(link,a)      rkBodySetAcc( rkLinkBody(link), a )
 #define rkLinkSetLinVel(link,v)   rkBodySetLinVel( rkLinkBody(link), v )
@@ -387,6 +376,7 @@ __ROKI_EXPORT rkMP *rkLinkMergeMP(const rkLink *link, rkMP *mp);
 
 /*! \brief update mass of the composite rigit body of a link. */
 __ROKI_EXPORT double rkLinkUpdateCRBMass(rkLink *link);
+
 /*! \brief update the composite rigit body of a link. */
 __ROKI_EXPORT rkMP *rkLinkUpdateCRB(rkLink *link);
 

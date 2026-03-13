@@ -262,11 +262,16 @@ rkMP *rkLinkUpdateCRB(rkLink *link)
   zMat3D tmpi;
   zVec3D tmpr;
 
-  if( !rkLinkChild(link) ) return rkLinkCRB(link);
-  /* composite COM */
+  if( !rkLinkChild(link) ){
+    rkMPCopy( rkLinkMP(link), rkLinkCRB(link) );
+    return rkLinkCRB(link);
+  }
+  /* composite mass & COM */
+  rkMPSetMass( rkLinkCRB(link), rkLinkMass(link) );
   _zVec3DMul( rkLinkCOM(link), rkLinkMass(link), rkLinkCRBCOM(link) );
   for( lp=rkLinkChild(link); lp; lp=rkLinkSibl(lp) ){
     rkLinkUpdateCRB( lp );
+    rkLinkCRBMass(link) += rkLinkCRBMass( lp );
     _zXform3D( rkLinkAdjFrame(lp), rkLinkCRBCOM(lp), &tmpr );
     _zVec3DCatDRC( rkLinkCRBCOM(link), rkLinkCRBMass(lp), &tmpr );
   }

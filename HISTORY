@@ -1,3 +1,6 @@
+2026.03.13. Modified rkLinkUpdateCRB to copy mass property of leaf links to their CRB, and to update mass of CRB. [rk_link]
+2026.03.13. Reimplemented rkLinkSetMP by using rkMPCopy. [rk_link]
+2026.03.13. Modified rkLinkSetMass, rkLinkSetCOM, and rkLinkSetInertia not to copy the provided values to the CRB member. [rk_link]
 2026.02.25. Added constructors and destructors of rkIKRef, rkIKAcmVal, rkIKAcm, and rkIKAttr. [rk_ik_cell]
 2026.02.25. Named internal union of rkIKAcm as rkIKAcmVal. [rk_ik_cell]
 2026.02.25. Modified _rkJointPlanaSetVel, _rkJointPlanaSetAcc, _rkJointPlanaSetTrq, _rkJointPlanaGetDis, _rkJointPlanaGetVel, _rkJointPlanaGetAcc, _rkJointPlanaGetTrq, _rkJointPlanaCatDis, and _rkJointPlanaSubDis to cast arguments to void *. [rk_joint_plana]
