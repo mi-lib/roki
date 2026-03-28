@@ -24,7 +24,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   rkMP();
   rkMP *copy(rkMP &);
   void zero();
-  friend bool operator==(rkMP &mp1, rkMP &mp2);
+  bool operator==(rkMP & other);
   friend rkMP operator*(zFrame3D &f, rkMP &src);
 #endif /* __cplusplus */
 };
@@ -146,7 +146,7 @@ __END_DECLS
 inline rkMP::rkMP(){ rkMPZero( this ); }
 inline rkMP *rkMP::copy(rkMP &src){ rkMPCopy( &src, this ); return this; }
 inline void rkMP::zero(){ rkMPZero( this ); }
-inline bool operator==(rkMP &mp1, rkMP &mp2){ return rkMPEqual( &mp1, &mp2 ); }
+inline bool rkMP::operator==(rkMP &other){ return rkMPEqual((rkMP*)this, (rkMP*)&other); }
 inline rkMP operator*(zFrame3D &f, rkMP &src){
   rkMP dest;
   rkMPXform( &src, &f, &dest );
