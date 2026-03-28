@@ -7,11 +7,7 @@ void assert_wrenchlist(void)
   rkWrenchList wl;
   rkWrench w[4];
   zVec6D rw;
-#ifdef __cplusplus
   zVec6D netw( 0, 0, 0, 0, 0, 4 );
-#else
-  zVec6D netw = { { 0, 0, 0, 0, 0, 4 } };
-#endif
 
   zListInit( &wl );
   zVec6DCreate( rkWrenchW(&w[0]),-1, 0, 0, 0, 0, 0 );

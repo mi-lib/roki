@@ -1,10 +1,6 @@
 #include <roki/rk_chain.h>
 
-#ifdef __cplusplus
 zVec3D p( 1.0, 2.0, 3.0 );
-#else
-zVec3D p = { { 1.0, 2.0, 3.0 } };
-#endif
 rkLink *le;
 
 void truth(zMat3D *morg, zVec3D *pos, zVec3D *aa, zVec6D *vin, zVec6D *ain, zFrame3D *fout, zVec6D *vout, zVec6D *aout)

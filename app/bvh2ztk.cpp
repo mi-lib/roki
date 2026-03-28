@@ -116,11 +116,7 @@ void bvh2ztk_joint_update_frame(joint_t *joint, joint_t *parent)
   if( parent )
     zFrame3DCascade( &parent->wldframe, &joint->adjframe, &joint->wldframe );
   else{
-#ifdef __cplusplus
     static zFrame3D f( 0, 0, 0,  0, 1, 0,  0, 0, 1,  1, 0, 0 );
-#else
-    static zFrame3D f = { { { 0, 0, 0 } }, { { { 0, 1, 0 }, { 0, 0, 1 }, { 1, 0, 0 } } } };
-#endif
     zFrame3DCascade( &f, &joint->adjframe, &joint->wldframe );
   }
   if( joint->child )

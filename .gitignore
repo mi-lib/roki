@@ -8,6 +8,7 @@ tools/*
 !tools/config.tools
 app/*
 !app/*.c
+!app/*.cpp
 !app/makefile
 !app/config.app
 test/test.log
