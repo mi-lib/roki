@@ -22,10 +22,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   zMat3D inertia;
 #ifdef __cplusplus
   rkMP();
-  rkMP *copy(rkMP &);
+  rkMP *copy(const rkMP &);
   void zero();
-  friend bool operator==(rkMP &mp1, rkMP &mp2);
-  friend rkMP operator*(zFrame3D &f, rkMP &src);
+  bool operator==(const rkMP &mp);
+  friend rkMP operator*(const zFrame3D &f, const rkMP &src);
 #endif /* __cplusplus */
 };
 
@@ -63,7 +63,7 @@ __ROKI_EXPORT rkMP *rkMPgmm2kgm(rkMP *mp);
  * \return
  * rkMPEqual() returns a boolean value based on the result.
  */
-__ROKI_EXPORT bool rkMPEqual(rkMP *mp1, rkMP *mp2);
+__ROKI_EXPORT bool rkMPEqual(const rkMP *mp1, const rkMP *mp2);
 
 /*! \brief transform mass properties to that with respect to a frame.
  *
@@ -144,10 +144,10 @@ __END_DECLS
 
 #ifdef __cplusplus
 inline rkMP::rkMP(){ rkMPZero( this ); }
-inline rkMP *rkMP::copy(rkMP &src){ rkMPCopy( &src, this ); return this; }
+inline rkMP *rkMP::copy(const rkMP &src){ rkMPCopy( &src, this ); return this; }
 inline void rkMP::zero(){ rkMPZero( this ); }
-inline bool operator==(rkMP &mp1, rkMP &mp2){ return rkMPEqual( &mp1, &mp2 ); }
-inline rkMP operator*(zFrame3D &f, rkMP &src){
+inline bool rkMP::operator==(const rkMP &mp){ return rkMPEqual( this, &mp ); }
+inline rkMP operator*(const zFrame3D &f, const rkMP &src){
   rkMP dest;
   rkMPXform( &src, &f, &dest );
   return dest;

@@ -20,7 +20,7 @@ rkMP *rkMPgmm2kgm(rkMP *mp)
 }
 
 /* check if two sets of mass properties are equal. */
-bool rkMPEqual(rkMP *mp1, rkMP *mp2)
+bool rkMPEqual(const rkMP *mp1, const rkMP *mp2)
 {
   return zEqual( rkMPMass(mp1), rkMPMass(mp2), zTOL ) &&
          zVec3DEqual( rkMPCOM(mp1), rkMPCOM(mp2) ) &&
