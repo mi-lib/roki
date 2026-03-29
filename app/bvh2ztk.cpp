@@ -67,8 +67,8 @@ joint_t *bvh2ztk_joint_create(char *name)
     return NULL;
   }
   zNameSet( joint, name );
-  zFrame3DIdent( &joint->orgframe );
-  zFrame3DIdent( &joint->wldframe );
+  joint->orgframe.ident();
+  joint->wldframe.ident();
   joint->num_axis = 0;
   joint->child = joint->sibl = NULL;
   return joint;
@@ -114,10 +114,10 @@ int bvh2ztk_joint_count_dis(joint_t *joint)
 void bvh2ztk_joint_update_frame(joint_t *joint, joint_t *parent)
 {
   if( parent )
-    zFrame3DCascade( &parent->wldframe, &joint->adjframe, &joint->wldframe );
+    joint->wldframe = parent->wldframe.cascade( joint->adjframe );
   else{
     static zFrame3D f( 0, 0, 0,  0, 1, 0,  0, 0, 1,  1, 0, 0 );
-    zFrame3DCascade( &f, &joint->adjframe, &joint->wldframe );
+    joint->wldframe = f.cascade( joint->adjframe );
   }
   if( joint->child )
     bvh2ztk_joint_update_frame( joint->child, joint );
@@ -254,7 +254,7 @@ joint_t *bvh2ztk_read_hierarchy(stream_t *stream)
 {
   joint_t *root;
 
-  /* header */
+  // header
   if( !bvh2ztk_stream_getline( stream ) ) return NULL;
   if( !bvh2ztk_stream_gettoken( stream ) ) return NULL;
   if( !bvh2ztk_cmp_token( stream, "HIERARCHY" ) ) return NULL;
@@ -308,7 +308,7 @@ bool bvh2ztk_read_posture(stream_t *stream, joint_t *joint)
     if( !bvh2ztk_stream_gettoken( stream ) ) return false;
     val[i] = atof( stream->token );
   }
-  zFrame3DIdent( &f );
+  f.ident();
   for( i=joint->num_axis-1; i>=0; i-- ){
     switch( joint->axis[i] ){
      case 0: /* X position */ zFrame3DPos(&f)->c.x += 0.01 * val[i]; break;
@@ -320,7 +320,7 @@ bool bvh2ztk_read_posture(stream_t *stream, joint_t *joint)
      default: ;
     }
   }
-  zFrame3DCascade( &f, &joint->orgframe, &joint->adjframe );
+  joint->adjframe = f.cascade( joint->orgframe );
   if( joint->child )
     if( !bvh2ztk_read_posture( stream, joint->child ) ) return false;
   if( joint->sibl )
@@ -330,9 +330,7 @@ bool bvh2ztk_read_posture(stream_t *stream, joint_t *joint)
 
 void bvh2ztk_write_joint_motion(FILE *fp, joint_t *joint)
 {
-  zVec6D v;
-
-  zFrame3DToVec6DAA( &joint->wldframe, &v );
+  zVec6D v( joint->wldframe.toPosAA() );
   zVec6DValueFPrint( fp, &v );
   if( joint->child )
     bvh2ztk_write_joint_motion( fp, joint->child );
@@ -353,17 +351,17 @@ bool bvh2ztk_conv_motion(stream_t *stream, joint_t *root, const char *filename)
   double dt;
   FILE *fp;
 
-  /* header */
+  // header
   if( !bvh2ztk_stream_getline( stream ) ) return false;
   if( !bvh2ztk_stream_gettoken( stream ) ) return false;
   if( !bvh2ztk_cmp_token( stream, "MOTION" ) ) return false;
-  /* number of frames */
+  // number of frames
   if( !bvh2ztk_stream_getline( stream ) ) return false;
   if( !bvh2ztk_stream_gettoken( stream ) ) return false;
   if( !bvh2ztk_cmp_token( stream, "Frames" ) ) return false;
   if( !bvh2ztk_stream_gettoken( stream ) ) return false;
   num_frame = atoi( stream->token );
-  /* frame interval */
+  // frame interval
   if( !bvh2ztk_stream_getline( stream ) ) return false;
   if( !bvh2ztk_stream_gettoken( stream ) ) return false;
   if( !bvh2ztk_cmp_token( stream, "Frame" ) ) return false;
@@ -371,7 +369,7 @@ bool bvh2ztk_conv_motion(stream_t *stream, joint_t *root, const char *filename)
   if( !bvh2ztk_cmp_token( stream, "Time" ) ) return false;
   if( !bvh2ztk_stream_gettoken( stream ) ) return false;
   dt = atof( stream->token );
-  /* output zkcs file */
+  // output zkcs file
   if( !( fp = fopen( filename, "w" ) ) ){
     ZOPENERROR( filename );
     return false;
