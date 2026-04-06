@@ -10,22 +10,22 @@ void assert_wrenchlist(void)
   zVec6D netw( 0, 0, 0, 0, 0, 4 );
 
   zListInit( &wl );
-  rkWrenchW(&w[0])->create( -1, 0, 0, 0, 0, 0 );
-  rkWrenchPos(&w[0])->create( 1, 1, 0 );
-  rkWrenchW(&w[1])->create( 0,-1, 0, 0, 0, 0 );
-  rkWrenchPos(&w[1])->create( -1, 1, 0 );
-  rkWrenchW(&w[2])->create( 1, 0, 0, 0, 0, 0 );
-  rkWrenchPos(&w[2])->create( -1,-1, 0 );
-  rkWrenchW(&w[3])->create( 0, 1, 0, 0, 0, 0 );
-  rkWrenchPos(&w[3])->create( 1,-1, 0 );
+  zVec6DCreate( rkWrenchW(&w[0]),-1, 0, 0, 0, 0, 0 );
+  zVec3DCreate( rkWrenchPos(&w[0]), 1, 1, 0 );
+  zVec6DCreate( rkWrenchW(&w[1]), 0,-1, 0, 0, 0, 0 );
+  zVec3DCreate( rkWrenchPos(&w[1]),-1, 1, 0 );
+  zVec6DCreate( rkWrenchW(&w[2]), 1, 0, 0, 0, 0, 0 );
+  zVec3DCreate( rkWrenchPos(&w[2]),-1,-1, 0 );
+  zVec6DCreate( rkWrenchW(&w[3]), 0, 1, 0, 0, 0, 0 );
+  zVec3DCreate( rkWrenchPos(&w[3]), 1,-1, 0 );
 
-  wl.insertTail( &w[0] );
-  wl.insertTail( &w[1] );
-  wl.insertTail( &w[2] );
-  wl.insertTail( &w[3] );
+  zListInsertTail( &wl, &w[0] );
+  zListInsertTail( &wl, &w[1] );
+  zListInsertTail( &wl, &w[2] );
+  zListInsertTail( &wl, &w[3] );
 
   rkWrenchListNet( &wl, &rw );
-  zAssert( rkWrenchListNet, ( rw == netw ) );
+  zAssert( rkWrenchListNet, zVec6DEqual( &rw, &netw ) );
 }
 
 int main(void)
