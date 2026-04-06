@@ -117,7 +117,7 @@ void bvh2ztk_joint_update_frame(joint_t *joint, joint_t *parent)
     zFrame3DCascade( &parent->wldframe, &joint->adjframe, &joint->wldframe );
   else{
 #ifdef __cplusplus
-    static zFrame3D f( 0, 0, 0,  0, 1, 0,  0, 0, 1,  1, 0, 0 );
+    static zFrame3D f{ 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0 };
 #else
     static zFrame3D f = { { { 0, 0, 0 } }, { { { 0, 1, 0 }, { 0, 0, 1 }, { 1, 0, 0 } } } };
 #endif
@@ -276,7 +276,7 @@ joint_t *bvh2ztk_read_hierarchy(stream_t *stream)
 
 void bvh2ztk_write_joint(FILE *fp, joint_t *joint, joint_t *parent)
 {
-  fprintf( fp, "[link]\n" );
+  fprintf( fp, "[%s]\n", ZTK_TAG_ROKI_LINK );
   fprintf( fp, "name: %s\n", zName(joint) );
   fprintf( fp, "jointtype: %s\n", joint->num_axis == 6 ? "float" : ( joint->child ? "spherical" : "fixed" ) );
   fprintf( fp, "pos: " ); zVec3DValueNLFPrint( fp, zFrame3DPos(&joint->orgframe) );

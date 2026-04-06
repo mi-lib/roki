@@ -1,3 +1,4 @@
+2026.04.06. Modified app/bvh2ztk and test programs to conform to C++ (thanks to Daishi Kaneta). [app, test]
 2026.03.29. Added const qualifiers to operator * of rkMP for C++. [rk_body]
 2026.03.29. Redefined operator == of rkMP for C++ as a member function (thanks to Daishi Kaneta). [rk_body]
 2026.03.29. Added const qualifiers to arguments of rkMPEqual. [rk_body]

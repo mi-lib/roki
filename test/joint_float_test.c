@@ -1,7 +1,7 @@
 #include <roki/rk_chain.h>
 
 #ifdef __cplusplus
-zVec3D p( 1.0, 2.0, 3.0 );
+zVec3D p{ 1.0, 2.0, 3.0 };
 #else
 zVec3D p = { { 1.0, 2.0, 3.0 } };
 #endif
