@@ -22,9 +22,18 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   zMat3D inertia;
 #ifdef __cplusplus
   rkMP();
-  rkMP *copy(const rkMP &);
-  void zero();
+  rkMP(double _mass, const zVec3D *_com, const zMat3D *_inertia);
+  rkMP(double _mass, const zVec3D &_com, const zMat3D &_inertia);
+  ~rkMP(){}
+  rkMP *zero();
+  rkMP *create(double _mass, const zVec3D *_com, const zMat3D *_inertia);
+  rkMP *create(double _mass, const zVec3D &_com, const zMat3D &_inertia);
+  rkMP *copy(const rkMP &src);
+  rkMP *combine(const rkMP &mp1, const rkMP &mp2);
+  rkMP *merge(const rkMP &mp_sub);
   bool operator==(const rkMP &mp);
+  rkMP &operator+=(const rkMP &mp_sub);
+  friend rkMP operator+(const rkMP &mp1, const rkMP &mp2);
   friend rkMP operator*(const zFrame3D &f, const rkMP &src);
 #endif /* __cplusplus */
 };
@@ -40,14 +49,22 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
 #define rkMPSetCOM(mp,c)        zVec3DCopy( c, rkMPCOM(mp) )
 #define rkMPSetInertia(mp,i)    zMat3DCopy( i, rkMPInertia(mp) )
 
-#define rkMPCopy(src,dest)      ( *(dest) = *(src) )
-
 /*! \brief clear mass property. */
-#define rkMPZero(mp) do{\
-  rkMPSetMass( (mp), 0 );\
-  zVec3DZero( rkMPCOM(mp) );\
-  zMat3DZero( rkMPInertia(mp) );\
+#define rkMPZero(mp) do{ \
+  rkMPSetMass( (mp), 0 ); \
+  zVec3DZero( rkMPCOM(mp) ); \
+  zMat3DZero( rkMPInertia(mp) ); \
 } while(0)
+
+/*! \brief create mass property. */
+#define rkMPCreate(mp,_mass,_com,_inertia) do{ \
+  rkMPSetMass( (mp), _mass ); \
+  zVec3DCopy( _com, rkMPCOM(mp) ); \
+  zMat3DCopy( _inertia, rkMPInertia(mp) ); \
+} while(0)
+
+/*! \brief copy mass property. */
+#define rkMPCopy(src,dest)      ( *(dest) = *(src) )
 
 /*! \brief convert mass properties in [g,mm] to that in [kg,m]. */
 __ROKI_EXPORT rkMP *rkMPgmm2kgm(rkMP *mp);
@@ -144,9 +161,17 @@ __END_DECLS
 
 #ifdef __cplusplus
 inline rkMP::rkMP(){ rkMPZero( this ); }
+inline rkMP::rkMP(double _mass, const zVec3D *_com, const zMat3D *_inertia){ rkMPCreate( this, _mass, _com, _inertia ); }
+inline rkMP::rkMP(double _mass, const zVec3D &_com, const zMat3D &_inertia){ rkMPCreate( this, _mass, &_com, &_inertia ); }
+inline rkMP *rkMP::zero(){ rkMPZero( this ); return this; }
+inline rkMP *rkMP::create(double _mass, const zVec3D *_com, const zMat3D *_inertia){ rkMPCreate( this, _mass, _com, _inertia ); return this; }
+inline rkMP *rkMP::create(double _mass, const zVec3D &_com, const zMat3D &_inertia){ rkMPCreate( this, _mass, &_com, &_inertia ); return this; }
 inline rkMP *rkMP::copy(const rkMP &src){ rkMPCopy( &src, this ); return this; }
-inline void rkMP::zero(){ rkMPZero( this ); }
+inline rkMP *rkMP::combine(const rkMP &mp1, const rkMP &mp2){ return rkMPCombine( &mp1, &mp2, this ); }
+inline rkMP *rkMP::merge(const rkMP &mp_sub){ return rkMPMerge( this, &mp_sub ); }
 inline bool rkMP::operator==(const rkMP &mp){ return rkMPEqual( this, &mp ); }
+inline rkMP &rkMP::operator+=(const rkMP &mp_sub){ return *rkMPMerge( this, &mp_sub ); }
+inline rkMP operator+(const rkMP &mp1, const rkMP &mp2){ rkMP mp; return *rkMPCombine( &mp1, &mp2, &mp ); }
 inline rkMP operator*(const zFrame3D &f, const rkMP &src){
   rkMP dest;
   rkMPXform( &src, &f, &dest );
@@ -179,6 +204,38 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
   zMat3D &setAtt(zMat3D &_att);
   zMat3D &setAtt(zVec3D &aa);
   zMat3D &setAtt(zEP &ep);
+  rkBody &init();
+  void destroy();
+  rkBody &clone(const rkBody *src, const zMultiShape3D *so, const zMultiShape3D *sc);
+  void zeroRate();
+  rkBody &copyState(const rkBody *src);
+  rkBody &copyState(const rkBody &src);
+  rkBody &combine(const rkBody &body1, const rkBody &body2, zFrame3D *frame);
+  rkBody &combine(const rkBody &body1, const rkBody &body2, zFrame3D &frame);
+  rkBody &merge(const rkBody &subbody);
+  rkBody &operator+=(const rkBody &subbody);
+  zVec3D *updateCOM();
+  void updateCOMVel();
+  void updateCOMAcc();
+  void updateCOMRate();
+  zVec6D *setExtWrench(zVec6D *wrench);
+  zVec6D *setExtWrench(zVec6D &wrench);
+  zVec6D *addExtWrench(zVec6D *wrench);
+  zVec6D *addExtWrench(zVec6D &wrench);
+  void zeroExtWrench();
+  zVec6D *setExtForce(const zVec3D *force, const zVec3D *pos);
+  zVec6D *setExtForce(const zVec3D &force, const zVec3D &pos);
+  zVec6D *addExtForce(const zVec3D *force, const zVec3D *pos);
+  zVec6D *addExtForce(const zVec3D &force, const zVec3D &pos);
+  zVec3D *linearMomentum(zVec3D *momentum);
+  zVec3D *angularMomentum(const zVec3D *pos, zVec3D *momentum);
+  double kineticEnergy();
+  zShape3DListCell *shapePush(zShape3D *shape);
+  zShape3D *shapePop();
+  void shapeDestroy();
+  const zVec3D *contigVert(const zVec3D *point, double *distance);
+  double shapeVolume();
+  rkMP *shapeMP(double density, rkMP *mp);
 #endif /* __cplusplus */
 };
 
@@ -274,17 +331,17 @@ __ROKI_EXPORT rkBody *rkBodyCopyState(const rkBody *src, rkBody *dest);
  */
 __ROKI_EXPORT rkBody *rkBodyCombine(const rkBody *body1, const rkBody *body2, const zFrame3D *frame, rkBody *body);
 
-/*! \brief combine a body directly to another.
+/*! \brief merge a body to another.
  *
- * rkBodyCombineDRC() combines mass properties of a given body \a sb
- * directly to another \a b.
- * \retval body
+ * rkBodyMerge() merges mass properties of a given body \a subbody to \a body.
+ * \return
+ * rkBodyMerge() returns a pointer \a body.
  */
-__ROKI_EXPORT rkBody *rkBodyCombineDRC(rkBody *body, const rkBody *subbody);
+__ROKI_EXPORT rkBody *rkBodyMerge(rkBody *body, const rkBody *subbody);
 
 /* \brief compute the inertial ellipsoid from a rigid body.
  */
-#define rkBodyInertiaEllips(body,e) rkMPInertiaEllips( rkBodyMP(body), e )
+#define rkBodyInertiaEllips(body,ellips) rkMPInertiaEllips( rkBodyMP(body), ellips )
 
 /*! \brief update body COM state.
  *
@@ -413,6 +470,38 @@ inline zVec3D &rkBody::setPos(zVec3D &_pos){ return this->frame.setPos( _pos ); 
 inline zMat3D &rkBody::setAtt(zMat3D &_att){ return this->frame.setAtt( _att ); }
 inline zMat3D &rkBody::setAtt(zVec3D &aa){ return this->frame.att.createFromAA( aa ); }
 inline zMat3D &rkBody::setAtt(zEP &ep){ return ep.toMat3D( this->frame.att ); }
+inline rkBody &rkBody::init(){ rkBodyInit( this ); return *this; }
+inline void rkBody::destroy(){ rkBodyDestroy( this ); }
+inline rkBody &rkBody::clone(const rkBody *src, const zMultiShape3D *so, const zMultiShape3D *sc){ return *rkBodyClone( src, this, so, sc ); }
+inline void rkBody::zeroRate(){ rkBodyZeroRate( this ); }
+inline rkBody &rkBody::copyState(const rkBody *src){ return *rkBodyCopyState( src, this ); }
+inline rkBody &rkBody::copyState(const rkBody &src){ return *rkBodyCopyState( &src, this ); }
+inline rkBody &rkBody::combine(const rkBody &body1, const rkBody &body2, zFrame3D *frame=ZFRAME3DIDENT){ return *rkBodyCombine( &body1, &body2, frame, this ); }
+inline rkBody &rkBody::combine(const rkBody &body1, const rkBody &body2, zFrame3D &frame){ return *rkBodyCombine( &body1, &body2, &frame, this ); }
+inline rkBody &rkBody::merge(const rkBody &subbody){ return *rkBodyMerge( this, &subbody ); }
+inline rkBody &rkBody::operator+=(const rkBody &subbody){ return *rkBodyMerge( this, &subbody ); }
+inline zVec3D *rkBody::updateCOM(){ return rkBodyUpdateCOM( this ); }
+inline void rkBody::updateCOMVel(){ rkBodyUpdateCOMVel( this ); }
+inline void rkBody::updateCOMAcc(){ rkBodyUpdateCOMAcc( this ); }
+inline void rkBody::updateCOMRate(){ rkBodyUpdateCOMRate( this ); }
+inline zVec6D *rkBody::setExtWrench(zVec6D *wrench){ return rkBodySetExtWrench( this, wrench ); }
+inline zVec6D *rkBody::setExtWrench(zVec6D &wrench){ return rkBodySetExtWrench( this, &wrench ); }
+inline zVec6D *rkBody::addExtWrench(zVec6D *wrench){ return rkBodyAddExtWrench( this, wrench ); }
+inline zVec6D *rkBody::addExtWrench(zVec6D &wrench){ return rkBodyAddExtWrench( this, &wrench ); }
+inline void rkBody::zeroExtWrench(){ rkBodyZeroExtWrench( this ); }
+inline zVec6D *rkBody::setExtForce(const zVec3D *force, const zVec3D *pos){ return rkBodySetExtForce( this, force, pos ); }
+inline zVec6D *rkBody::setExtForce(const zVec3D &force, const zVec3D &pos){ return rkBodySetExtForce( this, &force, &pos ); }
+inline zVec6D *rkBody::addExtForce(const zVec3D *force, const zVec3D *pos){ return rkBodyAddExtForce( this, force, pos ); }
+inline zVec6D *rkBody::addExtForce(const zVec3D &force, const zVec3D &pos){ return rkBodyAddExtForce( this, &force, &pos ); }
+inline zVec3D *rkBody::linearMomentum(zVec3D *momentum){ return rkBodyLinearMomentum( this, momentum ); }
+inline zVec3D *rkBody::angularMomentum(const zVec3D *pos, zVec3D *momentum){ return rkBodyAngularMomentum( this, pos, momentum ); }
+inline double rkBody::kineticEnergy(){ return rkBodyKineticEnergy( this ); }
+inline zShape3DListCell *rkBody::shapePush(zShape3D *shape){ return rkBodyShapePush( this, shape ); }
+inline zShape3D *rkBody::shapePop(){ return rkBodyShapePop( this ); }
+inline void rkBody::shapeDestroy(){ rkBodyShapeDestroy( this ); }
+inline const zVec3D *rkBody::contigVert(const zVec3D *point, double *distance){ return rkBodyContigVert( this, point, distance ); }
+inline double rkBody::shapeVolume(){ return rkBodyShapeVolume( this ); }
+inline rkMP *rkBody::shapeMP(double density, rkMP *mp){ return rkBodyShapeMP( this, density, mp ); }
 #endif /* __cplusplus */
 
 #endif /* __RK_BODY_H__ */

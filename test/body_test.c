@@ -188,21 +188,7 @@ void assert_mp_to_vec(void)
 void create_body_rand(rkBody *body)
 {
   rkBodyInit( body );
-#if 0
-  zVec3D iv[3];
-
-  rkBodySetMass( body, zRandF(0.1,5.0) );
-  zVec3DCreate( &iv[0], zRandF(0.1,1.0), zRandF(0.1,1.0), zRandF(0.1,1.0) );
-  zVec3DCreate( &iv[1], zRandF(0.1,1.0), zRandF(0.1,1.0), zRandF(0.1,1.0) );
-  zVec3DCreate( &iv[2], zRandF(0.1,1.0), zRandF(0.1,1.0), zRandF(0.1,1.0) );
-  zMat3DZero( rkBodyInertia(body) );
-  zMat3DAddDyad( rkBodyInertia(body), &iv[0], &iv[0] );
-  zMat3DAddDyad( rkBodyInertia(body), &iv[1], &iv[1] );
-  zMat3DAddDyad( rkBodyInertia(body), &iv[2], &iv[2] );
-  zVec3DCreate( rkBodyPos(body), zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
-#else
   create_mp_rand( rkBodyMP(body) );
-#endif
 }
 
 void assert_body_combine(void)
@@ -223,12 +209,12 @@ void assert_body_combine(void)
   rkBodyCombine( &tmp[0], &tmp[1], ZFRAME3DIDENT, &dst[1] );
   /* combined body 2 */
   rkBodyInit( &dst[2] );
-  rkBodyCombineDRC( &dst[2], &src[0] );
-  rkBodyCombineDRC( &dst[2], &src[1] );
-  rkBodyCombineDRC( &dst[2], &src[2] );
-  rkBodyCombineDRC( &dst[2], &src[3] );
+  rkBodyMerge( &dst[2], &src[0] );
+  rkBodyMerge( &dst[2], &src[1] );
+  rkBodyMerge( &dst[2], &src[2] );
+  rkBodyMerge( &dst[2], &src[3] );
 
-  zAssert( rkBodyCombine & rkBodyCombineDRC,
+  zAssert( rkBodyCombine & rkBodyMerge,
     rkMPEqual( rkBodyMP(&dst[0]), rkBodyMP(&dst[1]) ) &&
     rkMPEqual( rkBodyMP(&dst[0]), rkBodyMP(&dst[2]) ) );
 }

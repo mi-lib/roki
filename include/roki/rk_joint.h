@@ -14,12 +14,11 @@
 
 __BEGIN_DECLS
 
-/* ********************************************************** */
-/*! \struct rkJoint
- * \brief joint class
- * ********************************************************** */
 ZDECL_STRUCT( rkJointCom );
 
+/*! \struct rkJoint
+ * \brief joint class
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJoint ){
   bool is_active;  /*!< flag to tell if joint is active */
   void *prp;       /*!< joint properties */
@@ -28,6 +27,13 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJoint ){
   zVec6D wrench;   /*!< joint wrench */
   rkJointCom *com; /*!< common methods for joint class */
 #ifdef __cplusplus
+  rkJoint();
+  ~rkJoint();
+  rkJoint *init();
+  rkJoint *assign(rkJointCom *com);
+  rkJoint *assign(rkJointCom &com);
+  rkJoint *assign(const char *str);
+  void destroy();
   void setDis(double*);
   void setMinDis(double*);
   void setMaxDis(double*);
@@ -43,7 +49,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJoint ){
   void catDis(double*,double,double*);
   void subDis(double*,double*);
   void updateDisCNT(double*,double);
+  void neutralize();
+  bool isNeutral();
   zFrame3D *xform(zFrame3D*,zFrame3D*);
+  rkJoint *assignMotor(rkMotorSpecArray *msarray, const char *str);
 #endif /* __cplusplus */
 };
 
@@ -54,7 +63,9 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointFrictionPivot ){
   double prev_trq;
 };
 
-/*! \brief common methods for joint class. */
+/*! \struct rkJointCom
+ * \brief common methods for joint class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   const char *typestr; /*!< a string to identify the type of joint */
   byte dof;            /*!< degree-of-freedom of joint movement */
@@ -446,6 +457,13 @@ __ROKI_EXPORT rkJoint *rkJointFromZTK(rkJoint *joint, rkMotorSpecArray *motorspe
 __END_DECLS
 
 #ifdef __cplusplus
+inline rkJoint::rkJoint(){ rkJointInit( this ); }
+inline rkJoint::~rkJoint(){ rkJointDestroy( this ); }
+inline rkJoint *rkJoint::init(){ rkJointInit( this ); return this; }
+inline rkJoint *rkJoint::assign(rkJointCom *com){ return rkJointAssign( this, com ); }
+inline rkJoint *rkJoint::assign(rkJointCom &com){ return rkJointAssign( this, &com ); }
+inline rkJoint *rkJoint::assign(const char *str){ return rkJointAssignByStr( this,str ); }
+inline void rkJoint::destroy(){ rkJointDestroy( this ); }
 inline void rkJoint::setDis(double *val){ rkJointSetDis( this, val ); }
 inline void rkJoint::setMinDis(double *val){ rkJointSetMin( this, val ); }
 inline void rkJoint::setMaxDis(double *val){ rkJointSetMax( this, val ); }
@@ -461,7 +479,10 @@ inline void rkJoint::getTrq(double *val){ rkJointGetTrq( this, val ); }
 inline void rkJoint::catDis(double *dis, double k, double *val){ rkJointCatDis( this, dis, k, val ); }
 inline void rkJoint::subDis(double *dis, double *subdis){ rkJointSubDis( this, dis, subdis ); }
 inline void rkJoint::updateDisCNT(double *val, double dt){ rkJointSetDisCNT( this, val, dt ); }
+inline void rkJoint::neutralize(){ rkJointNeutralize( this ); }
+inline bool rkJoint::isNeutral(){ return rkJointIsNeutral( this ); }
 inline zFrame3D *rkJoint::xform(zFrame3D *f0, zFrame3D *f){ return rkJointXform( this, f0, f ); }
+inline rkJoint *rkJoint::assignMotor(rkMotorSpecArray *msarray, const char *str){ return rkJointAssignMotorByStr( this, msarray, str ); }
 #endif /* __cplusplus */
 
 #include <roki/rk_joint_fixed.h>   /* fixed joint */

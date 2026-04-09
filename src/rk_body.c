@@ -236,16 +236,15 @@ rkBody *rkBodyCombine(const rkBody *body1, const rkBody *body2, const zFrame3D *
   return body;
 }
 
-/* combine a body directly to another. */
-rkBody *rkBodyCombineDRC(rkBody *body, const rkBody *subbody)
+/* merge a body to another. */
+rkBody *rkBodyMerge(rkBody *body, const rkBody *subbody)
 {
-  rkMP mp1, mp2;
+  rkMP submp;
   zFrame3D df;
 
-  rkMPCopy( rkBodyMP(body), &mp1 );
   _zFrame3DXform( rkBodyFrame(body), rkBodyFrame(subbody), &df );
-  rkMPXform( rkBodyMP(subbody), &df, &mp2 );
-  rkMPCombine( &mp1, &mp2, rkBodyMP(body) );
+  rkMPXform( rkBodyMP(subbody), &df, &submp );
+  rkMPMerge( rkBodyMP(body), &submp );
   return body;
 }
 

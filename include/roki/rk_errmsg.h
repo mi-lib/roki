@@ -11,13 +11,13 @@
 
 /* warning message */
 
-#define RK_WARN_CONTACT_DUPLICATE_KEY   "duplicate contact information with keys %s and %s"
-#define RK_WARN_CONTACT_EMPTY           "empty set of contact information specified."
+#define RK_WARN_CONTACT_DUPLICATE_KEY   "duplicate contact information with keys '%s' and '%s'"
+#define RK_WARN_CONTACT_EMPTY           "empty set of contact information specified"
 
 #define RK_WARN_BODY_NON_SYMMETRIC_INERTIA "body inertia is not symmetric, corrected"
 
-#define RK_WARN_LINK_NULL               "null link specified."
-#define RK_WARN_LINK_DUPLICATE_NAME     "%s: name of a link duplicated."
+#define RK_WARN_LINK_NULL               "null link specified"
+#define RK_WARN_LINK_DUPLICATE_NAME     "%s: name of a link duplicated"
 
 #define RK_WARN_LINK_NON_ORTHONORMAL_ATT "link attitude is not orthonormal, corrected"
 #define RK_WARN_LINK_NON_RIGHTHAND_ATT  "link attitude is not right-handed"
@@ -29,18 +29,18 @@
 #define RK_WARN_LINK_TOO_SMALL_MASS     "too small mass of a link specified"
 #define RK_WARN_LINK_EMPTY_SHAPE        "cannot compute mass properties of an empty shape"
 
-#define RK_WARN_LINK_NOT_CONNECTED      "link %s not connected with %s"
+#define RK_WARN_LINK_NOT_CONNECTED      "link '%s' not connected with '%s'"
 
-#define RK_WARN_CHAIN_NULL              "null chain specified."
-#define RK_WARN_CHAIN_EMPTY             "empty chain specified."
+#define RK_WARN_CHAIN_NULL              "null chain specified"
+#define RK_WARN_CHAIN_EMPTY             "empty chain specified"
 #define RK_WARN_CHAIN_SHAPE_ONLY        "create a floating link to assign shape(s)"
 
-#define RK_WARN_IK_CONSTRAINT_ALREADY_REGISTERED "constraint %s already registered, replaced"
-#define RK_WARN_IK_CONSTRAINT_DUALLYDEFINED_LINK "duplicate specification of a link %s"
-#define RK_WARN_IK_CELL_DUPLICATE       "found duplicate name of constraint cell %s, replaced"
+#define RK_WARN_IK_CONSTRAINT_ALREADY_REGISTERED "constraint '%s' already registered, replaced"
+#define RK_WARN_IK_CONSTRAINT_DUALLYDEFINED_LINK "duplicate specification of a link '%s'"
+#define RK_WARN_IK_CELL_DUPLICATE       "found duplicate name of constraint cell '%s', replaced"
 
-#define RK_WARN_URDF_UNNAMED_SHAPE      "Unnamed shape. Skipped"
-#define RK_WARN_URDF_UNKNOWN_SHAPETYPE  "Unknown type of a shape: %s"
+#define RK_WARN_URDF_UNNAMED_SHAPE      "unnamed shape. skipped"
+#define RK_WARN_URDF_UNKNOWN_SHAPETYPE  "%s: unknown type of a shape"
 
 /* error messages */
 
@@ -56,6 +56,7 @@
 
 #define RK_ERR_BODY_INVSIZE_REGRESSOR   "invalid size of mass property regressor matrix (%dx%d)"
 
+#define RK_ERR_JOINT_UNKNOWN_TYPE       "%s: unknown type of a joint"
 #define RK_ERR_JOINT_FAILED             "cannot create joint instance"
 #define RK_ERR_JOINT_MISMATCH_DOF       "unmatched joint/motor DOFs %d/%d"
 
@@ -65,17 +66,17 @@
 #define RK_ERR_SHAPE_UNKNOWN            "%s: unknown shape"
 
 #define RK_ERR_CHAIN_MISMATCH_MAT_VEC_SIZES "unmatched matrix/vector size with joint size"
-#define RK_ERR_CHAIN_UNKNOWN_FILETYPE   "cannot identify the file type of %s"
+#define RK_ERR_CHAIN_UNKNOWN_FILETYPE   "cannot identify the file type of '%s'"
 
 #define RK_ERR_IK_JOINT_UNREGISTERED    "joint not registered"
-#define RK_ERR_IK_CONSTRAINT_NOTFOUND   "constraint %s of the inverse kinematics not found"
-#define RK_ERR_IK_CONSTRAINT_PREDEFINED "constraint %s of the inverse kinematics predefined"
+#define RK_ERR_IK_CONSTRAINT_NOTFOUND   "constraint '%s' of the inverse kinematics not found"
+#define RK_ERR_IK_CONSTRAINT_PREDEFINED "constraint '%s' of the inverse kinematics predefined"
 #define RK_ERR_IK_CELL_IS_NULL          "null pointer specified for IK cell"
-#define RK_ERR_IK_CELL_NOTFOUND         "IK cell %s not found"
+#define RK_ERR_IK_CELL_NOTFOUND         "IK cell '%s' not found"
 
-#define RK_ERR_URDF_UNCONNECTED_JOINT   "unconnected joint %s"
+#define RK_ERR_URDF_UNCONNECTED_JOINT   "unconnected joint '%s'"
 #define RK_ERR_URDF_ROOT_LINK_NOTFOUND  "root link not found"
-#define RK_ERR_URDF_UNKNOWN_JOINTTYPE   "Unknown type of a joint %s"
+#define RK_ERR_URDF_UNKNOWN_JOINTTYPE   "%s: unknown type of a joint"
 #define RK_ERR_URDF_INVALID             "invalid URDF file"
 
 #define RK_ERR_FATAL                    "fatal error! - please report to the author"

@@ -6,13 +6,9 @@
 
 #include <roki/rk_joint.h>
 
-/* ********************************************************** */
-/* CLASS: rkJoint
- * joint class
- * ********************************************************** */
-
 RK_JOINT_COM_ARRAY;
 
+/* assign joint type. */
 rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com)
 {
   rkJointInit( joint );
@@ -23,6 +19,7 @@ rkJoint *rkJointAssign(rkJoint *joint, rkJointCom *com)
   return joint;
 }
 
+/* assign joint type by a string. */
 rkJoint *rkJointAssignByStr(rkJoint *joint, const char *str)
 {
   int i;
@@ -30,6 +27,7 @@ rkJoint *rkJointAssignByStr(rkJoint *joint, const char *str)
   for( i=0; rk_joint_com[i]; i++ )
     if( strcmp( rk_joint_com[i]->typestr, str ) == 0 )
       return rkJointAssign( joint, rk_joint_com[i] );
+  ZRUNERROR( RK_ERR_JOINT_UNKNOWN_TYPE, str );
   return NULL;
 }
 

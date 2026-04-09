@@ -61,6 +61,10 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
 #ifdef __cplusplus
   rkLink();
   ~rkLink();
+  rkLink *init();
+  void destroy();
+  rkLink *addSibling(rkLink *_sibling);
+  rkLink *addChild(rkLink *_child);
 #endif /* __cplusplus */
 };
 
@@ -554,6 +558,10 @@ __END_DECLS
 #ifdef __cplusplus
 inline rkLink::rkLink(){ rkLinkInit( this ); }
 inline rkLink::~rkLink(){ rkLinkDestroy( this ); }
+inline rkLink *rkLink::init(){ rkLinkInit( this ); return this; }
+inline void rkLink::destroy(){ rkLinkDestroy( this ); }
+inline rkLink *rkLink::addSibling(rkLink *_sibling){ return rkLinkAddSibl( this, _sibling ); }
+inline rkLink *rkLink::addChild(rkLink *_child){ return rkLinkAddChild( this, _child ); }
 #endif /* __cplusplus */
 
 #endif /* __ZDF_LINK_H__ */

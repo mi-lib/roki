@@ -68,6 +68,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   int jointSize();
   zIndex createDefaultJointIndex();
   int jointIndexSize(zIndex idx);
+  void setJointIDOffset();
   rkLink *findLink(const char *name);
   int findLinkID(const char *name);
   int findLinkJointIDOffset(const char *name);
@@ -905,7 +906,7 @@ __END_DECLS
 
 #ifdef __cplusplus
 inline int rkChain::getLinkNum() const { return rkChainLinkNum( this ); }
-inline rkLink *rkChain::link(int i) const { return rkChainLink( this, i ); }
+inline rkLink *rkChain::link(int i) const { return i >= 0 && i < rkChainLinkNum(this) ? rkChainLink( this, i ) : NULL; }
 inline rkLink *rkChain::root() const { return rkChainRoot( this ); }
 inline zVec3D *rkChain::COM(){ return rkChainWldCOM( this ); }
 inline zVec3D *rkChain::COMVel(){ return rkChainCOMVel( this ); }
@@ -936,6 +937,7 @@ inline rkChain *rkChain::copyState(rkChain *dest){ return rkChainCopyState( this
 inline int rkChain::jointSize(){ return rkChainJointSize( this ); }
 inline zIndex rkChain::createDefaultJointIndex(){ return rkChainCreateDefaultJointIndex( this ); }
 inline int rkChain::jointIndexSize(zIndex idx){ return rkChainJointIndexSize( this, idx ); }
+inline void rkChain::setJointIDOffset(){ rkChainSetJointIDOffset( this ); }
 inline rkLink *rkChain::findLink(const char *name){ return rkChainFindLink( this, name ); }
 inline int rkChain::findLinkID(const char *name){ return rkChainFindLinkID( this, name ); }
 inline int rkChain::findLinkJointIDOffset(const char *name){ return rkChainFindLinkJointIDOffset( this, name ); }
