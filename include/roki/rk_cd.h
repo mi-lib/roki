@@ -149,7 +149,7 @@ __ROKI_EXPORT void rkCDColVolBREPFast(rkCD *cd); /* AABB->OBB->BREP->CH(Fast) */
 __ROKI_EXPORT void rkCDColVolBREPVert(rkCD *cd); /* AABB->OBB->BREP->CH, Vert */
 
 /* for fd */
-__ROKI_EXPORT rkCDPlaneList *rkCDPlaneListQuickSort(rkCDPlaneList *list, int (*cmp)(void*,void*,void*), void *priv);
+__ROKI_EXPORT ZEDA_DEF_LIST_QUICKSORT_PROTOTYPE( rkCDPlaneList, rkCDPlane );
 
 __END_DECLS
 

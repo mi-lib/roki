@@ -819,4 +819,4 @@ void rkCDColVolBREPVert(rkCD *cd)
 }
 
 /* for fd */
-zListQuickSortDef( rkCDPlaneList, rkCDPlane )
+ZEDA_DEF_LIST_QUICKSORT( rkCDPlaneList, rkCDPlane )
