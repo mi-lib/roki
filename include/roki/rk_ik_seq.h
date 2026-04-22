@@ -36,7 +36,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKSeqCell ){
 __ROKI_EXPORT bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c);
 
 /*! \brief IK sequence. */
-zListClass( rkIKSeq, rkIKSeqListCell, rkIKSeqCell);
+ZEDA_DEF_LIST_CLASS( rkIKSeq, rkIKSeqListCell, rkIKSeqCell );
 
 /*! \brief free IK sequence cell. */
 __ROKI_EXPORT void rkIKSeqListCellFree(rkIKSeqListCell *cell);

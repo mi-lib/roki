@@ -71,7 +71,8 @@ bool rk_mpCommandArgs(int argc, char *argv[])
   return true;
 }
 
-zListClass(int_list_t, int_list_cell_t, int);
+ZEDA_DEF_LIST_CLASS(int_list_t, int_list_cell_t, int);
+
 zIndex rk_mpLinkList(rkChain *chain)
 {
   int_list_t list;

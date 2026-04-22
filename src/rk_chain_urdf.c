@@ -8,7 +8,7 @@
 #include <roki/rk_chain.h>
 
 /* optical info list */
-zListClass( zOpticalInfoList, zOpticalInfoListCell, zOpticalInfo );
+ZEDA_DEF_LIST_CLASS( zOpticalInfoList, zOpticalInfoListCell, zOpticalInfo );
 
 /* shape list */
 typedef struct{
@@ -19,8 +19,8 @@ typedef struct{
   char *property2;
   char *material;
 } rkURDFShape;
-zListClass( rkURDFShapeList, rkURDFShapeListCell, rkURDFShape );
-zListClass( rkURDFShapePList, rkURDFShapePListCell, rkURDFShape* );
+ZEDA_DEF_LIST_CLASS( rkURDFShapeList, rkURDFShapeListCell, rkURDFShape );
+ZEDA_DEF_LIST_CLASS( rkURDFShapePList, rkURDFShapePListCell, rkURDFShape* );
 
 static void _rkURDFShapeListDestroy(rkURDFShapeList *list)
 {
@@ -44,7 +44,7 @@ typedef struct{
   struct _rkURDFJoint *joint;
   struct _rkURDFJoint *child;
 } rkURDFLink;
-zListClass( rkURDFLinkList, rkURDFLinkListCell, rkURDFLink );
+ZEDA_DEF_LIST_CLASS( rkURDFLinkList, rkURDFLinkListCell, rkURDFLink );
 
 static void _rkURDFLinkListDestroy(rkURDFLinkList *list)
 {
@@ -71,7 +71,7 @@ typedef struct _rkURDFJoint{
   rkURDFLink *child;
   struct _rkURDFJoint *sibling;
 } rkURDFJoint;
-zListClass( rkURDFJointList, rkURDFJointListCell, rkURDFJoint );
+ZEDA_DEF_LIST_CLASS( rkURDFJointList, rkURDFJointListCell, rkURDFJoint );
 
 /* robot info */
 typedef struct{

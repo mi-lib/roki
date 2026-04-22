@@ -37,7 +37,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDCellDat ){
   bool _ph_is_uptodate; /* check if polyhedron is up-to-date */
   /*! \endcond */
 };
-zListClass( rkCDCellList, rkCDCell, rkCDCellDat );
+ZEDA_DEF_LIST_CLASS( rkCDCellList, rkCDCell, rkCDCellDat );
 
 /*! \brief register collision detection cell.
  */
@@ -76,7 +76,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDVertDat ){
   zVec3D vel;      /* velocity of the vertex */
   /*! \endcond */
 };
-zListClass( rkCDVertList, rkCDVert, rkCDVertDat );
+ZEDA_DEF_LIST_CLASS( rkCDVertList, rkCDVert, rkCDVertDat );
 
 /*! \struct rkCDPlaneDat
  * \brief collision plane class.
@@ -87,7 +87,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDPlaneDat ){
   zVec2D r; /* pos on plane coordinate */
   zVec2D s; /* sliding direction */
 };
-zListClass( rkCDPlaneList, rkCDPlane, rkCDPlaneDat );
+ZEDA_DEF_LIST_CLASS( rkCDPlaneList, rkCDPlane, rkCDPlaneDat );
 
 /*! \struct rkCDPairDat
  * \brief pair of collision class.
@@ -106,7 +106,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDPairDat ){
   zFrame3D ref[2];
   rkContactFricType type; /* type to classify stick/slip mode */
 };
-zListClass( rkCDPairList, rkCDPair, rkCDPairDat );
+ZEDA_DEF_LIST_CLASS( rkCDPairList, rkCDPair, rkCDPairDat );
 
 /*! \struct rkCD
  * \brief collision detector class.

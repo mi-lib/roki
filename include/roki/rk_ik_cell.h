@@ -112,7 +112,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKConstraint ){
   bool (* fromZTK)(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk); /*!< a function to read attributes of an IK cell from ZTK */
   void (* fprintZTK)(FILE*,rkChain*,rkIKCell*); /*!< a function to print attributes of an IK cell from ZTK */
 };
-zListClass( rkIKConstraintList, rkIKConstraintListCell, const rkIKConstraint* );
+ZEDA_DEF_LIST_CLASS( rkIKConstraintList, rkIKConstraintListCell, const rkIKConstraint* );
 
 /*! \struct rkIKCellDat
  * \brief IK constraint cell class.
@@ -131,7 +131,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
   /*! \endcond */
 };
 
-zListClass( rkIKCellList, rkIKCell, rkIKCellDat );
+ZEDA_DEF_LIST_CLASS( rkIKCellList, rkIKCell, rkIKCellDat );
 
 #define rkIKCellName(cell)           zName( &(cell)->data )
 
