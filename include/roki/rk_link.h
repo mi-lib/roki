@@ -429,7 +429,7 @@ __ROKI_EXPORT zVec3D *rkLinkAngularMomentumRecursive(const rkLink *link, const z
 /*! \struct rkLinkArray
  * \brief array of links
  */
-zArrayClass( rkLinkArray, rkLink );
+ZEDA_DEF_ARRAY_CLASS( rkLinkArray, rkLink );
 
 /*! \brief allocate an array of links. */
 __ROKI_EXPORT rkLinkArray *rkLinkArrayAlloc(rkLinkArray *linkarray, int size);

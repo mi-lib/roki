@@ -13,7 +13,7 @@ typedef struct link_t{
   rkMP mp;
 } link_t;
 
-zArrayClass( link_array_t, link_t );
+ZEDA_DEF_ARRAY_CLASS( link_array_t, link_t );
 
 link_t *link_array_find_link(link_array_t *la, char *name)
 {
@@ -89,7 +89,7 @@ typedef struct{
   zFrame3D frame;
 } shape_t;
 
-zArrayClass( shape_array_t, shape_t );
+ZEDA_DEF_ARRAY_CLASS( shape_array_t, shape_t );
 
 bool shape_array_read_csv(zCSV *csv, shape_array_t *sa, link_array_t *la)
 {

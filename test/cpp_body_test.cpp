@@ -4,7 +4,7 @@ struct point_t{
   double m;
   zVec3D p;
 };
-zArrayClass( point_array_t, point_t );
+ZEDA_DEF_ARRAY_CLASS( point_array_t, point_t );
 
 void create_mp3(point_array_t *pa, rkMP mp[])
 {

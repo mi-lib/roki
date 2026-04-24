@@ -1,3 +1,4 @@
+2026.04.24. Applied renaming of zArrayClass to ZEDA_DEF_ARRAY_CLASS. [rk_contact, rk_motor, rk_link, app, test]
 2026.04.22. Applied renaming of zListClass to ZEDA_DEF_LIST_CLASS. [rk_force, rk_ik_cell, rk_ik_seq, rk_chain_urdf, app]
 2026.04.19. Applied newly defined ZEDA_DEF_LIST_QUICKSORT_PROTOTYPE and ZEDA_DEF_LIST_QUICKSORT for rkCDPlaneListQuickSort. [rk_cd]
 2026.04.09. Added methods init, destroy, clone, zeroRate, copyState, copyState, combine, merge, updateCOM, updateCOMVel, updateCOMAcc, updateCOMRate, setExtWrench, setExtWrench, addExtWrench, addExtWrench, zeroExtWrench, setExtForce, setExtForce, addExtForce, addExtForce, linearMomentum, angularMomentum, kineticEnergy, shapePush, shapePop, shapeDestroy, contigVert, shapeVolume, shapeMP, and an operator += of rkBody for C++. [rk_body]

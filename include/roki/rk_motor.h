@@ -1,7 +1,7 @@
 /* RoKi - Robot Kinetics library
  * Copyright (C) 1998 Tomomichi Sugihara (Zhidao)
  *
- * rk_motor - motor model
+ * rk_motor - motor model.
  * contributer: 2014-2015 Naoki Wakisaka
  */
 
@@ -14,7 +14,7 @@ __BEGIN_DECLS
 
 /* ********************************************************** */
 /*! \struct rkMotorSpec
- * \brief motor specification class
+ * \brief motor specification class.
  * ********************************************************** */
 ZDECL_STRUCT( rkMotor );
 ZDECL_STRUCT( rkMotorSpec );
@@ -87,10 +87,10 @@ __ROKI_EXPORT void rkMotorSpecFPrintZTK(FILE *fp, rkMotorSpec *ms);
 
 /* ********************************************************** */
 /*! \struct rkMotorSpecArray
- * \brief array of motor specifications
+ * \brief array of motor specifications.
  * ********************************************************** */
 
-zArrayClass( rkMotorSpecArray, rkMotorSpec );
+ZEDA_DEF_ARRAY_CLASS( rkMotorSpecArray, rkMotorSpec );
 
 __ROKI_EXPORT rkMotorSpecArray *rkMotorSpecArrayAlloc(rkMotorSpecArray *msarray, int size);
 

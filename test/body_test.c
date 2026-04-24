@@ -42,7 +42,7 @@ typedef struct{
   double m;
   zVec3D p;
 } point_t;
-zArrayClass( point_array_t, point_t );
+ZEDA_DEF_ARRAY_CLASS( point_array_t, point_t );
 
 void create_point_rand(point_array_t *pa, int n)
 {

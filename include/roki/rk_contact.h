@@ -1,7 +1,7 @@
 /* RoKi - Robot Kinetics library
  * Copyright (C) 1998 Tomomichi Sugihara (Zhidao)
  *
- * rk_contact - physical properties of contact
+ * rk_contact - physical properties of contact.
  */
 
 #ifndef __RK_CONTACT_H__
@@ -16,11 +16,9 @@ typedef enum{ RK_CONTACT_RIGID, RK_CONTACT_ELASTIC } rkContactType;
 
 typedef enum{ RK_CONTACT_UNCERTAIN, RK_CONTACT_SF, RK_CONTACT_KF } rkContactFricType;
 
-/* ********************************************************** */
-/* CLASS: rkContactInfo
- * contact model class
- * ********************************************************** */
-
+/*! \struct rkContactInfo
+ * \brief contact model class.
+ */
 typedef struct{
   char *__stf[2];        /* stuff binding keys */
   rkContactType type;    /* contact type (elastic/rigid model) */
@@ -129,12 +127,10 @@ __ROKI_EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, const char *s
  */
 __ROKI_EXPORT void rkContactInfoFPrintZTK(FILE *fp, rkContactInfo *ci);
 
-/* ********************************************************** */
-/* CLASS: rkContactInfoArray
- * array class of contact information set
- * ********************************************************** */
-
-zArrayClass( rkContactInfoArray, rkContactInfo );
+/*! \struct rkContactInfoArray
+ * \brief array class of contact information set.
+ */
+ZEDA_DEF_ARRAY_CLASS( rkContactInfoArray, rkContactInfo );
 
 /*! \brief destroy contact info array.
  *
