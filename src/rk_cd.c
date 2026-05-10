@@ -42,8 +42,7 @@ static rkCDCell *_rkCDCellCreate(rkCDCell *cell, rkChain *chain, rkLink *link, z
   zVec3DDataOBB( &data, &cell->data.bb );
   zVec3DDataDestroy( &data );
 
-  if( !zPH3DClone( zShape3DPH(cell->data.shape), &cell->data.ph ) )
-    return NULL;
+  if( !zPH3DClone( zShape3DPH(cell->data.shape), &cell->data.ph ) ) return NULL;
   zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
 
   zBox3DXform( &cell->data.bb, rkLinkWldFrame(cell->data.link), &cell->data.obb );
@@ -75,8 +74,7 @@ rkCDCell *rkCDCellReg(rkCDCellList *clist, rkChain *chain, rkLink *link, zShape3
 /* update the bounding box of a collision detection cell. */
 void rkCDCellUpdateBB(rkCDCell *cell)
 {
-  if( cell->data.type == RK_CD_CELL_STAT ||
-      cell->data._bb_is_uptodate == true ) return;
+  if( cell->data.type == RK_CD_CELL_STAT || cell->data._bb_is_uptodate ) return;
   zBox3DXform( &cell->data.bb, rkLinkWldFrame(cell->data.link), &cell->data.obb );
   zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
   cell->data._bb_is_uptodate = true;
@@ -85,8 +83,7 @@ void rkCDCellUpdateBB(rkCDCell *cell)
 /* update the polyhedron of a collision detection cell. */
 void rkCDCellUpdatePH(rkCDCell *cell)
 {
-  if( cell->data.type == RK_CD_CELL_STAT ||
-      cell->data._ph_is_uptodate == true ) return;
+  if( cell->data.type == RK_CD_CELL_STAT || cell->data._ph_is_uptodate ) return;
   zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
   cell->data._ph_is_uptodate = true;
 }
@@ -95,12 +92,12 @@ void rkCDCellUpdatePH(rkCDCell *cell)
 void rkCDCellUpdate(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT ) return;
-  if( cell->data._bb_is_uptodate == false ){
+  if( !cell->data._bb_is_uptodate ){
     zBox3DXform( &cell->data.bb, rkLinkWldFrame(cell->data.link), &cell->data.obb );
     zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
     cell->data._bb_is_uptodate = true;
   }
-  if( cell->data._ph_is_uptodate == false ){
+  if( !cell->data._ph_is_uptodate ){
     zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
     cell->data._ph_is_uptodate = true;
   }
@@ -211,12 +208,9 @@ rkCD *rkCDPairReg(rkCD *cd, rkLink *link1, rkLink *link2)
   rkCDPair *pair;
 
   zListForEach( &cd->plist, pair )
-    if( ( pair->data.cell[0]->data.link == link1 &&
-          pair->data.cell[1]->data.link == link2 ) ||
-        ( pair->data.cell[0]->data.link == link2 &&
-          pair->data.cell[1]->data.link == link1 ) )
+    if( ( pair->data.cell[0]->data.link == link1 && pair->data.cell[1]->data.link == link2 ) ||
+        ( pair->data.cell[0]->data.link == link2 && pair->data.cell[1]->data.link == link1 ) )
       return cd;
-
   zListForEach( &cd->clist, cp0 )
     for( cp1=zListCellNext(cp0); cp1!=zListRoot(&cd->clist); cp1=zListCellNext(cp1) )
       if( ( cp0->data.link == link1 && cp1->data.link == link2 ) ||
@@ -232,12 +226,10 @@ void rkCDPairUnreg(rkCD *cd, rkLink *link1, rkLink *link2)
 
   if( zListIsEmpty( &cd->plist ) ) return;
   zListForEach( &cd->plist, cp ){
-    if( ( cp->data.cell[0]->data.link == link1 &&
-          cp->data.cell[1]->data.link == link2 ) ||
-        ( cp->data.cell[0]->data.link == link2 &&
-          cp->data.cell[1]->data.link == link1 ) ){
+    if( ( cp->data.cell[0]->data.link == link1 && cp->data.cell[1]->data.link == link2 ) ||
+        ( cp->data.cell[0]->data.link == link2 && cp->data.cell[1]->data.link == link1 ) ){
       temp = zListCellPrev(cp);
-      _rkCDPairDestroy(cp);
+      _rkCDPairDestroy( cp );
       zListPurge( &cd->plist, cp );
       zFree( cp );
       cp = temp;
@@ -251,10 +243,9 @@ void rkCDPairChainUnreg(rkCD *cd, rkChain *chain)
 
   if( zListIsEmpty( &cd->plist ) ) return;
   zListForEach( &cd->plist, cp ){
-    if( ( cp->data.cell[0]->data.chain == chain &&
-          cp->data.cell[1]->data.chain == chain ) ){
+    if( ( cp->data.cell[0]->data.chain == chain && cp->data.cell[1]->data.chain == chain ) ){
       temp = zListCellPrev(cp);
-       _rkCDPairDestroy(cp);
+      _rkCDPairDestroy( cp );
       zListPurge( &cd->plist, cp );
       zFree( cp );
       cp = temp;
@@ -271,8 +262,8 @@ void rkCDPairPrint(rkCD *cd)
   zListForEach( &cd->plist, cp ){
     printf( "%d : %s : %s %s %s : %s %s %s\n", i,
       zBoolStr(cp->data.is_col),
-        zName(cp->data.cell[0]->data.chain),  zName(cp->data.cell[0]->data.link), zName(cp->data.cell[0]->data.shape),
-        zName(cp->data.cell[1]->data.chain),  zName(cp->data.cell[1]->data.link), zName(cp->data.cell[1]->data.shape) );
+      zName(cp->data.cell[0]->data.chain), zName(cp->data.cell[0]->data.link), zName(cp->data.cell[0]->data.shape),
+      zName(cp->data.cell[1]->data.chain), zName(cp->data.cell[1]->data.link), zName(cp->data.cell[1]->data.shape) );
     i++;
   }
 }
@@ -293,8 +284,7 @@ void rkCDPairVertPrint(rkCD *cd)
       zName(cp->data.cell[0]->data.chain), zName(cp->data.cell[0]->data.shape),
       zName(cp->data.cell[1]->data.chain), zName(cp->data.cell[1]->data.shape) );
     zListForEach( &cp->data.vlist, v ){
-      printf( "%s %s",
-        zName(v->data.cell->data.chain), zName(v->data.cell->data.link) );
+      printf( "%s %s", zName(v->data.cell->data.chain), zName(v->data.cell->data.link) );
       __vec_label_print( " vert", v->data.vert );
       __vec_label_print( " norm", &v->data.norm );
       __vec_label_print( " pro",  &v->data.pro );
@@ -311,8 +301,12 @@ void rkCDPairVertPrint(rkCD *cd)
 rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
 {
   zShape3DListCell *sc;
+  zVec joint_dis;
   int i;
 
+  if( !( joint_dis = zVecAlloc( rkChainJointSize(chain) ) ) ) return NULL;
+  rkChainGetJointDisAll( chain, joint_dis ); /* store configuration */
+  rkChainNeutralize( chain );
   for( i=0; i<rkChainLinkNum(chain); i++ )
     zListForEach( &rkChainLink(chain,i)->body.shapelist, sc ){
       if( !rkCDCellReg( &cd->clist, chain, rkChainLink(chain,i), sc->data, type ) )
@@ -320,6 +314,8 @@ rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
       if( zListSize(&cd->clist) > 1 )
         _rkCDPairCellReg( cd, zListHead(&cd->clist) );
     }
+  rkChainSetJointDisAll( chain, joint_dis ); /* restore configuration */
+  zVecFree( joint_dis );
   return cd;
 }
 
@@ -329,10 +325,9 @@ void rkCDChainUnreg(rkCD *cd, rkChain *chain)
   rkCDCell *cell, *ctemp;
 
   zListForEach( &cd->plist, pair ){
-    if( ( pair->data.cell[0]->data.chain == chain ) ||
-        ( pair->data.cell[1]->data.chain == chain ) ){
+    if( ( pair->data.cell[0]->data.chain == chain ) || ( pair->data.cell[1]->data.chain == chain ) ){
       ptemp = zListCellPrev(pair);
-      _rkCDPairDestroy(pair);
+      _rkCDPairDestroy( pair );
       zListPurge( &cd->plist, pair );
       zFree( pair );
       pair = ptemp;
@@ -341,7 +336,7 @@ void rkCDChainUnreg(rkCD *cd, rkChain *chain)
   zListForEach( &cd->clist, cell ){
     if( cell->data.chain == chain ){
       ctemp = zListCellPrev(cell);
-      _rkCDCellDestroy(cell);
+      _rkCDCellDestroy( cell );
       zListPurge( &cd->clist, cell );
       zFree( cell );
       cell = ctemp;
@@ -364,7 +359,6 @@ static bool _rkCDColChkAABB(rkCD *cd)
       is_col = true;
     }
   }
-
   return is_col;
 }
 
@@ -375,14 +369,13 @@ static bool _rkCDColChkOBB(rkCD *cd)
 
   is_col = false;
   zListForEach( &cd->plist, cp ){
-    if( cp->data.is_col == true ){
+    if( cp->data.is_col ){
       if( !zColChkBox3D( &cp->data.cell[0]->data.obb, &cp->data.cell[1]->data.obb ) )
         cp->data.is_col = false;
       else
         is_col = true;
     }
   }
-
   return is_col;
 }
 
@@ -394,19 +387,17 @@ static bool _rkCDColChkGJK(rkCD *cd)
 
   is_col = false;
   zListForEach( &cd->plist, cp ){
-    if( cp->data.is_col == true ){
+    if( cp->data.is_col ){
       /* TO BE MODIFIED */
       rkCDCellUpdatePH( cp->data.cell[0] );
       rkCDCellUpdatePH( cp->data.cell[1] );
-      if( !zColChkPH3D( &cp->data.cell[0]->data.ph, &cp->data.cell[1]->data.ph,
-          &v1, &v2 ) )
+      if( !zColChkPH3D( &cp->data.cell[0]->data.ph, &cp->data.cell[1]->data.ph, &v1, &v2 ) )
         cp->data.is_col = false;
       else{
         is_col = true;
       }
     }
   }
-
   return is_col;
 }
 
@@ -419,14 +410,12 @@ bool rkCDColChkAABB(rkCD *cd)
 
 bool rkCDColChkOBB(rkCD *cd)
 {
-  if( !rkCDColChkAABB( cd ) ) return false;
-  return _rkCDColChkOBB( cd );
+  return rkCDColChkAABB( cd ) ? _rkCDColChkOBB( cd ) : false;
 }
 
 bool rkCDColChkGJK(rkCD *cd)
 {
-  if( !rkCDColChkOBB( cd ) ) return false;
-  return _rkCDColChkGJK( cd );
+  return rkCDColChkOBB( cd ) ? _rkCDColChkGJK( cd ) : false;
 }
 
 void rkCDColChkGJKOnly(rkCD *cd)
@@ -448,10 +437,9 @@ void rkCDColChkGJKOnly(rkCD *cd)
 static bool _rkCDVertNorm(zPH3D *ph, zVec3D *vert, zVec3D *norm, zVec3D *pro)
 {
   zPH3DClosest( ph, vert, pro );
-  zVec3DSub( pro, vert, norm );
+  _zVec3DSub( pro, vert, norm );
   if( zVec3DIsTiny( norm ) ) return false;
   zVec3DNormalizeNCDRC( norm );
-
   return true;
 }
 
@@ -490,7 +478,7 @@ static rkCDVert *_rkCDVertReg(rkCD *cd, rkCDPair *pair, rkCDVertList *vlist, rkC
       v->data.type = cp->data.type;
       flag = true;
     }
-  if( zListIsEmpty( &pair->data.vlist ) || flag == false ){
+  if( zListIsEmpty( &pair->data.vlist ) || !flag ){
     if( !_rkCDVertNorm( &cell1->data.ph, zPH3DVert(&cell0->data.ph, v_id), &v->data.norm, &v->data.pro ) ){
       zFree( v );
       return NULL;
@@ -539,7 +527,7 @@ static void _rkCDColChkVert(rkCD *cd)
 
   cd->colnum = 0;
   zListForEach( &cd->plist, cp ){
-    if( cp->data.is_col == true ){
+    if( cp->data.is_col ){
       /* TO BE MODIFIED */
       rkCDCellUpdatePH( cp->data.cell[0] );
       rkCDCellUpdatePH( cp->data.cell[1] );
@@ -565,7 +553,7 @@ static void _rkCDColChkOBBVert(rkCD *cd)
 
   cd->colnum = 0;
   zListForEach( &cd->plist, cp ){
-    if( cp->data.is_col == true ){
+    if( cp->data.is_col ){
       zPH3DDestroy( &cp->data.cell[0]->data.ph );
       zPH3DDestroy( &cp->data.cell[1]->data.ph );
       zBox3DToPH( &cp->data.cell[0]->data.obb, &cp->data.cell[0]->data.ph );
@@ -604,7 +592,7 @@ static void _rkCDColVol(rkCD *cd)
 
   cd->colnum = 0;
   zListForEach( &cd->plist, cp )
-    if( cp->data.is_col == true ){
+    if( cp->data.is_col ){
       /* TO BE MODIFIED */
       rkCDCellUpdatePH( cp->data.cell[0] );
       rkCDCellUpdatePH( cp->data.cell[1] );
@@ -734,7 +722,7 @@ static void _rkCDColVolBREP(rkCD *cd)
 
   cd->colnum = 0;
   zListForEach( &cd->plist, cp )
-    if( cp->data.is_col == true ){
+    if( cp->data.is_col ){
       /* TO BE MODIFIED */
       rkCDCellUpdatePH( cp->data.cell[0] );
       rkCDCellUpdatePH( cp->data.cell[1] );
@@ -750,7 +738,7 @@ static void _rkCDColVolBREPFast(rkCD *cd)
 
   cd->colnum = 0;
   zListForEach( &cd->plist, cp )
-    if( cp->data.is_col == true ){
+    if( cp->data.is_col ){
       /* TO BE MODIFIED */
       rkCDCellUpdatePH( cp->data.cell[0] );
       rkCDCellUpdatePH( cp->data.cell[1] );
@@ -797,7 +785,7 @@ static void _rkCDColVolBREPVert(rkCD *cd)
 
   cd->colnum = 0;
   zListForEach( &cd->plist, cp ){
-    if( cp->data.is_col == true ){
+    if( cp->data.is_col ){
       /* TO BE MODIFIED */
       rkCDCellUpdatePH( cp->data.cell[0] );
       rkCDCellUpdatePH( cp->data.cell[1] );

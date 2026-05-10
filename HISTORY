@@ -1,3 +1,6 @@
+2026.05.10. Modified rkCDChainReg to store the current joint configuration of the chain to be registered in advance, neutralize the configuration, and restore the configuration after the registration. [rk_cd]
+2026.05.10. Modified rkCDColChkOBB and rkCDColChkGJK to use ternary-operator. [rk_cd]
+2026.05.10. Modified some logical conditions such as A == true and A == false in rk_cd to A and !A, respectively. [rk_cd]
 2026.04.24. Applied renaming of zArrayClass to ZEDA_DEF_ARRAY_CLASS. [rk_contact, rk_motor, rk_link, app, test]
 2026.04.22. Applied renaming of zListClass to ZEDA_DEF_LIST_CLASS. [rk_force, rk_ik_cell, rk_ik_seq, rk_chain_urdf, app]
 2026.04.19. Applied newly defined ZEDA_DEF_LIST_QUICKSORT_PROTOTYPE and ZEDA_DEF_LIST_QUICKSORT for rkCDPlaneListQuickSort. [rk_cd]
