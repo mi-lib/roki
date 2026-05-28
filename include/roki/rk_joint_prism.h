@@ -9,8 +9,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointPrismPrp ){
   double min;  /* minimum joint displacement */
   double max;  /* maximum joint displacement */
@@ -30,6 +28,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointPrismState ){
   rkJointFrictionPivot _fp;
   double _u;
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkJointCom rk_joint_prism;
 

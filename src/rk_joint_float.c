@@ -265,7 +265,7 @@ static void *_rkJointFloatDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return joint;
 }
 
-static bool _rkJointFloatDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointFloatDisFPrintZTK(FILE *fp, int i, const void *joint){
   if( zVec6DIsTiny( &_rks(joint)->dis ) ) return false;
   zVec6DValueNLFPrint( fp, &_rks(joint)->dis );
   return true;
@@ -280,7 +280,7 @@ static rkJoint *_rkJointFloatFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
   return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_float );
 }
 
-static void _rkJointFloatFPrintZTK(FILE *fp, rkJoint *joint, char *name)
+static void _rkJointFloatFPrintZTK(FILE *fp, const rkJoint *joint, const char *name)
 {
   _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_float );
 }

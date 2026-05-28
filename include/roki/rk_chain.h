@@ -10,14 +10,12 @@
 #include <roki/rk_link.h>
 #include <roki/rk_ik_cell.h>
 
-__BEGIN_DECLS
-
-/* ********************************************************** */
-/*! \brief kinematic chain class.
- *//* ******************************************************* */
 ZDECL_STRUCT( rkIK );
 ZDECL_STRUCT( rkFDEquation );
 
+/*! \struct rkChain
+ * \brief kinematic chain class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   Z_NAMED_CLASS;
   rkLinkArray linkarray;           /*!< array of links */
@@ -190,6 +188,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkChain ){
   int InverseKinematicsRJO(zVec dis, double tol, int iter);
 #endif /* __cplusplus */
 };
+
+__BEGIN_DECLS
 
 #define rkChainLinkArray(chain)             ( &(chain)->linkarray )
 #define rkChainRoot(chain)                  zArrayBuf( rkChainLinkArray(chain) )
@@ -874,26 +874,26 @@ __ROKI_EXPORT zSphere3D *rkChainBoundingBall(rkChain *chain, zSphere3D *bb);
 #define ZTK_KEY_ROKI_CHAIN_INIT_JOINT "joint"
 
 __ROKI_EXPORT rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk);
-__ROKI_EXPORT void rkChainFPrintZTK(FILE *fp, rkChain *chain);
+__ROKI_EXPORT void rkChainFPrintZTK(FILE *fp, const rkChain *chain);
 
 __ROKI_EXPORT rkChain *rkChainReadZTK(rkChain *chain, const char *filename);
-__ROKI_EXPORT bool rkChainWriteZTK(rkChain *chain, const char *filename);
+__ROKI_EXPORT bool rkChainWriteZTK(const rkChain *chain, const char *filename);
 
 /*! \brief read a ZTK or URDF file and create a new kinematic chain. */
 __ROKI_EXPORT rkChain *rkChainReadFile(rkChain *chain, const char *filename);
 
 __ROKI_EXPORT rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk);
-__ROKI_EXPORT void rkChainInitFPrintZTK(FILE *fp, rkChain *chain);
+__ROKI_EXPORT void rkChainInitFPrintZTK(FILE *fp, const rkChain *chain);
 
 __ROKI_EXPORT rkChain *rkChainInitReadZTK(rkChain *chain, const char *filename);
-__ROKI_EXPORT bool rkChainInitWriteZTK(rkChain *chain, const char *filename);
+__ROKI_EXPORT bool rkChainInitWriteZTK(const rkChain *chain, const char *filename);
 
 /* print current 6D postures of all links of a kinematic chain out to a file. */
-__ROKI_EXPORT void rkChainPostureFPrint(FILE *fp, rkChain *chain);
+__ROKI_EXPORT void rkChainPostureFPrint(FILE *fp, const rkChain *chain);
 #define rkChainPosturePrint(chain)    rkChainPostureFPrint( stdout, (chain) )
 
 /* print connectivity of a kinematic chain out to a file. */
-__ROKI_EXPORT void rkChainConnectivityFPrint(FILE *fp, rkChain *chain);
+__ROKI_EXPORT void rkChainConnectivityFPrint(FILE *fp, const rkChain *chain);
 #define rkChainConnectivityPrint(chain) rkChainConnectivityFPrint( stdout, (chain) )
 
 __END_DECLS

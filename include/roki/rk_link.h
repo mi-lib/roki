@@ -12,8 +12,6 @@
 /* this is only for rkWrenchList in rkABIPrp, and to be removed. */
 #include <roki/rk_force.h>
 
-__BEGIN_DECLS
-
 /*! \struct rkABIPrp
  * \brief properties for ABI method.
  */
@@ -67,6 +65,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkLink ){
   rkLink *addChild(rkLink *_child);
 #endif /* __cplusplus */
 };
+
+__BEGIN_DECLS
 
 #define RK_LINK_INVALID (-1)
 
@@ -426,10 +426,14 @@ __ROKI_EXPORT zVec3D *rkLinkAngularMomentumRecursive(const rkLink *link, const z
 /*! \brief compute mass property of a link. */
 #define rkLinkShapeMP(link,d,mp) rkBodyShapeMP( rkLinkBody(link), (d), (mp) )
 
+__END_DECLS
+
 /*! \struct rkLinkArray
  * \brief array of links
  */
 ZEDA_DEF_ARRAY_CLASS( rkLinkArray, rkLink );
+
+__BEGIN_DECLS
 
 /*! \brief allocate an array of links. */
 __ROKI_EXPORT rkLinkArray *rkLinkArrayAlloc(rkLinkArray *linkarray, int size);
@@ -441,9 +445,9 @@ __ROKI_EXPORT void rkLinkArrayDestroy(rkLinkArray *linkarray);
 __ROKI_EXPORT rkLinkArray *rkLinkArrayClone(rkLinkArray *org, rkLinkArray *cln, zMultiShape3D *shape_org, zMultiShape3D *shape_cln, rkMotorSpecArray *msarray_org, rkMotorSpecArray *msarray_cln);
 
 /*! \brief output information of an array of links to a file in the ZTK format. */
-__ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
+__ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, const rkLinkArray *linkarray);
 
-/* *** ZTK *** */
+/* ZTK */
 
 #define ZTK_TAG_ROKI_LINK           "roki::link"
 
@@ -539,18 +543,18 @@ __ROKI_EXPORT void rkLinkArrayFPrintZTK(FILE *fp, rkLinkArray *linkarray);
 __ROKI_EXPORT rkLink *rkLinkFromZTK(rkLink *link, rkLinkArray *link_array, zShape3DArray *shape_array, rkMotorSpecArray *motorspec_array, ZTK *ztk);
 __ROKI_EXPORT rkLink *rkLinkConnectFromZTK(rkLink *link, rkLinkArray *link_array, ZTK *ztk);
 
-__ROKI_EXPORT void rkLinkFPrintZTK(FILE *fp, rkLink *link);
+__ROKI_EXPORT void rkLinkFPrintZTK(FILE *fp, const rkLink *link);
 
 /* print current 6D posture of a link out to a file. */
-__ROKI_EXPORT void rkLinkPostureFPrint(FILE *fp, rkLink *link);
+__ROKI_EXPORT void rkLinkPostureFPrint(FILE *fp, const rkLink *link);
 #define rkLinkPosturePrint(link)      rkLinkPostureFPrint( stdout, (link) )
 
 /* print connectivity of a link of a kinematic chain out to a file. */
-__ROKI_EXPORT void rkLinkConnectivityFPrint(FILE *fp, rkLink *link, rkLink *root, ulong branch_bit, int depth);
+__ROKI_EXPORT void rkLinkConnectivityFPrint(FILE *fp, const rkLink *link, const rkLink *root, ulong branch_bit, int depth);
 #define rkLinkConnectivityPrint(link,root,branch_bit,depth) rkLinkConnectivityFPrint( stdout, (link), (root), (branch_bit), (depth) )
 
 /* print external wrench applied to a link out to a file. */
-__ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, rkLink *link);
+__ROKI_EXPORT void rkLinkExtWrenchFPrint(FILE *fp, const rkLink *link);
 #define rkLinkExtWrenchPrint(link)    rkLinkExtWrenchFPrint( stdout, (link) )
 
 __END_DECLS

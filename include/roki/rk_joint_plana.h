@@ -9,8 +9,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 /* 0, 1: planar translation, 2: rotation */
 
 /* this class is particularly for modelling wheeled mobile bases. */
@@ -22,6 +20,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointPlanaState ){
   /* trigonometric values */
   double _s, _c;
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkJointCom rk_joint_plana;
 

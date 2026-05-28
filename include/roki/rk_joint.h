@@ -12,8 +12,6 @@
 #include <roki/rk_motor.h>
 #include <roki/rk_body.h>
 
-__BEGIN_DECLS
-
 ZDECL_STRUCT( rkJointCom );
 
 /*! \struct rkJoint
@@ -132,9 +130,11 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   /* I/O */
   void *(*_dis_fromZTK)(void*,int,void*,ZTK*);
   rkJoint *(*_fromZTK)(rkJoint*,rkMotorSpecArray*,ZTK*);
-  bool (*_dis_fprintZTK)(FILE*,int,void*);
-  void (*_fprintZTK)(FILE*,rkJoint*,char*);  /* print */
+  bool (*_dis_fprintZTK)(FILE*,int,const void*);
+  void (*_fprintZTK)(FILE*,const rkJoint*,const char*);  /* print */
 };
+
+__BEGIN_DECLS
 
 #define RK_JOINT_COM_DEF_PRP_FUNC( name ) \
   static void *_rkJoint##name##AllocPrp(void){ return zAlloc( rkJoint##name##Prp, 1 ); } \

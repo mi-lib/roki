@@ -1,3 +1,8 @@
+2026.05.28. Applied ZDEF_STRUCT. [rk_foce, rk_contact, rk_ik_imp]
+2026.05.28. Added const qualifiers to arguments of print functions. [rk_force, rk_contact, rk_motor, rk_link, rk_chain, rk_ik_cell, rk_ik_seq, rk_ik]
+2026.05.28. Relocated __BEGIN_DECLS and __END_DECLS. [rk_force, rk_contact, rk_motor, rk_motor_none, rk_motor_trq, rk_motor_dc, rk_joint, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_plana, rk_joint_spher, fk_joint_float, rk_joint_brfloat, rk_body, rk_link, rk_chain, rk_ik_cell, rk_ik_imp, rk_ik_seq, rk_ik, rk_cd]
+2026.05.28. Applied new specification of print functions for ZTK. [rk_motor, rk_motor_none, rk_motor_trq, rk_motor_dc, rk_joint_fixed, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_plana, rk_joint_spher, fk_joint_float, rk_joint_brfloat, rk_link]
+2026.05.28. Added const qualifiers to arguments of members of rkJointCom and rkIKConstraint. [rk_joint, rk_ik_cell]
 2026.05.10. Modified rkCDChainReg to store the current joint configuration of the chain to be registered in advance, neutralize the configuration, and restore the configuration after the registration. [rk_cd]
 2026.05.10. Modified rkCDColChkOBB and rkCDColChkGJK to use ternary-operator. [rk_cd]
 2026.05.10. Modified some logical conditions such as A == true and A == false in rk_cd to A and !A, respectively. [rk_cd]

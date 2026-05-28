@@ -27,11 +27,11 @@ static void *_rkMotorSpecTrqMinFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return obj;
 }
 
-static bool _rkMotorSpecTrqMaxFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkMotorSpecTrqMaxFPrintZTK(FILE *fp, int i, const void *obj){
   fprintf( fp, "%.10g\n", _rkp(obj)->max );
   return true;
 }
-static bool _rkMotorSpecTrqMinFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkMotorSpecTrqMinFPrintZTK(FILE *fp, int i, const void *obj){
   fprintf( fp, "%.10g\n", _rkp(obj)->min );
   return true;
 }
@@ -46,7 +46,7 @@ static rkMotorSpec *_rkMotorSpecTrqFromZTK(rkMotorSpec *ms, ZTK *ztk)
   return (rkMotorSpec *)_ZTKEvalKey( ms, NULL, ztk, __ztk_prp_rkmotor_trq );
 }
 
-static void _rkMotorSpecTrqFPrintZTK(FILE *fp, rkMotorSpec *ms)
+static void _rkMotorSpecTrqFPrintZTK(FILE *fp, const rkMotorSpec *ms)
 {
   _ZTKPrpKeyFPrint( fp, ms, __ztk_prp_rkmotor_trq );
 }

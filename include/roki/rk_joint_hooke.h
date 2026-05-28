@@ -9,8 +9,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 /* 0: rotation about z-axis, 1: rotation about y-axis */
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointHookePrp ){
@@ -34,6 +32,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointHookeState ){
   rkJointFrictionPivot _fp[2];
   double _u[2];
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkJointCom rk_joint_hooke;
 

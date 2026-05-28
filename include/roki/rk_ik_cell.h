@@ -9,12 +9,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
-/* ********************************************************** */
-/* inverse kinematics cell class
- * ********************************************************** */
-
 ZDECL_STRUCT( rkChain );
 
 /*! \union rkIKRef
@@ -66,6 +60,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKAttr ){
 #endif /* __cplusplus */
 };
 
+__BEGIN_DECLS
+
 /*! \brief masks to specify attributes to be set */
 #define RK_IK_ATTR_MASK_NONE            0x00
 #define RK_IK_ATTR_MASK_ID              0x01
@@ -84,6 +80,8 @@ __ROKI_EXPORT rkIKAttr* rkIKAttrInit(rkIKAttr *attr);
 
 /* set weight on constraint of IK cell */
 #define rkIKAttrSetWeight(attr,w1,w2,w3)      zVec3DCreate( &(attr)->weight, (w1), (w2), (w3) )
+
+__END_DECLS
 
 /*! \brief reference function pointer */
 typedef void (* rkIKRef_fp)(rkIKRef *ref, double v1, double v2, double v3);
@@ -110,7 +108,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKConstraint ){
   rkIKAcm_fp  acm_fp;  /*!< error accumulation function pointer */
   /* I/O */
   bool (* fromZTK)(rkChain *chain, rkIKAttr *attr, ubyte *mask, ZTK *ztk); /*!< a function to read attributes of an IK cell from ZTK */
-  void (* fprintZTK)(FILE*,rkChain*,rkIKCell*); /*!< a function to print attributes of an IK cell from ZTK */
+  void (* fprintZTK)(FILE*,const rkChain*,const rkIKCell*); /*!< a function to print attributes of an IK cell from ZTK */
 };
 ZEDA_DEF_LIST_CLASS( rkIKConstraintList, rkIKConstraintListCell, const rkIKConstraint* );
 
@@ -132,6 +130,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKCellDat ){
 };
 
 ZEDA_DEF_LIST_CLASS( rkIKCellList, rkIKCell, rkIKCellDat );
+
+__BEGIN_DECLS
 
 #define rkIKCellName(cell)           zName( &(cell)->data )
 

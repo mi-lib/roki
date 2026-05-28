@@ -312,37 +312,37 @@ static void *_rkJointHookeStaticFrictionFromZTK(void *joint, int i, void *arg, Z
   return joint;
 }
 
-static bool _rkJointHookeDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointHookeDisFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rks(joint)->dis[0] ) && zIsTiny( _rks(joint)->dis[1] ) ) return false;
   fprintf( fp, "%.10g %.10g\n", zRad2Deg(_rks(joint)->dis[0]), zRad2Deg(_rks(joint)->dis[1]) );
   return true;
 }
-static bool _rkJointHookeMinFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointHookeMinFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsInf( -_rkp(joint)->min[0] ) && zIsInf( -_rkp(joint)->min[1] ) ) return false;
   fprintf( fp, "%.10g %.10g\n", zRad2Deg(_rkp(joint)->min[0]), zRad2Deg(_rkp(joint)->min[1]) );
   return true;
 }
-static bool _rkJointHookeMaxFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointHookeMaxFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsInf( _rkp(joint)->max[0] ) && zIsInf( _rkp(joint)->max[1] ) ) return false;
   fprintf( fp, "%.10g %.10g\n", zRad2Deg(_rkp(joint)->max[0]), zRad2Deg(_rkp(joint)->max[1]) );
   return true;
 }
-static bool _rkJointHookeStiffnessFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointHookeStiffnessFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->stiffness[0] ) && zIsTiny( _rkp(joint)->stiffness[1] ) ) return false;
   fprintf( fp, "%.10g %.10g\n", _rkp(joint)->stiffness[0], _rkp(joint)->stiffness[1] );
   return true;
 }
-static bool _rkJointHookeViscosityFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointHookeViscosityFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->viscosity[0] ) && zIsTiny( _rkp(joint)->viscosity[1] ) ) return false;
   fprintf( fp, "%.10g %.10g\n", _rkp(joint)->viscosity[0], _rkp(joint)->viscosity[1] );
   return true;
 }
-static bool _rkJointHookeCoulombFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointHookeCoulombFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->coulomb[0] ) && zIsTiny( _rkp(joint)->coulomb[1] ) ) return false;
   fprintf( fp, "%.10g %.10g\n", _rkp(joint)->coulomb[0], _rkp(joint)->coulomb[1] );
   return true;
 }
-static bool _rkJointHookeStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointHookeStaticFrictionFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->sf[0] ) && zIsTiny( _rkp(joint)->sf[1] ) ) return false;
   fprintf( fp, "%.10g %.10g\n", _rkp(joint)->sf[0], _rkp(joint)->sf[1] );
   return true;
@@ -363,7 +363,7 @@ static rkJoint *_rkJointHookeFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
   return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_hooke );
 }
 
-static void _rkJointHookeFPrintZTK(FILE *fp, rkJoint *joint, char *name)
+static void _rkJointHookeFPrintZTK(FILE *fp, const rkJoint *joint, const char *name)
 {
   _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_hooke );
 }

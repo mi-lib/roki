@@ -9,8 +9,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 /*! \brief IK entry scanned from a file. */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKEntry ){
   Z_NAMED_CLASS;
@@ -25,6 +23,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKSeqCell ){
   rkIKEntry *entry;
 };
 
+__BEGIN_DECLS
+
 /*! \brief initialize IK sequence cell. */
 #define rkIKSeqCellInit(c) do{\
   (c)->dt = 0;\
@@ -35,8 +35,12 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKSeqCell ){
 /*! \brief set IK cell to IK solver. */
 __ROKI_EXPORT bool rkChainSetIKSeqCell(rkChain *chain, rkIKSeqCell *c);
 
+__END_DECLS
+
 /*! \brief IK sequence. */
 ZEDA_DEF_LIST_CLASS( rkIKSeq, rkIKSeqListCell, rkIKSeqCell );
+
+__BEGIN_DECLS
 
 /*! \brief free IK sequence cell. */
 __ROKI_EXPORT void rkIKSeqListCellFree(rkIKSeqListCell *cell);
@@ -56,9 +60,9 @@ __ROKI_EXPORT rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq);
 #define rkIKSeqScan(seq) rkIKSeqFScan( stdin, seq )
 
 /*! \brief print an IK sequence out to a file. */
-__ROKI_EXPORT bool rkIKSeqPrintFile(rkIKSeq *seq, char filename[]);
+__ROKI_EXPORT bool rkIKSeqPrintFile(const rkIKSeq *seq, const char filename[]);
 /*! \brief print an IK sequence out to the current position of a file. */
-__ROKI_EXPORT void rkIKSeqFPrint(FILE *fp, rkIKSeq *seq);
+__ROKI_EXPORT void rkIKSeqFPrint(FILE *fp, const rkIKSeq *seq);
 #define rkIKSeqPrint(seq) rkIKSeqFPrint( stdout, seq )
 
 __END_DECLS

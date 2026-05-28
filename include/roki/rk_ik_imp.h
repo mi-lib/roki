@@ -11,17 +11,15 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
-/* ********************************************************** */
-/* CLASS: rkIKImp
- * inverse kinematics impedance control parameter set class
- * ********************************************************** */
-
-typedef struct{
+/*! \struct rkIKImp
+ * \brief inverse kinematics impedance control parameter set class.
+ */
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIKImp ){
   zVec3D k;  /*!< displacement compensation gain (stiffness) */
   zVec3D c;  /*!< velocity compensation gain (damper) */
-} rkIKImp;
+};
+
+__BEGIN_DECLS
 
 #define rkIKImpSetK(i,kx,ky,kz) zVec3DCreate( &(i)->k, kx, ky, kz )
 #define rkIKImpSetC(i,cx,cy,cz) zVec3DCreate( &(i)->c, cx, cy, cz )

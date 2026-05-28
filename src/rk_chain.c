@@ -966,7 +966,7 @@ static void *_rkChainNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return zNameSet( (rkChain*)obj, ZTKVal(ztk) ) ? obj : NULL;
 }
 
-static bool _rkChainNameFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkChainNameFPrintZTK(FILE *fp, int i, const void *obj){
   fprintf( fp, "%s\n", zName((rkChain*)obj) );
   return true;
 }
@@ -992,7 +992,7 @@ static void *_rkChainLinkConnectFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     rkChainLinkArray((rkChain*)obj), ztk ) ? obj : NULL;
 }
 
-static bool _rkChainChainFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkChainChainFPrintZTK(FILE *fp, int i, const void *obj){
   _ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_chain );
   return true;
 }
@@ -1020,11 +1020,11 @@ static void *_rkChainInitJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return obj;
 }
 
-static bool _rkChainInitPosFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkChainInitPosFPrintZTK(FILE *fp, int i, const void *obj){
   zVec3DFPrint( fp, rkChainOrgPos((rkChain*)obj) );
   return true;
 }
-static bool _rkChainInitAttFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkChainInitAttFPrintZTK(FILE *fp, int i, const void *obj){
   zMat3DFPrint( fp, rkChainOrgAtt((rkChain*)obj) );
   return true;
 }
@@ -1042,7 +1042,7 @@ static void *_rkChainInitFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   return obj;
 }
 
-static bool _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
+static bool _rkChainInitFPrintZTK(FILE *fp, int i, const void *obj)
 {
   int k;
   rkLink *link;
@@ -1131,7 +1131,7 @@ rkChain *rkChainFromZTK(rkChain *chain, ZTK *ztk)
 }
 
 /* print information of a kinematic chain out to the current position of a file. */
-void rkChainFPrintZTK(FILE *fp, rkChain *chain)
+void rkChainFPrintZTK(FILE *fp, const rkChain *chain)
 {
   _ZTKPrpTagFPrint( fp, chain, __ztk_prp_tag_roki_chain );
   fprintf( fp, "\n" );
@@ -1158,13 +1158,13 @@ rkChain *rkChainReadZTK(rkChain *chain, const char *filename)
 }
 
 /* write information of a kinematic chain to a file in ZTK format. */
-bool rkChainWriteZTK(rkChain *c, const char *filename)
+bool rkChainWriteZTK(const rkChain *chain, const char *filename)
 {
   FILE *fp;
 
   if( !( fp = zOpenZTKFile( filename, "wb" ) ) ) return false;
-  rkChainFPrintZTK( fp, c );
-  fclose(fp);
+  rkChainFPrintZTK( fp, chain );
+  fclose( fp );
   return true;
 }
 
@@ -1202,7 +1202,7 @@ rkChain *rkChainInitFromZTK(rkChain *chain, ZTK *ztk)
   return chain;
 }
 
-void rkChainInitFPrintZTK(FILE *fp, rkChain *chain)
+void rkChainInitFPrintZTK(FILE *fp, const rkChain *chain)
 {
   _ZTKPrpTagFPrint( fp, chain, __ztk_prp_tag_roki_chain_init );
   fprintf( fp, "\n" );
@@ -1219,7 +1219,7 @@ rkChain *rkChainInitReadZTK(rkChain *chain, const char *filename)
   return chain;
 }
 
-bool rkChainInitWriteZTK(rkChain *chain, const char *filename)
+bool rkChainInitWriteZTK(const rkChain *chain, const char *filename)
 {
   FILE *fp;
 
@@ -1230,18 +1230,18 @@ bool rkChainInitWriteZTK(rkChain *chain, const char *filename)
 }
 
 /* print current 6D postures of all links of a kinematic chain out to a file. */
-void rkChainPostureFPrint(FILE *fp, rkChain *chain)
+void rkChainPostureFPrint(FILE *fp, const rkChain *chain)
 {
   int i;
 
-  fprintf( fp, "Chain : %s\n", zName(chain) );
+  fprintf( fp, "chain: %s\n", zName(chain) );
   for( i=0; i<rkChainLinkNum(chain); i++ )
     rkLinkPostureFPrint( fp, rkChainLink(chain,i) );
 }
 
 /* print connectivity of a kinematic chain out to a file. */
-void rkChainConnectivityFPrint(FILE *fp, rkChain *chain)
+void rkChainConnectivityFPrint(FILE *fp, const rkChain *chain)
 {
-  fprintf( fp, "Chain : %s\n", zName(chain) );
+  fprintf( fp, "chain: %s\n", zName(chain) );
   rkLinkConnectivityFPrint( fp, rkChainRoot(chain), rkChainRoot(chain), 0, 0 );
 }

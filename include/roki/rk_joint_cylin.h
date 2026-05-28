@@ -9,8 +9,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 /* 0: prismatic translation, 1: rotation */
 
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCylinPrp ){
@@ -34,6 +32,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCylinState ){
   rkJointFrictionPivot _fp[2];
   double _u[2];
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkJointCom rk_joint_cylin;
 

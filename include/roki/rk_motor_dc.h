@@ -10,8 +10,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorDCPrp ){
   double motorconst;   /*!< motor constant */
   double admittance;   /*!< inner admittance */
@@ -37,6 +35,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorDCState ){
   double e;  /*!< applied voltage */
   double tf; /*!< friction torque */
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkMotorCom rk_motor_dc;
 

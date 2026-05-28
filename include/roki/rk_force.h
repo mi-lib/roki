@@ -9,20 +9,20 @@
 
 #include <roki/rk_misc.h>
 
-__BEGIN_DECLS
-
 /*! \struct rkWrench
  * \brief wrench class.
  */
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkWrenchData ){
   zVec6D w;
   zVec3D p; /* point of action */
-} rkWrenchData;
+};
 
 /*! \struct rkWrenchList
  * \brief wrench class.
  */
 ZEDA_DEF_LIST_CLASS( rkWrenchList, rkWrench, rkWrenchData );
+
+__BEGIN_DECLS
 
 #define rkWrenchW(c)           ( &(c)->data.w )
 #define rkWrenchForce(c)       zVec6DLin( rkWrenchW(c) )
@@ -91,7 +91,7 @@ __ROKI_EXPORT zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w);
  * \retval
  * Neither rkWrenchFPrint() nor rkWrenchPrint() return any values.
  */
-__ROKI_EXPORT void rkWrenchFPrint(FILE *fp, rkWrench *cell);
+__ROKI_EXPORT void rkWrenchFPrint(FILE *fp, const rkWrench *cell);
 #define rkWrenchPrint(c) rkWrenchFPrint( stdout, (c) )
 
 __END_DECLS

@@ -10,8 +10,6 @@
 #include <roki/rk_g3d.h>
 #include <roki/rk_contact.h>
 
-__BEGIN_DECLS
-
 /*! \struct rkMP
  * \brief mass property class.
  */
@@ -37,6 +35,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMP ){
   friend rkMP operator*(const zFrame3D &f, const rkMP &src);
 #endif /* __cplusplus */
 };
+
+__BEGIN_DECLS
 
 #define rkMPMass(mp)            (mp)->mass
 #define rkMPCOM(mp)             ( &(mp)->com )
@@ -179,8 +179,6 @@ inline rkMP operator*(const zFrame3D &f, const rkMP &src){
 }
 #endif /* __cplusplus */
 
-__BEGIN_DECLS
-
 /*! \struct rkBody
  * \brief rigid body class.
  */
@@ -238,6 +236,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkBody ){
   rkMP *shapeMP(double density, rkMP *mp);
 #endif /* __cplusplus */
 };
+
+__BEGIN_DECLS
 
 #define rkBodyMP(body)           ( &(body)->mp )
 #define rkBodyMass(body)         rkMPMass( rkBodyMP(body) )

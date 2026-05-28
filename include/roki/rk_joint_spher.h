@@ -9,8 +9,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointSpherState ){
   zVec3D aa;  /* joint displacement (angle-axis vector) */
   zVec3D vel; /* velocity (angular vector) */
@@ -21,6 +19,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointSpherState ){
   /* for forward dynamics */
   double _u[3];
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkJointCom rk_joint_spher;
 

@@ -108,7 +108,7 @@ rkIKSeq *rkIKSeqFScan(FILE *fp, rkIKSeq *seq)
 }
 
 /* print IK sequence out to a file. */
-bool rkIKSeqPrintFile(rkIKSeq *seq, char filename[])
+bool rkIKSeqPrintFile(const rkIKSeq *seq, const char filename[])
 {
   char fname[BUFSIZ];
   FILE *fp;
@@ -124,7 +124,7 @@ bool rkIKSeqPrintFile(rkIKSeq *seq, char filename[])
 }
 
 /* print IK sequence out to the current position of a file. */
-void rkIKSeqFPrint(FILE *fp, rkIKSeq *seq)
+void rkIKSeqFPrint(FILE *fp, const rkIKSeq *seq)
 {
   rkIKSeqListCell *cp;
   int i;

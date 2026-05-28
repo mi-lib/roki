@@ -414,7 +414,7 @@ static bool _rkIKConstraintLinkFromZTK(rkChain *chain, int num, rkIKAttr *attr, 
 }
 
 /* print an attention point of a link of an IK cell to a file in ZTK format. */
-static void _rkIKConstraintAttentionPointFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintAttentionPointFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   if( cell->data.attr.mask & RK_IK_ATTR_MASK_ATTENTION_POINT ){
     fprintf( fp, " at" );
     zVec3DValueFPrint( fp, rkIKCellAttentionPoint(cell) );
@@ -422,7 +422,7 @@ static void _rkIKConstraintAttentionPointFPrintZTK(FILE *fp, rkChain *chain, rkI
 }
 
 /* print a weighting vector of a link of an IK cell to a file in ZTK format. */
-static void _rkIKConstraintWeightFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintWeightFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   if( cell->data.attr.mask & RK_IK_ATTR_MASK_WEIGHT ){
     fprintf( fp, " w" );
     zVec3DValueFPrint( fp, rkIKCellWeight(cell) );
@@ -430,13 +430,13 @@ static void _rkIKConstraintWeightFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *c
 }
 
 /* print a name of a link of an IK cell to a file in ZTK format. */
-static void _rkIKConstraintLinkFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintLinkFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   if( cell->data.attr.mask & RK_IK_ATTR_MASK_ID )
     fprintf( fp, " %s", rkChainLinkName(chain,rkIKCellLinkID(cell)) );
 }
 
 /* print a name of a sublink of an IK cell to a file in ZTK format. */
-static void _rkIKConstraintLinkSubFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintLinkSubFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   if( cell->data.attr.mask & RK_IK_ATTR_MASK_ID_SUB )
     fprintf( fp, " %s", rkChainLinkName(chain,rkIKCellLinkID2(cell)) );
 }
@@ -456,7 +456,7 @@ static bool _rkIKConstraintWldPosFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *
   }
   return true;
 }
-static void _rkIKConstraintWldPosFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintWldPosFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   _rkIKConstraintLinkFPrintZTK( fp, chain, cell );
   _rkIKConstraintAttentionPointFPrintZTK( fp, chain, cell );
   _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
@@ -488,7 +488,7 @@ static bool _rkIKConstraintWldAttFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *
   }
   return true;
 }
-static void _rkIKConstraintWldAttFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintWldAttFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
   _rkIKConstraintLinkFPrintZTK( fp, chain, cell );
   fprintf( fp, "\n" );
@@ -522,7 +522,7 @@ static bool _rkIKConstraintL2LPosFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *
   }
   return true;
 }
-static void _rkIKConstraintL2LPosFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintL2LPosFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   _rkIKConstraintLinkFPrintZTK( fp, chain, cell );
   _rkIKConstraintLinkSubFPrintZTK( fp, chain, cell );
   _rkIKConstraintAttentionPointFPrintZTK( fp, chain, cell );
@@ -557,7 +557,7 @@ static bool _rkIKConstraintL2LAttFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *
   }
   return true;
 }
-static void _rkIKConstraintL2LAttFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintL2LAttFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   _rkIKConstraintLinkFPrintZTK( fp, chain, cell );
   _rkIKConstraintLinkSubFPrintZTK( fp, chain, cell );
   _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
@@ -585,7 +585,7 @@ static bool _rkIKConstraintCOMFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *mas
   }
   return true;
 }
-static void _rkIKConstraintCOMFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintCOMFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
   fprintf( fp, "\n" );
 }
@@ -612,7 +612,7 @@ static bool _rkIKConstraintAMFromZTK(rkChain *chain, rkIKAttr *attr, ubyte *mask
   }
   return true;
 }
-static void _rkIKConstraintAMFPrintZTK(FILE *fp, rkChain *chain, rkIKCell *cell){
+static void _rkIKConstraintAMFPrintZTK(FILE *fp, const rkChain *chain, const rkIKCell *cell){
   _rkIKConstraintAttentionPointFPrintZTK( fp, chain, cell );
   _rkIKConstraintWeightFPrintZTK( fp, chain, cell );
   fprintf( fp, "\n" );

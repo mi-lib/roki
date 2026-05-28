@@ -88,8 +88,8 @@ static void _rkJointFixedABIQAcc(rkJoint *joint, zMat6D *m, zVec6D *b, zVec6D *j
 
 static void *_rkJointFixedDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){ return NULL; }
 static rkJoint *_rkJointFixedFromZTK(rkJoint *joint, rkMotorSpecArray *motorarray, ZTK *ztk){ return joint; }
-static bool _rkJointFixedDisFPrintZTK(FILE *fp, int i, void *joint){ return true; }
-static void _rkJointFixedFPrintZTK(FILE *fp, rkJoint *joint, char *name){}
+static bool _rkJointFixedDisFPrintZTK(FILE *fp, int i, const void *joint){ return true; }
+static void _rkJointFixedFPrintZTK(FILE *fp, const rkJoint *joint, const char *name){}
 
 rkJointCom rk_joint_fixed = {
   "fixed",

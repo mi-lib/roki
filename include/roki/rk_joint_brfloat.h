@@ -9,8 +9,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointBrFloatPrp ){
   double ep_f; /* threshold force to break joint */
   double ep_t; /* threshold torque to break joint */
@@ -24,6 +22,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointBrFloatState ){
   /* internal matrix */
   zMat3D _att;
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkJointCom rk_joint_brfloat;
 

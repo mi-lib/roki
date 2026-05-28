@@ -9,8 +9,6 @@
 
 #include <roki/rk_misc.h>
 
-__BEGIN_DECLS
-
 /* to be varied. */
 typedef enum{ RK_CONTACT_RIGID, RK_CONTACT_ELASTIC } rkContactType;
 
@@ -19,7 +17,7 @@ typedef enum{ RK_CONTACT_UNCERTAIN, RK_CONTACT_SF, RK_CONTACT_KF } rkContactFric
 /*! \struct rkContactInfo
  * \brief contact model class.
  */
-typedef struct{
+ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkContactInfo ){
   char *__stf[2];        /* stuff binding keys */
   rkContactType type;    /* contact type (elastic/rigid model) */
   union{
@@ -34,7 +32,9 @@ typedef struct{
   } param;
   double static_fc;      /* static friction coefficient */
   double kinetic_fc;     /* kinetic friction coefficient */
-} rkContactInfo;
+};
+
+__BEGIN_DECLS
 
 #define rkContactInfoType(c)      (c)->type
 #define rkContactInfoK(c)         (c)->param.rigid_param.compensation
@@ -125,12 +125,16 @@ __ROKI_EXPORT rkContactInfo *rkContactInfoAssoc(rkContactInfo *ci, const char *s
  * \return
  * rkContactInfoFPrintZTK() returns no value.
  */
-__ROKI_EXPORT void rkContactInfoFPrintZTK(FILE *fp, rkContactInfo *ci);
+__ROKI_EXPORT void rkContactInfoFPrintZTK(FILE *fp, const rkContactInfo *ci);
+
+__END_DECLS
 
 /*! \struct rkContactInfoArray
  * \brief array class of contact information set.
  */
 ZEDA_DEF_ARRAY_CLASS( rkContactInfoArray, rkContactInfo );
+
+__BEGIN_DECLS
 
 /*! \brief destroy contact info array.
  *
@@ -158,12 +162,12 @@ __ROKI_EXPORT rkContactInfo *rkContactInfoArrayAssocType(rkContactInfoArray *ci,
 /* scan contact information array from a ZTK format processor. */
 __ROKI_EXPORT rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *ztk);
 /* print contact information array out to the current position of a ZTK format file. */
-__ROKI_EXPORT void rkContactInfoArrayFPrintZTK(FILE *fp, rkContactInfoArray *ci);
+__ROKI_EXPORT void rkContactInfoArrayFPrintZTK(FILE *fp, const rkContactInfoArray *ci);
 
 /* read contact information array from a ZTK file. */
 __ROKI_EXPORT rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, const char filename[]);
 /* write contact information array to a ZTK file. */
-__ROKI_EXPORT bool rkContactInfoArrayWriteZTK(rkContactInfoArray *ci, const char filename[]);
+__ROKI_EXPORT bool rkContactInfoArrayWriteZTK(const rkContactInfoArray *ci, const char filename[]);
 
 __END_DECLS
 

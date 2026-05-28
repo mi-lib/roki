@@ -297,42 +297,42 @@ static void *_rkJointRevolMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return rkJointAssignMotorByStr( (rkJoint *)joint, (rkMotorSpecArray *)arg, ZTKVal(ztk) );
 }
 
-static bool _rkJointRevolDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolDisFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rks(joint)->dis ) ) return false;
   fprintf( fp, "%.10g\n", zRad2Deg(_rks(joint)->dis) );
   return true;
 }
-static bool _rkJointRevolMinFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolMinFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsInf( -_rkp(joint)->min ) ) return false;
   fprintf( fp, "%.10g\n", zRad2Deg(_rkp(joint)->min) );
   return true;
 }
-static bool _rkJointRevolMaxFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolMaxFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsInf( _rkp(joint)->max ) ) return false;
   fprintf( fp, "%.10g\n", zRad2Deg(_rkp(joint)->max) );
   return true;
 }
-static bool _rkJointRevolStiffnessFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolStiffnessFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->stiffness ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->stiffness );
   return true;
 }
-static bool _rkJointRevolViscosityFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolViscosityFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->viscosity ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->viscosity );
   return true;
 }
-static bool _rkJointRevolCoulombFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolCoulombFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->coulomb ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->coulomb );
   return true;
 }
-static bool _rkJointRevolStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolStaticFrictionFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->sf ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->sf );
   return true;
 }
-static bool _rkJointRevolMotorFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointRevolMotorFPrintZTK(FILE *fp, int i, const void *joint){
   if( !((rkJoint *)joint)->motor ) return false;
   fprintf( fp, "%s\n", rkMotorName( ((rkJoint *)joint)->motor ) );
   return true;
@@ -354,7 +354,7 @@ static rkJoint *_rkJointRevolFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
   return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_revol );
 }
 
-static void _rkJointRevolFPrintZTK(FILE *fp, rkJoint *joint, char *name)
+static void _rkJointRevolFPrintZTK(FILE *fp, const rkJoint *joint, const char *name)
 {
   _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_revol );
 }

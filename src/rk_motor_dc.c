@@ -40,7 +40,7 @@ RK_MOTOR_COM_DEF_ALLOC_COPY_FUNC( DC )
     _rkp(obj)->member = ZTKDouble(ztk); \
     return obj; \
   } \
-  static bool _rkMotorSpecDC##name##FPrintZTK(FILE *fp, int i, void *obj){ \
+  static bool _rkMotorSpecDC##name##FPrintZTK(FILE *fp, int i, const void *obj){ \
     fprintf( fp, "%.10g\n", _rkp(obj)->member ); \
     return true; \
   }
@@ -72,7 +72,7 @@ static rkMotorSpec *_rkMotorSpecDCFromZTK(rkMotorSpec *ms, ZTK *ztk)
   return (rkMotorSpec *)_ZTKEvalKey( ms, NULL, ztk, __ztk_prp_rkmotor_dc );
 }
 
-static void _rkMotorSpecDCFPrintZTK(FILE *fp, rkMotorSpec *ms)
+static void _rkMotorSpecDCFPrintZTK(FILE *fp, const rkMotorSpec *ms)
 {
   _ZTKPrpKeyFPrint( fp, ms, __ztk_prp_rkmotor_dc );
 }

@@ -10,15 +10,12 @@
 
 #include <roki/rk_misc.h>
 
-__BEGIN_DECLS
-
-/* ********************************************************** */
-/*! \struct rkMotorSpec
- * \brief motor specification class.
- * ********************************************************** */
 ZDECL_STRUCT( rkMotor );
 ZDECL_STRUCT( rkMotorSpec );
 
+/*! \struct rkMotorCom
+ * \brief common methods for motor class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorCom ){
   const char *typestr; /*!< \brief a string for type identification */
   byte dof;            /*!< \brief degree-of-freedom of motor motion */
@@ -27,7 +24,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorCom ){
   void *(* _alloc_prp)(void);
   void (* _copy_prp)(rkMotorSpec*,rkMotorSpec*);
   rkMotorSpec *(* _fromZTK)(rkMotorSpec*,ZTK*);
-  void (* _fprintZTK)(FILE*,rkMotorSpec*);
+  void (* _fprintZTK)(FILE*,const rkMotorSpec*);
   /* methods for motor instance */
   void (* _init_state)(rkMotor*);
   void *(* _alloc_state)(void);
@@ -39,11 +36,16 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorCom ){
   void (* _dtrq)(rkMotor*,double*,double*,double*,double*); /*!< \brief driving torque */
 };
 
+/*! \struct rkMotorSpec
+ * \brief motor specification class.
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorSpec ){
   Z_NAMED_CLASS;
   void *prp;
   rkMotorCom *com;
 };
+
+__BEGIN_DECLS
 
 #define rkMotorSpecTypeStr(ms) (ms)->com->typestr
 #define rkMotorSpecDOF(ms)     (ms)->com->dof
@@ -83,14 +85,16 @@ __ROKI_EXPORT rkMotorSpec *rkMotorSpecClone(rkMotorSpec *org, rkMotorSpec *cln);
 #define ZTK_KEY_ROKI_MOTOR_COMPL         "compl"
 
 __ROKI_EXPORT rkMotorSpec *rkMotorSpecFromZTK(rkMotorSpec *ms, ZTK *ztk);
-__ROKI_EXPORT void rkMotorSpecFPrintZTK(FILE *fp, rkMotorSpec *ms);
+__ROKI_EXPORT void rkMotorSpecFPrintZTK(FILE *fp, const rkMotorSpec *ms);
 
-/* ********************************************************** */
+__END_DECLS
+
 /*! \struct rkMotorSpecArray
  * \brief array of motor specifications.
- * ********************************************************** */
-
+ */
 ZEDA_DEF_ARRAY_CLASS( rkMotorSpecArray, rkMotorSpec );
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkMotorSpecArray *rkMotorSpecArrayAlloc(rkMotorSpecArray *msarray, int size);
 
@@ -100,7 +104,7 @@ __ROKI_EXPORT rkMotorSpecArray *rkMotorSpecArrayClone(rkMotorSpecArray *org, rkM
 
 __ROKI_EXPORT rkMotorSpec *rkMotorSpecArrayFind(rkMotorSpecArray *msarray, const char *name);
 
-__ROKI_EXPORT void rkMotorSpecArrayFPrintZTK(FILE *fp, rkMotorSpecArray *msarray);
+__ROKI_EXPORT void rkMotorSpecArrayFPrintZTK(FILE *fp, const rkMotorSpecArray *msarray);
 
 __END_DECLS
 
@@ -119,15 +123,17 @@ rkMotorCom *_rk_motor_com[] = {\
   NULL,\
 }
 
-/* ********************************************************** */
+__END_DECLS
+
 /*! \struct rkMotor
  * \brief motor class
- * ********************************************************** */
-
+ */
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotor ){
   rkMotorSpec *spec;
   void *state;
 };
+
+__BEGIN_DECLS
 
 #define RK_MOTOR_COM_DEF_ALLOC_COPY_FUNC( name ) \
   static void *_rkMotorSpec##name##AllocPrp(void){ return zAlloc( rkMotor##name##Prp, 1 ); } \

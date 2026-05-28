@@ -11,8 +11,6 @@
 
 #include <roki/rk_chain.h>
 
-__BEGIN_DECLS
-
 /*! \brief type to classify stationary or movable shape */
 typedef enum{ RK_CD_CELL_STAT, RK_CD_CELL_MOVE } rkCDCellType;
 
@@ -39,6 +37,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCDCellDat ){
 };
 ZEDA_DEF_LIST_CLASS( rkCDCellList, rkCDCell, rkCDCellDat );
 
+__BEGIN_DECLS
+
 /*! \brief register collision detection cell.
  */
 __ROKI_EXPORT rkCDCell *rkCDCellReg(rkCDCellList *clist, rkChain *chain, rkLink *link, zShape3D *shape, rkCDCellType type);
@@ -54,6 +54,8 @@ __ROKI_EXPORT void rkCDCellUpdatePH(rkCDCell *cell);
 /*! \brief update a collision detection cell.
  */
 __ROKI_EXPORT void rkCDCellUpdate(rkCDCell *cell);
+
+__END_DECLS
 
 /*! \struct rkCDVertDat
  * \brief vertex-based collision detection cell class.
@@ -117,6 +119,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkCD ){
   int colnum;         /*!< number of collision pairs */
   rkContactFricType def_type; /*!< default friction type */
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkCD *rkCDCreate(rkCD *cd);
 __ROKI_EXPORT void rkCDDestroy(rkCD *cd);

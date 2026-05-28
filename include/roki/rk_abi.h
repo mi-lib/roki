@@ -12,10 +12,6 @@
 
 __BEGIN_DECLS
 
-/* ********************************************************** */
-/* CLASS: rkABI
- * ********************************************************** */
-
 /* allocate memory for ABI of a link. */
 __ROKI_EXPORT rkLink *rkLinkAllocABI(rkLink *link);
 /* allocate memory for ABI of a kinematic chain. */

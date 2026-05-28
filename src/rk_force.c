@@ -6,11 +6,6 @@
 
 #include <roki/rk_force.h>
 
-/* ********************************************************** */
-/* CLASS: rkWrench & rkWrenchList
- * wrench list class
- * ********************************************************** */
-
 /* pop a wrench from a list. */
 rkWrench *rkWrenchListPop(rkWrenchList *wl)
 {
@@ -42,7 +37,7 @@ zVec6D *rkWrenchListNet(rkWrenchList *list, zVec6D *w)
 }
 
 /* print wrench out to a file. */
-void rkWrenchFPrint(FILE *fp, rkWrench *cell)
+void rkWrenchFPrint(FILE *fp, const rkWrench *cell)
 {
   if( !cell ) return;
 

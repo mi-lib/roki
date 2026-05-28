@@ -12,7 +12,7 @@ static void *_rkMotorSpecNoneAllocPrp(void){ return NULL; }
 static void _rkMotorSpecNoneCopyPrp(rkMotorSpec *src, rkMotorSpec *dst){}
 
 static rkMotorSpec *_rkMotorSpecNoneFromZTK(rkMotorSpec *ms, ZTK *ztk){ return ms; }
-static void _rkMotorSpecNoneFPrintZTK(FILE *fp, rkMotorSpec *ms){}
+static void _rkMotorSpecNoneFPrintZTK(FILE *fp, const rkMotorSpec *ms){}
 
 static void _rkMotorNoneInitState(rkMotor *motor){}
 static void *_rkMotorNoneAllocState(void){ return NULL; }

@@ -260,13 +260,13 @@ static void *_rkJointSpherMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return rkJointAssignMotorByStr( (rkJoint *)joint, (rkMotorSpecArray *)arg, ZTKVal(ztk) );
 }
 
-static bool _rkJointSpherDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointSpherDisFPrintZTK(FILE *fp, int i, const void *joint){
   if( zVec3DIsTiny( &_rks(joint)->aa ) ) return false;
   zVec3DValueNLFPrint( fp, &_rks(joint)->aa );
   return true;
 }
 
-static bool _rkJointSpherMotorFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointSpherMotorFPrintZTK(FILE *fp, int i, const void *joint){
   if( !((rkJoint *)joint)->motor ) return false;
   fprintf( fp, "%s\n", rkMotorName( ((rkJoint *)joint)->motor ) );
   return true;
@@ -282,7 +282,7 @@ static rkJoint *_rkJointSpherFromZTK(rkJoint *joint, rkMotorSpecArray *motorspec
   return rkJointPrpFromZTK( joint, motorspecarray, ztk, __ztk_prp_rkjoint_spher );
 }
 
-static void _rkJointSpherFPrintZTK(FILE *fp, rkJoint *joint, char *name)
+static void _rkJointSpherFPrintZTK(FILE *fp, const rkJoint *joint, const char *name)
 {
   _ZTKPrpKeyFPrint( fp, joint, __ztk_prp_rkjoint_spher );
 }

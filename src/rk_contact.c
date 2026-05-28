@@ -6,11 +6,6 @@
 
 #include <roki/rk_contact.h>
 
-/* ********************************************************** */
-/* CLASS: rkContactInfo
- * contact model class
- * ********************************************************** */
-
 /* create a rigid contact model. */
 rkContactInfo *rkContactInfoRigidCreate(rkContactInfo *ci, double k, double l, double sf, double kf, const char *stf1, const char *stf2)
 {
@@ -105,7 +100,7 @@ static void *_rkContactInfoFromZTK(void *obj, int i, void *arg, ZTK *ztk)
 }
 
 /* print information of a contact model. */
-void rkContactInfoFPrintZTK(FILE *fp, rkContactInfo *ci)
+void rkContactInfoFPrintZTK(FILE *fp, const rkContactInfo *ci)
 {
   fprintf( fp, "%s: %s %s\n", ZTK_KEY_ROKI_CONTACT_BIND, ci->__stf[0], ci->__stf[1] );
   switch( rkContactInfoType(ci) ){
@@ -124,10 +119,7 @@ void rkContactInfoFPrintZTK(FILE *fp, rkContactInfo *ci)
   fprintf( fp, "\n" );
 }
 
-/* ********************************************************** */
-/* CLASS: rkContactInfoArray
- * contact model array class
- * ********************************************************** */
+/* contact model array class */
 
 /* destroy contact information array */
 void rkContactInfoArrayDestroy(rkContactInfoArray *carray)
@@ -186,7 +178,7 @@ rkContactInfoArray *rkContactInfoArrayFromZTK(rkContactInfoArray *carray, ZTK *z
 }
 
 /* print contact information array out to the current position of a ZTK format file. */
-void rkContactInfoArrayFPrintZTK(FILE *fp, rkContactInfoArray *carray)
+void rkContactInfoArrayFPrintZTK(FILE *fp, const rkContactInfoArray *carray)
 {
   int i;
 
@@ -209,7 +201,7 @@ rkContactInfoArray *rkContactInfoArrayReadZTK(rkContactInfoArray *carray, const 
 }
 
 /* write contact information array to a ZTK file. */
-bool rkContactInfoArrayWriteZTK(rkContactInfoArray *carray, const char filename[])
+bool rkContactInfoArrayWriteZTK(const rkContactInfoArray *carray, const char filename[])
 {
   FILE *fp;
 

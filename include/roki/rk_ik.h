@@ -10,8 +10,6 @@
 #include <roki/rk_jacobi.h>
 #include <roki/rk_ik_cell.h>
 
-__BEGIN_DECLS
-
 /* ********************************************************** */
 /* inverse kinematics solver class
  * **********************************************************
@@ -85,6 +83,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkIK ){
   zVec __c;
   /*! \endcond */
 };
+
+__BEGIN_DECLS
 
 #define rkChainIKConstraintMat(chain) (chain)->_ik->_c_mat
 #define rkChainIKConstraintVec(chain) (chain)->_ik->_c_vec
@@ -280,9 +280,9 @@ __ROKI_EXPORT rkChain *rkChainIKConfFromZTK(rkChain *chain, ZTK *ztk);
 __ROKI_EXPORT rkChain *rkChainIKConfReadZTK(rkChain *chain, const char *filename);
 
 /* print the inverse kinematics configuration of a kinematic chain out to the current position of a file. */
-__ROKI_EXPORT void rkChainIKConfFPrintZTK(FILE *fp, rkChain *chain);
+__ROKI_EXPORT void rkChainIKConfFPrintZTK(FILE *fp, const rkChain *chain);
 /* write the inverse kinematics configuration of a kinematic chain to a file in ZTK format. */
-__ROKI_EXPORT bool rkChainIKConfWriteZTK(rkChain *chain, const char *filename);
+__ROKI_EXPORT bool rkChainIKConfWriteZTK(const rkChain *chain, const char *filename);
 
 __END_DECLS
 

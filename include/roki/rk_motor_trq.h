@@ -10,8 +10,6 @@
 
 /* NOTE: never include this header file in user programs. */
 
-__BEGIN_DECLS
-
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorTrqPrp ){
   double min; /*!< \brief minimum input torque */
   double max; /*!< \brief maximum input torque */
@@ -20,6 +18,8 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorTrqPrp ){
 ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkMotorTrqState ){
   double input;
 };
+
+__BEGIN_DECLS
 
 __ROKI_EXPORT rkMotorCom rk_motor_trq;
 
