@@ -132,7 +132,7 @@ ZDEF_STRUCT( __ROKI_CLASS_EXPORT, rkJointCom ){
   /* I/O */
   void *(*_dis_fromZTK)(void*,int,void*,ZTK*);
   rkJoint *(*_fromZTK)(rkJoint*,rkMotorSpecArray*,ZTK*);
-  bool (*_dis_fprintZTK)(FILE*,int,void*);
+  bool (*_dis_fprintZTK)(FILE*,int,const void*);
   void (*_fprintZTK)(FILE*,rkJoint*,char*);  /* print */
 };
 
