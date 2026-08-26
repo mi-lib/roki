@@ -966,7 +966,7 @@ static void *_rkChainNameFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return zNameSet( (rkChain*)obj, ZTKVal(ztk) ) ? obj : NULL;
 }
 
-static bool _rkChainNameFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkChainNameFPrintZTK(FILE *fp, int i, const void *obj){
   fprintf( fp, "%s\n", zName((rkChain*)obj) );
   return true;
 }
@@ -992,7 +992,7 @@ static void *_rkChainLinkConnectFromZTK(void *obj, int i, void *arg, ZTK *ztk){
     rkChainLinkArray((rkChain*)obj), ztk ) ? obj : NULL;
 }
 
-static bool _rkChainChainFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkChainChainFPrintZTK(FILE *fp, int i, const void *obj){
   _ZTKPrpKeyFPrint( fp, obj, __ztk_prp_rkchain_chain );
   return true;
 }
@@ -1020,11 +1020,11 @@ static void *_rkChainInitJointFromZTK(void *obj, int i, void *arg, ZTK *ztk){
   return obj;
 }
 
-static bool _rkChainInitPosFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkChainInitPosFPrintZTK(FILE *fp, int i, const void *obj){
   zVec3DFPrint( fp, rkChainOrgPos((rkChain*)obj) );
   return true;
 }
-static bool _rkChainInitAttFPrintZTK(FILE *fp, int i, void *obj){
+static bool _rkChainInitAttFPrintZTK(FILE *fp, int i, const void *obj){
   zMat3DFPrint( fp, rkChainOrgAtt((rkChain*)obj) );
   return true;
 }
@@ -1042,7 +1042,7 @@ static void *_rkChainInitFromZTK(void *obj, int i, void *arg, ZTK *ztk)
   return obj;
 }
 
-static bool _rkChainInitFPrintZTK(FILE *fp, int i, void *obj)
+static bool _rkChainInitFPrintZTK(FILE *fp, int i, const void *obj)
 {
   int k;
   rkLink *link;

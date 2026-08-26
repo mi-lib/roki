@@ -293,42 +293,42 @@ static void *_rkJointPrismMotorFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return rkJointAssignMotorByStr( (rkJoint *)joint, (rkMotorSpecArray *)arg, ZTKVal(ztk) );
 }
 
-static bool _rkJointPrismDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPrismDisFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rks(joint)->dis ) ) return false;
   fprintf( fp, "%.10g\n", _rks(joint)->dis );
   return true;
 }
-static bool _rkJointPrismMinFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPrismMinFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsInf( -_rkp(joint)->min ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->min );
   return true;
 }
-static bool _rkJointPrismMaxFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPrismMaxFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsInf( _rkp(joint)->max ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->max );
   return true;
 }
-static bool _rkJointPrismStiffnessFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPrismStiffnessFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->stiffness ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->stiffness );
   return true;
 }
-static bool _rkJointPrismViscosityFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPrismViscosityFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->viscosity ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->viscosity );
   return true;
 }
-static bool _rkJointPrismCoulombFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPrismCoulombFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->coulomb ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->coulomb );
   return true;
 }
-static bool _rkJointPrismStaticFrictionFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPrismStaticFrictionFPrintZTK(FILE *fp, int i, const void *joint){
   if( zIsTiny( _rkp(joint)->sf ) ) return false;
   fprintf( fp, "%.10g\n", _rkp(joint)->sf );
   return true;
 }
-static bool _rkJointPrismMotorFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPrismMotorFPrintZTK(FILE *fp, int i, const void *joint){
   if( !((rkJoint *)joint)->motor ) return false;
   fprintf( fp, "%s\n", rkMotorName( ((rkJoint *)joint)->motor ) );
   return true;

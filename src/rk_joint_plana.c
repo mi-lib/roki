@@ -201,7 +201,7 @@ static void *_rkJointPlanaDisFromZTK(void *joint, int i, void *arg, ZTK *ztk){
   return joint;
 }
 
-static bool _rkJointPlanaDisFPrintZTK(FILE *fp, int i, void *joint){
+static bool _rkJointPlanaDisFPrintZTK(FILE *fp, int i, const void *joint){
   if( zCoord2DIsTiny( &_rks(joint)->dis ) ) return false;
   fprintf( fp, "%.10g %.10g %.10g\n",
     zCoord2DX(&_rks(joint)->dis),
