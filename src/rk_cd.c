@@ -300,6 +300,7 @@ void rkCDPairVertPrint(rkCD *cd)
 /* register a chain to a collision detector. */
 rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
 {
+#if 0
   zShape3DListCell *sc;
   zVec joint_dis;
   int i;
@@ -317,6 +318,19 @@ rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
   rkChainSetJointDisAll( chain, joint_dis ); /* restore configuration */
   zVecFree( joint_dis );
   return cd;
+#else
+  zShape3DListCell *sc;
+  int i;
+
+  for( i=0; i<rkChainLinkNum(chain); i++ )
+    zListForEach( &rkChainLink(chain,i)->body.shapelist, sc ){
+      if( !rkCDCellReg( &cd->clist, chain, rkChainLink(chain,i), sc->data, type ) )
+        return NULL;
+      if( zListSize(&cd->clist) > 1 )
+        _rkCDPairCellReg( cd, zListHead(&cd->clist) );
+    }
+  return cd;
+#endif
 }
 
 void rkCDChainUnreg(rkCD *cd, rkChain *chain)
