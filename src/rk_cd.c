@@ -71,36 +71,39 @@ rkCDCell *rkCDCellReg(rkCDCellList *clist, rkChain *chain, rkLink *link, zShape3
   return cell;
 }
 
+/* update bounding geometry regardless of the cell type or cache flags. */
+static void _rkCDCellUpdateBB(rkCDCell *cell)
+{
+  zBox3DXform( &cell->data.bb, rkLinkWldFrame(cell->data.link), &cell->data.obb );
+  zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
+  cell->data._bb_is_uptodate = true;
+}
+
+static void _rkCDCellUpdatePH(rkCDCell *cell)
+{
+  zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
+  cell->data._ph_is_uptodate = true;
+}
+
 /* update the bounding box of a collision detection cell. */
 void rkCDCellUpdateBB(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT || cell->data._bb_is_uptodate ) return;
-  zBox3DXform( &cell->data.bb, rkLinkWldFrame(cell->data.link), &cell->data.obb );
-  zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
-  cell->data._bb_is_uptodate = true;
+  _rkCDCellUpdateBB( cell );
 }
 
 /* update the polyhedron of a collision detection cell. */
 void rkCDCellUpdatePH(rkCDCell *cell)
 {
   if( cell->data.type == RK_CD_CELL_STAT || cell->data._ph_is_uptodate ) return;
-  zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
-  cell->data._ph_is_uptodate = true;
+  _rkCDCellUpdatePH( cell );
 }
 
 /* update a collision detection cell. */
 void rkCDCellUpdate(rkCDCell *cell)
 {
-  if( cell->data.type == RK_CD_CELL_STAT ) return;
-  if( !cell->data._bb_is_uptodate ){
-    zBox3DXform( &cell->data.bb, rkLinkWldFrame(cell->data.link), &cell->data.obb );
-    zBox3DToAABox3D( &cell->data.obb, &cell->data.aabb );
-    cell->data._bb_is_uptodate = true;
-  }
-  if( !cell->data._ph_is_uptodate ){
-    zPH3DXform( zShape3DPH(cell->data.shape), rkLinkWldFrame(cell->data.link), &cell->data.ph );
-    cell->data._ph_is_uptodate = true;
-  }
+  rkCDCellUpdateBB( cell );
+  rkCDCellUpdatePH( cell );
 }
 
 /* create a collision detector. */
@@ -297,40 +300,48 @@ void rkCDPairVertPrint(rkCD *cd)
 
 #undef __vec_label_print
 
+/* register cells and pairs in the current chain configuration. */
+static rkCD *_rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
+{
+  zShape3DListCell *sc;
+  int i;
+
+  for( i=0; i<rkChainLinkNum(chain); i++ )
+    zListForEach( &rkChainLink(chain,i)->body.shapelist, sc ){
+      if( !rkCDCellReg( &cd->clist, chain, rkChainLink(chain,i), sc->data, type ) )
+        return NULL;
+      if( zListSize(&cd->clist) > 1 )
+        _rkCDPairCellReg( cd, zListHead(&cd->clist) );
+    }
+  return cd;
+}
+
 /* register a chain to a collision detector. */
 rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
 {
-#if 0
-  zShape3DListCell *sc;
+  rkCDCell *cell;
+  rkCD *ret;
   zVec joint_dis;
-  int i;
+  int joint_size;
 
-  if( !( joint_dis = zVecAlloc( rkChainJointSize(chain) ) ) ) return NULL;
-  rkChainGetJointDisAll( chain, joint_dis ); /* store configuration */
+  joint_size = rkChainJointSize( chain );
+  if( joint_size == 0 ) return _rkCDChainReg( cd, chain, type );
+  if( !( joint_dis = zVecAlloc( joint_size ) ) ) return NULL;
+  rkChainGetJointDisAll( chain, joint_dis );
+  /* Exclude self-collisions in the neutral pose. */
   rkChainNeutralize( chain );
-  for( i=0; i<rkChainLinkNum(chain); i++ )
-    zListForEach( &rkChainLink(chain,i)->body.shapelist, sc ){
-      if( !rkCDCellReg( &cd->clist, chain, rkChainLink(chain,i), sc->data, type ) )
-        return NULL;
-      if( zListSize(&cd->clist) > 1 )
-        _rkCDPairCellReg( cd, zListHead(&cd->clist) );
-    }
-  rkChainSetJointDisAll( chain, joint_dis ); /* restore configuration */
+  ret = _rkCDChainReg( cd, chain, type );
+  /* Restore the pose even on failure. */
+  rkChainSetJointDisAll( chain, joint_dis );
+  rkChainUpdateFK( chain );
   zVecFree( joint_dis );
-  return cd;
-#else
-  zShape3DListCell *sc;
-  int i;
-
-  for( i=0; i<rkChainLinkNum(chain); i++ )
-    zListForEach( &rkChainLink(chain,i)->body.shapelist, sc ){
-      if( !rkCDCellReg( &cd->clist, chain, rkChainLink(chain,i), sc->data, type ) )
-        return NULL;
-      if( zListSize(&cd->clist) > 1 )
-        _rkCDPairCellReg( cd, zListHead(&cd->clist) );
-    }
-  return cd;
-#endif
+  /* Refresh static cells too. */
+  zListForEach( &cd->clist, cell ){
+    if( cell->data.chain != chain ) continue;
+    _rkCDCellUpdateBB( cell );
+    _rkCDCellUpdatePH( cell );
+  }
+  return ret;
 }
 
 void rkCDChainUnreg(rkCD *cd, rkChain *chain)

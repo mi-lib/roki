@@ -1,0 +1,31 @@
+[roki::chain]
+name: cd_chain
+
+[zeo::shape]
+name: box
+type: box
+depth: 0.1
+width: 0.1
+height: 0.1
+
+[roki::link]
+name: root
+jointtype: float
+mass: 1
+shape: box
+
+[roki::link]
+name: separated
+parent: root
+jointtype: float
+pos: 0.3 0 0
+mass: 1
+shape: box
+
+[roki::link]
+name: overlapping
+parent: root
+jointtype: float
+pos: 0.05 0 0
+mass: 1
+shape: box

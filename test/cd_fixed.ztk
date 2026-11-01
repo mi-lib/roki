@@ -1,0 +1,15 @@
+[roki::chain]
+name: cd_fixed
+
+[zeo::shape]
+name: box
+type: box
+depth: 0.1
+width: 0.1
+height: 0.1
+
+[roki::link]
+name: fixed
+jointtype: fixed
+mass: 1
+shape: box
