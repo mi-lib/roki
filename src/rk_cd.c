@@ -324,8 +324,8 @@ rkCD *rkCDChainReg(rkCD *cd, rkChain *chain, rkCDCellType type)
   zVec joint_dis;
   int joint_size;
 
-  joint_size = rkChainJointSize( chain );
-  if( joint_size == 0 ) return _rkCDChainReg( cd, chain, type );
+  if( ( joint_size = rkChainJointSize( chain ) ) == 0 )
+    return _rkCDChainReg( cd, chain, type );
   if( !( joint_dis = zVecAlloc( joint_size ) ) ) return NULL;
   rkChainGetJointDisAll( chain, joint_dis );
   /* Exclude self-collisions in the neutral pose. */

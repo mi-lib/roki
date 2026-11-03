@@ -1,3 +1,6 @@
+2026.11.03. Added cd_reg_test (thanks to Naoki Wakisaka). [test]
+2026.11.03. Debugged rkCDChainReg with the automatic neutralization of configuration to treat zero-dof kinematic chains correctly (thanks to Naoki Wakisaka). [rk_cd]
+2026.11.03. Reimplemented rkCDCellUpdateBB, rkCDCellUpdatePH, and rkCDCellUpdate to use newly added _rkCDCellUpdateBB and _rkCDCellUpdatePH (thanks to Naoki Wakisaka). [rk_cd]
 2026.10.27. Added const qualifiers for rk*FPrintZTK (thanks to Daishi Kaneta). [rk_motor, rk_motor_dc, rk_motor_trq, rk_joint, rk_joint_fixed, rk_joint_revol, rk_joint_prism, rk_joint_cylin, rk_joint_hooke, rk_joint_spher, rk_joint_plana, rk_joint_float, rk_joint_brfloat, rk_link, rk_chain]
 2026.10.27. Reverted modification of rkCDChainReg tentatively for debug. [rk_cd]
 2026.05.28. Applied ZDEF_STRUCT. [rk_foce, rk_contact, rk_ik_imp]
