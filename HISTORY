@@ -1,3 +1,5 @@
+2026.11.13. Removed a redundant normalization of the outer product of two orthogonal unit vectors in a test. [test]
+2026.11.12. Reflected new specification of zVec3DNormalizeDRC. [test]
 2026.11.03. Added cd_reg_test (thanks to Naoki Wakisaka). [test]
 2026.11.03. Debugged rkCDChainReg with the automatic neutralization of configuration to treat zero-dof kinematic chains correctly (thanks to Naoki Wakisaka). [rk_cd]
 2026.11.03. Reimplemented rkCDCellUpdateBB, rkCDCellUpdatePH, and rkCDCellUpdate to use newly added _rkCDCellUpdateBB and _rkCDCellUpdatePH (thanks to Naoki Wakisaka). [rk_cd]

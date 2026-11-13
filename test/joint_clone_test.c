@@ -124,7 +124,7 @@ void assert_spher_set(rkJoint *joint)
   zVec3D axis;
 
   zVec3DCreate( &axis, 1, 2, 0 );
-  zVec3DNormalizeDRC( &axis );
+  zVec3DNormalizeDRC( &axis, 0 );
   rkJointSetDis( joint, axis.e );
 }
 
@@ -152,7 +152,7 @@ void assert_float_set(rkJoint *joint)
 
   zVec3DCreate( zVec6DLin(&dis), 0, 1, 2 );
   zVec3DCreate( zVec6DAng(&dis), 1, 2, 0 );
-  zVec3DNormalizeDRC( zVec6DAng(&dis) );
+  zVec3DNormalizeDRC( zVec6DAng(&dis), 0 );
   rkJointSetDis( joint, dis.e );
 }
 
@@ -172,7 +172,7 @@ void assert_brfloat_set(rkJoint *joint)
 
   zVec3DCreate( zVec6DLin(&dis), 0, 1, 2 );
   zVec3DCreate( zVec6DAng(&dis), 1, 2, 0 );
-  zVec3DNormalizeDRC( zVec6DAng(&dis) );
+  zVec3DNormalizeDRC( zVec6DAng(&dis), 0 );
   rkJointSetDis( joint, dis.e );
 }
 

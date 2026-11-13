@@ -10,10 +10,9 @@ zShape3D *generate_box_rand(void)
   zVec3DCreate( &ax, zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
   zVec3DCreate( &tmp, zRandF(-1,1), zRandF(-1,1), zRandF(-1,1) );
   zVec3DOrthogonalize( &tmp, &ax, &ay );
+  zVec3DNormalizeDRC( &ax, 0 );
+  zVec3DNormalizeDRC( &ay, 0 );
   zVec3DOuterProd( &ax, &ay, &az );
-  zVec3DNormalizeDRC( &ax );
-  zVec3DNormalizeDRC( &ay );
-  zVec3DNormalizeDRC( &az );
   return zShape3DBoxCreate( box, &center, &ax, &ay, &az, zRandF(0.1,5), zRandF(0.1,5), zRandF(0.1,5) );
 }
 
